@@ -1,0 +1,9 @@
+
+Tests à réaliser :
+- vérifier que les indicateurs/signaux renvoient les même résultats
+  que l'on utilise calculate ou calculate_interval en particulier
+  en ce qui concerne les bornes des données disponibles ...
+- vérifier que les indicateurs renvoient les même résultats
+  dans la durée (en stockant un fichier résultat de référence)
+
+

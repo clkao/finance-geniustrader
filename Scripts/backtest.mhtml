@@ -1,0 +1,69 @@
+<%args>
+@loop
+%v
+</%args>
+<html>
+<head>
+<style type="text/css">
+.up { background-color: #55FF55}
+.down {background-color: #FF5555}
+</style>
+</head>
+<body>
+Analysis of <%$v{'sys'}%>|<%$v{'pf'}%>
+<table border='1' bgcolor='#EEEEEE'><tr><td>
+<pre>
+## Global analysis (full portfolio always invested)
+Analysis of the portfolio ( <%$v{'first_date'}%> / <%$v{'last_date'}%> ) :
+-----------------------------------------------------
+Performance : <%$v{'performance1'}%> (<%$v{'performance2'}%>)	  Buy & Hold :  <%$v{'buyhold1'}%> ( <%$v{'buyhold2'}%>) () => by <%$v{'timeframe'}%>
+MaxDrawDown :       <%$v{'maxdrawdown'}%>  B&H MaxDrawDown :    <%$v{'bh_maxdrawdown'}%>
+Best performance :   <%$v{'bestperformance'}%>  Worst performance : <%$v{'worstperformance'}%>
+Net gain :       <%$v{'netgain'}%>  Gross gain :      <%$v{'grossgain'}%>
+
+Trades statistics :
+Number of trades :     <%$v{'nbtrades'}%>  Trades/Year :         <%$v{'nbtradesavg'}%>
+Number of gains :       <%$v{'nbgain'}%>  Number of losses :       <%$v{'nblosses'}%>  Win. ratio :   <%$v{'winratio'}%>
+Max consec. win :       <%$v{'maxconsecwin'}%>  Max consec. loss :       <%$v{'maxconsecloss'}%>  Expectancy :    <%$v{'expectancy'}%>
+Average gain :     <%$v{'avggain'}%>  Average loss :     <%$v{'avgloss'}%>  Avg. perf  :  <%$v{'avgperformance'}%>
+Biggest gain :     <%$v{'biggestgain'}%>  Biggest loss :     <%$v{'biggestloss'}%>  Profit fac :    <%$v{'profictfactor'}%>
+Sum of gains :     <%$v{'sumgains'}%>  Sum of losses :   <%$v{'sumlosses'}%>  Risk of ruin : <%$v{'riskruin'}%>
+</pre></td></tr></table>
+
+<h2>History of the portfolio</h2>
+
+<table border='1' cellpadding='5' cellspacing='0'>
+
+<tr>
+<th>Trade #</th>
+<th>Code</th>
+<th>Type</th>
+<th>Source</th>
+<th>Shares</th>
+<th>Entry Date</th>
+<th>Entry Price</th>
+<th>Exit Date</th>
+<th>Exit Price</th>
+<th>Return</th>
+<th>Duration</th>
+</tr>
+
+%    foreach my $row (@loop) {
+<tr>
+<td class=<%$row->{'className'}%>><%$row->{'tradenum'}%></td>
+<td class=<%$row->{'className'}%>><%$row->{'code'}%></td>
+<td class=<%$row->{'className'}%>><%$row->{'type'}%></td>
+<td class=<%$row->{'className'}%>><%$row->{'source'}%></td>
+<td class=<%$row->{'className'}%>><%$row->{'shares'}%></td>
+<td class=<%$row->{'className'}%>><%$row->{'entrydate'}%></td>
+<td class=<%$row->{'className'}%>><%$row->{'entryprice'}%></td>
+<td class=<%$row->{'className'}%>><%$row->{'exitdate'}%></td>
+<td class=<%$row->{'className'}%>><%$row->{'exitprice'}%></td>
+<td class=<%$row->{'className'}%>><%$row->{'return'}%></td>
+<td class=<%$row->{'className'}%>><%$row->{'duration'}%></td>
+</tr>
+
+%    }
+</table>
+</body>
+</html>

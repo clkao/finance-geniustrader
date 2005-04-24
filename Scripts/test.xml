@@ -1,0 +1,22 @@
+<?xml version='1.0' standalone='yes'?>
+<opt>
+
+  <code value="500340" />
+  <code value="578580" />
+  <code value="840400" />
+  <code value="604843" />
+
+  <init value="100000" />
+
+  <system-manager>
+    <system value="Generic {S:Generic:CrossOverUp {I:Prices} {I:SMA 22}} {S:Generic:CrossOverDown {I:Prices} {I:SMA 22}}" />
+    <broker value="InteractiveBrokers" />
+    <cs     value="OppositeSignal" />
+  </system-manager>
+
+  <mm     value="Portfolio::FixedFractional 15" sort="01" />
+  <mm     value="Portfolio::OneCode" sort="02" />
+
+</opt>
+
+
