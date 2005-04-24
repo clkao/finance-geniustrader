@@ -1,0 +1,35 @@
+Utilisation d'un Builder :
+
+=> définition d'un graphique INDEPENDAMMENT de la sortie future
+
+- définition d'un Layout en différentes zones identifiables par leur
+  position (x,y) 
+  (0,0) la zone en haut à gauche
+  (1,0) la zone juste à droite de la précédente
+  Chaque zone a une taille connue (au moins en hauteur).
+- définition d'une échelle (Scale) par défaut pour une zone,
+  possibilité de personnaliser l'échelle pour une série de données
+  en particulier
+  => échelle modifiable au vol après coup
+- ajout de séries de données, une série est associée à une zone
+    - chaque série de données a un "z" définissant l'ordre d'apparition
+      (z petit => en dessous et dessiné en premier)
+      le z est implicite à l'ordre d'ajout de la série de données,
+      il peut être modifié plus tard
+    - chaque série de données a une fonction d'affichage associée (voire une
+      série de fonction dans l'ordre préférentiel)
+      (implémentée avec un FlyWeight recevant comme paramètre la zone,
+      la série (et l'échelle)), la fonction d'affichage est
+      préalablement "enregistrée".
+- ajout d'objets (droites, commentaires, signaux, flèches, ...)
+- chaque zone peut avoir 4 axes (chaque côté), un axe est associé à une
+  échelle et précise les intervalles de trait (gros, fin) et les label
+  à afficher ...
+- une zone peut également avoir un titre sur un des côtés, mais une zone
+  ne peut avoir titre et axe d'un même côté (quoique ...)
+- une grille est un produit des axes, il y aura des "ticks" spéciaux
+  "grille" pour savoir quand le trait doit être prolongé
+
+Accès transparent aux données ?
+ * comment une fonction d'affichage n'ayant besoin que d'une série de
+   chiffres va afficher une série de vecteurs ?

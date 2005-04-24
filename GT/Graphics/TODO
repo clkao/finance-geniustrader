@@ -1,0 +1,37 @@
+TODO pour la partie graphique :
+-------------------------------
+
+* Documenter les options existantes (pour les couleurs et les tailles)
+
+* Rajouter de nombreux objets graphiques :
+  - courbe double
+  - droite
+  - signaux d'achat/vente
+  - signaux de détection de configuration (ex: mettre en évidence des
+    configurations particulières de chandeliers japonais)
+  - Candlevolume
+  - Equivolume
+  - Point & Figure
+  - Kagi
+  - Renko
+  - 3 Line Break
+  - Pie Chart
+
+* Rajouter de nouvelles sources de données :
+  - historique des trades d'un système ou d'un portefeuille
+
+* Ajouter de nouveaux drivers :
+  - Scalable Vector Graphics (SVG)
+  - Flash
+    
+* Ajuster la largeur des chandeliers de manière dynamique
+  (cf. Candlevolume & Equivolume). Il faut donc pouvoir définir de
+  manière dynamique (ex: par rapport aux volumes) l'espace correspondant
+  à chaque période.
+
+* Générer des graphiques 3D
+
+Long terme :
+
+* Permettre d'utiliser des tailles différentes, des polices différentes,
+  des couleurs différentes pour les titres selon leur emplacement.

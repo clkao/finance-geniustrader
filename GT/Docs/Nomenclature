@@ -1,0 +1,74 @@
+Nomenclature :
+--------------
+
+---------
+Signaux :
+---------
+
+. Signals/Indicators/
+
+Contient les signaux générés usuellement par les indicateurs. Le signal
+peut utiliser un signal générique et des indicateurs. Au besoin il 
+peut y avoir plusieurs fichiers par indicateurs (<indic>-<methode>).
+
+. Signals/Generic/
+
+Contient les signaux génériques comme CrossUp, CrossDown, CrossAny,
+InRange, InAbsRange, LocalTop, LocalBottom, BreakOut (comme Cross)...
+
+. Signals/Combi/
+
+Signaux complexes constitués de combinaisons de signaux. Peut éventuellement
+être subdivisés de manière similaire aux autres (Graphical, Indicators, ..).
+
+. Signals/Graphical/CandleSticks/
+. Signals/Graphical/PointsAndFigures/
+. Signals/Graphical/Patterns/
+
+Signaux graphiques usuels.
+
+. Signals/Basic
+
+Signaux de bases utilisant les prix. New{High,Low}, Gap{Up,Down}, ...
+
+. Signals/Systems
+
+Des signaux utilisés tel quel par le système de même nom. Permet de
+voir les signaux détectés par les systèmes sans être obligé de
+"lancer" le système.
+
+----------
+Systèmes :
+----------
+
+. Systems/Trend
+. Systems/Trend/Combi
+
+Des systèmes qui devraient marcher avec des valeurs en tendance.
+
+. Systems/Flat
+
+Des systèmes qui devraient marcher avec des valeurs sans tendance.
+
+. Systems/Volatility
+
+Des systèmes exploitant la volatilité.
+
+. Systems/Cyclical
+
+Des systèmes exploitant les cycles sur les valeurs.
+
+. Systems/NeuralNetwork
+. Systems/FuzzyLogic
+
+Systèmes magiques.
+
+. Systems/Reversal
+
+Systèmes jouant les retournements.
+
+. Systems/Generic
+
+Des systèmes qui essaient de marcher dans tous les cas.
+
+

@@ -1,0 +1,95 @@
+Short term:
+
+- Finish the graphical part. cf Graphics/TODO
+
+- Use everywhere GT::ArgsTree.
+  - reproduce the changes made for Indicators & Signals to Systems
+  - update all indicators/signals for GT::ArgsTree support
+    (add "Standards-Version: 1.0" header when done to remember
+     that it has been done)
+
+- Add a new MoneyManagement module enabling us to multiply the quantity
+  of shares when a TradeFilter answers "accept trade". The idea is to
+  augment the position when market conditions are favorable instead
+  of removing the trade when they are not good (which is the classical
+  use of the TradeFilter).
+
+- Calculate the number of days in the market for each trade and for the
+  system in general so that the performance can be evaluated according to
+  the real duration of the trades.
+  Also calculate the duration of the max draw down.
+
+- Calculate the biggest possible gain and the biggest possible loss
+  for each trade. The goal is to identify if the system goes in too
+  early (high RunDown) and/or goes out too late (big difference between
+  max perf and final performance).
+
+- The equity curve should be a price serie of its own so that it can be
+  used in calculations (ex: max draw down, sharpe ratio, ...)
+
+- Calculate the Sharpe ratio (annual return / annual risk (=standard
+  deviation)).
+- Calculate the Sterling ratio (annual return / max draw down)
+- Calculate the equity drop ratio. annual return / standard deviation of loss
+- Calculate the variance of yields.
+
+- New money management with the best divider ("diviseur optimal" in french)
+  of Ralph Vince f*. (cf book of Béchu)
+
+- Create a script like analyze_backtest.pl which puts all results on
+  some web pages with graphics ("equity curve" and "underwater equity curve").
+
+- Rehash how money management works. Ideas :
+  1. Decide how much money is available (we really need both money available
+     and value of the portfolio)
+  2. Distribute part of this money on a system/share
+  3. Limitations by other filters
+
+  http://www.prudenttradingsystems.com/method.html :
+  
+  + Capital Preservation Rules - variety of trailing stops, measured move,
+  rule of seven, annualized return, etc.
+  
+  + Capital Allocation Rules 
+    - equal allocation, index allocation, volatility allocation, "equal
+      risk allocation" 
+    - proprietary rules  assigning capital to each stock/commodity
+      according to its initial risk, any arbitrary allocation of capital,
+      etc
+
+  + Capital Redistribution Rules - cash obtained from closing open
+  positions can be reallocated back into still active stocks/commodities
+  according to predefined rules (equal, equal risk, arbitrary etc.)
+
+- Manage several trading systems on several shares (even a market).
+
+- Create the structure for market indicators :
+  - requisite: calculate indices associated to list
+    (a list can describe its evolution over the time)
+  - integrate the concept of market/list in GT::Calculator
+
+- Better portfolio:
+  - should know the list of open positions and pending orders at any date
+  - should be able to return the events that happened during a given
+    period
+  - can provide several series:
+    - global evaluation (with high/low/open/close)
+    - cash (total/available for use/blocked for covering marged positions)
+    - open position evaluation (values of the position for real positions,
+      value of the gain/loss for marged position) with [O/H/L/C]
+    
+- Think of a way to add a ReverseOnStop on a existing system.
+
+- Updated analyse_backtest.pl to display the 3/5/10/N best
+  systems for each share
+  
+- Update the actual GT::Systems and remove the useless $manager
+
+Long term :
+
+- Find a way to evaluate the charges for the "marged" positions
+  (including "month to month report" charges).
+
+- Redesign the portfolio analysis functions so that we can analyse
+  the portfolio on a given period and on a given share.
+ 

@@ -1,0 +1,45 @@
+	Design of the database modules
+	------------------------------
+
+GOALS AND WANTED FEATURES
+
+* The framework should support several kind of data :
+  - ticks (Price, Volume, Datetime)
+  - quotes (Bid, Ask, Bid_size, Ask_size, [bid_exchange], [ask_exchange], Datetime)
+  - bars (Open, High, Low, Close, Volume)
+  
+* Each module may not be able to provide all kind of informations.
+  They provide a set of informations :
+  - historic prices (historic prices in ticks or in bars, depending on the
+    case)
+  - current prices (the prices of the day, the prices in real time)
+    possibly for many stocks (whereas the historic prices are always 
+    only provided for a single stock)
+  - metainformations
+  - list of stock codes/names (market, personal lists, ...)
+
+* A module may additionnaly provide the possibility to modify/add data.
+
+* A module common to all DB modules could provide features to work with
+  several DB modules :
+  - synchronization of a writable DB with another DB
+  - verify the accuracy of the prices of a DB by comparing it to
+    another DB
+  - find the most up-to-date DB
+  - choose the good DB module based on some requirements (eg CURRENT_PRICE |
+    HISTORIC_PRICE | 5MIN_BARS)
+  - apply split on the databases
+    - stores the split as metainformation (in the first writable metainformation
+      DB module) if it isn't stored yet
+    - apply the split on all writables DB modules where it hasn't been
+      applied yet
+    
+MEANS AND IDEAS OF IMPLEMENTATION
+
+
+PROPOSED DESIGN
+
+
+PROBLEMS
+
+

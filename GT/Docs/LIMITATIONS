@@ -1,0 +1,20 @@
+- Le système accepte les ordres s'ils sont dans le range de la journée
+  (min et max inclus), si l'ordre était tout juste sur une limite il
+  y a des chances pour qu'il n'ait pas été éxécuté ou que partiellement.
+
+- Le jour d'entrée n'a pas forcément de stop. Et/ou GT ne peut pas évaluer
+  si le stop a été touché ou pas.
+
+- Les dépendances "infinies" par exemple pour un indicateur nécessitant
+  le calcul depuis l'origine n'existe pas ... dans ce cas il faut mettre
+  des dépendances qui garantissent que l'on puisse calculer quelque chose
+  pour tous les jours souhaités.
+
+- Il n'y a pas moyen d'avoir d'informations de dépendances sur les "flux"
+  de données passés à SMA, MIN, MAX et autres indicateurs paramétrés
+  par un flux d'entrée.
+
+- Le système de gestion de ce qui est déjà calculé et de vérification
+  n'est pas optimal, bien que fonctionnel.
+
+- 

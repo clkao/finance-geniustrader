@@ -1,0 +1,21 @@
+- Crossover Signals
+
+Signals which end in -C are defined as Crossover trading signals. A Crossover Signal is one in which two indicators cross each over. Examples include SMA-C (Simple Moving Average Crossover) and RSI-C (Relative Strength Index Crossover).
+
+- Peak Signals
+
+Signals which end in -P are defined as Peak trading signals. A Peak Signal must result from a peak or valley forming above or below a given signal level. Examples include STO-P, WLR-P and CCI-P.
+
+- Breakout Signals
+
+Signals which end in -B are defined as Breakout type signals. A Breakout Signal is one in which the price crosses a threshold or barrier in the direction of a newly-established trend. Examples include MFR-B (Money Flow RSI Breakout) and RWI-P (Random Walk Breakout).
+
+- Reversal Signals
+
+Signals which end in -R are defined as Reversal Signals. Such systems trade on reversals which occur in the vicinity of trendlines, suppor/resistance levels or other reversing factor. The TDLN-RMT (Trendline Reversal Medium Term) signal is an example.
+
+- Divergeance Signals
+
+Signals which end in -D are defined as Divergence type signals. A Divergence Signal is one of the few trading tools which automatically measures oscillator divergence. (*)
+
+(*) Note : The primary obstacle ito determining divergence is finding the precise Pivot Points from which to measure the divergeance. It's possible to use signifiant highs and lows in the oscillator on which to base divergeance measurements. A rule for divergence could be that the price line can be flat, but the oscillator's pivot points must form an angle in the direction of the trade.

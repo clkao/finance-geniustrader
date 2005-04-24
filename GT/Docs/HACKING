@@ -1,0 +1,6 @@
+Here are some points to follow when you hack on the code :
+
+* always 'use strict' and perl -w
+* comment modules and available functions with pod comment
+* use normal comment to comment the actual code
+

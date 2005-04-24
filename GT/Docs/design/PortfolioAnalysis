@@ -1,0 +1,102 @@
+	Design of the portfolio analysis modules
+	----------------------------------------
+
+GOALS AND WANTED FEATURES
+
+We need to rework the structure used to analyse Portfolio. Right now
+there's only one way to analyse a portfolio and it always return the
+same set of stats.
+
+* Addind a new stat in an analysis should be as easy as writing a new
+  module...
+
+* Analysis should be doable on a complete portfolio but also on specific
+  subset of the portfolio :
+  - on a given stock
+  - on a given trading system
+  - on a given period
+  - on a arbitrary subset of the portfolio
+  
+* The portfolio should be clearly defined... it could consist of :
+  - an historic of the positions we had
+    - the evolution of the position when it was open ?
+  - a list of open positions
+  - an historic of the cash available
+  - what else ?
+
+* All those sub-objects should be real objects and not anonymous
+  hashes. The code should be more "encapsulated" around those objects.
+
+* The simulation logic should be separated from the portfolio. It doesn't
+  make sense to have "apply_pending_orders" within the portfolio for
+  example.
+
+MEANS AND IDEAS OF IMPLEMENTATION
+
+
+PROPOSED DESIGN
+
+Portfolio:
+- contains a set of historic positions
+  - list / add / remove
+- contains a set of open positions
+  - list / add / remove
+- contains a Brokering object
+  - get / set
+- contains a MoneyEvolution for the "cash"
+- function to compute the evaluation at any time
+  (find all the non-marged positions that were active at that time and sum
+  the evaluations)
+- function to compute marged gains at any time
+  (find all the marged positions that were active at that time and sum
+  the evaluations)
+- must be fully serializable
+
+Portfolio::Position:
+- contains a set of order
+- contains a MoneyEvolution for the evaluation (start at non-zero for
+  non-marged positions)
+- contains a MoneyEvolution for the gain/loss (start at 0)
+- computes cost for brokerage
+- fully serializable
+
+Portfolio::Order:
+- like actually without the is_executed that should move
+  to Brokering
+
+MoneyEvolution:
+- evolution of a sum of money
+- add money at a specified datetime
+- remove money at a specified datetime
+- set the sum of money at a specified date (generate automatically the
+  required add/remove event if there's no event registered at a later
+  datetime)
+- be able to compute the sum of money at any time
+- be able to compute the variation of money between two dates
+- can extract a list of values following a list of "datetimes" given
+  directly (or through an existing object like GT::Prices)
+- datetime provided by the user is expressed by a combination of
+  "timeframe" (cf DateTime.pm) and a string ("1999-10-12", "2000-03") in the
+  given format
+- fully serializable
+
+Brokering:
+- submit order
+- manage pending orders (discard, etc)
+- confirm order execution, get price of execution, etc
+- fully serializable
+
+Portfolio::Analysis:
+- input: set of positions (active or not)
+- much like indicators for the rest
+
+PROBLEMS
+
+* How to manage stats which need another stat as input to be computed ?
+  => something like indicators dependency ?
+
+* How to mix positions traded on different timeframes ? (eg intradday
+  position and long-term positions)
+  => MoneyEvolution + internal use of "datetime" computed with "timeframe"
+  + "datetime string provided" (cf GT::TimeFrame for the support)
+
