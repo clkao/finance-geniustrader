@@ -1,0 +1,150 @@
+<html>
+<head>
+<title>GeniusTrader - tools for building trading systems</title>
+<meta name="description" content="GeniusTrader is a toolbox
+to create and backtest trading systems.">
+<meta name="keywords" content="GeniusTrader, trading systems, systematic
+trading, neural networks, genetic algorithm, market, finance,
+open source, free software, perl, linux">
+</head>
+<body bgcolor="#ffffff">
+
+<!--#include virtual="box.html" -->
+
+<div align="center">
+<img src="gt.jpg" width="338" height="206" ALT="GeniusTrader">
+</div>
+
+<h1>Presentation</h1>
+
+<p><b>GeniusTrader</b> aims to be a <b>full featured toolbox to create
+<em>trading systems</em></b>. Powerful systematic trading requires
+several things :
+<ul>
+<li>many indicators and corresponding signals</li>
+<li>money management rules
+    <ul>
+    <li>deciding what is a reasonable amount of money to put on a single trade
+        (to limit the risk associated to that trade)</li>
+    <li>combining different values within the portfolio
+        (to limit the global risk)</li>
+    </ul>
+</li>
+<li>flexibility to be able to test all combinations with the above items</li>
+<li>backtesting system with analysis of results</li>
+</ul>
+
+<p>GeniusTrader already has support of most of this. GeniusTrader consists
+of a bunch of perl modules associated to a few perl scripts. It
+has no graphical user interface since it's absolutely not needed to achieve
+its goals ... 
+
+<p>Here's an <a href="examples/report.html">example of a backtest report</a>
+that GeniusTrader can generate for you (once you created your trading
+system by defining its rules). GeniusTrader can nevertheless generate
+graphics that can be used to help you create your trading system. It can 
+generate fully customized <a href="screenshots.html">graphics</a> and it can 
+also display the evolution of a portfolio during a backtest.  Those
+graphics help a lot to realize the weaknesses of your
+trading systems :
+<ul>
+<li>big max draw down</li>
+<li>long period without new high (very frustrating when
+    you're playing with real money)</li>
+<li>no regular gains (only one very good trade made most of the profits)</li>
+</ul>
+
+<h1>Going further ...</h1>
+
+<p>What you read looked interesting and you want to try ? Okay, that's why it's free software.
+However let me warn you : GeniusTrader is not meant to be used by typical end-users, you
+should really know a bit of Perl and if you want to use it, you'll have to understand how
+it works (by reading the docs and the API). That said, we can help you in that direction...
+you'll find everything needed below.
+
+<h2>Obtaining source code</h2>
+
+<p>The code is managed via CVS. You can always download CVS tarballs (generated on the fly) :
+<ul>
+<li>Development tree
+<ul>
+<li><a href="http://www.geniustrader.org/cgi-bin/viewcvs.cgi/GT.tar.gz?view=tar">Perl modules</a></li>
+<li><a href="http://www.geniustrader.org/cgi-bin/viewcvs.cgi/Scripts.tar.gz?view=tar">Perl scripts</a></li>
+</ul>
+</li>
+<li>Stable tree: there's no stable tree, use the development one, it's
+working fine.
+</li>
+</ul>
+
+<p>The CVS repository is available via anonymous access:
+<pre>
+$ export
+CVSROOT=:pserver:anonymous&#64;geniustrader.org:/srv/geniustrader.org/cvs
+$ cvs login
+[ empty password ]
+$ cvs co GT Scripts
+</pre>
+<p>You can also <a href="/cgi-bin/viewcvs.cgi">browse the CVS tree online</a>. You can use the code
+under the terms of the <a href="http://www.gnu.org/licenses/gpl.html">General Public License</a>
+(version 2 or, at your option, any later version).
+<p>
+Once you have the code you still have to go through some steps to have
+a working installation to play with. <a href="first_use.html">Follow the
+instructions</a>.
+
+<h2>Status</h2>
+
+<p>GeniusTrader is already usable but it still evolves at a rapid pace with
+regular changes resulting in breakage in other parts of the code. Contributions
+are always welcome because we always have more ideas than time to
+implement them. :-)
+
+<h2>Mailing lists</h2>
+
+<p>Beware: I added spaces in the emails below to avoid a bit of spam.</p>
+
+<p>The coordination of the development happens on a mailing list
+(devel &#64; geniustrader.org). You're invited to join and to participate in the
+discussions. Just send "subscribe devel your&#64;email" to
+<a href="mailto:sympa &#64; geniustrader.org">sympa &#64; geniustrader.org</a>. That's where
+you submit patches and ideas for improving GeniusTrader. Also you can
+probably find some help over there (in particular if you want to
+contribute later)...</p>
+
+<p>If you're not interested in the development of GeniusTrader but
+you have a strong interest in systematic trading, then you're
+welcome to join system-traders &#64; geniustrader.org where you can
+exchange your ideas and research with other people. To subscribe
+to it, please send "subscribe system-traders your&#64;email" to
+<a href="mailto:sympa &#64; geniustrader.org">sympa &#64; geniustrader.org</a>.</p>
+
+<p>Both lists are archived on the web:
+<ul>
+<li><a href="http://www.geniustrader.org/lists/devel/">devel &#64; geniustrader.org</a> (<a href="http://www.geniustrader.org/lists/devel/index2.html">same without CVS commit notices</a>)</li>
+<li><a href="http://www.geniustrader.org/lists/system-traders/">system-traders &#64; geniustrader.org</a></li>
+</ul>
+
+<h2>GeniusTrader internals</h2>
+
+<p>There is no good documentation giving an overview of GeniusTrader internals.
+However each object is documented in the source code (with POD) and you can browse
+the <a href="doc/GT/">API</a> to learn more about it. In order to help you have
+a global view of GeniusTrader before digging into it, you can watch this schema:
+<p align="center">
+<img src="gt-internals.png" alt="Gross overview of GeniusTrader architecture" width="700" height="367">
+<p>
+You should also know that each customizable object has access to
+various informations including many indicators, signals and whatever
+can be computed with history of prices and volume (and possibly some
+external meta-data information). Keep in mind that this representation
+of GeniusTrader's architecture is incomplete and is not always 100%
+accurate (some simplifications have been made), but it gives you a good
+overview of how things are working together.
+
+<p>Have fun, we hope to see you soon, we'd enjoy your contribution !
+
+<hr />
+Copyright 2000-2005 Raphaël Hertzog &amp; Fabien Fulhaber
+</body>
+</html>

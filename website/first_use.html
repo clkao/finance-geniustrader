@@ -1,0 +1,103 @@
+<html>
+<head>
+<title>GeniusTrader - first use</title>
+</head>
+<body bgcolor="#ffffff">
+
+<!--#include virtual="box.html" -->
+
+<div align="center">
+<img src="gt.jpg" width="338" height="206" ALT="GeniusTrader">
+</div>
+
+<h1>First use of GeniusTrader</h1>
+
+You'll find below some step by step instructions that will help you
+use GeniusTrader for the first time.
+
+<h2>Extract the archives</h2>
+
+Once you downloaded both GT.tar.gz and Scripts.tar.hz from the main page, you can
+extract them in a new directory :
+<pre style="background-color: #eaeaea;">
+$ mkdir geniustrader
+$ cd geniustrader
+$ tar zxf ~/GT.tar.gz
+$ tar zxf ~/Scripts.tar.gz
+</pre>
+
+<h2>Install the dependencies</h2>
+
+<p>GeniusTrader uses several external perl modules. You have to install them. You can do
+that by hand, or you can use the CPAN perl module or you can use the corresponding
+packages of your linux distribution. Take care, some of those modules depends on other
+modules...
+<ul>
+<li><a href="http://search.cpan.org/author/SQUIRREL/Carp-Datum-0.1.3/">Carp::Datum</a> (debian package: <a href="http://packages.debian.org/libcarp-datum-perl">libcarp-datum-perl</a>)</li>
+<li><a href="http://search.cpan.org/author/STBEY/Date-Calc-5.3/">Date::Calc</a> (debian package: <a href="http://packages.debian.org/libdate-calc-perl">libdate-calc-perl</a>)</li>
+<li><a href="http://search.cpan.org/author/RAM/Getargs-Long-0.1.3/">Getargs::Long</a> (debian package: <a href="http://packages.debian.org/libgetargs-long-perl">libgetargs-long-perl</a>)</li>
+<li><a href="http://search.cpan.org/author/PHISH/XML-LibXML-1.53/">XML::LibXML</a> (debian package: <a href="http://packages.debian.org/libxml-libxml-perl">libxml-libxml-perl</a>)</li>
+<li><a href="http://search.cpan.org/~pmqs/Compress-Zlib-1.33/">Compress::Zlib</a> (debian package: <a href="http://packages.debian.org/libcompress-zlib-perl">libcompress-zlib-perl</a>)</li>
+<li><a href="http://search.cpan.org/author/AMS/Storable-2.06/">Storable</a> (standard in perl 5.8, debian package for woody/perl 5.6: <a href="http://packages.debian.org/libstorable-perl">libstorable-perl</a>)</li>
+</ul>
+
+<h2>Setup your source of data</h2>
+
+<p>In order to do something useful, you have to setup a source of data (prices).
+Various modules are available for that (check <a href="doc/GT/DB/">GT::DB::*</a>).
+Since you may not have any data, I'll give you some <a
+href="examples/data.tar.gz">sample data</a>. Extract this archive near the two other
+archives that you already extracted:
+<pre style="background-color: #eaeaea;">
+$ tar zxf ~/data.tar.gz
+</pre>
+<p>Now, you have to create the GT configuration file:
+<pre style="background-color: #eaeaea;">
+$ mkdir ~/.gt
+$ vim ~/.gt/options
+</pre>
+<p>Copy and paste the following text in your configuration file, and edit the directories
+so that they match your real directories of course:
+<pre style="background-color: #eaeaea;">
+DB::module Text
+DB::text::directory /home/rhertzog/geniustrader/data
+
+Brokers::module SelfTrade
+
+Path::Font::Arial /usr/X11R6/lib/X11/fonts/TrueType/arial.ttf
+Path::Font::Courier /usr/X11R6/lib/X11/fonts/TrueType/couri.ttf
+Path::Font::Times /usr/X11R6/lib/X11/fonts/TrueType/times.ttf
+
+Analysis::ReferenceTimeFrame year
+
+#Graphic::BackgroundColor black
+#Graphic::ForegroundColor white
+
+Aliases::Global::TFS    SY:TFS 50 10|CS:SY:TFS
+Aliases::Global::TFS[]  SY:TFS #1 #2|CS:SY:TFS #1|CS:Stop:Fixed #3
+</pre>
+
+<h2>Test GeniusTrader</h2>
+
+That's it, GeniusTrader should be working now. Let's make some tests:
+<pre style="background-color: #eaeaea;">
+$ cd Scripts
+$ ./display_indicator.pl I:RSI 13000 | less
+[...]
+$ ./backtest.pl TFS 13000 | less
+[...]
+$ ./backtest.pl TFS[30,7,7] 13000 | less
+[...]
+</pre>
+<p>You should now read the <a href="doc/Scripts/">documentation of those
+scripts</a> to understand what they can do.
+
+<h2>Have questions ?</h2>
+
+If you have questions, please join the mailing list (cf <a
+href="index.html">homepage</a>), we'll try to help you.
+
+<hr />
+Copyright 2000-2004 Raphaël Hertzog &amp; Fabien Fulhaber
+</body>
+</html>

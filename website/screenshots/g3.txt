@@ -1,0 +1,21 @@
+--title=Analysis: %n
+--type=barchart
+--add=Switch-Zone(0)
+--add=Curve(Indicators::SafeZone/1, [255,0,0])
+--add=Curve(Indicators::SafeZone/2, [255,0,0])
+--add=Curve(Indicators::VIDYA)
+
+--add=New-Zone(75)
+--add=Curve(Indicators::DSS)
+--add=Curve(Indicators::Generic::Eval 0.80,[200,0,0])
+--add=Curve(Indicators::Generic::Eval 0.20,[200,0,0])
+--add=Text(DSS, 50, 50, center, center, giant, [80,160,240,200])
+
+--add=New-Zone(75)
+--add=Curve(Indicators::OBV)
+--add=Text(OBV, 50, 50, center, center, giant, [80,160,240,200])
+
+--add=New-Zone(75)
+--add=Curve(Indicators::RMI 21, 10, {I:OBV})
+--add=Curve(Indicators::Generic::Eval 80,[200,0,0])
+--add=Text(RMI(OBV), 50, 50, center, center, giant, [80,160,240,200])

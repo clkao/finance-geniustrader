@@ -1,0 +1,20 @@
+--title=Analysis: %n
+--type=candlevolplace
+--add=Switch-Zone(0)
+--add=Curve(Indicators::KAMA, [255,0,0])
+
+--add=New-Zone(100)
+--add=MountainBand(Indicators::Generic::If {S:Generic:Above {I:RSI} 70} {I:RSI} 70,Indicators::Generic::Eval 70,[255,0,0,0])
+--add=MountainBand(Indicators::Generic::If {S:Generic:Below {I:RSI} 30} {I:RSI} 30,Indicators::Generic::Eval 30,[0,255,0,0])
+--add=Curve(Indicators::RSI)
+--add=Curve(Indicators::Generic::Eval 70)
+--add=Curve(Indicators::Generic::Eval 30)
+--add=Text(RSI, 50, 50, center, center, giant, [80,160,240,200])
+
+--add=New-Zone(100)
+--add=MountainBand(Indicators::Generic::If {S:Generic:Above {I:RSI} {I:BOL/2 20 2 {I:RSI}}} {I:RSI} {I:BOL/2 20 2 {I:RSI}},Indicators::BOL/2 20 2 {I:RSI}},[255,0,0,0])
+--add=MountainBand(Indicators::Generic::If {S:Generic:Below {I:RSI} {I:BOL/3 20 2 {I:RSI}}} {I:RSI} {I:BOL/3 20 2 {I:RSI}},Indicators::BOL/3 20 2 {I:RSI}},[0,255,0,0])
+--add=Curve(Indicators::RSI)
+--add=Curve(Indicators::BOL/2  20 2 {I:RSI},[0,0,255])
+--add=Curve(Indicators::BOL/3 20 2 {I:RSI},[0,0,255])
+--add=Text(BOL(RSI), 50, 50, center, center, giant, [80,160,240,200])
