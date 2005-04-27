@@ -64,12 +64,13 @@ you'll find everything needed below.
 
 <h2>Obtaining source code</h2>
 
-<p>The code is managed via CVS. You can always download CVS tarballs (generated on the fly) :
+<p>The code is managed via <a href="http://subversion.tigris.org">Subversion</a>. 
+You can always download tarballs (generated on the fly):
 <ul>
 <li>Development tree
 <ul>
-<li><a href="http://www.geniustrader.org/cgi-bin/viewcvs.cgi/GT.tar.gz?view=tar">Perl modules</a></li>
-<li><a href="http://www.geniustrader.org/cgi-bin/viewcvs.cgi/Scripts.tar.gz?view=tar">Perl scripts</a></li>
+<li><a href="http://www.geniustrader.org/cgi-bin/viewcvs.cgi/trunk/GT.tar.gz?view=tar">Perl modules</a></li>
+<li><a href="http://www.geniustrader.org/cgi-bin/viewcvs.cgi/trunk/Scripts.tar.gz?view=tar">Perl scripts</a></li>
 </ul>
 </li>
 <li>Stable tree: there's no stable tree, use the development one, it's
@@ -77,15 +78,12 @@ working fine.
 </li>
 </ul>
 
-<p>The CVS repository is available via anonymous access:
+<p>The subversion repository is available via anonymous access:
 <pre>
-$ export
-CVSROOT=:pserver:anonymous&#64;geniustrader.org:/srv/geniustrader.org/cvs
-$ cvs login
-[ empty password ]
-$ cvs co GT Scripts
+$ svn co https://devel.geniustrader.org:8082/svn/trunk/GT
+$ svn co https://devel.geniustrader.org:8082/svn/trunk/Scripts
 </pre>
-<p>You can also <a href="/cgi-bin/viewcvs.cgi">browse the CVS tree online</a>. You can use the code
+<p>You can also <a href="/cgi-bin/viewcvs.cgi/trunk/">browse the subversion tree online</a>. You can use the code
 under the terms of the <a href="http://www.gnu.org/licenses/gpl.html">General Public License</a>
 (version 2 or, at your option, any later version).
 <p>
@@ -121,7 +119,7 @@ to it, please send "subscribe system-traders your&#64;email" to
 
 <p>Both lists are archived on the web:
 <ul>
-<li><a href="http://www.geniustrader.org/lists/devel/">devel &#64; geniustrader.org</a> (<a href="http://www.geniustrader.org/lists/devel/index2.html">same without CVS commit notices</a>)</li>
+<li><a href="http://www.geniustrader.org/lists/devel/">devel &#64; geniustrader.org</a> (<a href="http://www.geniustrader.org/lists/devel/index2.html">same without SVN commit notices</a>)</li>
 <li><a href="http://www.geniustrader.org/lists/system-traders/">system-traders &#64; geniustrader.org</a></li>
 </ul>
 
