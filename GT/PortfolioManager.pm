@@ -430,12 +430,11 @@ sub submit_order_in_position {
 
 
 sub park_order {
-    DFEATURE my $f;
     my ($self, $order, $i, $calc) = @_;
 
-    DREQUIRE defined($order), "order is defined";
-    DREQUIRE $i >= 0, "day number $i is valid";
-    DREQUIRE defined($calc), "calc is defined";
+    #WAR# WARN "order is defined" unless (defined($order));
+    #WAR# WARN "day number $i is valid" unless ($i >= 0);
+    #WAR# WARN "calc is defined" unless (defined($calc));
 
     $order->set_timeframe($calc->current_timeframe);
 
@@ -445,11 +444,10 @@ sub park_order {
     push @{$self->{'portfolio'}->{'parked-orders'}},
       [$order, $i, $calc ];
 
-    return DVAL 1;
+    return 1;
 }
 
 sub submit_parked_orders {
-    DFEATURE my $f;
     my $self = shift;
 
     foreach my $p ( @{$self->{'portfolio'}->{'parked-orders'}} ) {

@@ -170,7 +170,6 @@ sub backtest_single {
 
 
 sub backtest_multi {
-    DFEATURE my $f;
     my ($pf_manager, $sys_manager_ref, $broker_ref, $calc_ref, $start, $end, $full, $init) = @_;
     my @sysmanager = @{$sys_manager_ref};
     my @brokers = @{$broker_ref};
@@ -384,7 +383,7 @@ sub backtest_multi {
 	"portfolio" => $p
     };
 
-    return DVAL $analysis;
+    return $analysis;
 }
 
 
