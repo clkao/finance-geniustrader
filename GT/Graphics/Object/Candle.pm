@@ -69,7 +69,12 @@ sub display {
     my ($self, $driver, $picture) = @_;
     my $scale = $self->get_scale();
     my $zone = $self->{'zone'};
+    my $width = $self->{'width'};
     my ($start, $end) = $self->{'source'}->get_selected_range();
+    my $space = $scale->convert_to_x_coordinate($start + 1) -
+                $scale->convert_to_x_coordinate($start);
+    my $offset = int($space/2) - int($width/2);
+    $offset = 0 if $offset < 1;
     for(my $i = $start; $i <= $end; $i++)
     {
 	my $data = $self->{'source'}->get($i);
@@ -78,43 +83,44 @@ sub display {
 	my $close = $scale->convert_to_y_coordinate($data->[$CLOSE]);
 	my $high = $scale->convert_to_y_coordinate($data->[$HIGH]);
 	my $x = $scale->convert_to_x_coordinate($i);
+	$x += $offset;
 	if ($open < $close) {
 	
 	    $driver->filled_rectangle($picture, 
 		$zone->absolute_coordinate($x + 1, $open + 1),
-		$zone->absolute_coordinate($x + $self->{'width'} - 2 - 1, $close - 1),
+		$zone->absolute_coordinate($x + $width - 2 - 1, $close - 1),
 		$self->{'up_body_color'});
 
 	    $driver->rectangle($picture,
 		$zone->absolute_coordinate($x, $open),
-	    	$zone->absolute_coordinate($x + $self->{'width'} - 2, $close),
+	    	$zone->absolute_coordinate($x + $width - 2, $close),
 		$self->{'up_body_border_color'});
 		    
 	    $driver->line($picture,
-		$zone->absolute_coordinate($x + int($self->{'width'} / 2) - 1, $close + 1),
-		$zone->absolute_coordinate($x + int($self->{'width'} / 2) - 1, $high), $self->{'up_shadows_color'});
+		$zone->absolute_coordinate($x + int($width / 2) - 1, $close + 1),
+		$zone->absolute_coordinate($x + int($width / 2) - 1, $high), $self->{'up_shadows_color'});
 		
 	    $driver->line($picture,
-		$zone->absolute_coordinate($x + int($self->{'width'} / 2) - 1, $low),
-		$zone->absolute_coordinate($x + int($self->{'width'} / 2) - 1, $open - 1), $self->{'up_shadows_color'});
+		$zone->absolute_coordinate($x + int($width / 2) - 1, $low),
+		$zone->absolute_coordinate($x + int($width / 2) - 1, $open - 1), $self->{'up_shadows_color'});
 
 	} else {
 	    
 	    $driver->filled_rectangle($picture,
 		$zone->absolute_coordinate($x + 1, $close + 1),
-		$zone->absolute_coordinate($x + $self->{'width'} - 2 - 1, $open - 1), $self->{'down_body_color'});
+		$zone->absolute_coordinate($x + $width - 2 - 1, $open - 1), $self->{'down_body_color'});
 
 	    $driver->rectangle($picture, 
 		$zone->absolute_coordinate($x, $close),
-		$zone->absolute_coordinate($x + $self->{'width'} - 2, $open), $self->{'down_body_border_color'});
+		$zone->absolute_coordinate($x + $width - 2, $open), $self->{'down_body_border_color'});
 
 	    $driver->line($picture,
-		$zone->absolute_coordinate($x + int($self->{'width'} / 2) - 1, $open + 1),
-		$zone->absolute_coordinate($x + int($self->{'width'} / 2) - 1, $high), $self->{'down_shadows_color'});
+		$zone->absolute_coordinate($x + int($width / 2) - 1, $open + 1),
+		$zone->absolute_coordinate($x + int($width / 2) - 1, $high), $self->{'down_shadows_color'});
 		
 	    $driver->line($picture,
-		$zone->absolute_coordinate($x + int($self->{'width'} / 2) - 1, $low),
-		$zone->absolute_coordinate($x + int($self->{'width'} / 2) - 1, $close - 1), $self->{'down_shadows_color'});
+		$zone->absolute_coordinate($x + int($width / 2) - 1, $low),
+		$zone->absolute_coordinate($x + int($width / 2) - 1, $close - 1), $self->{'down_shadows_color'});
 	}
     }
 }

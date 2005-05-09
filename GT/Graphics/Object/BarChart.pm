@@ -41,6 +41,10 @@ sub display {
     my $zone = $self->{'zone'};
     my $width = $self->{'width'};
     my ($start, $end) = $self->{'source'}->get_selected_range();
+    my $space = $scale->convert_to_x_coordinate($start + 1) -
+                $scale->convert_to_x_coordinate($start);
+    my $offset = int($space/2) - int($width/2);
+    $offset = 0 if $offset < 1;
     for(my $i = $start; $i <= $end; $i++)
     {
 	my $data = $self->{'source'}->get($i);
@@ -51,6 +55,7 @@ sub display {
 	my $x = $scale->convert_to_x_coordinate($i);
 	my $color = ($open < $close) ? $self->{'up_color'} :
 				       $self->{'down_color'};
+	$x += $offset;
 	$driver->line($picture,
 	    $zone->absolute_coordinate($x + int($width / 2) - 1, $low),
 	    $zone->absolute_coordinate($x + int($width / 2) - 1, $high),
