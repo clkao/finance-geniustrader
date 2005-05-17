@@ -278,12 +278,12 @@ sub includes_point {
     my ($self, $x, $y, $extended) = @_;
     if (defined($extended) && $extended) {
 	return (($x >= - $self->{'left'}) && 
-		($x <= $self->{'width'} + $self->{'right'}) &&
+		($x < $self->{'width'} + $self->{'right'}) &&
 		($y >= - $self->{'bottom'}) &&
-		($y <= $self->{'height'} + $self->{'top'}));
+		($y < $self->{'height'} + $self->{'top'}));
     } else {
-	return (($x >= 0) && ($x <= $self->{'width'}) &&
-		($y >= 0) && ($y <= $self->{'height'}));
+	return (($x >= 0) && ($x < $self->{'width'}) &&
+		($y >= 0) && ($y < $self->{'height'}));
     }
 }
 
@@ -349,7 +349,7 @@ sub display {
 	$driver->string($picture, $self->{'font_name'},
 		    $self->{'font_size'}, $self->{'font_color'},
 		    $self->absolute_coordinate(
-		      $self->{'right'} + $self->{'width'},
+		      $self->{'right'} + $self->{'width'} - 1,
 		      int($self->{'height'} / 2)),
 		    $self->{'title_right'}, $ALIGN_RIGHT, $ALIGN_CENTER,
 		    $ORIENTATION_DOWN);
@@ -359,7 +359,7 @@ sub display {
 		    $self->{'font_size'}, $self->{'font_color'},
 		    $self->absolute_coordinate(
 		      int($self->{'width'} / 2), 
-		      $self->{'height'} + $self->{'top'}),
+		      $self->{'height'} + $self->{'top'} - 1),
 		    $self->{'title_top'}, $ALIGN_CENTER, $ALIGN_TOP);
     }
     if ($self->{'title_bottom'}) {
