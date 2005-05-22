@@ -48,13 +48,13 @@ $FONT_SIZE_MEDIUM = 14;
 $FONT_SIZE_LARGE  = 18;
 $FONT_SIZE_GIANT  = 30;
 
-$FONT_ARIAL = GT::Conf::get("Path::Font::Arial");
-$FONT_TIMES = GT::Conf::get("Path::Font::Times");
-$FONT_HELVETICA = GT::Conf::get("Path::Font::Arial");
-$FONT_SANS_SERIF = GT::Conf::get("Path::Font::Arial");
-$FONT_FIXED = GT::Conf::get("Path::Font::Courier");
-$FONT_PROPORTIONNAL = GT::Conf::get("Path::Font::Times");
-$FONT_SERIF = GT::Conf::get("Path::Font::Times");
+$FONT_ARIAL = GT::Conf::get("Path::Font::Arial") || die("Undefined font.\nPlease set the Path::Font::Arial value in the ~/.gt/options file.\n");
+$FONT_TIMES = GT::Conf::get("Path::Font::Times") || $FONT_ARIAL;
+$FONT_HELVETICA = GT::Conf::get("Path::Font::Arial") || $FONT_ARIAL;
+$FONT_SANS_SERIF = GT::Conf::get("Path::Font::Arial") || $FONT_ARIAL;
+$FONT_FIXED = GT::Conf::get("Path::Font::Courier") || $FONT_ARIAL;
+$FONT_PROPORTIONNAL = GT::Conf::get("Path::Font::Times") || $FONT_ARIAL;
+$FONT_SERIF = GT::Conf::get("Path::Font::Times") || $FONT_ARIAL;
 
 $ALIGN_LEFT = "left";
 $ALIGN_CENTER = "center";
