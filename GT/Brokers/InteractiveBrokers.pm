@@ -10,7 +10,6 @@ use vars qw(@NAMES @ISA);
 use GT::Brokers;
 use GT::Eval;
 use GT::Conf;
-use Carp::Datum;
 
 @NAMES = ("InteractiveBrokers[#1]", "IB[#1]");
 @ISA = qw(GT::Brokers);
@@ -61,7 +60,6 @@ The first parameter could be initialized to :
 =cut
 
 sub new {
-    DFEATURE my $f, "new InteractiveBrokers";
     my $type = shift;
     my $class = ref($type) || $type;
     my $args = shift;
@@ -69,7 +67,7 @@ sub new {
     my $option = GT::Conf::get('Brokers::InteractiveBrokers::Market');
     my $self = { 'args' => defined($args) ? $args : [$option] };
 
-    return DVAL manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
+    return manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
 }
 
 =head2 $broker->calculate_order_commission($order)
@@ -79,7 +77,6 @@ Return the amount of money ask by the broker for the given order.
 =cut
 
 sub calculate_order_commission_percentage {
-    DFEATURE my $f;
     my($self, $order, $percent, $min, $max) = @_;
     my $commission = 0;
 
@@ -89,42 +86,37 @@ sub calculate_order_commission_percentage {
 	$commission = sprintf("%.2f", $investment * $percent);
 	$commission = $min if ($min and $commission < $min);
 	$commission = $max if ($max and $commission > $max);
-	return DVAL $commission if ($commission != 0);
+	return $commission if ($commission != 0);
     }
 }
 
 sub calculate_order_commission_de {
-    DFEATURE my $f;
     my ($self, $order) = @_;
     return $self->calculate_order_commission_percentage($order, 0.1 / 100, 4, 29);
 }
 
 sub calculate_order_commission_ch {
-    DFEATURE my $f;
     my ($self, $order) = @_;
     my $commission = $self->calculate_order_commission_percentage($order, 0.1 / 100, 10);
     $commission += $commission * 0.07 / 100;
-    return DVAL $commission if ($commission != 0);
+    return $commission if ($commission != 0);
 }
 
 sub calculate_order_commission_ie {
-    DFEATURE my $f;
     my ($self, $order) = @_;
     my $commission = $self->calculate_order_commission_percentage($order, 0.1 / 100, 5);
     $commission += $commission * 1.0 / 100 if ($order->is_buy_order());
-    return DVAL $commission if ($commission != 0);
+    return $commission if ($commission != 0);
 }
 
 sub calculate_order_commission_uk {
-    DFEATURE my $f;
     my ($self, $order) = @_;
     my $commission = $self->calculate_order_commission_percentage($order, 0.1 / 100, 5);
     $commission += $commission * 0.5 / 100 if ($order->is_buy_order());
-    return DVAL $commission if ($commission != 0);
+    return $commission if ($commission != 0);
 }
 
 sub calculate_order_commission_us {
-    DFEATURE my $f;
     my ($self, $order, $min) = @_;
     my $quantity = $order->quantity;
     my $commission = 0;
@@ -137,12 +129,11 @@ sub calculate_order_commission_us {
 
 	$commission += $quantity * 0.01;
 	$commission = 1 if ($min and $commission < 1);
-	return DVAL $commission if ($commission != 0);
+	return $commission if ($commission != 0);
     }
 }
 
 sub calculate_order_commission {
-    DFEATURE my $f;
     my ($self, $order) = @_;
     my $market = $self->{args}->[0];
     return $self->calculate_order_commission_de($order) if ($market eq 'de');
@@ -162,9 +153,8 @@ according to the given portfolio, which is 0 EUR.
 =cut
 
 sub calculate_annual_account_charge {
-    DFEATURE my $f;
     my ($self, $portfolio, $year) = @_;
-    return DVAL 0;
+    return 0;
 }
 
 1;

@@ -39,7 +39,6 @@ use vars qw(@NAMES @ISA);
 use GT::Brokers;
 use GT::Eval;
 use GT::Conf;
-use Carp::Datum;
 
 @NAMES = ("Usaa[#1]");
 @ISA = qw(GT::Brokers);
@@ -64,7 +63,6 @@ shares in excess of 1000.  There is no annual account charge.
 =cut
 
 sub new {
-    DFEATURE my $f, "new Broker";
     my $type = shift;
     my $class = ref($type) || $type;
     my $args = shift;
@@ -78,7 +76,7 @@ sub new {
 
     $args->[0] = $option if (! defined($args->[0]));
 
-    return DVAL manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
+    return manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
 }
 
 =head2 $broker->calculate_order_commission($order)
@@ -88,7 +86,6 @@ Return the calculated broker's commission for the given order.
 =cut
 
 sub calculate_order_commission {
-    DFEATURE my $f;
     my ($self, $order) = @_;
 #    my $forfait = $self->{'args'}[0];
     my $commission = 0;
@@ -111,7 +108,7 @@ sub calculate_order_commission {
     else { 
 	print "price or quantity missing!!\n" ;}
 	
-	return DVAL $commission if ($commission != 0);;
+	return $commission if ($commission != 0);;
 }
 
 =head2 $broker->calculate_annual_account_charge($portfolio, $year)
@@ -122,10 +119,9 @@ according to the given portfolio, which is $0 in the case of USAA Brokerage.
 =cut
 
 sub calculate_annual_account_charge {
-    DFEATURE my $f;
     my ($self, $portfolio, $year) = @_;
 
-    return DVAL 0;
+    return 0;
 
 }
 

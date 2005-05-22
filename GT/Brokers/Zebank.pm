@@ -10,7 +10,6 @@ use vars qw(@NAMES @ISA);
 use GT::Brokers;
 use GT::Eval;
 use GT::Conf;
-use Carp::Datum;
 
 @NAMES = ("Zebank[#1]");
 @ISA = qw(GT::Brokers);
@@ -31,14 +30,13 @@ Free return if buy & sell during the same day.
 =cut
 
 sub new {
-    DFEATURE my $f, "new Broker";
     my $type = shift;
     my $class = ref($type) || $type;
     my $args = shift;
     
     my $self = { 'args' => defined($args) ? $args : [] };
 
-    return DVAL manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
+    return manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
 }
 
 =head2 $broker->calculate_order_commission($order)
@@ -48,7 +46,6 @@ Return the amount of money ask by the broker for the given order.
 =cut
 
 sub calculate_order_commission {
-    DFEATURE my $f;
     my ($self, $order) = @_;
     my $commission = 0;
     
@@ -73,7 +70,7 @@ sub calculate_order_commission {
 	    $commission += sprintf("%.2f", ($impot_de_bourse - $abattement));
 	}
 	
-	return DVAL $commission if ($commission != 0);;
+	return $commission if ($commission != 0);;
     }
 }
 
@@ -85,10 +82,9 @@ according to the given portfolio.
 =cut
 
 sub calculate_annual_account_charge {
-    DFEATURE my $f;
     my ($self, $portfolio, $year) = @_;
-    
-    return DVAL 0;
+
+    return 0;
 
 }
 
