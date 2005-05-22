@@ -10,7 +10,6 @@ use strict;
 use vars qw(@ISA @NAMES);
 
 use GT::CloseStrategy;
-use Carp::Datum;
 
 @ISA = qw(GT::CloseStrategy);
 @NAMES = ("NeverClose");
@@ -24,30 +23,26 @@ strategies.
 =cut
 
 sub long_position_opened {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
-    return DVOID;
+    return;
 }
 
 sub short_position_opened {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
-    return DVOID;
+    return;
 }
 
 sub manage_long_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
-    return DVOID;
+    return;
 }
 
 sub manage_short_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
     
-    return DVOID;
+    return;
 }
 

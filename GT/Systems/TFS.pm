@@ -7,7 +7,6 @@ package GT::Systems::TFS;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use Carp::Datum;
 use GT::Prices;
 use GT::Systems;
 use GT::Indicators::TETHER;
@@ -42,10 +41,9 @@ sub initialize {
 
 
 sub long_signal {
-    DFEATURE my $f;
     my ($self, $calc, $i) = @_;
     
-    return DVAL 0 if (! $self->check_dependencies($calc, $i));
+    return 0 if (! $self->check_dependencies($calc, $i));
     
     if ( ( $calc->prices->at($i)->[$CLOSE] > 
 	   $calc->indicators->get($self->{'tether'}->get_name, $i) )
@@ -56,16 +54,15 @@ sub long_signal {
 	 ( $calc->indicators->get($self->{'vosc'}->get_name, $i) > 0 )
        )
     {
-	return DVAL 1;
+	return 1;
     }
-    return DVAL 0;
+    return 0;
 }
 
 sub short_signal {
-    DFEATURE my $f;
     my ($self, $calc, $i) = @_;
     
-    return DVAL 0 if (! $self->check_dependencies($calc, $i));
+    return 0 if (! $self->check_dependencies($calc, $i));
 
     if ( ( $calc->prices->at($i)->[$CLOSE] < 
 	   $calc->indicators->get($self->{'tether'}->get_name, $i) )
@@ -76,9 +73,9 @@ sub short_signal {
 	 ( $calc->indicators->get($self->{'vosc'}->get_name, $i) < 0 )
        )
     {
-	return DVAL 1;
+	return 1;
     }
-    return DVAL 0;
+    return 0;
 }
 
 1;

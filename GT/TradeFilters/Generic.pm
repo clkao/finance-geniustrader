@@ -9,7 +9,6 @@ package GT::TradeFilters::Generic;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use Carp::Datum;
 use GT::Prices;
 use GT::TradeFilters;
 use GT::Eval;
@@ -53,7 +52,6 @@ sub precalculate_interval {
 }
 
 sub accept_trade {
-    DFEATURE my $f;
     my ($self, $order, $i, $calc, $portfolio) = @_;
 
     return if (! $self->check_dependencies($calc, $i));
@@ -61,16 +59,16 @@ sub accept_trade {
     if ($order->is_buy_order()) {
 	# Buy order, allow only if first signal is true
 	if ($self->{'args'}->get_arg_values($calc, $i, 1)) {
-	    return DVAL 1;
+	    return 1;
 	} else {
-	    return DVAL 0;
+	    return 0;
 	}
     } else {
 	# Sell order, allow only if second signal is true
 	if ($self->{'args'}->get_arg_values($calc, $i, 2)) {
-	    return DVAL 1;
+	    return 1;
 	} else {
-	    return DVAL 0;
+	    return 0;
 	}
     }
 }

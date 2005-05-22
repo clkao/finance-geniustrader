@@ -12,7 +12,6 @@ use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
 use GT::CloseStrategy;
 use GT::Prices;
-use Carp::Datum;
 
 @ISA = qw(GT::CloseStrategy);
 @NAMES = ("ReinvestShortGain[#1]");
@@ -29,27 +28,24 @@ sub initialize {
 }
 
 sub long_position_opened {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
     $self->{'long_factor'} = 1 + $self->{'args'}->get_arg_values($calc, $i, 1) / 100;
     $position->set_attribute("ReinvestInWinners::LongLimit", $position->open_price * $self->{'long_factor'});
 
-    return DVOID;
+    return;
 }
 
 sub short_position_opened {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
     $self->{'short_factor'} = 1 - $self->{'args'}->get_arg_values($calc, $i, 1) / 100;
     $position->set_attribute("ReinvestInWinners::ShortLimit", $position->open_price * $self->{'short_factor'});
 
-    return DVOID;
+    return;
 }
 
 sub manage_long_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
     $self->{'long_factor'} = 1 + $self->{'args'}->get_arg_values($calc, $i, 1) / 100;
@@ -72,11 +68,10 @@ sub manage_long_position {
 	    $position->set_attribute("ReinvestInWinners::LongLimit", $new_limit);
         }
     }
-    return DVOID;
+    return;
 }
 
 sub manage_short_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
     $self->{'short_factor'} = 1 - $self->{'args'}->get_arg_values($calc, $i, 1) / 100;
@@ -99,7 +94,7 @@ sub manage_short_position {
 	    $position->set_attribute("ReinvestInWinners::ShortLimit", $new_limit);
 	}
     }
-    return DVOID;
+    return;
 }
 
 1;

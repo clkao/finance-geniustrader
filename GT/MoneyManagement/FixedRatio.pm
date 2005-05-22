@@ -9,7 +9,6 @@ use vars qw(@NAMES @ISA);
 
 use GT::MoneyManagement;
 use GT::Prices;
-use Carp::Datum;
 
 @NAMES = ("FixedRatio[#1,#2]");
 @ISA = qw(GT::MoneyManagement);
@@ -25,18 +24,16 @@ management rules.
 =cut
 
 sub new {
-    DFEATURE my $f, "new MoneyManagement";
     my $type = shift;
     my $class = ref($type) || $type;
     my $args = shift;
  
     my $self = { 'args' => defined($args) ? $args : [] };
 
-    return DVAL manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
+    return manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
 }
 
 sub manage_quantity {
-    DFEATURE my $f;
     my ($self, $order, $i, $calc, $portfolio) = @_;
 
     # Initialization of $margin and $delta
@@ -67,7 +64,7 @@ sub manage_quantity {
 	$number_of_shares += 1;
     }
     
-    return DVAL $number_of_shares;
+    return $number_of_shares;
 }
 
 1;

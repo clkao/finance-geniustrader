@@ -10,7 +10,6 @@ use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
 use GT::OrderFactory;
-use Carp::Datum;
 
 @ISA = qw(GT::OrderFactory);
 @NAMES = ("MaximumSlippage");
@@ -32,17 +31,15 @@ whether a system is robust against slippage.
 =cut
 
 sub create_buy_order {
-    DFEATURE my $f;
     my ($self, $calc, $i, $sys_manager, $pf_manager) = @_;
 
-    return DVAL $pf_manager->virtual_buy_at_high($calc, $sys_manager->get_name);
+    return $pf_manager->virtual_buy_at_high($calc, $sys_manager->get_name);
 }
 
 sub create_sell_order {
-    DFEATURE my $f;
     my ($self, $calc, $i, $sys_manager, $pf_manager) = @_;
 
-    return DVAL $pf_manager->virtual_sell_at_low($calc, $sys_manager->get_name);
+    return $pf_manager->virtual_sell_at_low($calc, $sys_manager->get_name);
 }
 
 1;

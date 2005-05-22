@@ -10,7 +10,6 @@ use strict;
 use vars qw(@NAMES @ISA @DEFAULT_ARGS);
 
 use GT::TradeFilters;
-use Carp::Datum;
 
 @NAMES = ("MaxOpenTrades[#1]");
 @ISA = qw(GT::TradeFilters);
@@ -28,7 +27,6 @@ however accept it if it's in the process of being closed.
 =cut
 
 sub accept_trade {
-    DFEATURE my $f;
     my ($self, $order, $i, $calc, $portfolio) = @_;
     
     my @pos = $portfolio->list_open_positions($order->source);
@@ -45,10 +43,10 @@ sub accept_trade {
     }
 
     if ($trades >= $self->{'args'}->get_arg_constant(1)) {
-    	return DVAL 0;
+    	return 0;
     }
 
-    return DVAL 1;
+    return 1;
 }
 
 1;

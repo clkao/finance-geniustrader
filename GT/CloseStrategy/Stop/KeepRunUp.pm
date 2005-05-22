@@ -14,7 +14,6 @@ use GT::CloseStrategy;
 use GT::Indicators::Generic::MaxInPeriod;
 use GT::Indicators::Generic::MinInPeriod;
 use GT::Prices;
-use Carp::Datum;
 
 @ISA = qw(GT::CloseStrategy);
 @NAMES = ("KeepRunUp[#*]");
@@ -33,39 +32,34 @@ opening profits and avoid to turn profitable trades into loosing ones.
 =cut
 
 sub get_indicative_long_stop {
-    DFEATURE my $f;
     my ($self, $calc, $i, $order, $pf_manager, $sys_manager) = @_;
     my $percentage = $self->{'args'}->get_arg_values($calc, $i, 1);
     my $close = $self->{'args'}->get_arg_values($calc, $i, 4);
     
-    return DVAL ($close * (1 - $percentage / 100));
+    return ($close * (1 - $percentage / 100));
 }
 
 sub get_indicative_short_stop {
-    DFEATURE my $f;
     my ($self, $calc, $i, $order, $pf_manager, $sys_manager) = @_;
     my $percentage = $self->{'args'}->get_arg_values($calc, $i, 1);
     my $close = $self->{'args'}->get_arg_values($calc, $i, 4);
 
-    return DVAL ($close * (1 + $percentage / 100));
+    return ($close * (1 + $percentage / 100));
 }
 
 sub long_position_opened {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
-    return DVOID;
+    return;
 }
 
 sub short_position_opened {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
-    return DVOID;
+    return;
 }
 
 sub manage_long_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
     my $percentage = $self->{'args'}->get_arg_values($calc, $i, 1);
     my $date = $position->open_date;
@@ -82,11 +76,10 @@ sub manage_long_position {
 	$position->set_stop($highest_high * (1 - $percentage / 100));
     }
 
-    return DVOID;
+    return;
 }
 
 sub manage_short_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
     my $percentage = $self->{'args'}->get_arg_values($calc, $i, 1);
 
@@ -104,7 +97,7 @@ sub manage_short_position {
 	$position->set_stop($lowest_low * (1 + $percentage / 100));
     }
 
-    return DVOID;
+    return;
 }
 
 1;

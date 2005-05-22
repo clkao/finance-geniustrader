@@ -13,7 +13,6 @@ use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 use GT::CloseStrategy;
 use GT::Prices;
 use GT::Indicators::StandardDeviation;
-use Carp::Datum;
 
 @ISA = qw(GT::CloseStrategy);
 @NAMES = ("VAR[#1]");
@@ -42,7 +41,6 @@ sub initialize {
 }
 
 sub get_indicative_long_stop {
-    DFEATURE my $f;
     my ($self, $calc, $i, $order, $pf_manager, $sys_manager) = @_;
     my $stop = 0;
 
@@ -50,47 +48,45 @@ sub get_indicative_long_stop {
     $self->remove_volatile_dependencies();
     $self->add_volatile_prices_dependency( $nb );
 
-    return DVAL 0 if (! $self->check_dependencies($calc, $i));
+    return 0 if (! $self->check_dependencies($calc, $i));
     my $limit = $self->get_lower_limit($calc, $i);
     if ($order->price)
     {
-	return DVAL $order->price * $limit;
+	return $order->price * $limit;
     } else {
-	return DVAL $calc->prices->at($i)->[$LAST] * $limit;
+	return $calc->prices->at($i)->[$LAST] * $limit;
     }
 }
 
 sub get_indicative_short_stop {
-    DFEATURE my $f;
     my ($self, $calc, $i, $order, $pf_manager, $sys_manager) = @_;
     my $stop = 0;
     my $nb = $self->{'args'}->get_arg_values($calc, $i, 1);
     $self->remove_volatile_dependencies();
     $self->add_volatile_prices_dependency( $nb );
 
-    return DVAL 0 if (! $self->check_dependencies($calc, $i));
+    return 0 if (! $self->check_dependencies($calc, $i));
     my $limit = $self->get_upper_limit($calc, $i);
     if ($order->price)
     {
-	return DVAL $order->price * $limit;
+	return $order->price * $limit;
     } else {
-	return DVAL $calc->prices->at($i)->[$LAST] * $limit;
+	return $calc->prices->at($i)->[$LAST] * $limit;
     }
 }
 
 sub long_position_opened {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
     my $nb = $self->{'args'}->get_arg_values($calc, $i, 1);
     $self->remove_volatile_dependencies();
     $self->add_volatile_prices_dependency( $nb );
  
-    return DVOID if (! $self->check_dependencies($calc, $i));
+    return if (! $self->check_dependencies($calc, $i));
  
     my $lower_limit = $self->get_lower_limit($calc, $i);
     $position->set_stop($position->open_price * $lower_limit);
     
-    return DVOID;
+    return;
 }
 
 sub get_lower_limit {
@@ -121,15 +117,14 @@ sub get_lower_limit {
 }
 
 sub short_position_opened {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
  
-    return DVOID if (! $self->check_dependencies($calc, $i));
+    return if (! $self->check_dependencies($calc, $i));
  
     my $upper_limit = $self->get_upper_limit($calc, $i);
     $position->set_stop($position->open_price * $upper_limit);
 
-    return DVOID;
+    return;
 }
 
 sub get_upper_limit {
@@ -160,16 +155,14 @@ sub get_upper_limit {
 }
 
 sub manage_long_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
-    return DVOID;
+    return;
 }
 
 sub manage_short_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $ps_manager, $sys_manager) = @_;
     
-    return DVOID;
+    return;
 }
 

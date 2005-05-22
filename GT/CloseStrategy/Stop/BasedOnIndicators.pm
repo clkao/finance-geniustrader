@@ -11,7 +11,6 @@ use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
 use GT::CloseStrategy;
-use Carp::Datum;
 use GT::Eval;
 use GT::Prices;
 use GT::Tools qw(:generic);
@@ -34,54 +33,49 @@ sub initialize {
 }
 
 sub get_indicative_long_stop {
-    DFEATURE my $f;
     my ($self, $calc, $i, $order, $pf_manager, $sys_manager) = @_;
 
-    return DVAL 0 if (! $self->check_dependencies($calc, $i));
+    return 0 if (! $self->check_dependencies($calc, $i));
     my $indi = $self->{'args'}->get_arg_values($calc, $i, 1);
     my $price = $self->{'args'}->get_arg_values($calc, $i, 3);
 
     if ($indi < $price) {
-        return DVAL $indi;
+        return $indi;
     } else {
-	return DVAL 0;
+	return 0;
     }
 }
 
 sub get_indicative_short_stop {
-    DFEATURE my $f;
     my ($self, $calc, $i, $order, $pf_manager, $sys_manager) = @_;
 
-    return DVAL 0 if (! $self->check_dependencies($calc, $i));
+    return 0 if (! $self->check_dependencies($calc, $i));
     my $indi = $self->{'args'}->get_arg_values($calc, $i, 2);
     my $price = $self->{'args'}->get_arg_values($calc, $i, 3);
 
     if ($indi > $price) {
-	return DVAL $indi;
+	return $indi;
     } else {
-	return DVAL 0;
+	return 0;
     }
 }
 
 sub long_position_opened {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
-    return DVOID;
+    return;
 }
 
 sub short_position_opened {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
-    return DVOID;
+    return;
 }
 
 sub manage_long_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
-    return DVOID if (! $self->check_dependencies($calc, $i));
+    return if (! $self->check_dependencies($calc, $i));
     my $indi = $self->{'args'}->get_arg_values($calc, $i, 1);
     my $price = $self->{'args'}->get_arg_values($calc, $i, 3);
 
@@ -89,14 +83,13 @@ sub manage_long_position {
 	$position->set_stop($indi);
     }
     
-    return DVOID;
+    return;
 }
 
 sub manage_short_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
-    return DVOID if (! $self->check_dependencies($calc, $i));
+    return if (! $self->check_dependencies($calc, $i));
     my $indi = $self->{'args'}->get_arg_values($calc, $i, 2);
     my $price = $self->{'args'}->get_arg_values($calc, $i, 3);
 
@@ -104,7 +97,7 @@ sub manage_short_position {
 	$position->set_stop($indi);
     }
 
-    return DVOID;
+    return;
 }
 
 1;

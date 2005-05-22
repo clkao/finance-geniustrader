@@ -10,7 +10,6 @@ use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
 use GT::OrderFactory;
-use Carp::Datum;
 use GT::Eval;
 use GT::Indicators qw($GET_LAST);
 use GT::Tools qw(:generic);
@@ -39,23 +38,21 @@ sub initialize {
 }
 
 sub create_buy_order {
-    DFEATURE my $f;
     my ($self, $calc, $i, $sys_manager, $pf_manager) = @_;
 
-    return DVAL 0 if (! $self->check_dependencies($calc, $i));
+    return 0 if (! $self->check_dependencies($calc, $i));
 
     my $price = $self->{'args'}->get_arg_values($calc, $i, 1);
-    return DVAL $pf_manager->buy_conditional($calc, $sys_manager->get_name, $price);
+    return $pf_manager->buy_conditional($calc, $sys_manager->get_name, $price);
 }
 
 sub create_sell_order {
-    DFEATURE my $f;
     my ($self, $calc, $i, $sys_manager, $pf_manager) = @_;
 
-    return DVAL 0 if (! $self->check_dependencies($calc, $i));
+    return 0 if (! $self->check_dependencies($calc, $i));
 
     my $price = $self->{'args'}->get_arg_values($calc, $i, 2);
-    return DVAL $pf_manager->sell_conditional($calc, $sys_manager->get_name, $price);
+    return $pf_manager->sell_conditional($calc, $sys_manager->get_name, $price);
 }
 
 1;

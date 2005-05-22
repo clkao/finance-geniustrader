@@ -9,7 +9,6 @@ use vars qw(@NAMES @ISA);
 
 use GT::MoneyManagement;
 use GT::Prices;
-use Carp::Datum;
 
 @NAMES = ("PositionSizeLimit[#1]");
 @ISA = qw(GT::MoneyManagement);
@@ -24,7 +23,6 @@ remain them below a fixed percentage of the portfolio value.
 =cut
 
 sub new {
-    DFEATURE my $f, "new MoneyManagement";
     my $type = shift;
     my $class = ref($type) || $type;
     my $args = shift;
@@ -33,11 +31,10 @@ sub new {
 
     $args->[0] = 100 if (! defined($args->[0]));
     
-    return DVAL manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
+    return manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
 }
 
 sub manage_quantity {
-    DFEATURE my $f;
     my ($self, $order, $i, $calc, $portfolio) = @_;
     my $size_limit = ($self->{'args'}[0] / 100);
     my $code = $order->code;
@@ -94,11 +91,11 @@ sub manage_quantity {
 	# Return the number of shares to trade
 	if (($order->quantity > 0) && ($order->quantity < $maximum_shares))
 	{
-	    return DVAL $order->quantity;
+	    return $order->quantity;
 	} elsif ($maximum_shares > 0) {
-	    return DVAL $maximum_shares;
+	    return $maximum_shares;
 	} else {
-	    return DVAL 0;
+	    return 0;
 	}
     }
 }

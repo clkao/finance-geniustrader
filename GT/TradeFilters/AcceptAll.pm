@@ -10,7 +10,6 @@ use strict;
 use vars qw(@NAMES @ISA @DEFAULT_ARGS);
 
 use GT::TradeFilters;
-use Carp::Datum;
 
 @NAMES = ("AcceptAll");
 @ISA = qw(GT::TradeFilters);

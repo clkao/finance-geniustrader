@@ -10,7 +10,6 @@ package GT::CloseStrategy::Generic;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use Carp::Datum;
 use GT::Prices;
 use GT::CloseStrategy;
 use GT::Eval;
@@ -54,10 +53,9 @@ sub precalculate_interval {
 }
 
 sub manage_long_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
-    return DVAL 0 if (! $self->check_dependencies($calc, $i));
+    return 0 if (! $self->check_dependencies($calc, $i));
     
     if ( $self->{'args'}->get_arg_values($calc, $i, 1) == 1 )
     {
@@ -66,11 +64,10 @@ sub manage_long_position {
         $pf_manager->submit_order_in_position($position, $order, $i, $calc);
     }
     
-    return DVOID;
+    return;
 }
 
 sub manage_short_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
     
     return if (! $self->check_dependencies($calc, $i));
@@ -83,7 +80,7 @@ sub manage_short_position {
         $pf_manager->submit_order_in_position($position, $order, $i, $calc);
     }
    
-    return DVOID;
+    return;
 }
 
 1;

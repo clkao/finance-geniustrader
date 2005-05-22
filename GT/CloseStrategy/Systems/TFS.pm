@@ -7,7 +7,6 @@ package GT::CloseStrategy::Systems::TFS;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use Carp::Datum;
 use GT::Prices;
 use GT::CloseStrategy;
 use GT::Indicators::TETHER;
@@ -39,7 +38,6 @@ sub initialize {
 
 
 sub manage_long_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
     $self->{'tether'}->calculate($calc, $i);
@@ -52,11 +50,10 @@ sub manage_long_position {
 						   $sys_manager->get_name);
 	$pf_manager->submit_order_in_position($position, $order, $i, $calc);
     }
-    return DVOID;
+    return;
 }
 
 sub manage_short_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
     
     $self->{'tether'}->calculate($calc, $i);
@@ -68,6 +65,6 @@ sub manage_short_position {
 						  $sys_manager->get_name);
 	$pf_manager->submit_order_in_position($position, $order, $i, $calc);
     }
-    return DVOID;
+    return;
 }
 

@@ -9,7 +9,6 @@ package GT::Systems::ADX;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use Carp::Datum;
 use GT::Prices;
 use GT::Systems;
 use GT::Indicators::ADX;
@@ -31,18 +30,16 @@ sub initialize {
 }
 
 sub precalculate_interval {
-    DFEATURE my $f;
     my ($self, $calc, $first, $last) = @_;
     if ($self->{'args'}->is_constant()) {
 	my $period = $self->{'args'}->get_arg_constant(1);
 	my $adx = GT::Indicators::ADX->new([$period]);
 	$adx->calculate($calc, $last);
     }
-    return DVOID;
+    return;
 }
 
 sub long_signal {
-    DFEATURE my $f;
     my ($self, $calc, $i) = @_;
 
     my $period = $self->{'args'}->get_arg_values($calc, $i, 1);
@@ -52,7 +49,7 @@ sub long_signal {
     $self->remove_volatile_dependencies();
     $self->add_volatile_indicator_dependency($adx, 2);
 
-    return DVAL 0 if (!$self->check_dependencies($calc, $i));
+    return 0 if (!$self->check_dependencies($calc, $i));
 
     if (($calc->indicators->get($adxname, $i) < 15)
 	&&
@@ -60,14 +57,13 @@ sub long_signal {
 	 $calc->indicators->get($adxname, $i))
 	)
     {
-	return DVAL 1;
+	return 1;
     }
-    return DVAL 0;
+    return 0;
 }
 
 sub short_signal {
-    DFEATURE my $f;
     my ($self, $calc, $i) = @_;
 
-    return DVAL 0;
+    return 0;
 }

@@ -10,7 +10,6 @@ use vars qw(@NAMES @ISA);
 use GT::MoneyManagement;
 use GT::Indicators::StandardDeviation;
 use GT::Prices;
-use Carp::Datum;
 
 @NAMES = ("VAR[#1,#2]");
 @ISA = qw(GT::MoneyManagement);
@@ -31,7 +30,6 @@ Technical Analysis of Stocks and Commodities - August 1999
 =cut
 
 sub new {
-    DFEATURE my $f, "new MoneyManagement";
     my $type = shift;
     my $class = ref($type) || $type;
     my $args = shift;
@@ -41,7 +39,7 @@ sub new {
     $args->[0] = 10 if (! defined($args->[0]));
     $args->[1] = 2 if (! defined($args->[1]));
  
-    return DVAL manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
+    return manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
 }
 
 sub initialize {
@@ -54,7 +52,6 @@ sub initialize {
 }
 
 sub manage_quantity {
-    DFEATURE my $f;
     my ($self, $order, $i, $calc, $portfolio) = @_;
     my $prices = $calc->prices;
     my $period = $prices->count();
@@ -105,16 +102,16 @@ sub manage_quantity {
 	# Calculate the quantity to buy for a long trade
 	if ($order->{'order'} eq "B") {
 
-	    return DVAL int( - $portfolio_value * $maximum_percentage_of_portfolio_to_lose_per_trade / 100 / $lower_limit / $prices->at($i)->[$LAST] );
+	    return int( - $portfolio_value * $maximum_percentage_of_portfolio_to_lose_per_trade / 100 / $lower_limit / $prices->at($i)->[$LAST] );
 	}
 
 	# Calculate the quantity to sell for a short trade
 	if ($order->{'order'} eq "S") {
  
-	    return DVAL int( $portfolio_value * $maximum_percentage_of_portfolio_to_lose_per_trade / 100 / $upper_limit / $prices->at($i)->[$LAST] );
+	    return int( $portfolio_value * $maximum_percentage_of_portfolio_to_lose_per_trade / 100 / $upper_limit / $prices->at($i)->[$LAST] );
 	}
     } else {
-	return DVAL 0;
+	return 0;
     }
 }
 

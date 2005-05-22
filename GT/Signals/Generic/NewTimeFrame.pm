@@ -9,7 +9,6 @@ package GT::Signals::Generic::NewTimeFrame;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use Carp::Datum;
 use GT::Signals;
 use GT::Eval;
 use GT::DateTime;
@@ -36,7 +35,6 @@ sub initialize {
 }
 
 sub detect {
-    DFEATURE my $f;
     my ($self, $calc, $i) = @_;
 
     return if (! $self->check_dependencies($calc, $i));

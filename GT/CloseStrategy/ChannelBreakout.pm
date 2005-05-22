@@ -10,7 +10,6 @@ use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
 use GT::CloseStrategy;
-use Carp::Datum;
 use GT::Eval;
 use GT::Tools qw(:generic);
 
@@ -38,45 +37,41 @@ sub initialize {
 }
 
 sub long_position_opened {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
-    return DVOID;
+    return;
 }
 
 sub short_position_opened {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
-    return DVOID;
+    return;
 }
 
 sub manage_long_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
-    return DVAL 0 if (! $self->check_dependencies($calc, $i));
+    return 0 if (! $self->check_dependencies($calc, $i));
 
     my $price = $self->{'args'}->get_arg_values($calc, $i, 1);
     my $order = $pf_manager->sell_conditional($calc, $sys_manager->get_name, $price);
     $pf_manager->submit_order_in_position($position, $order, $i, $calc);
     $position->set_no_intent_to_close;
     
-    return DVOID;
+    return;
 }
 
 sub manage_short_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
-    return DVAL 0 if (! $self->check_dependencies($calc, $i));
+    return 0 if (! $self->check_dependencies($calc, $i));
 
     my $price = $self->{'args'}->get_arg_values($calc, $i, 2);
     my $order = $pf_manager->buy_conditional($calc, $sys_manager->get_name, $price);
     $pf_manager->submit_order_in_position($position, $order, $i, $calc);
     $position->set_no_intent_to_close;
    
-    return DVOID;
+    return;
 }
 
 1;

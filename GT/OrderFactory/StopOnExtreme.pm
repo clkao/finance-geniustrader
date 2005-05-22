@@ -10,7 +10,6 @@ use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
 use GT::OrderFactory;
-use Carp::Datum;
 use GT::Prices;
 
 @ISA = qw(GT::OrderFactory);
@@ -34,30 +33,28 @@ sub initialize {
 }
 
 sub create_buy_order {
-    DFEATURE my $f;
     my ($self, $calc, $i, $sys_manager, $pf_manager) = @_;
     
-    return DVOID if (! $self->check_dependencies($calc, $i));
+    return if (! $self->check_dependencies($calc, $i));
 
     $self->{'long_factor'} = 1 + $self->{'args'}->get_arg_values($calc, $i, 1) / 100;
     $self->{'long_second'} = 1 + $self->{'args'}->get_arg_values($calc, $i, 2) / 100;
     
     my $stop = $calc->prices->at($i)->[$HIGH] * $self->{'long_factor'};
-    return DVAL $pf_manager->buy_conditional($calc, $sys_manager->get_name,
+    return $pf_manager->buy_conditional($calc, $sys_manager->get_name,
 				$stop, $stop * $self->{'long_second'});
 }
 
 sub create_sell_order {
-    DFEATURE my $f;
     my ($self, $calc, $i, $sys_manager, $pf_manager) = @_;
 
-    return DVOID if (! $self->check_dependencies($calc, $i));
+    return if (! $self->check_dependencies($calc, $i));
     
     $self->{'short_factor'} = 1 - $self->{'args'}->get_arg_values($calc, $i, 1) / 100;
     $self->{'short_second'} = 1 - $self->{'args'}->get_arg_values($calc, $i, 2) / 100;
     
     my $stop = $calc->prices->at($i)->[$LOW] * $self->{'short_factor'};
-    return DVAL $pf_manager->sell_conditional($calc, $sys_manager->get_name,
+    return $pf_manager->sell_conditional($calc, $sys_manager->get_name,
 				$stop, $stop * $self->{'short_second'});
 }
 

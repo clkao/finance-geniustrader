@@ -9,7 +9,6 @@ use vars qw(@ISA @NAMES);
 
 use GT::CloseStrategy;
 use GT::Eval;
-use Carp::Datum;
 
 @ISA = qw(GT::CloseStrategy);
 @NAMES = ("ConditionalTF[#*]");
@@ -69,7 +68,6 @@ sub new {
 }
 
 sub long_position_opened {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
     my $order = $pf_manager->sell_market_price($calc, $sys_manager->get_name);
@@ -80,11 +78,10 @@ sub long_position_opened {
 			    $pf_manager, $sys_manager);
     }
 
-    return DVOID;
+    return;
 }
 
 sub short_position_opened {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
     my $order = $pf_manager->sell_market_price($calc, $sys_manager->get_name);
@@ -95,11 +92,10 @@ sub short_position_opened {
 			    $pf_manager, $sys_manager);
     }
 
-    return DVOID;
+    return;
 }
 
 sub manage_long_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
     
     my $order = $pf_manager->sell_market_price($calc, $sys_manager->get_name);
@@ -110,11 +106,10 @@ sub manage_long_position {
 			    $pf_manager, $sys_manager);
     }
 
-    return DVOID;
+    return;
 }
 
 sub manage_short_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
     
     my $order = $pf_manager->buy_market_price($calc, $sys_manager->get_name);
@@ -125,6 +120,6 @@ sub manage_short_position {
 			    $pf_manager, $sys_manager);
     }
 
-    return DVOID;
+    return;
 }
 

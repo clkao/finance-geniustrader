@@ -12,7 +12,6 @@ use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
 use GT::CloseStrategy;
 use GT::Prices;
-use Carp::Datum;
 
 @ISA = qw(GT::CloseStrategy);
 @NAMES = ("LimitPeriodInTheMarket[#1]");
@@ -49,52 +48,48 @@ sub initialize {
 }
 
 sub long_position_opened {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
-    return DVOID;
+    return;
 }
 
 sub short_position_opened {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
-    return DVOID;
+    return;
 }
 
 sub manage_long_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
     my $initial_period = $calc->prices->date($position->{'open_date'});
     my $period_in_the_market = $self->{'args'}->get_arg_values($calc, $i, 1);
     
-    return DVOID if (! $self->check_dependencies($calc, $i));
+    return if (! $self->check_dependencies($calc, $i));
     
-    return DVOID if (! $self->{'args'}->get_arg_values($calc, $i, 2));
+    return if (! $self->{'args'}->get_arg_values($calc, $i, 2));
     
     if (($i + 1) eq ($initial_period + $period_in_the_market)) {
 	my $order = $pf_manager->sell_market_price($calc, $sys_manager->get_name);
 	$pf_manager->submit_order_in_position($position, $order, $i, $calc);
     }
     
-    return DVOID;
+    return;
 }
 
 sub manage_short_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
     my $initial_period = $calc->prices->date($position->{'open_date'});
     my $period_in_the_market = $self->{'args'}->get_arg_values($calc, $i, 1);
     
-    return DVOID if (! $self->check_dependencies($calc, $i));
+    return if (! $self->check_dependencies($calc, $i));
     
-    return DVOID if (! $self->{'args'}->get_arg_values($calc, $i, 3));
+    return if (! $self->{'args'}->get_arg_values($calc, $i, 3));
 
     if (($i + 1) eq ($initial_period + $period_in_the_market)) {
 	my $order = $pf_manager->buy_market_price($calc, $sys_manager->get_name);
 	$pf_manager->submit_order_in_position($position, $order, $i, $calc);
     }
    
-    return DVOID;
+    return;
 }
 

@@ -12,7 +12,6 @@ use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
 use GT::CloseStrategy;
 use GT::Prices;
-use Carp::Datum;
 
 @ISA = qw(GT::CloseStrategy);
 @NAMES = ("StopFixed[#1]");
@@ -31,7 +30,6 @@ sub initialize {
 }
 
 sub get_indicative_long_stop {
-    DFEATURE my $f;
     my ($self, $calc, $i, $order, $pf_manager, $sys_manager) = @_;
     my $stop = 0;
     $self->{'long_factor'} = 1 - $self->{'args'}->get_arg_values($calc, $i, 1) / 100;
@@ -41,11 +39,10 @@ sub get_indicative_long_stop {
     } else {
 	$stop = $calc->prices->at($i)->[$LAST] * $self->{'long_factor'};
     }
-    return DVAL $stop;
+    return $stop;
 }
 
 sub get_indicative_short_stop {
-    DFEATURE my $f;
     my ($self, $calc, $i, $order, $pf_manager, $sys_manager) = @_;
     my $stop = 0;
     $self->{'short_factor'} = 1 + $self->{'args'}->get_arg_values($calc, $i, 1) / 100;
@@ -55,40 +52,36 @@ sub get_indicative_short_stop {
     } else {
 	$stop = $calc->prices->at($i)->[$LAST] * $self->{'short_factor'};
     }
-    return DVAL $stop;
+    return $stop;
 }
 
 sub long_position_opened {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
     $self->{'long_factor'} = 1 - $self->{'args'}->get_arg_values($calc, $i, 1) / 100;
     $position->set_stop($position->open_price * $self->{'long_factor'});
     
-    return DVOID;
+    return;
 }
 
 sub short_position_opened {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
     $self->{'short_factor'} = 1 + $self->{'args'}->get_arg_values($calc, $i, 1) / 100;
     $position->set_stop($position->open_price * $self->{'short_factor'});
 
-    return DVOID;
+    return;
 }
 
 sub manage_long_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
-    return DVOID;
+    return;
 }
 
 sub manage_short_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $ps_manager, $sys_manager) = @_;
     
-    return DVOID;
+    return;
 }
 

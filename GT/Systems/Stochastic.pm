@@ -7,7 +7,6 @@ package GT::Systems::Stochastic;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use Carp::Datum;
 use GT::Prices;
 use GT::Systems;
 use GT::Indicators::STO;
@@ -43,35 +42,33 @@ sub initialize {
 
 
 sub long_signal {
-    DFEATURE my $f;
     my ($self, $calc, $i) = @_;
     my $indic = $calc->indicators;
     
-    return DVAL 0 if (!$self->check_dependencies($calc, $i));
+    return 0 if (!$self->check_dependencies($calc, $i));
 
     if ( ( $indic->get($self->{'sto'}->get_name(2), $i) < 80 ) &&
  	 ( $indic->get($self->{'sto'}->get_name(1), $i) >
 	   $indic->get($self->{'sto'}->get_name(3), $i) )
        )
     {
-	return DVAL 1;
+	return 1;
     }
-    return DVAL 0;
+    return 0;
 }
 
 sub short_signal {
-    DFEATURE my $f;
     my ($self, $calc, $i) = @_;
     my $indic = $calc->indicators;
     
-    return DVAL 0 if (!$self->check_dependencies($calc, $i));
+    return 0 if (!$self->check_dependencies($calc, $i));
 
     if ( ( $indic->get($self->{'sto'}->get_name(2), $i) > 20 ) &&
  	 ( $indic->get($self->{'sto'}->get_name(1), $i) <
 	   $indic->get($self->{'sto'}->get_name(3), $i) )
        )
     {
-	return DVAL 1;
+	return 1;
     }
-    return DVAL 0;
+    return 0;
 }

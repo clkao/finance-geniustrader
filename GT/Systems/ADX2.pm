@@ -9,7 +9,6 @@ package GT::Systems::ADX2;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use Carp::Datum;
 use GT::Prices;
 use GT::Systems;
 use GT::Indicators::ADX;
@@ -31,7 +30,6 @@ sub initialize {
 }
 
 sub precalculate_interval {
-    DFEATURE my $f;
     my ($self, $calc, $first, $last) = @_;
     if ($self->{'args'}->is_constant()) {
 	my $period = $self->{'args'}->get_arg_constant(1);
@@ -40,11 +38,10 @@ sub precalculate_interval {
 	my $adxr = GT::Indicators::ADXR->new([$period]);
 	$adxr->calculate_interval($calc, $first, $last);
     }
-    return DVOID;
+    return;
 }
 
 sub long_signal {
-    DFEATURE my $f;
     my ($self, $calc, $i) = @_;
 
     my $period = $self->{'args'}->get_arg_values($calc, $i, 1);
@@ -59,7 +56,7 @@ sub long_signal {
     $self->add_volatile_indicator_dependency($adx, 2);
     $self->add_volatile_indicator_dependency($adxr, 1);
 
-    return DVAL 0 if (!$self->check_dependencies_interval($calc, $i - 1, $i));
+    return 0 if (!$self->check_dependencies_interval($calc, $i - 1, $i));
 
     if (($calc->indicators->get($positive_di_name, $i) >
 	 $calc->indicators->get($negative_di_name, $i))
@@ -70,13 +67,12 @@ sub long_signal {
 	($calc->indicators->get($adxr_name, $i) > 25)
 	)
     {
-	return DVAL 1;
+	return 1;
     }
-    return DVAL 0;
+    return 0;
 }
 
 sub short_signal {
-    DFEATURE my $f;
     my ($self, $calc, $i) = @_;
 
     my $period = $self->{'args'}->get_arg_values($calc, $i, 1);
@@ -91,7 +87,7 @@ sub short_signal {
     $self->add_volatile_indicator_dependency($adx, 2);
     $self->add_volatile_indicator_dependency($adxr, 1);
 
-    return DVAL 0 if (!$self->check_dependencies_interval($calc, $i - 1, $i));
+    return 0 if (!$self->check_dependencies_interval($calc, $i - 1, $i));
 
     if (($calc->indicators->get($positive_di_name, $i) <
          $calc->indicators->get($negative_di_name, $i))
@@ -102,7 +98,7 @@ sub short_signal {
         ($calc->indicators->get($adxr_name, $i) > 25)
         )
     {
-	return DVAL 1;
+	return 1;
     }
-    return DVAL 0;
+    return 0;
 }

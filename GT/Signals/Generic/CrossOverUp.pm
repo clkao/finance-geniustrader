@@ -9,7 +9,6 @@ package GT::Signals::Generic::CrossOverUp;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use Carp::Datum;
 use GT::Signals;
 use GT::Eval;
 use GT::Tools qw(:generic);
@@ -39,7 +38,6 @@ sub initialize {
 }
 
 sub detect {
-    DFEATURE my $f;
     my ($self, $calc, $i) = @_;
     
     return if (! $self->check_dependencies($calc, $i));

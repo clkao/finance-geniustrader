@@ -12,7 +12,6 @@ use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
 use GT::CloseStrategy;
 use GT::Prices;
-use Carp::Datum;
 
 @ISA = qw(GT::CloseStrategy);
 @NAMES = ("Breakeven[#1,#2]");
@@ -34,35 +33,30 @@ sub initialize {
 }
 
 sub get_indicative_long_stop {
-    DFEATURE my $f;
     my ($self, $calc, $i, $order, $pf_manager, $sys_manager) = @_;
 
-    return DVAL 0;
+    return 0;
 }
 
 sub get_indicative_short_stop {
-    DFEATURE my $f;
     my ($self, $calc, $i, $order, $pf_manager, $sys_manager) = @_;
     
-    return DVAL 0;
+    return 0;
 }
 
 sub long_position_opened {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
-    return DVOID;
+    return;
 }
 
 sub short_position_opened {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
-    return DVOID;
+    return;
 }
 
 sub manage_long_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
     $self->{'long_profit_factor'} = 1 + $self->{'args'}->get_arg_values($calc, $i, 1) / 100;
@@ -70,11 +64,10 @@ sub manage_long_position {
     if ($calc->prices->at($i)->[$LAST] >= ($position->open_price * $self->{'long_profit_factor'})) {
 	$position->set_stop($position->open_price * $self->{'long_stop_factor'});
     }
-    return DVOID;
+    return;
 }
 
 sub manage_short_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
     $self->{'short_profit_factor'} = 1 - $self->{'args'}->get_arg_values($calc, $i, 1) / 100;
@@ -82,7 +75,7 @@ sub manage_short_position {
     if ($calc->prices->at($i)->[$LAST] <= ($position->open_price * $self->{'short_profit_factor'})) {
         $position->set_stop($position->open_price * $self->{'short_stop_factor'});
     }
-    return DVOID;
+    return;
 }
 
 1;

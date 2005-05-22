@@ -9,7 +9,6 @@ package GT::Signals::Generic::Below;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use Carp::Datum;
 use GT::Signals;
 use GT::Eval;
 use GT::Tools qw(:generic);
@@ -38,7 +37,6 @@ sub initialize {
 }
 
 sub detect {
-    DFEATURE my $f;
     my ($self, $calc, $i) = @_;
     
     return if ($calc->signals->is_available($self->get_name, $i));

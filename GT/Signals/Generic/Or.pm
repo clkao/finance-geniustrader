@@ -9,7 +9,6 @@ package GT::Signals::Generic::Or;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use Carp::Datum;
 use GT::Signals;
 use GT::Eval;
 use GT::Tools qw(:generic);

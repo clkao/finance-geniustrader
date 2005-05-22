@@ -9,7 +9,6 @@ use vars qw(@NAMES @ISA);
 
 use GT::MoneyManagement;
 use GT::Prices;
-use Carp::Datum;
 
 @NAMES = ("FixedShares[#1]");
 @ISA = qw(GT::MoneyManagement);
@@ -24,7 +23,6 @@ number of shares. The default number is set up to 100 shares.
 =cut
 
 sub new {
-    DFEATURE my $f, "new MoneyManagement";
     my $type = shift;
     my $class = ref($type) || $type;
     my $args = shift;
@@ -33,14 +31,13 @@ sub new {
 
     $args->[0] = 100 if (! defined($args->[0]));
     
-    return DVAL manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
+    return manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
 }
 
 sub manage_quantity {
-    DFEATURE my $f;
     my ($self, $order, $i, $calc, $portfolio) = @_;
  
-    return DVAL $self->{'args'}[0];
+    return $self->{'args'}[0];
 }
 
 1;

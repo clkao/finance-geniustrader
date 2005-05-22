@@ -7,7 +7,6 @@ package GT::Systems::TTS;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use Carp::Datum;
 use GT::Prices;
 use GT::Systems;
 use GT::Indicators::Generic::MinInPeriod;
@@ -60,42 +59,39 @@ sub initialize {
 }
 
 sub precalculate_interval {
-    DFEATURE my $f;
     my ($self, $calc, $first, $last) = @_;
     $self->{'max'}->calculate_interval($calc, $first, $last);
     $self->{'min'}->calculate_interval($calc, $first, $last);
 
-    return DVOID;
+    return;
 }
 
 sub long_signal {
-    DFEATURE my $f;
     my ($self, $calc, $i) = @_;
     
-    return DVAL 0 if (! $self->check_dependencies($calc, $i));
+    return 0 if (! $self->check_dependencies($calc, $i));
     
     if ( ( $calc->prices->at($i)->[$CLOSE] > 
 	   $calc->indicators->get($self->{'max'}->get_name, $i - 1) )
        )
     {
-	return DVAL 1;
+	return 1;
     }
-    return DVAL 0;
+    return 0;
 }
 
 sub short_signal {
-    DFEATURE my $f;
     my ($self, $calc, $i) = @_;
     
-    return DVAL 0 if (! $self->check_dependencies($calc, $i));
+    return 0 if (! $self->check_dependencies($calc, $i));
 
     if ( ( $calc->prices->at($i)->[$CLOSE] < 
 	   $calc->indicators->get($self->{'min'}->get_name, $i - 1) )
        )
     {
-	return DVAL 1;
+	return 1;
     }
-    return DVAL 0;
+    return 0;
 }
 
 1;

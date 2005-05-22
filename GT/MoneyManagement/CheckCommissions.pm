@@ -9,7 +9,6 @@ use vars qw(@NAMES @ISA);
 
 use GT::MoneyManagement;
 use GT::Prices;
-use Carp::Datum;
 
 @NAMES = ("CheckCommissions[#1]");
 @ISA = qw(GT::MoneyManagement);
@@ -30,7 +29,6 @@ than 1 % of the investment and reject others.
 =cut
 
 sub new {
-    DFEATURE my $f, "new MoneyManagement";
     my $type = shift;
     my $class = ref($type) || $type;
     my $args = shift;
@@ -39,11 +37,10 @@ sub new {
 
     $args->[0] = 0.005 if (! defined($args->[0]));
     
-    return DVAL manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
+    return manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
 }
 
 sub manage_quantity {
-    DFEATURE my $f;
     my ($self, $order, $i, $calc, $portfolio) = @_;
     my $percentage = $self->{'args'}[0];
     my $commission = 0;
@@ -69,9 +66,9 @@ sub manage_quantity {
 	    $investment = $order->quantity * $calc->prices->at($i)->[$LAST];
 	}
 	if ($commission <= ($investment * $percentage)) {
-	    return DVAL $order->quantity;
+	    return $order->quantity;
 	} else {
-	    return DVAL 0;
+	    return 0;
 	}
     }
 }

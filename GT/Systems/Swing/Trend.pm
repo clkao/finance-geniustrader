@@ -7,7 +7,6 @@ package GT::Systems::Swing::Trend;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use Carp::Datum;
 use GT::Prices;
 use GT::Systems;
 use GT::Signals::Swing::Trend;
@@ -44,29 +43,27 @@ sub initialize {
 
 
 sub long_signal {
-    DFEATURE my $f;
     my ($self, $calc, $i) = @_;
     
-    return DVAL 0 if (!$self->check_dependencies($calc, $i));
+    return 0 if (!$self->check_dependencies($calc, $i));
     
     if ($calc->signals->get($self->{'trend'}->get_name(1), $i) ||
 	$calc->signals->get($self->{'trendending'}->get_name(1), $i))
     {
-	return DVAL 1;
+	return 1;
     }
-    return DVAL 0;
+    return 0;
 }
 
 sub short_signal {
-    DFEATURE my $f;
     my ($self, $calc, $i) = @_;
 
-    return DVAL 0 if (!$self->check_dependencies($calc, $i));
+    return 0 if (!$self->check_dependencies($calc, $i));
     
     if ($calc->signals->get($self->{'trend'}->get_name(0), $i) ||
 	$calc->signals->get($self->{'trendending'}->get_name(0), $i))
     {
-	return DVAL 1;
+	return 1;
     }
-    return DVAL 0;
+    return 0;
 }

@@ -9,7 +9,6 @@ use vars qw(@NAMES @ISA);
 
 use GT::MoneyManagement;
 use GT::Prices;
-use Carp::Datum;
 
 @NAMES = ("AntiMartingale");
 @ISA = qw(GT::MoneyManagement);
@@ -41,18 +40,16 @@ http://roulette.casino.com/article.pl/aid=mathematical_systems_part_1
 =cut
 
 sub new {
-    DFEATURE my $f, "new MoneyManagement";
     my $type = shift;
     my $class = ref($type) || $type;
     my $args = shift;
  
     my $self = { 'args' => defined($args) ? $args : [ ] };
 
-    return DVAL manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
+    return manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
 }
 
 sub manage_quantity {
-    DFEATURE my $f;
     my ($self, $order, $i, $calc, $portfolio) = @_;
     my $prices = $calc->prices;
     my $code = $order->code;
@@ -130,7 +127,7 @@ sub manage_quantity {
 
 	# Summarize both bet size values and add 1
 	$bet_size += $bet_size_from_opened_positions + 1;
-	return DVAL ($order->{'quantity'} * 2 ** $bet_size);
+	return ($order->{'quantity'} * 2 ** $bet_size);
     }
 }
 

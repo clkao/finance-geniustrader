@@ -10,7 +10,6 @@ use vars qw(@NAMES @ISA);
 use GT::MoneyManagement;
 use GT::Indicators;
 use GT::Indicators::SMA;
-use Carp::Datum;
 
 @NAMES = ("CheckVolumeAverage[#1,#2]");
 @ISA = qw(GT::MoneyManagement);
@@ -30,7 +29,6 @@ days average volume and reject others.
 =cut
 
 sub new {
-    DFEATURE my $f, "new MoneyManagement";
     my $type = shift;
     my $class = ref($type) || $type;
     my $args = shift;
@@ -40,7 +38,7 @@ sub new {
     $args->[0] = 5 if (! defined($args->[0]));
     $args->[1] = 0.01 if (! defined($args->[1]));
     
-    return DVAL manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
+    return manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
 }
 
 sub initialize {
@@ -53,7 +51,6 @@ sub initialize {
 }
 
 sub manage_quantity {
-    DFEATURE my $f;
     my ($self, $order, $i, $calc, $portfolio) = @_;
     my $volume_average = $self->{'sma'};
     my $volume_average_name = $volume_average->get_name;
@@ -71,7 +68,7 @@ sub manage_quantity {
 
     if (defined($order->{'quantity'})) {
 	if ($order->{'quantity'} < $required_volume) {
-	    return DVAL $order->{'quantity'};
+	    return $order->{'quantity'};
 	}
     }
 }

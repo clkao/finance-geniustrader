@@ -12,7 +12,6 @@ use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
 use GT::CloseStrategy;
 use GT::Prices;
-use Carp::Datum;
 use GT::Indicators::MIN;
 use GT::Indicators::MAX;
 
@@ -40,66 +39,60 @@ sub initialize {
 }
 
 sub get_indicative_long_stop {
-    DFEATURE my $f;
     my ($self, $calc, $i, $order, $pf_manager, $sys_manager) = @_;
 
-    return DVOID if (! $self->check_dependencies($calc, $i));
+    return if (! $self->check_dependencies($calc, $i));
 
     my $percentage = $self->{'args'}->get_arg_values($calc, $i, 2);
     my $lowest_low = $calc->indicators->get($self->{'min'}->get_name, $i);
 
-    return DVAL ($lowest_low * (1 - $percentage / 100));
+    return ($lowest_low * (1 - $percentage / 100));
 }
 
 sub get_indicative_short_stop {
-    DFEATURE my $f;
     my ($self, $calc, $i, $order, $pf_manager, $sys_manager) = @_;
 
-    return DVOID if (! $self->check_dependencies($calc, $i));
+    return if (! $self->check_dependencies($calc, $i));
 
     my $percentage = $self->{'args'}->get_arg_values($calc, $i, 2);
     my $highest_high = $calc->indicators->get($self->{'max'}->get_name, $i);
 
-    return DVAL ($highest_high * (1 + $percentage / 100));
+    return ($highest_high * (1 + $percentage / 100));
 }
 
 sub long_position_opened {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
-    return DVOID;
+    return;
 }
 
 sub short_position_opened {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
-    return DVOID;
+    return;
 }
 
 sub manage_long_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
-    return DVOID if (! $self->check_dependencies($calc, $i));
+    return if (! $self->check_dependencies($calc, $i));
 
     my $percentage = $self->{'args'}->get_arg_values($calc, $i, 2);
     my $lowest_low = $calc->indicators->get($self->{'min'}->get_name, $i);
     $position->set_stop($lowest_low * (1 - $percentage / 100));
 
-    return DVOID;
+    return;
 }
 
 sub manage_short_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $ps_manager, $sys_manager) = @_;
 
-    return DVOID if (! $self->check_dependencies($calc, $i));
+    return if (! $self->check_dependencies($calc, $i));
 
     my $percentage = $self->{'args'}->get_arg_values($calc, $i, 2);
     my $highest_high = $calc->indicators->get($self->{'max'}->get_name, $i);
     $position->set_stop($highest_high * (1 + $percentage / 100));
 
-    return DVOID;
+    return;
 }
 

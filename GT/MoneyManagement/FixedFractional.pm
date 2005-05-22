@@ -9,7 +9,6 @@ use vars qw(@NAMES @ISA);
 
 use GT::MoneyManagement;
 use GT::Prices;
-use Carp::Datum;
 
 @NAMES = ("FixedFractional[#1]");
 @ISA = qw(GT::MoneyManagement);
@@ -24,7 +23,6 @@ the current portfolio value.
 =cut
 
 sub new {
-    DFEATURE my $f, "new MoneyManagement";
     my $type = shift;
     my $class = ref($type) || $type;
     my $args = shift;
@@ -33,11 +31,10 @@ sub new {
 
     $args->[0] = 100 if (! defined($args->[0]));
     
-    return DVAL manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
+    return manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
 }
 
 sub manage_quantity {
-    DFEATURE my $f;
     my ($self, $order, $i, $calc, $portfolio) = @_;
     my $ratio = $self->{'args'}[0] / 100;
 
@@ -48,9 +45,9 @@ sub manage_quantity {
     my $portfolio_value = $cash + $positions + $upcoming_gains_or_losses;
 
     if ($order->{'price'}) {
-	return DVAL int(($portfolio_value * $ratio) / $order->{'price'});
+	return int(($portfolio_value * $ratio) / $order->{'price'});
     } else {
-	return DVAL int(($portfolio_value * $ratio) / $calc->prices->at($i)->[$LAST]);
+	return int(($portfolio_value * $ratio) / $calc->prices->at($i)->[$LAST]);
     }
 }
 

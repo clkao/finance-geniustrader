@@ -7,7 +7,6 @@ package GT::Systems::AlwaysInTheMarket;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use Carp::Datum;
 use GT::Systems;
 
 @ISA = qw(GT::Systems);
@@ -49,17 +48,15 @@ sub new {
 }
 
 sub long_signal {
-    DFEATURE my $f;
     my ($self, $calc, $i) = @_;
     
-    return DVAL 1;
+    return 1;
 }
 
 sub short_signal {
-    DFEATURE my $f;
     my ($self, $calc, $i) = @_;
     
-    return DVAL 1;
+    return 1;
 }
 
 1;

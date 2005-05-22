@@ -8,7 +8,6 @@ use strict;
 use vars qw(@ISA @NAMES);
 
 use GT::CloseStrategy;
-use Carp::Datum;
 
 @ISA = qw(GT::CloseStrategy);
 @NAMES = ("CloseGain[#1]");
@@ -42,7 +41,6 @@ sub initialize {
 }
 
 sub long_position_opened {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
     # Check for other "target" orders
@@ -62,11 +60,10 @@ sub long_position_opened {
     $pf_manager->submit_order_in_position($position, $order, $i, $calc);
     $position->set_no_intent_to_close;
 
-    return DVOID;
+    return;
 }
 
 sub short_position_opened {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
     
     # Check for other "target" orders
@@ -86,20 +83,18 @@ sub short_position_opened {
     $pf_manager->submit_order_in_position($position, $order, $i, $calc);
     $position->set_no_intent_to_close;
 
-    return DVOID;
+    return;
 }
 
 sub manage_long_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
     
-    return DVOID;
+    return;
 }
 
 sub manage_short_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
    
-    return DVOID;
+    return;
 }
 

@@ -8,7 +8,6 @@ package GT::Systems::Generic;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use Carp::Datum;
 use GT::Prices;
 use GT::Systems;
 use GT::Eval;
@@ -30,30 +29,28 @@ sub precalculate_interval {
 }
 
 sub long_signal {
-    DFEATURE my $f;
     my ($self, $calc, $i) = @_;
     
-    return DVAL 0 if (! $self->check_dependencies($calc, $i));
+    return 0 if (! $self->check_dependencies($calc, $i));
     
     if ( $self->{'args'}->get_arg_values($calc, $i, 1) == 1 )
     {
-	return DVAL 1;
+	return 1;
     }
-    return DVAL 0;
+    return 0;
 }
 
 sub short_signal {
-    DFEATURE my $f;
     my ($self, $calc, $i) = @_;
     
-    return DVAL 0 if (! $self->check_dependencies($calc, $i));
+    return 0 if (! $self->check_dependencies($calc, $i));
 
     if ( $self->{'args'}->get_nb_args() >= 2 && 
 	 $self->{'args'}->get_arg_values($calc, $i, 2) == 1 )
     {
-	return DVAL 1;
+	return 1;
     }
-    return DVAL 0;
+    return 0;
 }
 
 1;

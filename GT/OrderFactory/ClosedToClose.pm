@@ -10,7 +10,6 @@ use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
 use GT::OrderFactory;
-use Carp::Datum;
 use GT::Prices;
 
 @ISA = qw(GT::OrderFactory);
@@ -33,23 +32,21 @@ sub initialize {
 }
 
 sub create_buy_order {
-    DFEATURE my $f;
     my ($self, $calc, $i, $sys_manager, $pf_manager) = @_;
     
     $self->{'long_factor'} = 1 + $self->{'args'}->get_arg_values($calc, $i, 1) / 100;
     
     my $price = $calc->prices->at($i)->[$CLOSE] * $self->{'long_factor'};
-    return DVAL $pf_manager->buy_limited_price($calc, $sys_manager->get_name, $price);
+    return $pf_manager->buy_limited_price($calc, $sys_manager->get_name, $price);
 }
 
 sub create_sell_order {
-    DFEATURE my $f;
     my ($self, $calc, $i, $sys_manager, $pf_manager) = @_;
 
     $self->{'short_factor'} = 1 - $self->{'args'}->get_arg_values($calc, $i, 1) / 100;
     
     my $price = $calc->prices->at($i)->[$CLOSE] * $self->{'short_factor'};
-    return DVAL $pf_manager->sell_conditional($calc, $sys_manager->get_name, $price);
+    return $pf_manager->sell_conditional($calc, $sys_manager->get_name, $price);
 }
 
 1;

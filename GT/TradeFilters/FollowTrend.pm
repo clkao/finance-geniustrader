@@ -11,7 +11,6 @@ use vars qw(@NAMES @ISA @DEFAULT_ARGS);
 
 use GT::TradeFilters;
 use GT::Indicators::SMA;
-use Carp::Datum;
 
 @NAMES = ("FollowTrend[#1]");
 @ISA = qw(GT::TradeFilters);
@@ -31,23 +30,21 @@ The first parameter is the number of days used to calculate the SMA.
 =cut
 
 sub initialize {
-    DFEATURE my $f;
     my ($self) = @_;
     
     $self->{'mm'} = GT::Indicators::SMA->new([ $self->{'args'}->get_arg_names(1) ]);
     
     $self->add_indicator_dependency($self->{'mm'}, 2);
     
-    return DVOID;
+    return;
 }
 
 sub accept_trade {
-    DFEATURE my $f;
     my ($self, $order, $i, $calc, $portfolio) = @_;
     my $mm_name = $self->{'mm'}->get_name;
     
     # Refuse if we can't evaluate the risk
-    return DVAL 0 if (! $self->check_dependencies_interval($calc, $i - 1, $i));
+    return 0 if (! $self->check_dependencies_interval($calc, $i - 1, $i));
 
     if ($calc->indicators->get($mm_name, $i-1) <
 	$calc->indicators->get($mm_name, $i))
@@ -55,17 +52,17 @@ sub accept_trade {
 	# Bull market
 	if ($order->is_buy_order())
 	{
-	    return DVAL 1;
+	    return 1;
 	} else {
-	    return DVAL 0;
+	    return 0;
 	}
     } else {
 	# Bear market
 	if ($order->is_sell_order())
 	{
-	    return DVAL 1;
+	    return 1;
 	} else {
-	    return DVAL 0;
+	    return 0;
 	}
     }
 }

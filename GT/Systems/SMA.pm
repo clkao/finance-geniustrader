@@ -7,7 +7,6 @@ package GT::Systems::SMA;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use Carp::Datum;
 use GT::Prices;
 use GT::Systems;
 use GT::Indicators::SMA;
@@ -47,11 +46,10 @@ sub initialize {
 
 
 sub long_signal {
-    DFEATURE my $f;
     my ($self, $calc, $i) = @_;
     my $indic = $calc->indicators;
     
-    return DVAL 0 if (!$self->check_dependencies($calc, $i));
+    return 0 if (!$self->check_dependencies($calc, $i));
     
     if ( ( $indic->get($self->{'sma1'}->get_name, $i - 1) <
   	   $indic->get($self->{'sma2'}->get_name, $i - 1)) &&
@@ -59,15 +57,14 @@ sub long_signal {
 	   $indic->get($self->{'sma2'}->get_name, $i) )
        )
     {
-	return DVAL 1;
+	return 1;
     }
-    return DVAL 0;
+    return 0;
 }
 
 sub short_signal {
-    DFEATURE my $f;
     my ($self, $calc, $i) = @_;
     my $indic = $calc->indicators;
     
-    return DVAL 0;
+    return 0;
 }

@@ -11,7 +11,6 @@ use GT::MoneyManagement;
 use GT::Indicators::RSI;
 use GT::Prices;
 use GT::Portfolio;
-use Carp::Datum;
 
 @NAMES = ("RSI");
 @ISA = qw(GT::MoneyManagement);
@@ -31,14 +30,13 @@ Article found in http://www.erivativesreview.com
 =cut
 
 sub new {
-    DFEATURE my $f, "new MoneyManagement";
     my $type = shift;
     my $class = ref($type) || $type;
     my $args = shift;
  
     my $self = { 'args' => defined($args) ? $args : [] };
 
-    return DVAL manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
+    return manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
 }
 
 sub initialize {
@@ -49,7 +47,6 @@ sub initialize {
 }
 
 sub manage_quantity {
-    DFEATURE my $f;
     my ($self, $order, $i, $calc, $portfolio) = @_;
     my $indic = $calc->indicators;
     my $rsi_name = $self->{'rsi'}->get_name;
@@ -67,7 +64,7 @@ sub manage_quantity {
 	if ($order->is_sell_order) {
 	    $factor = $rsi / 100;
 	}
-	return DVAL int($order->quantity * $factor);
+	return int($order->quantity * $factor);
     }
 }
 

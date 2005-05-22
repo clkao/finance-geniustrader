@@ -13,7 +13,6 @@ use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 use GT::CloseStrategy;
 use GT::Indicators::SAR;
 use GT::Prices;
-use Carp::Datum;
 
 @ISA = qw(GT::CloseStrategy);
 @NAMES = ("SAR[#1,#2,#3]");
@@ -55,11 +54,10 @@ sub initialize {
 }
 
 sub get_indicative_long_stop {
-    DFEATURE my $f;
     my ($self, $calc, $i, $order, $pf_manager, $sys_manager) = @_;
     my $stop = 0;
 
-    return DVAL 0 if (! $self->check_dependencies($calc, $i));
+    return 0 if (! $self->check_dependencies($calc, $i));
     
     my $sar = $calc->indicators->get($self->{'sar'}->get_name, $i);
     
@@ -67,15 +65,14 @@ sub get_indicative_long_stop {
     if ($sar < $calc->prices->at($i)->[$LOW]) {
 	$stop = $sar;
     }
-    return DVAL $stop;
+    return $stop;
 }
 
 sub get_indicative_short_stop {
-    DFEATURE my $f;
     my ($self, $calc, $i, $order, $pf_manager, $sys_manager) = @_;
     my $stop = 0;
 
-    return DVAL 0 if (! $self->check_dependencies($calc, $i));
+    return 0 if (! $self->check_dependencies($calc, $i));
     
     my $sar = $calc->indicators->get($self->{'sar'}->get_name, $i);
     
@@ -83,28 +80,25 @@ sub get_indicative_short_stop {
     if ($sar > $calc->prices->at($i)->[$HIGH]) {
 	$stop = $sar;
     }
-    return DVAL $stop;
+    return $stop;
 }
 
 sub long_position_opened {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
-    return DVOID;
+    return;
 }
 
 sub short_position_opened {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
-    return DVOID;
+    return;
 }
 
 sub manage_long_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
 
-    return DVOID if (! $self->check_dependencies($calc, $i));
+    return if (! $self->check_dependencies($calc, $i));
     
     my $sar = $calc->indicators->get($self->{'sar'}->get_name, $i);
     
@@ -117,14 +111,13 @@ sub manage_long_position {
         $pf_manager->submit_order_in_position($position, $order, $i, $calc);
     }
     
-    return DVOID;
+    return;
 }
 
 sub manage_short_position {
-    DFEATURE my $f;
     my ($self, $calc, $i, $position, $pf_manager, $sys_manager) = @_;
     
-    return DVOID if (! $self->check_dependencies($calc, $i));
+    return if (! $self->check_dependencies($calc, $i));
  
     my $sar = $calc->indicators->get($self->{'sar'}->get_name, $i);
 
@@ -137,7 +130,7 @@ sub manage_short_position {
         $pf_manager->submit_order_in_position($position, $order, $i, $calc);
     }
 
-    return DVOID;
+    return;
 }
 
 1;

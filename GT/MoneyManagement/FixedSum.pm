@@ -9,7 +9,6 @@ use vars qw(@NAMES @ISA);
 
 use GT::MoneyManagement;
 use GT::Prices;
-use Carp::Datum;
 
 @NAMES = ("FixedSum[#1]");
 @ISA = qw(GT::MoneyManagement);
@@ -24,7 +23,6 @@ trade. The default value is set up to 1000.
 =cut
 
 sub new {
-    DFEATURE my $f, "new MoneyManagement";
     my $type = shift;
     my $class = ref($type) || $type;
     my $args = shift;
@@ -33,19 +31,18 @@ sub new {
 
     $args->[0] = 1000 if (! defined($args->[0]));
     
-    return DVAL manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
+    return manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
 }
 
 sub manage_quantity {
-    DFEATURE my $f;
     my ($self, $order, $i, $calc, $portfolio) = @_;
     my $investment = $self->{'args'}[0];
  
     if (!defined($order->{'quantity'})) {
 	if ($order->{'price'}) {
-	    return DVAL int($investment / $order->{'price'});
+	    return int($investment / $order->{'price'});
 	} else {
-	    return DVAL int($investment / $calc->prices->at($i)->[$LAST]);
+	    return int($investment / $calc->prices->at($i)->[$LAST]);
 	}
     }
 }

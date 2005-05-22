@@ -10,7 +10,6 @@ use strict;
 use vars qw(@NAMES @ISA @DEFAULT_ARGS);
 
 use GT::TradeFilters;
-use Carp::Datum;
 
 @NAMES = ("LongOnly");
 @ISA = qw(GT::TradeFilters);
@@ -30,13 +29,12 @@ only system than either a short only or a long and short trading system.
 =cut
 
 sub accept_trade {
-    DFEATURE my $f;
     my ($self, $order, $i, $calc, $portfolio) = @_;
     
     if ($order->is_buy_order) {
-	return DVAL 1;
+	return 1;
     } else {
-	return DVAL 0;
+	return 0;
     }
 }
 

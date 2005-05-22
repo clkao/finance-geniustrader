@@ -9,7 +9,6 @@ package GT::Signals::Generic::Repeated;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use Carp::Datum;
 use GT::Signals;
 
 @ISA = qw(GT::Signals);

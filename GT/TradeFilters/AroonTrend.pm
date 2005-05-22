@@ -11,7 +11,6 @@ use vars qw(@NAMES @ISA @DEFAULT_ARGS);
 
 use GT::TradeFilters;
 use GT::Indicators::AROON;
-use Carp::Datum;
 
 @NAMES = ("AroonTrend");
 @ISA = qw(GT::TradeFilters);
@@ -29,15 +28,13 @@ market (ie like buying in a bear market or selling in a bullish market).
 =cut
 
 sub initialize {
-    DFEATURE my $f;
     my ($self) = @_;
     
     $self->{'aroon'} = GT::Indicators::AROON->new;
-    return DVOID;
+    return;
 }
 
 sub accept_trade {
-    DFEATURE my $f;
     my ($self, $order, $i, $calc, $portfolio) = @_;
     my $name = $self->{'aroon'}->get_name(2);
     
@@ -46,15 +43,15 @@ sub accept_trade {
     if (! $calc->indicators->is_available($name, $i))
     {
 	# Refuse if we can't evaluate the risk
-	return DVAL 0;
+	return 0;
     }
 
     if (abs($calc->indicators->get($name, $i)) > 30)
     {
-	return DVAL 0;
+	return 0;
     } else {
 	# Authorize when there's no clear trend
-	return DVAL 1;
+	return 1;
     }
 }
 

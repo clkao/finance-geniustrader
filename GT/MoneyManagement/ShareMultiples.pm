@@ -9,7 +9,6 @@ use vars qw(@NAMES @ISA);
 
 use GT::MoneyManagement;
 use GT::Prices;
-use Carp::Datum;
 
 @NAMES = ("ShareMultiples[#1, #2]");
 @ISA = qw(GT::MoneyManagement);
@@ -34,7 +33,6 @@ represent the calculation method, but look at all options :
 =cut
 
 sub new {
-    DFEATURE my $f, "new MoneyManagement";
     my $type = shift;
     my $class = ref($type) || $type;
     my $args = shift;
@@ -44,11 +42,10 @@ sub new {
     $args->[0] = 10 if (! defined($args->[0]));
     $args->[1] = 0 if (! defined($args->[1]));
     
-    return DVAL manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
+    return manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
 }
 
 sub manage_quantity {
-    DFEATURE my $f;
     my ($self, $order, $i, $calc, $portfolio) = @_;
     my $multiple = $self->{'args'}[0];
     my $calculation_method = $self->{'args'}[1];
@@ -60,16 +57,16 @@ sub manage_quantity {
 	
 	if ($calculation_method eq 0) {
 	    if ($remains >= ($multiple / 2)) {
-		return DVAL ($round_quantity + $multiple);
+		return ($round_quantity + $multiple);
 	    } else {
-		return DVAL $round_quantity;
+		return $round_quantity;
 	    }
 	}
 	if ($calculation_method eq 1) {
-	    return DVAL $round_quantity;
+	    return $round_quantity;
 	}
 	if ($calculation_method eq 2) {
-            return DVAL ($round_quantity + $multiple);
+            return ($round_quantity + $multiple);
         }
     }
 }
