@@ -21,8 +21,18 @@ text files.
 
 =head2 Configuration
 
-You can set the GT::Text::directory configuration item to tell where
+You must set the GT::Text::directory configuration item to tell where
 the quotes are usually stored.
+
+You can optionally set the GT::Text::options configuration item to tell GT
+how to read the Text file:
+
+DB::module test
+
+DB::text::directory  /home/projects/geniustrader/database
+
+DB::text::options ( "," , 2 , ".csv" , ('date' => 0, 'open' => 1, 'high' => 2, 'low' => 3, 'close' => 4, 'volume' => 5, 'Adj. Close*' => 6) ) 
+
 
 =head2 new()
 
@@ -35,7 +45,40 @@ sub new {
     my $class = ref($type) || $type;
 
     my $self = { "directory" => GT::Conf::get("DB::Text::directory")};
-    
+
+    my $options=GT::Conf::get("DB::Text::options");
+#( "\t" , 2 , ".txt" , ( 'open' , 0, 'high' , 1, 'low' , 2, 'close' , 3, %'volume' , 4, 'date' , 5 ) )
+    if ( $options =~/^\(\s+\"(.+)\"\s+,\s+(.+)\s+,\s+\"(.+)\"\s+,\s+(\(.+)\s+\)$/ )
+    {
+	    my $mark=$1;
+    	my $date_format=$2;
+	    my $extention=$3;
+	    my $fields=$4;
+	 
+	    $self->{'mark'} = $mark; 
+        $self->{'date_format'} = $date_format;
+	    $self->{'extention'} = $extention; 
+
+        #( 'date' => 0, 'open' => 1, 'high' => 2, 'low' => 3, 'close' => 4, 'volume' => 5, 'Adj. Close*' => 6)
+        #( 'open' => 0, 'high' => 1, 'low' => 2, 'close' => 3, 'volume' => 4, 'date' => 5 ) )
+        if ( $fields =~/^.*(,|\()\s*'open'\s*=>\s*(\d+)\s*(,|\)).*$/  ) 
+	    {	$self->{'open'} = $2;	}
+
+    	if ( $fields =~/^.*(,|\()\s*'high'\s*=>\s*(\d+)\s*(,|\)).*$/ ) 
+    	{	$self->{'high'} = $2;	}
+
+    	if ( $fields =~/^.*(,|\()\s*'low'\s*=>\s*(\d+)\s*(,|\)).*$/ ) 
+    	{	$self->{'low'} = $2;	}
+
+    	if ( $fields =~/^.*(,|\()\s*'close'\s*=>\s*(\d+)\s*(,|\)).*$/ ) 
+    	{	$self->{'close'} = $2;	}
+
+    	if ( $fields =~/^.*(,|\()\s*'volume'\s*=>\s*(\d+)\s*(,|\)).*$/ ) 
+    	{	$self->{'volume'} = $2;	}
+
+    	if ( $fields =~/^.*(,|\()\s*'date'\s*=>\s*(\d+)\s*(,|\)).*$/ ) 
+    	{	$self->{'date'} = $2;	}	  
+    }
     return bless $self, $class;
 }
 
@@ -109,15 +152,15 @@ sub get_prices {
     my $prices = GT::Prices->new;
     $prices->set_timeframe($DAY);
 
-    if (!$self->{'mark'}) { $self->{'mark'} = "\t"; }
-    if (!$self->{'date_format'}) { $self->{'date_format'} = 0; }
-    if (!$self->{'extention'}) { $self->{'extention'} = ".txt"; }
-    if (!$self->{'open'}) { $self->{'open'} = 0; }
-    if (!$self->{'high'}) { $self->{'high'} = 1; }
-    if (!$self->{'low'}) { $self->{'low'} = 2; }
-    if (!$self->{'close'}) { $self->{'close'} = 3; }
-    if (!$self->{'volume'}) { $self->{'volume'} = 4; }
-    if (!$self->{'date'}) { $self->{'date'} = 5; }
+    if (!exists($self->{'mark'})) { $self->{'mark'} = "\t"; }
+    if (!exists($self->{'date_format'})) { $self->{'date_format'} = 0; }
+    if (!exists($self->{'extention'})) { $self->{'extention'} = ".txt"; }
+    if (!exists($self->{'open'})) { $self->{'open'} = 0; }
+    if (!exists($self->{'high'})) { $self->{'high'} = 1; }
+    if (!exists($self->{'low'})) { $self->{'low'} = 2; }
+    if (!exists($self->{'close'})) { $self->{'close'} = 3; }
+    if (!exists($self->{'volume'})) { $self->{'volume'} = 4; }
+    if (!exists($self->{'date'})) { $self->{'date'} = 5;}
  
     my %fields = ('open' => $self->{'open'}, 'high' => $self->{'high'},
                   'low' => $self->{'low'}, 'close' => $self->{'close'},
