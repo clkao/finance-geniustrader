@@ -9,7 +9,6 @@ use lib '..';
 use strict;
 use vars qw($db);
 
-use Carp::Datum (":all", defined($ENV{'GTDEBUG'}) ? "on" : "off");
 use GT::Prices;
 use GT::Calculator;
 use GT::Conf;

@@ -14,9 +14,8 @@ use strict;
 use vars qw($db);
 
 use XML::Simple;
-use Data::Dumper;
+#use Data::Dumper;
 
-use Carp::Datum (":all", defined($ENV{'GTDEBUG'}) ? "on" : "off");
 use GT::Prices;
 use GT::Portfolio;
 use GT::PortfolioManager;

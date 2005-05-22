@@ -8,7 +8,6 @@ use lib '..';
 
 use strict;
 
-use Carp::Datum (":all", defined($ENV{'GTDEBUG'}) ? "on" : "off");
 use GT::BackTest::Spool;
 use GT::Report;
 use GT::Conf;
