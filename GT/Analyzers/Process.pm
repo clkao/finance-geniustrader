@@ -5,7 +5,6 @@ package GT::Analyzers::Process;
 # version 2 or (at your option) any later version.
 
 use strict;
-use Carp::Datum;
 
 use GT::ArgsTree;
 use GT::Prices;
