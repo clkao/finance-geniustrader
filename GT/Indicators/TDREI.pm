@@ -84,8 +84,8 @@ sub calculate {
       my $c7 = $self->{'args'}->get_arg_values($calc, $i-$n-$nb-$mom, 5);
       my $c8 = $self->{'args'}->get_arg_values($calc, $i-$n-$nb-$mom-1, 5);
 
-      if ( ( ($h>=$l5 | $h>=$l6) & ($l<=$h5 | $l<=$h6) ) |
-	   ( ($h2>=$c7 | $h2>=$c8) & ($l2<=$c7 | $l2<=$c8) ) ) {
+      if ( ( ($h>=$l5 || $h>=$l6) && ($l<=$h5 || $l<=$h6) ) ||
+	   ( ($h2>=$c7 || $h2>=$c8) && ($l2<=$c7 || $l2<=$c8) ) ) {
 	$sumval += ($h - $h2 + $l - $l2);
 	$sumabs += abs($h-$h2) + abs($l-$l2);
       }

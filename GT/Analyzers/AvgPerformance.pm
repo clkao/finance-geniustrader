@@ -58,7 +58,7 @@ sub calculate {
     my $init = $self->{'args'}->get_arg_values($calc, $last, 4);
 
     my $ret = 0;
-    $ret = (1 + ($gain / $init) ) **( 1 / ($nbg + $nbl) ) - 1 unless( $init == 0 |
+    $ret = (1 + ($gain / $init) ) **( 1 / ($nbg + $nbl) ) - 1 unless( $init == 0 ||
 								      ($nbg + $nbl) == 0 );
 
     $calc->indicators->set($name, $last, $ret);

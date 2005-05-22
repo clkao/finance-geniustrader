@@ -74,8 +74,8 @@ sub calculate {
     $self->add_volatile_indicator_dependency( $self->{'sma'}, $nb1 );
     $self->add_volatile_indicator_dependency( $self->{'atr'}, $nb1 );
 
-    return if ( $calc->indicators->is_available($name, $i) & 
-		$calc->indicators->is_available($upname, $i) & 
+    return if ( $calc->indicators->is_available($name, $i) &&
+		$calc->indicators->is_available($upname, $i) &&
 		$calc->indicators->is_available($lowname, $i) );
     return if (! $self->check_dependencies($calc, $i));
 

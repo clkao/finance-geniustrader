@@ -51,7 +51,7 @@ sub new {
 sub calculate {
     my ($self, $force) = @_;
     $force = 0 if (! defined($force));
-    if ($force & !$self->{'calculated'}) {
+    if ($force && !$self->{'calculated'}) {
 	$self->{'indicator'}->calculate_interval($self->{'calc'}, $self->get_selected_range());
     }
 }

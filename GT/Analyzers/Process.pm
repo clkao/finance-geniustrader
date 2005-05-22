@@ -81,7 +81,7 @@ sub new { # Generate a new Object
   %{$self->{'CMDS'}} = map { $_ => \&$_ } 
     qw(bye set load save calc calc_array licence license help p info btest report list source);
 
-  if ( defined($term) & -r ".AnaShHistory" ) {
+  if ( defined($term) && -r ".AnaShHistory" ) {
     open IN, ".AnaShHistory";
     while (<IN>) {
       chomp;
@@ -172,7 +172,7 @@ sub bye {
       print "Save settings? [Y/n]: ";
       my $answer = <>;
       chomp( $answer );
-      if ( lc($answer) eq "y" | lc($answer) eq "" ) {
+      if ( lc($answer) eq "y" || lc($answer) eq "" ) {
 	open OUT, ">.AnaShHistory";
 	my @history = $term->GetHistory();
 	@history = splice @history, ($#history-100), 100 if ($#history > 100);
@@ -268,7 +268,7 @@ sub set {
 	    $self->set_code( $val, 1 );
 	  }
 	}
-	$myself = $self if (lc($skey) eq "expert" & !defined($myself) & $val == 1 );
+	$myself = $self if (lc($skey) eq "expert" && !defined($myself) && $val == 1 );
       }
     }
   }
@@ -582,7 +582,7 @@ sub btest {
     foreach my $tf ( @{$self->{'config'}{'tf'}} ) {
       $self->{'sys_manager'}->add_trade_filter( create_standard_object(split (/\s+/, "TradeFilters::$tf")));
     }
-  } elsif ( defined($self->{'config'}{'tf'}) & $self->{'config'}{'tf'} ne "" ) {
+  } elsif ( defined($self->{'config'}{'tf'}) && $self->{'config'}{'tf'} ne "" ) {
       $self->{'sys_manager'}->add_trade_filter( create_standard_object(split (/\s+/, "TradeFilters::" . $self->{'config'}{'tf'})));
   }
 

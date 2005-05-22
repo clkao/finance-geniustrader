@@ -40,7 +40,7 @@ sub display {
     for(my $i = $start; $i <= $end; $i++)
     {
 	# Find two available points
-        if ($self->{'source'}->is_available($i) &
+        if ($self->{'source'}->is_available($i) &&
 	    $self->{'source2'}->is_available($i)) {
             $second_pt = $i;
         } else {

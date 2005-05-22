@@ -56,7 +56,7 @@ sub calculate {
     my $lastday = $calc->prices->count();
     my $days = $self->{'args'}->get_arg_values($calc, $i, 1);
 
-    return if ( $calc->indicators->is_available($name, $i) &
+    return if ( $calc->indicators->is_available($name, $i) &&
 		$calc->indicators->is_available($nameday, $i) );
 
     return if ($i+$days >= $lastday);

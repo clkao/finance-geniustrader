@@ -80,7 +80,7 @@ sub calculate {
 
     my $rmi = 0;
     my $diff;
-    if ( ! ($calc->indicators->is_available($upname, $i-1) &
+    if ( ! ($calc->indicators->is_available($upname, $i-1) &&
 	    $calc->indicators->is_available($downname, $i-1)) )
     {
 	for(my $n = $i - $nb1 + 1; $n <= $i; $n++) 

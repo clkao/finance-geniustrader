@@ -143,7 +143,7 @@ sub calculate {
 	$res = $self->{'args'}->get_arg_values($calc, $i, 2);
 	for (my $n = 1; $n < $arg; $n++) {
 	    my $val = $self->{'args'}->get_arg_values($calc, $i - $n, 2);
-	    if (defined($val) & defined($res)) {
+	    if (defined($val) && defined($res)) {
 		$res = max($res, $val);
 	    }
 	}
