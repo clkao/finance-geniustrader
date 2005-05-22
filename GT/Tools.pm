@@ -22,8 +22,6 @@ use GT::Prices;
 use GT::Eval;
 use GT::ArgsTree;
 
-use Carp qw(cluck);
-
 =head1 NAME
 
 GT::Tools - Various helper functions
@@ -75,7 +73,7 @@ sub max {
     my $max = $_[0];
     foreach (@_) {
 	if (! defined($_)) {
-	    cluck "GT::Tools::max called with undef argument !\n";
+	    warn "GT::Tools::max called with undef argument !\n";
 	    next;
 	}
 	$max = ($_ > $max) ? $_ : $max;
@@ -87,7 +85,7 @@ sub min {
     my $min = $_[0];
     foreach (@_) { 
 	if (! defined($_)) {
-	    cluck "GT::Tools::min called with undef argument !\n";
+	    warn "GT::Tools::min called with undef argument !\n";
 	    next;
 	}
 	$min = ($_ < $min) ? $_ : $min;
