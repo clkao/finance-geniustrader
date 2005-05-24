@@ -467,7 +467,7 @@ sub submit_parked_orders {
 	    }
         }
 
-        DENSURE $order->quantity > 0, "order quantity is positive " . $order->quantity;
+        #WAR# warn "order quantity is positive " . $order->quantity if ($order->quantity > 0);
     
         # TODO
         # Update other fields of the order like dates and so on
