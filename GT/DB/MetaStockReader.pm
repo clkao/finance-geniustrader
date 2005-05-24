@@ -1,5 +1,5 @@
 package GT::DB::MetaStockReader;
-# Copyright 2003-2004 Yannick Tournedouet
+# Copyright 2003-2005 Yannick Tournedouet
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
@@ -10,6 +10,7 @@ package GT::DB::MetaStockReader;
 # v1.2 30/07/2004 : use hash of hash for the security list for a better performance.
 #      : bug 1.1 fixed -> XMASTER read MASTER file
 # v1.3 27/08/2004 : fixed bug in the read_xmaster and read_master method when the code is the not ISIN code
+# v1.4 23/05/2005 : fixed a bug in the coding float number format.
 
 
 use strict;
@@ -96,7 +97,7 @@ sub initialize {
   if (! defined $directory) {
     $directory = $self->{'directory'};
   }
-  
+
   opendir (DIR,$directory) or die "Can't open the current directory $directory";
 
   foreach $file (readdir DIR) {
@@ -350,12 +351,10 @@ sub get_prices {
     $low = $self->convertFloat($PlusBas00,$PlusBas01,$PlusBas02,$PlusBas03);
     $close = $self->convertFloat($Fermeture00,$Fermeture01,$Fermeture02,$Fermeture03);
     $volume = $self->convertFloat($Volume00,$Volume01,$Volume02,$Volume03);
-
     $date += 19000000;
     $date =~ /^(\d{4})(\d{2})(\d{2})/;
     $date = $1 . "-" . $2 . "-" .$3;
     $prices->add_prices([ $open, $high, $low, $close, $volume, $date ]);
-
     $Index++;
   }
 
@@ -367,7 +366,8 @@ sub get_prices {
 
 =head2 $db->puissance($value00,$value01,$value02,$value03)
 
-Convert a IEEE float format (4 bytes) to a float perl format (4 bytes)
+Convert a MSBIN format to a float perl format (4 bytes).
+It convert first to a IEEE float format (4 bytes).
 
 =cut
 sub convertFloat {
@@ -376,7 +376,7 @@ sub convertFloat {
 
   my $signe = 0x00;
   my $exp = 0x00;
-  my $resultat;
+  my $resultat = 0;
   my $virgule = 0;
 
   my $resultat00 = $value00;
@@ -388,136 +388,10 @@ sub convertFloat {
   $resultat03 |= $signe;
   $exp = $value03 - 2;
   $resultat03 |= $exp >> 1;
-  $resultat02 |= ($exp << 7) & (0x00FF);
+  $resultat02 |= (($exp << 7) & (0x00FF));
   $resultat02 |= ($value02 & 0x7F);
-
-  $exp = (($resultat03 & 0x7F) << 1) + (($resultat02 & 0x80) >> 7) - 127;
-
-  # number > 1
-  if ($exp > 0) {
-
-     if ($exp < 8) {
-
-        $resultat = (0x7F & $resultat02) >> (7 - $exp);
-
-     } elsif ($exp < 16) {
-
-       $resultat = (((0x7F & $resultat02) << 8) >> (15 - $exp)) + ($resultat01 >> (15 - $exp));
-
-     } elsif ($exp < 24) {
-
-       $resultat = (((0x7F & $resultat02) << 16) >> (23 - $exp)) + (($resultat01 << 8) >> (23 - $exp)) + ($resultat00 >> (23 - $exp));
-     }
-
-     $virgule = $self->virgule_pos($exp,$resultat02,$resultat01,$resultat00);
-     $resultat += $self->puissance(2,$exp);
-
-  # number < 1
-  } else {
-
-    $resultat = 0;
-    $virgule =
-    $self->virgule_neg($exp,$resultat03,$resultat02,$resultat01,$resultat00);
-  }
-
-  $resultat += $virgule;
-
-  return $resultat;
-}
-
-=head2 $db->puissance($value,$exp)
-
-Return : $value exp($exp).
-
-=cut
-sub puissance {
-
-  my($self,$value,$exp) = @_;
-  my $return = 1;
-
-  for (my $i = 0; $i < $exp; $i++) {
-    $return *= $value;
-  }
-
-  return $return;
-}
-
-=head2 $db->virgule_pos($exp,$value03,$value02,$value01,$value00)
-
-Returns a value after the "comma" of the security fo the number > 1.
-
-=cut
-sub virgule_pos {
-
-  my($self,$exp,$value02,$value01,$value00) = @_;
-  my $resultat = 0;
-  my $value = 0;
-  my $mask = 0;
-
-  for (my $i = 0; $i < 23-$exp; $i++) {
-
-    if ($i < 8) {
-       $value = $value00;
-       $mask = $self->puissance(2,$i);
-    } elsif ($i < 16) {
-      $value = $value01;
-      $mask = $self->puissance(2,$i-8);
-    } elsif ($i < 24) {
-      $value = $value02;
-      $mask = $self->puissance(2,$i-16);
-    }
-
-    if ($mask & $value) {
-
-       $resultat += 1 / ($self->puissance(2,23-$exp-$i));
-    }
-  }
-
-  return $resultat;
-}
-
-=head2 $db->virgule_neg($exp,$value03,$value02,$value01,$value00)
-
-Returns a value after the "comma" of the security fo the number < 1.
-
-=cut
-sub virgule_neg {
-
-  my($self,$exp,$value03,$value02,$value01,$value00) = @_;
-  my $resultat = 0;
-  my $value = 0;
-  my $mask = 0;
-
-  for (my $i = 0; $i < 23; $i++) {
-
-    if ($i < 8) {
-
-      $value = $value02;
-      $mask = $self->puissance(2,7-$i);
-
-    } elsif ($i < 16) {
-
-      $value = $value01;
-      $mask = $self->puissance(2,15-$i);
-
-    } elsif ($i < 24) {
-
-      $value = $value00;
-      $mask = $self->puissance(2,23-$i);
-    }
-
-    if ($mask & $value) {
-
-       $resultat += 1 / ($self->puissance(2,-$exp+$i));
-    }
-
-  }
-
-  if (0x01 & $value03) {
-
-    $resultat += 1 / ($self->puissance(2,1));
-  }
-
+  $resultat = pack("CCCC",$resultat00,$resultat01,$resultat02,$resultat03);
+  $resultat = unpack("f",$resultat);
   return $resultat;
 }
 
@@ -540,7 +414,7 @@ sub get_last_prices {
 
 =head1 COPYRIGHT
 
-Copyright 2003-2004 Tournedouet Yannick.
+Copyright 2003-2005 Tournedouet Yannick.
 
 =cut
 
