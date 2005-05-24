@@ -27,11 +27,11 @@ the quotes are usually stored.
 You can optionally set the GT::Text::options configuration item to tell GT
 how to read the Text file:
 
-DB::module test
+DB::module text
 
 DB::text::directory  /home/projects/geniustrader/database
 
-DB::text::options ( "," , 2 , ".csv" , ('date' => 0, 'open' => 1, 'high' => 2, 'low' => 3, 'close' => 4, 'volume' => 5, 'Adj. Close*' => 6) ) 
+DB::text::options ( "," , 2 , ".csv" , ('date' => 0, 'open' => 1, 'high' => 2, 'low' => 3, 'close' => 4, 'volume' => 5, 'Adj. Close*' => 6) )
 
 
 =head2 new()
@@ -54,30 +54,30 @@ sub new {
     	my $date_format=$2;
 	    my $extention=$3;
 	    my $fields=$4;
-	 
-	    $self->{'mark'} = $mark; 
+
+	    $self->{'mark'} = $mark;
         $self->{'date_format'} = $date_format;
-	    $self->{'extention'} = $extention; 
+	    $self->{'extention'} = $extention;
 
         #( 'date' => 0, 'open' => 1, 'high' => 2, 'low' => 3, 'close' => 4, 'volume' => 5, 'Adj. Close*' => 6)
         #( 'open' => 0, 'high' => 1, 'low' => 2, 'close' => 3, 'volume' => 4, 'date' => 5 ) )
-        if ( $fields =~/^.*(,|\()\s*'open'\s*=>\s*(\d+)\s*(,|\)).*$/  ) 
+        if ( $fields =~/^.*(,|\()\s*'open'\s*=>\s*(\d+)\s*(,|\)).*$/  )
 	    {	$self->{'open'} = $2;	}
 
-    	if ( $fields =~/^.*(,|\()\s*'high'\s*=>\s*(\d+)\s*(,|\)).*$/ ) 
+    	if ( $fields =~/^.*(,|\()\s*'high'\s*=>\s*(\d+)\s*(,|\)).*$/ )
     	{	$self->{'high'} = $2;	}
 
-    	if ( $fields =~/^.*(,|\()\s*'low'\s*=>\s*(\d+)\s*(,|\)).*$/ ) 
+    	if ( $fields =~/^.*(,|\()\s*'low'\s*=>\s*(\d+)\s*(,|\)).*$/ )
     	{	$self->{'low'} = $2;	}
 
-    	if ( $fields =~/^.*(,|\()\s*'close'\s*=>\s*(\d+)\s*(,|\)).*$/ ) 
+    	if ( $fields =~/^.*(,|\()\s*'close'\s*=>\s*(\d+)\s*(,|\)).*$/ )
     	{	$self->{'close'} = $2;	}
 
-    	if ( $fields =~/^.*(,|\()\s*'volume'\s*=>\s*(\d+)\s*(,|\)).*$/ ) 
+    	if ( $fields =~/^.*(,|\()\s*'volume'\s*=>\s*(\d+)\s*(,|\)).*$/ )
     	{	$self->{'volume'} = $2;	}
 
-    	if ( $fields =~/^.*(,|\()\s*'date'\s*=>\s*(\d+)\s*(,|\)).*$/ ) 
-    	{	$self->{'date'} = $2;	}	  
+    	if ( $fields =~/^.*(,|\()\s*'date'\s*=>\s*(\d+)\s*(,|\)).*$/ )
+    	{	$self->{'date'} = $2;	}
     }
     return bless $self, $class;
 }
@@ -115,7 +115,7 @@ By default :
     0 : GeniusTrader Date Format
     1 : US sort of Date Format
     2 : EU sort of Date Format
-    
+
 - Extention
     ".txt"
 
@@ -161,18 +161,18 @@ sub get_prices {
     if (!exists($self->{'close'})) { $self->{'close'} = 3; }
     if (!exists($self->{'volume'})) { $self->{'volume'} = 4; }
     if (!exists($self->{'date'})) { $self->{'date'} = 5;}
- 
+
     my %fields = ('open' => $self->{'open'}, 'high' => $self->{'high'},
                   'low' => $self->{'low'}, 'close' => $self->{'close'},
 		  'volume' => $self->{'volume'}, 'date' => $self->{'date'});
-    
-    $prices->loadtxt($self->{'directory'} . "/$code" . $self->{'extention'}, 
+
+    $prices->loadtxt($self->{'directory'} . "/$code" . $self->{'extention'},
 		     $self->{'mark'}, $self->{'date_format'},
 		     %fields);
     return $prices;
 }
 
-=pod 
+=pod
 
 =head2 $db->get_last_prices($code, $limit)
 
