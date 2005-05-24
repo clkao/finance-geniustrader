@@ -20,6 +20,7 @@ YYYY-MM-DD
 sub map_date_to_time {
     my ($date) = @_;
     my ($y, $m, $d) = split /-/, $date;
+	($d) = split / /, $d;
     return POSIX::mktime(0, 0, 0, $d, $m - 1, $y - 1900);
 }
 
@@ -31,11 +32,10 @@ sub map_time_to_date {
 
 sub timeframe_ratio {
     my ($tf) = @_;
-    
+
     #WAR# WARN "timeframe must be smaller than a day" unless ($tf < $DAY);
-    
+
     $tf == $PERIOD_1MIN && return 8 * 60; # 8 hours approximatively
-    $tf == $PERIOD_2MIN && return 8 * 30; # 2 times less
     $tf == $PERIOD_5MIN && return 8 * 12;
     $tf == $PERIOD_10MIN && return 8 * 6;
     $tf == $PERIOD_30MIN && return 8 * 2;
