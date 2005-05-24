@@ -27,7 +27,7 @@ the quotes are usually stored.
 You can optionally set the GT::Text::options configuration item to tell GT
 how to read the Text file:
 
-DB::module text
+DB::module Text
 
 DB::text::directory  /home/projects/geniustrader/database
 
