@@ -59,7 +59,6 @@ use warnings;
 use vars qw($newpath);
 
 use File::Find;
-use Carp::Datum::Strip qw(datum_strip);
 
 $newpath = "/tmp";
 
@@ -96,8 +95,6 @@ if (!defined($mtstamp) || $actual_time - $PERIODIC_UPDATE > $mtstamp) {
 
 	if ($s_time != $d_time && $_ =~ /pm$/) {
 
-	  datum_strip( $_, $dest );
-
 	  open CODE, $dest or die("Cannot open $dest for reading");
 	  my $code = join("", <CODE>);
 	  close CODE;
@@ -129,7 +126,6 @@ if (!defined($mtstamp) || $actual_time - $PERIODIC_UPDATE > $mtstamp) {
   }
 
 }
-
 
 
 #print STDERR "OptimizeGT took " . (time()-$actual_time) . " seconds\n";
