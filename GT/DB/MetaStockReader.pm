@@ -11,6 +11,8 @@ package GT::DB::MetaStockReader;
 #      : bug 1.1 fixed -> XMASTER read MASTER file
 # v1.3 27/08/2004 : fixed bug in the read_xmaster and read_master method when the code is the not ISIN code
 # v1.4 23/05/2005 : fixed a bug in the coding float number format.
+# v1.5 27/05/2005 : fixed a warning with the 'pack' function when a Byte was > 255.
+#		: test if security already exists before putting in the table.
 
 
 use strict;
@@ -188,7 +190,9 @@ sub read_master {
     $enregistrement{'NOM'} = $nom_titre[0];
     $enregistrement{'DATE_DEBUT'} = $self->convertFloat($DateDebut00,$DateDebut01,$DateDebut02,$DateDebut03);
     $enregistrement{'DATE_FIN'} = $self->convertFloat($DateFin00,$DateFin01,$DateFin02,$DateFin03);
-    $self->{'codes'}{$ISIN} = {%enregistrement};
+    if (! exists ($self->{'codes'}{$ISIN})) {
+    	$self->{'codes'}{$ISIN} = {%enregistrement};
+    }
   }
 
   close(MASTER);
@@ -240,7 +244,9 @@ sub read_xmaster {
 
      $enregistrement{'DATE_DEBUT'} = 0;
      $enregistrement{'DATE_FIN'} = 0;
-     $self->{'codes'}{$enregistrement{'ISIN'}} = {%enregistrement};
+     if (! exists ($self->{'codes'}{$ISIN})) {
+	     $self->{'codes'}{$enregistrement{'ISIN'}} = {%enregistrement};
+     }    
   }
 
   close(XMASTER);
@@ -387,8 +393,8 @@ sub convertFloat {
   $signe = $value02 & 0x80;
   $resultat03 |= $signe;
   $exp = $value03 - 2;
-  $resultat03 |= $exp >> 1;
-  $resultat02 |= (($exp << 7) & (0x00FF));
+  $resultat03 |= ($exp >> 1) & 0xff;
+  $resultat02 |= ($exp << 7) & 0xff;
   $resultat02 |= ($value02 & 0x7F);
   $resultat = pack("CCCC",$resultat00,$resultat01,$resultat02,$resultat03);
   $resultat = unpack("f",$resultat);
