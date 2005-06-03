@@ -1,6 +1,6 @@
 package GT::DateTime::10Min;
 
-# Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
+# Copyright 2005 João Antunes Costa
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
@@ -12,8 +12,8 @@ use POSIX;
 
 =head1 GT::DateTime::10Min
 
-This module treat dates describing a quarter-hour. They have the following format :
-YYYY-MM-DD HH:NN:00
+This module treat dates describing a 10 minute period. They have the following format :
+YYYY-MM-DD HH:N0:00
 
 =cut
 sub map_date_to_time {

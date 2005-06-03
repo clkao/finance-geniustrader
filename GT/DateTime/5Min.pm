@@ -1,6 +1,6 @@
 package GT::DateTime::5Min;
 
-# Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
+# Copyright 2005 João Antunes Costa
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
@@ -12,7 +12,7 @@ use POSIX;
 
 =head1 GT::DateTime::5Min
 
-This module treat dates describing a quarter-hour. They have the following format :
+This module treat dates describing a 5 minute period. They have the following format :
 YYYY-MM-DD HH:NN:00
 
 =cut
