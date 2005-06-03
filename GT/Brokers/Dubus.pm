@@ -1,6 +1,6 @@
 package GT::Brokers::Dubus;
 
-# Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
+# Copyright 2005 Yannick Tournedouet
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
@@ -12,7 +12,6 @@ use vars qw(@NAMES @ISA);
 use GT::Brokers;
 use GT::Eval;
 use GT::Conf;
-use Carp::Datum;
 
 @NAMES = ("Dubus[#1]");
 @ISA = qw(GT::Brokers);
@@ -50,7 +49,6 @@ The first parameter could be initialized to :
 =cut
 
 sub new {
-    DFEATURE my $f, "new Broker";
     my $type = shift;
     my $class = ref($type) || $type;
     my $args = shift;
@@ -64,7 +62,7 @@ sub new {
 
     $args->[0] = $option if (! defined($args->[0]));
 
-    return DVAL manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
+    return manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
 }
 
 =head2 $broker->calculate_order_commission($order)
@@ -74,7 +72,6 @@ Return the amount of money ask by the broker for the given order.
 =cut
 
 sub calculate_order_commission {
-    DFEATURE my $f;
     my ($self, $order) = @_;
     my $forfait = $self->{'args'}[0];
     my $TVA = (1 + 19.6 / 100);
@@ -132,7 +129,7 @@ sub calculate_order_commission {
 		}
     }
 	
-	return DVAL $commission if ($commission != 0);
+	return $commission if ($commission != 0);
     }
 }
 
@@ -144,10 +141,9 @@ according to the given portfolio.
 =cut
 
 sub calculate_annual_account_charge {
-    DFEATURE my $f;
     my ($self, $portfolio, $year) = @_;
 
-    return DVAL 0;
+    return 0;
 
 }
 
