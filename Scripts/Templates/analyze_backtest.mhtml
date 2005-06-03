@@ -1,0 +1,103 @@
+
+<%args>
+@loop_by_code
+@loop_by_system
+</%args>
+<html>
+<head>
+<style type="text/css">
+.up { background-color: #55FF55}
+.down {background-color: #FF5555}
+</style>
+</head>
+<body>
+
+<h2>Performance</h2>
+
+<h3>Results by Code</h3>
+<table cellpadding=5 cellspacing=0 frame=box rules=all>
+
+<tr>
+<th>Code</th>
+<th>Name</th>
+<th>System, Return per Period, Return, Max Draw Down</th>
+<th>Number of Gains</th>
+<th>Number of Losses</th>
+<th>Average Return</th>
+<th>Buy and Hold Return</th>
+</tr>
+
+%    foreach my $row (@loop_by_code) {
+<tr valign=top align=left>
+<td><%$row->{'code'}%></td>
+<td><%$row->{'name'}%></td>
+
+<td>
+<table border=0>
+% my $i=0;
+% while ($row->{'returninfo'}[$i]->{'returnper'} ne "") {;
+<tr>
+<td><%$row->{'returninfo'}[$i]->{'systemname'}%>,</td>
+<td><%$row->{'returninfo'}[$i]->{'returnper'}%>,</td>
+<td><%$row->{'returninfo'}[$i]->{'return'}%>,</td>
+<td>[<%$row->{'returninfo'}[$i]->{'maxdrawdown'}%>]</td>
+</tr>
+% $i++;
+% }
+</table>
+</td>
+
+<td><%$row->{'numgains'}%></td>
+<td><%$row->{'numlosses'}%></td>
+<td><%$row->{'averagereturn'}%></td>
+<td><%$row->{'buyandhold'}%></td>
+</tr>
+
+%    }
+</table>
+
+
+<h3>Results by System</h3>
+<table cellpadding=5 cellspacing=0 frame=box rules=all>
+
+<tr>
+<th>System</th>
+<th>Stock, Return per Period, Return, Max Draw Down</th>
+<th>Number of Gains</th>
+<th>Number of Losses</th>
+<th>Average Return</th>
+<th>Buy and Hold Return</th>
+</tr>
+
+%    foreach my $row (@loop_by_system) {
+<tr valign=top align=left>
+<td><%$row->{'systemname'}%></td>
+
+<td>
+<table border=0>
+% my $i=0;
+% while ($row->{'returninfo'}[$i]->{'returnper'} ne "") {;
+<tr>
+<td><%$row->{'returninfo'}[$i]->{'name'}%></td>
+<td>(<%$row->{'returninfo'}[$i]->{'code'}%>),</td>
+<td><%$row->{'returninfo'}[$i]->{'returnper'}%>,</td>
+<td><%$row->{'returninfo'}[$i]->{'return'}%>,</td>
+<td><%$row->{'returninfo'}[$i]->{'maxdrawdown'}%></td>
+</tr>
+% $i++;
+% }
+</table>
+</td>
+
+<td><%$row->{'numgains'}%></td>
+<td><%$row->{'numlosses'}%></td>
+<td><%$row->{'averagereturn'}%></td>
+<td><%$row->{'buyandhold'}%></td>
+</tr>
+
+%    }
+</table>
+
+
+</body>
+</html>

@@ -33,6 +33,7 @@ manage_portfolio.pl
   ./manage_portfolio.pl <portfolio> set initial-sum <sum of money>
   ./manage_portfolio.pl <portfolio> set broker <broker>
   ./manage_portfolio.pl <portfolio> report {performance|positions|historic|analysis}
+  ./manage_portfolio.pl <portfolio> file <filename>
 
 =head1 OPTIONS
 
@@ -50,9 +51,27 @@ Useful to tag certain orders as the result of a particular strategy. All orders
 passed by following the advice of someone could be tagged with his name and later
 you'll be able to make stats on the performance you made with his advices.
 
+=item --template=<template file>
+
+Output is generated using the indicated HTML::Mason component.
+For example, --template="manage_portfolio_historic.mpl", when using "report historic"
+             --template="manage_portfolio_positions.mpl", when using "report positions"
+The template directory is defined as Template::directory in the options file.
+Each template can be predefined by including it into the options file
+For example, Template::manage_portfolio_positions manage_portfolio_positions.mpl
+             Template::manage_portfolio_historic manage_portfolio_historic.mpl
+
 =item --timeframe {day|week|...}
 
 Tell how to parse the format of the date.
+
+=item --noconfirm
+
+Do not prompt for confirmation, just apply the request
+
+=item --detailed
+
+Add extra information into the output. On by default. Turn off by using --nodetailed
 
 =item --since <date>
 
@@ -60,6 +79,18 @@ Tell how to parse the format of the date.
 
 Those two options are used to restrict the result of a "report" command to
 a certain timeframe.
+
+=item file <filename>
+
+Specifies the name of a file which contains a list of 
+
+bought <quantity> <share> <price> [<date>]
+
+or 
+
+sold <quantity> <share> <price> [<date>]
+
+commands. This allows you to submit many bought/sold commands in a single instance.
 
 =back
 
@@ -79,11 +110,12 @@ directory.
 =cut
 
 # Get all options
-my ($marged, $source, $since, $until, $confirm, $timeframe) = 
-    (0, '', '', '', 1, 'day');
+my ($marged, $source, $since, $until, $confirm, $timeframe, $template, $detailed) = 
+    (0, '', '', '', 1, 'day', '', 1);
 GetOptions("marged!" => \$marged, "source=s" => \$source, 
 	   "since=s" => \$since, "until=s" => \$until,
-	   "confirm!" => \$confirm, "timeframe" => \$timeframe);
+	   "confirm!" => \$confirm, "timeframe" => \$timeframe,
+	   'template=s' => \$template, "detailed!" => \$detailed, );
 
 # Check the portfolio directory
 GT::Conf::default("GT::Portfolio::Directory", $ENV{'HOME'} . "/.gt/portfolio");
@@ -124,46 +156,65 @@ if ($cmd eq "create") {
 	$pf->set_initial_value($cash);
     }
     
-} elsif (($cmd eq "bought") or ($cmd eq "sold")) {
+} elsif (($cmd eq "bought") or ($cmd eq "sold") or ($cmd eq "file")) {
     
-    $changes = 1;
-    my ($quantity, $code, $price, $date) = @ARGV;
-    
-    if (! defined($date)) {
-	$date = sprintf("%04d-%02d-%02d", localtime->year + 1900, localtime->mon + 1, localtime->mday);
-    }
-    my $order = GT::Portfolio::Order->new;
-    if ($cmd eq "bought") {
-	$order->set_buy_order;
-    } else {
-	$order->set_sell_order;
-    }	
-    $order->set_type_limited;
-    $order->set_price($price);
-    $order->set_submission_date($date);
-    $order->set_quantity($quantity);
-    $order->set_source($source) if ($source);
+   $changes = 1;
+   my @orderlist;
+   my $batchorder;
+   if ($cmd eq "file") {
+   	my $file=shift;
+   	# there is a batch file, read it in
+   	open(FILE,"<$file") || die ("Can not open batch file $file");
+		@orderlist=<FILE>;
+    	close(FILE);
+   } else {
+   	# no batch file, place the command line parameters into the start of the data array
+   	my ($quantity, $code, $price, $date)=@ARGV;
+   	# for this one off we have to insert the $cmd (bought or sold)
+		$orderlist[0]="$cmd $quantity $code $price $date";
+   }
 
-    my $name = $db->get_name($code);
-    # Look for open positions to complete
-    my $pos = find_position($pf, $code, $source, $marged);
-    if (! defined $pos) {
-	if (defined($name) && $name) {
-	    print "Creating a new position ($name - $code, $source).\n"; 
-	} else {
-	    print "Creating a new position ($code, $source).\n"; 
-	}
-	$pos = $pf->new_position($code, $source, $date);
-	$pos->set_timeframe(GT::DateTime::name_to_timeframe($timeframe));
-	if ($marged) {
-	    $pos->set_marged();
-	} else {
-	    $pos->set_not_marged();
-	}   
-    }
-    print "Applying order: $cmd $quantity at $price on $date.\n";
-    $pf->apply_order_on_position($pos, $order, $price, $date);
-    
+	foreach $batchorder (@orderlist) {
+
+		 chomp($batchorder);
+   	 my ($cmd, $quantity, $code, $price, $date) = split(/ /,$batchorder);
+       
+       if (! defined($date)) {
+   	$date = sprintf("%04d-%02d-%02d", localtime->year + 1900, localtime->mon + 1, localtime->mday);
+       }
+       my $order = GT::Portfolio::Order->new;
+       if ($cmd eq "bought") {
+   	$order->set_buy_order;
+       } else {
+   	$order->set_sell_order;
+       }	
+       $order->set_type_limited;
+       $order->set_price($price);
+       $order->set_submission_date($date);
+       $order->set_quantity($quantity);
+       $order->set_source($source) if ($source);
+   
+       my $name = $db->get_name($code);
+       # Look for open positions to complete
+       my $pos = find_position($pf, $code, $source, $marged);
+       if (! defined $pos) {
+   	if (defined($name) && $name) {
+   	    print "Creating a new position ($name - $code, $source).\n"; 
+   	} else {
+   	    print "Creating a new position ($code, $source).\n"; 
+   	}
+   	$pos = $pf->new_position($code, $source, $date);
+   	$pos->set_timeframe(GT::DateTime::name_to_timeframe($timeframe));
+   	if ($marged) {
+   	    $pos->set_marged();
+   	} else {
+   	    $pos->set_not_marged();
+   	}   
+       }
+       print "Applying order: $cmd $quantity at $price on $date.\n";
+       $pf->apply_order_on_position($pos, $order, $price, $date);
+       
+   }
 } elsif ($cmd eq "stop") {
 
     my ($code, $price) = @ARGV;
@@ -199,16 +250,44 @@ if ($cmd eq "create") {
     
     my ($what) = @ARGV;
 
-    my $db = create_db_object();
-    if ($what eq "performance") {
+    # code for templating setup
+    my $root = GT::Conf::get('Template::directory');
+    $root = File::Spec->rel2abs( cwd() ) if (!defined($root));
+    
+    # try and get the template from the config file if it has not been defined on the command line
+    # the template name in the config file is expected to be manage_portfolio_$what
+    $template = GT::Conf::get("Template::manage_portfolio_$what") if ($template eq '');
 
-    } elsif ($what eq "positions") {
-	GT::Report::OpenPositions($pf, 1);
-    } elsif ($what eq "historic") {
-	GT::Report::Portfolio($pf, 1);
-    } elsif ($what eq "analysis") {
-	
-    }
+    my $db = create_db_object();
+ 
+    if ($template eq '') {
+      # no template is defined either on the command line or in the config file
+      # use Report.pm for standard reporting
+      if ($what eq "performance") {
+         # not yet coded
+      } elsif ($what eq "positions") {
+         GT::Report::OpenPositions($pf, 1);
+      } elsif ($what eq "historic") {
+   	   GT::Report::Portfolio($pf, 1);
+      } elsif ($what eq "analysis") {
+  	      # not yet coded
+      }
+    } else {
+      # template reporting using HTML::Mason is being invoked
+      my $output;
+      my $use = 'use HTML::Mason;use File::Spec;use Cwd;';
+   
+      eval $use;
+      die(@!) if(@!);
+    
+      my $interp = HTML::Mason::Interp->new( comp_root => $root,
+    					 out_method => \$output
+    				       );
+      $template='/' . $template unless ($template =~ /\\|\//);
+      $interp->exec($template, detailed => $detailed, p => $pf, db => $db);
+      print $output;
+    }      
+    
 } else {
     print "${cmd}: Invalid command.\n";
 }

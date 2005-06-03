@@ -56,6 +56,10 @@ Runs the backtest on the full history (it runs on two years by default)
 =item --template="backtest.mpl"
 
 Output is generated using the indicated HTML::Mason component.
+For Example, --template="backtest.mpl"
+The template directory is defined as Template::directory in the options file.
+Each template can be predefined by including it into the options file
+For example, Template::backtest backtest.mpl
 
 =item --html
 
@@ -198,7 +202,7 @@ if (! $code) {
     die "You must give a symbol for the simulation.\n";
 }
 my $q = $db->get_prices($code);
-$db->disconnect;
+#$db->disconnect;
 
 my $calc = GT::Calculator->new($q);
 $calc->set_code($code);
@@ -287,7 +291,7 @@ if ($graph_file) {
 }
 
 # Display the results
-$template = GT::Conf::get('Template::backtest') if (!defined($template));
+$template = GT::Conf::get('Template::backtest') if ($template eq '');
 if ($template ne '') {
   my $output;
 

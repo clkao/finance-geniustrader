@@ -368,18 +368,22 @@ Max consec. win : @<<<<<<<<<  Max consec. loss : @<<<<<<<<<
 Display the results of the backtest. Results per code and per system.
 
 =cut
+
+#=============================================
+# previously sub _get_name was defined inside sub AnalysisList
+sub _get_name {
+   my ($spool, $name) = @_;
+   my $res = $spool->get_alias_name($name);
+   return $res if (defined($res) && $res);
+   return $name;
+}
+#=============================================
+
 sub AnalysisList {
     my ($spool, $set) = @_;
 
     my $l = $spool->list_available_data($set);
     my $s = $spool;
-    
-    sub _get_name {
-	my ($spool, $name) = @_;
-	my $res = $spool->get_alias_name($name);
-	return $res if (defined($res) && $res);
-	return $name;
-    }
     
     # Find all codes
     my %codes;

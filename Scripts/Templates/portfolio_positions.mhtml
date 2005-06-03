@@ -1,0 +1,68 @@
+
+<%args>
+@loop
+</%args>
+<html>
+<head>
+<style type="text/css">
+.up { background-color: #55FF55}
+.down {background-color: #FF5555}
+</style>
+</head>
+<body>
+
+<h2>Current Positions</h2>
+
+<table cellpadding=5 cellspacing=0 frame=box rules=all>
+
+<tr>
+<th>Position Type</th>
+<th>ID</th>
+<th>Code</th>
+<th>Name</th>
+<th>Source</th>
+<th>Orders</th>
+<th>Current Price</th>
+<th>Return</th>
+<th>Profit</th>
+<th>Stop Info</th>
+</tr>
+
+%    foreach my $row (@loop) {
+<tr valign=top align=left>
+<td><%$row->{'positiontype'}%></td>
+<td><%$row->{'positionid'}%></td>
+<td><%$row->{'code'}%></td>
+<td><%$row->{'name'}%></td>
+<td><%$row->{'source'}%></td>
+
+<td>
+<table border=0>
+% my $i=0;
+% while ($row->{'orderlist'}[$i]->{'submission_date'} ne "") {;
+<tr>
+<td><%$row->{'orderlist'}[$i]->{'order_type'}%></td>
+<td><%$row->{'orderlist'}[$i]->{'quantity'}%></td>
+<td>at <%$row->{'orderlist'}[$i]->{'price'}%></td>
+<td>on <%$row->{'orderlist'}[$i]->{'submission_date'}%></td>
+</tr>
+% $i++;
+% }
+</table>
+</td>
+
+<td><%$row->{'currentprice'}%></td>
+<td><%$row->{'return'}%></td>
+<td><%$row->{'profit'}%></td>
+
+<td>
+<%$row->{'stopprice'}%>
+<%$row->{'stopreturn'}%>
+<%$row->{'stopprofit'}%>
+</td>
+</tr>
+
+%    }
+</table>
+</body>
+</html>

@@ -58,6 +58,10 @@ Runs the backtest using the given timeframe.
 
 If you want to start two  (or more) backtests in parallel (useful for machines with several CPUs for example).
 
+=item --set=SETNAME
+
+Stores the backtest results in the "backtests" directory (refer to your options file for the location of this directory) using the set name SETNAME. Use the --set option of analyze_backtest.pl to differentiate between the different backtest results in your directory.
+
 =back
 
 =head2 Examples
