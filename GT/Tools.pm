@@ -11,11 +11,12 @@ require Exporter;
 @ISA = qw(Exporter);
 @EXPORT_OK = qw(min max extract_object_number resolve_alias
 		resolve_object_alias PI sign long_name short_name
-		isin_checksum isin_validate isin_create_from_local);
+		isin_checksum isin_validate isin_create_from_local get_timeframe_data);
 %EXPORT_TAGS = ("math" => [qw(min max PI sign)], 
 		"generic" => [qw(extract_object_number)],
 		"conf" => [qw(resolve_alias resolve_object_alias long_name short_name)],
-		"isin" => [qw(isin_checksum isin_validate isin_create_from_local)]
+		"isin" => [qw(isin_checksum isin_validate isin_create_from_local)],
+		"timeframe" => [qw(get_timeframe_data)]
 		);
 
 use GT::Prices;
@@ -354,6 +355,41 @@ sub isin_create_from_local {
     }
     my $isin = isin_checksum("$country$code");
     return $isin;
+}
+
+=item C<< GetTimeFrameData ($code, $timeframe, $db, $max_loaded_items) >>
+
+Returns a prices and a calculator object with data for the required
+$code in the specified $timeframe. It uses $db object to fetch the data.
+
+=cut
+sub get_timeframe_data {
+my ($code, $timeframe, $db, $max_loaded_items) = @_;
+#WAR# WARN "Fetching all available data, because the max_loaded_items parameter was not set." unless(defined($max_loaded_items));
+$max_loaded_items = -1 unless(defined($max_loaded_items));
+my @tf = GT::DateTime::list_of_timeframe;
+my $q;
+
+#ERR#  ERROR  "Invalid db argument in get_timeframe_data" unless ( ref($db) =~ /GT::DB/);
+#ERR#  ERROR  "Timeframe parameter not set in get_timeframe_data." unless(defined($timeframe));
+$max_loaded_items = -1 unless(defined($max_loaded_items));
+
+foreach(reverse(@tf)) {
+  next if ($_ > $timeframe);
+  $q = $db->get_last_prices($code, $max_loaded_items, $_);
+  last if ($q->count > 0);
+}
+
+warn ("No data is available to complete the request for $code") if ($q && $q->count == 0);
+my $calc = GT::Calculator->new($q);
+$calc->set_code($code);
+
+if ($q->timeframe != $timeframe) {
+    $calc->set_current_timeframe($timeframe);
+    $q = $calc->prices;
+}
+
+return ($q, $calc);
 }
 
 =back
