@@ -89,26 +89,31 @@ sub disconnect {
     delete $self->{'dates'};
 }
 
-=item C<< $db->get_prices($code) >>
+=item C<< $db->get_prices($code, $timeframe) >>
 
 Returns a GT::Prices object containing all known prices for the symbol $code.
 
 =cut
 sub get_prices {
-    return get_last_prices(@_, -1);
+    my($self, $code, $timeframe) = @_;
+    return get_last_prices($self, $code, -1, $timeframe);
 }
 
-=item C<< $db->get_last_prices($code, $limit) >>
+=item C<< $db->get_last_prices($code, $limit, $timeframe) >>
 
 Returns a GT::Prices object containing the $limit last known prices for
 the symbol $code.
 
 =cut
 sub get_last_prices {
-    my ($self, $code, $limit) = @_;
+    my ($self, $code, $limit, $timeframe) = @_;
 
     my $q = GT::Prices->new($limit);
-    $q->set_timeframe($DAY);
+    $timeframe = $DAY unless ($timeframe);
+    die "Intraday support not implemented in DB::pg" if ($timeframe < $DAY);
+    return GT::Prices->new() if ($timeframe > $DAY);
+
+    $q->set_timeframe($timeframe);
 
     my $sql = qq{ SELECT first, high, low, last, volume, date
     		  FROM PRICES_$code ORDER BY date DESC };

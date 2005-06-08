@@ -124,15 +124,19 @@ sub set_options {
     }
 }
 
-=item C<< $db->get_prices($code) >>
+=item C<< $db->get_prices($code, $timeframe) >>
 
 Returns a GT::Prices object containing all known prices for the symbol $code.
 
 =cut
 sub get_prices {
-    my ($self, $code) = @_;
+    my ($self, $code, $timeframe) = @_;
+	$timeframe = $DAY unless ($timeframe);
+    die "Intraday support not implemented in DB::HTTP" if ($timeframe < $DAY);
+    return GT::Prices->new() if ($timeframe > $DAY);
+
     my $prices = GT::Prices->new();
-    $prices->set_timeframe($DAY);
+    $prices->set_timeframe($timeframe);
 
     if (!$self->{'mark'}) { $self->{'mark'} = "\t"; }
     if (!$self->{'date_format'}) { $self->{'date_format'} = 0; }
@@ -155,7 +159,7 @@ sub get_prices {
     return $prices;
 }
 
-=item C<< $db->get_last_prices($code, $limit) >>
+=item C<< $db->get_last_prices($code, $limit, $timeframe) >>
 
 NOT SUPPORTED for HTTP db.
 
@@ -164,8 +168,9 @@ the symbol $code.
 
 =cut
 sub get_last_prices {
-    my ($self, $code, $limit) = @_;
+    my ($self, $code, $limit, $timeframe) = @_;
 
+    return get_prices($self, $code, $timeframe) if ($limit==-1);
     die "get_last_prices not supported with HTTP database\n";
 }
 

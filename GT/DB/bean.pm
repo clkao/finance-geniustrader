@@ -107,7 +107,7 @@ sub disconnect {
     delete $self->{'dates'};
 }
 
-=item C<< $db->get_prices($code) >>
+=item C<< $db->get_prices($code, $timeframe) >>
 
 Returns a GT::Prices object containing all known prices for the symbol $code.
 
@@ -116,17 +116,23 @@ sub get_prices {
     return get_last_prices(@_, -1);
 }
 
-=item C<< $db->get_last_prices($code, $limit) >>
+=item C<< $db->get_last_prices($code, $limit, $timeframe) >>
 
 Returns a GT::Prices object containing the $limit last known prices for
 the symbol $code.
 
+Notice that beancounter only supports daily data, therefore it will
+throw an error if you try to retrieve data in timeframes smaller than daily.
+
 =cut
 sub get_last_prices {
-    my ($self, $code, $limit) = @_;
+    my ($self, $code, $limit, $timeframe) = @_;
 
     my $q = GT::Prices->new($limit);
-    $q->set_timeframe($DAY);
+
+    $timeframe = $DAY unless($timeframe);
+    die "The beancounter DB module does not support intraday data.\n" if ($timeframe < $DAY);
+    $q->set_timeframe($timeframe);
 
     my $sql = qq{ SELECT day_open, day_high, day_low, day_close, volume, date
     		  FROM stockprices WHERE symbol = '$code' ORDER BY date DESC };

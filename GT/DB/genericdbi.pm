@@ -116,7 +116,7 @@ sub disconnect {
     delete $self->{'dates'};
 }
 
-=item C<< $db->get_prices($code) >>
+=item C<< $db->get_prices($code, $timeframe) >>
 
 Returns a GT::Prices object containing all known prices for the symbol $code.
 
@@ -126,15 +126,15 @@ sub get_prices {
     return get_last_prices($self, $code, -1, $timeframe);
 }
 
-=item C<< $db->get_last_prices($code, $limit) >>
+=item C<< $db->get_last_prices($code, $limit, $timeframe) >>
 
 Returns a GT::Prices object containing the $limit last known prices for
-the symbol $code.
+the symbol $code in the given $timeframe.
 
 =cut
 sub get_last_prices {
     my ($self, $code, $limit, $timeframe) = @_;
-    $timeframe = $DAY unless (defined($timeframe));
+    $timeframe = $DAY unless ($timeframe);
 	$limit = 99999999 if ($limit==-1);
 
     my $q = GT::Prices->new($limit);
@@ -145,11 +145,12 @@ sub get_last_prices {
 	$sql =~ s/\$timeframe/$timeframe/;
 	$sql =~ s/\$limit/$limit/;
 
-    my $sth = $self->{'_dbh'}->prepare($sql) 
+    my $sth = $self->{'_dbh'}->prepare($sql)
     	|| die $self->{'_dbh'}->errstr;
-    $sth->execute() || die $self->{'_dbh'}->errstr;
-    my $array_ref = $sth->fetchall_arrayref(  );
-    $q->add_prices_array(reverse(@$array_ref));
+    if ($sth->execute()) {# || die $self->{'_dbh'}->errstr;
+        my $array_ref = $sth->fetchall_arrayref();
+        $q->add_prices_array(reverse(@$array_ref));
+	}
     return $q;
 }
 

@@ -141,16 +141,20 @@ sub set_options {
     }
 }
 
-=head2 $db->get_prices($code)
+=head2 $db->get_prices($code, $timeframe)
 
 Returns a GT::Prices object containing all known prices for the symbol $code.
 
 =cut
 
 sub get_prices {
-    my ($self, $code) = @_;
+    my ($self, $code, $timeframe) = @_;
+    $timeframe = $DAY unless ($timeframe);
+    die "Intraday support not implemented in DB::Text" if ($timeframe < $DAY);
+    return GT::Prices->new() if ($timeframe > $DAY);
+
     my $prices = GT::Prices->new;
-    $prices->set_timeframe($DAY);
+    $prices->set_timeframe($timeframe);
 
     if (!exists($self->{'mark'})) { $self->{'mark'} = "\t"; }
     if (!exists($self->{'date_format'})) { $self->{'date_format'} = 0; }
@@ -174,7 +178,7 @@ sub get_prices {
 
 =pod
 
-=head2 $db->get_last_prices($code, $limit)
+=head2 $db->get_last_prices($code, $limit, $timeframe)
 
 NOT SUPPORTED for text db.
 
@@ -183,8 +187,9 @@ the symbol $code.
 
 =cut
 sub get_last_prices {
-    my ($self, $code, $limit) = @_;
+    my ($self, $code, $limit, $timeframe) = @_;
 
+    return get_prices($self, $code, $timeframe) if ($limit==-1);
     die "get_last_prices not supported with text database\n";
 }
 

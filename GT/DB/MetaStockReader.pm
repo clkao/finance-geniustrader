@@ -13,6 +13,7 @@ package GT::DB::MetaStockReader;
 # v1.4 23/05/2005 : fixed a bug in the coding float number format.
 # v1.5 27/05/2005 : fixed a warning with the 'pack' function when a Byte was > 255.
 #		: test if security already exists before putting in the table.
+# v1.6 04/06/2005 : Changed the DB object interface to allow better timeframe support (João Costa)
 
 
 use strict;
@@ -283,7 +284,7 @@ sub get_db_name {
   return $equity->{'NOM'};
 }
 
-=head2 $db->get_prices($code)
+=head2 $db->get_prices($code, $timeframe)
 
 Returns a GT::Prices object containing all known prices for the symbol
 $code.
@@ -291,7 +292,10 @@ $code.
 =cut
 sub get_prices {
 
-  my($self, $isin) = @_;
+  my($self, $isin, $timeframe) = @_;
+  $timeframe = $DAY unless ($timeframe);
+  die "Intraday support not implemented in DB::MetaStockReader" if ($timeframe < $DAY);
+  return GT::Prices->new() if ($timeframe > $DAY);
   my $reg;
   my $file;
   my $unpack = "S S A24";
@@ -316,7 +320,7 @@ sub get_prices {
   }
 
   my $prices = GT::Prices->new();
-  $prices->set_timeframe($DAY);
+  $prices->set_timeframe($timeframe);
 
   $reg = $self->find_isin($isin);
 
@@ -401,7 +405,7 @@ sub convertFloat {
   return $resultat;
 }
 
-=head2 $db->get_last_prices($code, $limit)
+=head2 $db->get_last_prices($code, $limit, $timeframe)
 
 NOT YET SUPPORTED for MetaStockReader module.
 
@@ -410,8 +414,9 @@ the symbol $code.
 
 =cut
 sub get_last_prices {
-    my ($self, $code, $limit) = @_;
+    my ($self, $code, $limit, $timeframe) = @_;
 
+    return get_prices($self, $code, $timeframe) if ($limit==-1);
     die "get_last_prices not yet supported with metastock database\n";
 }
 
