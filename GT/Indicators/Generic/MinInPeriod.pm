@@ -49,11 +49,13 @@ Example of accepted argument list :
 
 =item 10 {I:RSI}
 
-=item 2002-01-03
+=item 2005-01-03
 
 =item 5
 
-=item 2002-04-05 {I:Prices LOW}
+=item 2005-04-05 {I:Prices LOW}
+
+=item "2005-04-05 14:30:00" {I:Prices LOW}
 
 =back
 
@@ -79,7 +81,7 @@ sub calculate {
 		$res = min($res, $val);
 	    }
 	}
-    } elsif ($arg =~/^\d{4}-\d\d-\d\d$/) {
+    } elsif ($arg =~/^\d{4}-\d\d(-\d\d)?( \d\d:\d\d:\d\d)?$/) {
 	my $n = undef;
 	if ($calc->prices->has_date($arg)) {
 	    $n = $calc->prices->date($arg);
@@ -142,7 +144,7 @@ sub calculate_interval {
 	    }
 	    $calc->indicators->set($name, $i, $currentLow);
         }
-    } elsif ($arg =~/^\d{4}-\d\d-\d\d$/) {
+    } elsif ($arg =~/^\d{4}-\d\d(-\d\d)?( \d\d:\d\d:\d\d)?$/) {
 	my $n = undef;
 	if ($calc->prices->has_date($arg)) {
 	    $n = $calc->prices->date($arg);
