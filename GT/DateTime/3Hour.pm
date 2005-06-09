@@ -1,5 +1,6 @@
 package GT::DateTime::3Hour;
 
+# Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # Copyright 2005 João Antunes Costa
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
@@ -46,7 +47,7 @@ sub map_time_to_date {
 	elsif ($hour>=3) {$hour=3;}
 	else {$hour=0;}
 
-    return sprintf("%04d-%02d-%02d_%02d:00:00", $y + 1900, $m + 1, $d, $hour);
+    return sprintf("%04d-%02d-%02d %02d:00:00", $y + 1900, $m + 1, $d, $hour);
 }
 
 1;
