@@ -5,16 +5,17 @@ package GT::DateTime;
 # version 2 or (at your option) any later version.
 
 use strict;
-use vars qw(@ISA @EXPORT $PERIOD_1MIN $PERIOD_5MIN $PERIOD_10MIN
+use vars qw(@ISA @EXPORT $PERIOD_TICK $PERIOD_1MIN $PERIOD_5MIN $PERIOD_10MIN
 	    $PERIOD_15MIN $PERIOD_30MIN $HOUR $PERIOD_3HOUR $DAY $WEEK $MONTH $YEAR %NAMES);
 
 require Exporter;
 @ISA = qw(Exporter);
-@EXPORT = qw($PERIOD_1MIN $PERIOD_5MIN $PERIOD_10MIN
+@EXPORT = qw($PERIOD_TICK $PERIOD_1MIN $PERIOD_5MIN $PERIOD_10MIN
 	     $PERIOD_15MIN $PERIOD_30MIN $HOUR $PERIOD_3HOUR $DAY $WEEK $MONTH $YEAR);
 
 #ALL#  use Log::Log4perl qw(:easy);
 
+$PERIOD_TICK = 1;
 $PERIOD_1MIN = 10;
 $PERIOD_5MIN = 30;
 $PERIOD_10MIN = 40;
@@ -28,6 +29,7 @@ $MONTH = 90;
 $YEAR = 100;
 
 %NAMES = (
+    $PERIOD_TICK => "tick",
     $PERIOD_1MIN => "1min",
     $PERIOD_5MIN => "5min",
     $PERIOD_10MIN => "10min",
@@ -41,6 +43,7 @@ $YEAR = 100;
     $YEAR => "year"
 );
 
+require GT::DateTime::Tick;
 require GT::DateTime::1Min;
 require GT::DateTime::5Min;
 require GT::DateTime::10Min;
@@ -60,7 +63,7 @@ GT::DateTime - Manage TimeFrames and provides date/time helper functions
 =head1 DESCRIPTION
 
 This module exports all the variable describing the available "periods"
-commonly used for trading : $PERIOD_1MIN, $PERIOD_5MIN,
+commonly used for trading : $PERIOD_TICK $PERIOD_1MIN, $PERIOD_5MIN,
 $PERIOD_10MIN, $PERIOD_15MIN, $PERIOD_30MIN, $HOUR, $PERIOD_3HOUR, $DAY, $WEEK, $MONTH, $YEAR.
 
 The timeframes are represented by those variables which are only numbers.
@@ -95,6 +98,7 @@ versa.
 sub map_date_to_time {
     my ($timeframe, $date) = @_;
 
+    $timeframe == $PERIOD_TICK && return GT::DateTime::Tick::map_date_to_time($date);
     $timeframe == $PERIOD_1MIN && return GT::DateTime::1Min::map_date_to_time($date);
     $timeframe == $PERIOD_5MIN && return GT::DateTime::5Min::map_date_to_time($date);
     $timeframe == $PERIOD_10MIN && return GT::DateTime::10Min::map_date_to_time($date);
@@ -111,6 +115,7 @@ sub map_date_to_time {
 sub map_time_to_date {
     my ($timeframe, $time) = @_;
 
+    $timeframe == $PERIOD_TICK && return GT::DateTime::Tick::map_time_to_date($time);
     $timeframe == $PERIOD_1MIN && return GT::DateTime::1Min::map_time_to_date($time);
     $timeframe == $PERIOD_5MIN && return GT::DateTime::5Min::map_time_to_date($time);
     $timeframe == $PERIOD_10MIN && return GT::DateTime::10Min::map_time_to_date($time);
@@ -144,7 +149,7 @@ Returns the list of timeframes that are managed by the DateTime framework.
 =cut
 sub list_of_timeframe {
     return (
-	    $PERIOD_1MIN, $PERIOD_5MIN, $PERIOD_10MIN,
+	    $PERIOD_TICK, $PERIOD_1MIN, $PERIOD_5MIN, $PERIOD_10MIN,
 	    $PERIOD_15MIN, $PERIOD_30MIN, $HOUR, $PERIOD_3HOUR,
 	    $DAY, $WEEK, $MONTH, $YEAR
 	   );
@@ -189,6 +194,8 @@ sub timeframe_ratio {
     {
 	return (1 / timeframe_ratio($second, $first));
     }
+
+	$first == $PERIOD_TICK && die("Cannot set timeframe ratio for tick data");
     $first == $PERIOD_1MIN && return (GT::DateTime::Hour::timeframe_ratio($second) / 60);
     $first == $PERIOD_5MIN && return (GT::DateTime::Hour::timeframe_ratio($second) / 12);
     $first == $PERIOD_10MIN && return (GT::DateTime::Hour::timeframe_ratio($second) / 6);
