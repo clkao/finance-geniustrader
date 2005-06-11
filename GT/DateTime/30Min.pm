@@ -10,7 +10,7 @@ use vars qw();
 
 use GT::DateTime;
 #ALL# use Log::Log4perl qw(:easy);
-use POSIX;
+use Time::Local;
 
 =head1 GT::DateTime::30Min
 
@@ -24,7 +24,7 @@ sub map_date_to_time {
     my ($y, $m, $d) = split /-/, $date;
 	my ($h, $n, ) = split /:/, $time;
 	if ($n >=30) {$n=30;} else {$n=0;}
-    return POSIX::mktime(0, $n, $h, $d, $m - 1, $y - 1900);
+    return timelocal(0, $n, $h, $d, $m - 1, $y - 1900);
 }
 
 sub map_time_to_date {

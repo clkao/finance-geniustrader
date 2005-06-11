@@ -9,7 +9,7 @@ use strict;
 use vars qw();
 
 use GT::DateTime;
-use POSIX;
+use Time::Local;
 
 =head1 GT::DateTime::10Min
 
@@ -28,7 +28,7 @@ sub map_date_to_time {
 	elsif ($n>=20) {$n=20}
 	elsif ($n>=10) {$n=10}
 	else {$n=0}
-    return POSIX::mktime(0, $n, $h, $d, $m - 1, $y - 1900);
+    return timelocal(0, $n, $h, $d, $m - 1, $y - 1900);
 }
 
 sub map_time_to_date {

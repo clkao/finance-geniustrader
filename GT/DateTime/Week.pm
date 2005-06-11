@@ -10,7 +10,7 @@ use vars qw();
 use GT::DateTime;
 use Date::Calc qw(Week_of_Year Monday_of_Week);
 #ALL# use Log::Log4perl qw(:easy);
-use POSIX;
+use Time::Local;
 
 =head1 GT::DateTime::Week
 
@@ -24,7 +24,7 @@ sub map_date_to_time {
     my ($date) = @_;
     my ($y, $w) = split /-/, $date;
     my ($year, $month, $day) = Monday_of_Week($w, $y);
-    return POSIX::mktime(0, 0, 0, $day, $month - 1, $year - 1900);
+    return timelocal(0, 0, 0, $day, $month - 1, $year - 1900);
 }
 
 sub map_time_to_date {

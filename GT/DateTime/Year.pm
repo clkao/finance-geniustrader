@@ -9,7 +9,7 @@ use vars qw();
 
 use GT::DateTime;
 #ALL# use Log::Log4perl qw(:easy);
-use POSIX;
+use Time::Local;
 
 =head1 GT::DateTime::Year
 
@@ -19,7 +19,7 @@ YYYY
 =cut
 sub map_date_to_time {
     my ($date) = @_;
-    return POSIX::mktime(0, 0, 0, 1, 0, $date - 1900);
+    return timelocal(0, 0, 0, 1, 0, $date - 1900);
 }
 
 sub map_time_to_date {

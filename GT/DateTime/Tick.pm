@@ -1,4 +1,4 @@
-package GT::DateTime::15Min;
+package GT::DateTime::Tick;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # Copyright 2005 João Antunes Costa
@@ -11,32 +11,25 @@ use vars qw();
 use GT::DateTime;
 use Time::Local;
 
-=head1 GT::DateTime::15Min
+=head1 GT::DateTime::Tick
 
-This module treat dates describing a quarter-hour. They have the following format :
-YYYY-MM-DD HH:NN:00
+This module treat dates describing ticks. They have the following format :
+YYYY-MM-DD HH:NN:SS
 
 =cut
 sub map_date_to_time {
     my ($value) = @_;
 	my ($date, $time) = split / /, $value;
+	$time = '00:00:00' unless (defined($time));
     my ($y, $m, $d) = split /-/, $date;
-	my ($h, $n, ) = split /:/, $time;
-	if ($n >=45) {$n=45}
-	elsif ($n>=30) {$n=30}
-	elsif ($n>=15) {$n=15}
-	else {$n=0}
-    return timelocal(0, $n, $h, $d, $m - 1, $y - 1900);
+	my ($h, $n, $s) = split /:/, $time;
+    return timelocal($s, $n, $h, $d, $m - 1, $y - 1900);
 }
 
 sub map_time_to_date {
     my ($time) = @_;
     my ($sec, $min, $hour, $d, $m, $y, $wd, $yd) = localtime($time);
-	if ($min>=45) {$min=45;}
-	elsif ($min>=30) {$min=30;}
-	elsif ($min>=15) {$min=15;}
-	else {$min=0;}
-    return sprintf("%04d-%02d-%02d %02d:%02d:00", $y + 1900, $m + 1, $d, $hour, $min);
+    return sprintf("%04d-%02d-%02d %02d:%02d:%02d", $y + 1900, $m + 1, $d, $hour, $min, $sec);
 }
 
 1;

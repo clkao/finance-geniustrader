@@ -9,7 +9,7 @@ use strict;
 use vars qw();
 
 use GT::DateTime;
-use POSIX;
+use Time::Local;
 
 =head1 GT::DateTime::3Hour
 
@@ -31,7 +31,7 @@ sub map_date_to_time {
 	elsif ($h>=6) {$h=6}
 	elsif ($h>=3) {$h=3}
 	else {$h=0}
-    return POSIX::mktime(0, 0, $h, $d, $m - 1, $y - 1900);
+    return timelocal(0, 0, $h, $d, $m - 1, $y - 1900);
 }
 
 sub map_time_to_date {

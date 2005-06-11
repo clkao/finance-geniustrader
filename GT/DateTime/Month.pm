@@ -9,7 +9,7 @@ use vars qw();
 
 use GT::DateTime;
 #ALL# use Log::Log4perl qw(:easy);
-use POSIX;
+use Time::Local;
 
 =head1 GT::DateTime::Month
 
@@ -20,7 +20,7 @@ YYYY-MM
 sub map_date_to_time {
     my ($date) = @_;
     my ($y, $m) = split /\//, $date;
-    return POSIX::mktime(0, 0, 0, 1, $m - 1, $y - 1900);
+    return timelocal(0, 0, 0, 1, $m - 1, $y - 1900);
 }
 
 sub map_time_to_date {

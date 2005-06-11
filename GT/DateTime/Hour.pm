@@ -10,7 +10,7 @@ use vars qw();
 
 use GT::DateTime;
 #ALL# use Log::Log4perl qw(:easy);
-use POSIX;
+use Time::Local;
 
 =head1 GT::DateTime::Hour
 
@@ -24,7 +24,7 @@ sub map_date_to_time {
     my ($y, $m, $d) = split /-/, $date;
 	$time = "00:00:00" if (!defined($time));
 	my ($h, , ) = split /:/, $time;
-    return POSIX::mktime(0, 0, $h, $d, $m - 1, $y - 1900);
+    return timelocal(0, 0, $h, $d, $m - 1, $y - 1900);
 }
 
 sub map_time_to_date {
