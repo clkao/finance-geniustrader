@@ -21,12 +21,12 @@ use GT::Graphics::Tools qw(:axis :color);
 use GT::BackTest::Spool;
 use GT::Portfolio;
 use GT::DateTime;
-use GT::Tools qw(:conf);
+use GT::Tools qw(:conf :timeframe);
 use Getopt::Long;
 
 GT::Conf::load();
 
-=head1 ./graphic.pl [ --timeframe=day|week|month ] [ --nb-item=100 ] \
+=head1 ./graphic.pl [ --timeframe=timeframe ] [ --nb-item=100 ] \
 		    [ --start=1999-02-01 ] [ --end=2001-03-23 ] \
 		    [ --type=candle|candlevol|candlevolplace|barchart|line|none ] [ --volume ]
 		    [ --volume-height=150 ] [ --title="Daily Chart" ] \
@@ -34,6 +34,11 @@ GT::Conf::load();
 		    [ additionnal graphical elements ] \
                     [ --file=conf ] [ --driver={GD|ImageMagick} ] \
 		    <code>
+
+timeframe can be any of the available modules in GT/DateTime.  
+At the time of this writing that includes:
+
+1min|5min|10min|15min|30min|hour|3hour|Day|Week|Month|Year
 
 =head1 Additionnal graphical elements
 
@@ -147,7 +152,7 @@ Example:
 
 =cut
 
-my $timeframe = "";
+my $timeframe = 'day';
 my $nb_item = 120;
 my ($start, $end) = ("", "");
 my ($width, $height) = ("", "200");
@@ -158,7 +163,7 @@ my $vheight = 50;
 my @add;
 my @options;
 my $title = '';
-my $max_loaded_items = 0;
+my $max_loaded_items = -1;
 my $filename = "";
 my $opt_driver = "";
 
@@ -194,22 +199,8 @@ foreach (@options) {
 
 my $code = shift;
 my $db = create_standard_object("DB::" . GT::Conf::get("DB::module"));
-my $q;
-if ($max_loaded_items) {
-    $q = $db->get_last_prices($code, $max_loaded_items);
-} else {
-    $q = $db->get_prices($code);
-}
-my $tf = $q->timeframe;
-
-my $calc = GT::Calculator->new($q);
-$calc->set_code($code);
-
-if ($timeframe) {
-    $tf = GT::DateTime::name_to_timeframe($timeframe);
-    $calc->set_current_timeframe($tf);
-    $q = $calc->prices;
-}
+$timeframe = GT::DateTime::name_to_timeframe($timeframe);
+my ($q, $calc) = get_timeframe_data($code, $timeframe, $db, $max_loaded_items);
 
 my ($first, $last) = ($q->count() - $nb_item, $q->count() - 1);
 $first = 0 if ($first < 0);
@@ -315,9 +306,13 @@ $axis->set_custom_ticks(
 	build_axis_for_interval($ds->get_value_range(), 1, 0)
     );
 
-if ($tf == $DAY) {
+if ($timeframe <= $PERIOD_5MIN) {
+	$axis2->set_custom_ticks(build_axis_for_timeframe($q, $HOUR, 1), 0);
+} elsif ($timeframe < $DAY) {
+	$axis2->set_custom_ticks(build_axis_for_timeframe($q, $DAY, 1), 0);
+} elsif ($timeframe == $DAY) {
     my $space = $scale_m->convert_to_x_coordinate(
-	    int(GT::DateTime::timeframe_ratio($MONTH, $tf))
+	    int(GT::DateTime::timeframe_ratio($MONTH, $timeframe))
 	) - $scale_m->convert_to_x_coordinate(0);
     if ($space <= 5) {
 	$axis2->set_custom_big_ticks(
@@ -329,9 +324,9 @@ if ($tf == $DAY) {
 	    );
 	$axis2->set_custom_ticks(build_axis_for_timeframe($q, $WEEK, 0), 1);
     }
-} elsif ($tf == $WEEK) {
+} elsif ($timeframe == $WEEK) {
     my $space = $scale_m->convert_to_x_coordinate(
-	    int(GT::DateTime::timeframe_ratio($MONTH, $tf))
+	    int(GT::DateTime::timeframe_ratio($MONTH, $timeframe))
 	) - $scale_m->convert_to_x_coordinate(0);
     if ($space <= 5) {
 	$axis2->set_custom_big_ticks(
@@ -343,7 +338,7 @@ if ($tf == $DAY) {
 	    );
     }
     #$axis2->set_custom_ticks(build_axis_for_timeframe($q, $WEEK, 0), 1);
-} elsif ($tf == $MONTH) {
+} elsif ($timeframe == $MONTH) {
     $axis2->set_custom_big_ticks(build_axis_for_timeframe($q, $YEAR, 1, 1), 1);
     #$axis2->set_custom_ticks(build_axis_for_timeframe($q, $WEEK, 0), 1);
 }
@@ -370,7 +365,7 @@ if ($type eq "candle") {
 } elsif ($type eq "none") {
     # Nothing
 } else {
-    die "Bad type ($type). Can be candle, barchart, line or none.\n";
+    die "Bad type ($type). Can be candle, candlevol, candlevolplace, barchart, line or none.\n";
 }
 
 my @datasource;

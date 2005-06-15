@@ -11,28 +11,36 @@ use vars qw($db);
 
 use GT::Prices;
 use GT::Calculator;
-use GT::Report;
 use GT::Conf;
 use GT::Eval;
 use Getopt::Long;
+use GT::Tools qw(:timeframe);
 
 GT::Conf::load();
 
-=head1 ./test_signals.pl [ --full ] [ --verbose ] <signalname> <code> [args...]
+=head1 ./display_signal.pl [ --full ] [ --timeframe=timeframe ] <signalname> <code> [args...]
+
+timeframe can be any of the available modules in GT/DateTime.  
+At the time of this writing that includes:
+
+1min|5min|10min|15min|30min|hour|3hour|Day|Week|Month|Year
 
 Examples:
-./test_signals.pl S:Prices:GapUp IBM
-./test_signals.pl --full S:I:RSIUp 13000 18
+
+./display_signal.pl S:Prices:GapUp IBM
+
+./display_signal.pl --full S:I:RSIUp 13000 18
 
 Args are passed to the new call that will create the signal.
 
 =cut
 
 # Get all options
-my ($full, $verbose, $start, $end) = (0, 0, '', '');
+my ($full, $start, $end, $timeframe) = (0, '', '', 'day');
 Getopt::Long::Configure("require_order");
-GetOptions('full!' => \$full, "verbose" => \$verbose,
+GetOptions('full!' => \$full, "timeframe=s" => \$timeframe,
 	   "start=s" => \$start, "end=s" => \$end);
+$timeframe = GT::DateTime::name_to_timeframe($timeframe);
 
 # Create the signal according to the arguments
 my $signal_module = shift;
@@ -43,10 +51,7 @@ my $signal = create_standard_object("$signal_module", @ARGV);
 # Create the complete framework
 my $db = create_standard_object("DB::" . GT::Conf::get("DB::module"));
 my $signal_name = $signal->get_name;
-my $q = $db->get_prices($code);
-my $calc = GT::Calculator->new($q);
-
-$calc->set_code($code);
+my ($q, $calc) = get_timeframe_data($code, $timeframe, $db);
 my $last = $q->count() - 1;
 my $first = $last - 200;
 
@@ -81,4 +86,3 @@ for(my $i = $first; $i <= $last; $i++)
 }
 
 $db->disconnect;
-
