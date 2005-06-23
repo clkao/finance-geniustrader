@@ -91,7 +91,7 @@ sub display {
 	my $high = $scale->convert_to_y_coordinate($data->[$HIGH]);
 	$self->{'width'} = $holewidth * $data->[$VOLUME] / $holevolume;
 	my $x = $scale->convert_to_x_coordinate($i);
-	if ($open < $close) {
+    if ($data->[$OPEN] < $data->[$CLOSE]) {
 	
 	    $driver->filled_rectangle($picture, 
 		$zone->absolute_coordinate($x + 1, $open + 1),
