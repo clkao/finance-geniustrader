@@ -128,10 +128,11 @@ throw an error if you try to retrieve data in timeframes smaller than daily.
 sub get_last_prices {
     my ($self, $code, $limit, $timeframe) = @_;
 
-    my $q = GT::Prices->new($limit);
-
     $timeframe = $DAY unless($timeframe);
     die "The beancounter DB module does not support intraday data.\n" if ($timeframe < $DAY);
+    return GT::Prices->new() if ($timeframe > $DAY);
+
+    my $q = GT::Prices->new($limit);
     $q->set_timeframe($timeframe);
 
     my $sql = qq{ SELECT day_open, day_high, day_low, day_close, volume, date
