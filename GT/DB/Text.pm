@@ -46,6 +46,9 @@ sub new {
 
     my $self = { "directory" => GT::Conf::get("DB::Text::directory")};
 
+    GT::Conf::default('DB::Text::options', '( "," , 2 , ".csv" , ("date" => 0, "open" => 1, "high" => 2, "low" => 3, "close" => 4, "volume" => 5, "Adj. Close*" => 6) )');
+
+
     my $options=GT::Conf::get("DB::Text::options");
 #( "\t" , 2 , ".txt" , ( 'open' , 0, 'high' , 1, 'low' , 2, 'close' , 3, %'volume' , 4, 'date' , 5 ) )
     if ( $options =~/^\(\s+\"(.+)\"\s+,\s+(.+)\s+,\s+\"(.+)\"\s+,\s+(\(.+)\s+\)$/ )
