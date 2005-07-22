@@ -9,6 +9,8 @@ use GT::Graphics::Driver;
 use GT::Graphics::Zone;
 use Image::Magick;
 
+our @ISA = qw(GT::Graphics::Driver);
+
 =head1 GT::Graphics::Driver::ImageMagick
 
 This driver implements the drawing primitives using the ImageMagick Perl extension.

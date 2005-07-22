@@ -9,6 +9,8 @@ use GT::Graphics::Driver;
 use GT::Graphics::Zone;
 use SVG;
 
+our @ISA = qw(GT::Graphics::Driver);
+
 =head1 GT::Graphics::Driver::SVG
 
 =head2 Overview

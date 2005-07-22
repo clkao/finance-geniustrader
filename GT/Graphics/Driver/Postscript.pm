@@ -10,6 +10,8 @@ use GT::Graphics::Zone;
 use PostScript::Simple;
 use GT::Conf;
 
+our @ISA = qw(GT::Graphics::Driver);
+
 =head1 GT::Graphics::Driver::Postscript
 
 This driver implements the drawing primitives using the PostScripts::Simple-module.
