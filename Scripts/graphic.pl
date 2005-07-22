@@ -258,6 +258,9 @@ if ($volume and ($type ne "none")) {
     $axis_v->set_custom_ticks([]);
     $z_v->set_axis_left($axis_v);
     my $vol = GT::Graphics::Object::Histogram->new($ds_v, $z_v, $calc);
+    my $vol_color = GT::Conf::get('Graphic::Volume::Color');
+    $vol->set_foreground_color($vol_color) if (defined($vol_color));
+
     $graphic->add_object($vol);
 }
 

@@ -25,7 +25,7 @@ This graphical object display an histogram.
 
 sub init {
     my ($self, $calc) = @_;
-    
+
     # Default values ...
     $self->{'fg_color'} = GT::Conf::get("Graphic::Histogram::Color");
     $self->{'color_ds'} = undef;
@@ -35,6 +35,7 @@ sub init {
     }
 
     if (defined($calc) && $self->{'fg_color'} =~ /^Indicators/) {
+      $self->{'fg_color'} = $color;
       $self->{'color_ds'} = GT::Graphics::DataSource::GenericIndicatorResults->new($calc, $self->{'fg_color'});
     }
     else {
