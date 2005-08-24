@@ -62,6 +62,8 @@ use GT::Graphics::Tools qw(:color) :
 Return a color. You can ask it by its name ("blue", "light blue", ..) or
 by its RGB code "[125,164,198]".
 
+=back
+
 =cut
 sub build_axis_for_timeframe {
     my ($prices, $timeframe, $put_label, $period) = @_;

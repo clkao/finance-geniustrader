@@ -120,7 +120,7 @@ sub new_position {
     return $position;
 }
 
-=item C<< $p->apply_order_on_position($position, $order, $price, $date)
+=item C<< $p->apply_order_on_position($position, $order, $price, $date) >>
 
 Add the given order to the position and modify the money available in the
 portfolio accordingly.

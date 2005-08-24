@@ -18,6 +18,8 @@ use GT::Tools qw(:generic);
 
 =head1 Trend Following System (TFS)
 
+If only one argument is present, this is the long signal. A short signal is only considered if a second argument is present.
+
 =cut
 
 sub initialize {

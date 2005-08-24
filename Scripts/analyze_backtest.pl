@@ -19,7 +19,7 @@ GT::Conf::load();
 
 =head1 NAME
 
-analyze_portfolio.pl
+analyze_backtest.pl
 
 =head1 SYNOPSIS
 
@@ -27,7 +27,7 @@ analyze_portfolio.pl
 
 =head1 OPTIONS
 
-=over
+=over 4
 
 =item --set=SETNAME
 
@@ -40,6 +40,7 @@ For Example, --template="analyze_backtest.mpl"
 The template directory is defined as Template::directory in the options file.
 Each template can be predefined by including it into the options file
 For example, Template::analyze_backtest analyze_backtest.mpl
+
 =back
 
 =head1 DESCRIPTION

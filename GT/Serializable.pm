@@ -61,7 +61,9 @@ the name of elements used to store the object in the XML file.
 =item C<< $self->store("file" | \*FILE) >>
 
 =item C<< my $a = Module->create_from_file("file" | \*FILE) >>
-'
+
+=back
+
 =cut
 sub as_string {
     my $self = shift;
