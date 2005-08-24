@@ -10,7 +10,6 @@ use vars qw(@NAMES @ISA);
 use GT::Brokers;
 use GT::Eval;
 use GT::Conf;
-use Carp::Datum;
 
 @NAMES = ("NoCosts[]");
 @ISA = qw(GT::Brokers);
@@ -24,13 +23,12 @@ This module will calculate no commissions or charges.
 =cut
 
 sub new {
-    DFEATURE my $f, "new Broker";
     my $type = shift;
     my $class = ref($type) || $type;
     my $args = shift;
     my $self = {};
 
-    return DVAL manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
+    return manage_object(\@NAMES, $self, $class, $self->{'args'}, '');
 }
 
 =head2 $broker->calculate_order_commission($order)
