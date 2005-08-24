@@ -35,7 +35,6 @@ sub init {
     }
 
     if (defined($calc) && $self->{'fg_color'} =~ /^Indicators/) {
-      $self->{'fg_color'} = $color;
       $self->{'color_ds'} = GT::Graphics::DataSource::GenericIndicatorResults->new($calc, $self->{'fg_color'});
     }
     else {
@@ -114,6 +113,7 @@ sub display {
 sub set_foreground_color {
     my ($self, $color) = @_;
     if ( $self->{'calc'} ne "" && $color =~ /^Indicators/) {
+      $self->{'fg_color'} = $color;
       $self->{'color_ds'} = GT::Graphics::DataSource::GenericIndicatorResults->new($self->{'calc'}, $color );
     }
     else {
