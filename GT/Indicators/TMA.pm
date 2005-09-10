@@ -5,12 +5,13 @@ package GT::Indicators::TMA;
 # version 2 or (at your option) any later version.
 
 use strict;
-use vars qw(@ISA @NAMES);
+use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
 use GT::Indicators;
 
 @ISA = qw(GT::Indicators);
-@NAMES = ("TMA[#1]");
+@NAMES = ("TMA[#1,#2]");
+@DEFAULT_ARGS = (20, "{I:Prices CLOSE}");
 
 =head1 GT::Indicators::TMA
 
@@ -26,7 +27,7 @@ TMA(5) = (1/9) * (1 * Close(i) + 2 * Close(i - 1) + 3 * Close(i - 2) + 2 * Close
 
 GT::Indicators::TMA->new()
 GT::Indicators::TMA->new([50])
-GT::Indicators::TMA->new([30], "OPEN", $GET_OPEN)
+GT::Indicators::TMA->new([30], {I:Prices OPEN})
 
 =head2 Links
 
@@ -34,27 +35,11 @@ http://www.equis.com/free/taaz/movingaverages.html
 http://www.ivorix.com/en/products/tech/smooth/tma.html
 
 =cut
-sub new {
-    my $type = shift;
-    my $class = ref($type) || $type;
-    my ($args, $key, $func) = @_;
-    my $self = { 'args' => defined($args) ? $args : [ 20 ] };
-    
-    # User defined function to get data or default with close prices
-    if (defined($func)) {
-	$self->{'_func'} = $func;
-    } else {
-	$self->{'_func'} = $GET_LAST;
-	$key = 'LAST';
-    }
-
-    return manage_object(\@NAMES, $self, $class, $self->{'args'}, $key);
-}
 
 sub initialize {
     my ($self) = @_;
 
-    $self->add_prices_dependency($self->{'args'}[0]);
+    $self->add_prices_dependency($self->{'args'}->get_arg_constant(1));
 }
 
 =head2 GT::Indicators::TMA::calculate($calc, $day)
@@ -62,8 +47,7 @@ sub initialize {
 =cut
 sub calculate {
     my ($self, $calc, $i) = @_;
-    my $nb = $self->{'args'}[0];
-    my $getvalue = $self->{'_func'};
+    my $nb = $self->{'args'}->get_arg_constant(1);
     my $name = $self->get_name;
     my $weight = 0;
     my $sum_of_weight = 0;
@@ -96,7 +80,7 @@ sub calculate {
 	} else {
 	    $weight -= 1;
 	}
-	$sum += &$getvalue($calc, $n) * $weight;
+	$sum += $self->{'args'}->get_arg_values($calc, $n, 2) * $weight;
 	$sum_of_weight += $weight;
     }
     $calc->indicators->set($name, $i, $sum / $sum_of_weight);

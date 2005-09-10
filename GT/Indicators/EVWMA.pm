@@ -5,13 +5,14 @@ package GT::Indicators::EVWMA;
 # version 2 or (at your option) any later version.
 
 use strict;
-use vars qw(@ISA @NAMES);
+use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
 use GT::Indicators;
 use GT::Prices;
 
 @ISA = qw(GT::Indicators);
 @NAMES = ("EVWMA");
+@DEFAULT_ARGS = ("{I:Prices CLOSE}");
 
 =head1 GT::Indicators::EVWMA
 
@@ -39,24 +40,6 @@ GT::Indicators::EVWMA->new()
 http://www.christian-fries.de/evwma/
 http://www.linnsoft.com/tour/techind/evwma.htm
 
-=cut
-sub new {
-    my $type = shift;
-    my $class = ref($type) || $type;
-    my ($args, $key, $func) = @_;
-    my $self = { 'args' => defined($args) ? $args : [] };
-    
-    # User defined function to get data or default with close prices
-    if (defined($func)) {
-	$self->{'_func'} = $func;
-    } else {
-	$self->{'_func'} = $GET_LAST;
-	$key = 'LAST';
-    }
-
-    return manage_object(\@NAMES, $self, $class, $self->{'args'}, $key);
-}
-
 =head2 GT::Indicators::EVWMA::calculate($calc, $day)
 
 =cut
@@ -83,12 +66,12 @@ sub calculate {
 	if ($n == 0) {
 	    
 	    # Set eVWMA(0) as Today's Close
-	    $evwma = &$getvalue($calc, $n);
+	    $evwma = self->{'args'}->get_arg_values($calc, $i, $n);
 	    
 	} else {
 
 	    # Calculate the following eVWMA
-	    $evwma = (($floating_shares - $prices->at($n)->[$VOLUME]) * &$getvalue($calc, $n - 1) + ($prices->at($n)->[$VOLUME] * &$getvalue($calc, $n))) / $floating_shares;
+	    $evwma = (($floating_shares - $prices->at($n)->[$VOLUME]) * self->{'args'}->get_arg_values($calc, $i, $n - 1) + ($prices->at($n)->[$VOLUME] * self->{'args'}->get_arg_values($calc, $i, $n))) / $floating_shares;
 	}
         $calc->indicators->set($evwma_name, $i, $evwma);
     }
