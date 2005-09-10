@@ -60,6 +60,7 @@ so that they match your real directories of course:
 <pre style="background-color: #eaeaea;">
 DB::module Text
 DB::text::directory /home/rhertzog/geniustrader/data
+DB::text::options ( "	" , 0 , ".txt" , ("date" => 5, "open" => 0, "high" => 1, "low" => 2, "close" => 3, "volume" => 4, "Adj. Close*" => 3) )
 
 Brokers::module SelfTrade
 
