@@ -89,11 +89,14 @@ sub calculate {
 
 sub calculate_interval {
     my ($self, $calc, $first, $last) = @_;
-    my $indic = $calc->{'_indics'};
-    my $macd_name = $self->{'names'}[0];
-    my $signal_name = $self->{'names'}[1];
-    my $diff_name = $self->{'names'}[2];
+    my $indic = $calc->indicators;
+    my $macd_name = $self->get_name(0);
+    my $signal_name = $self->get_name(1);
+    my $diff_name = $self->get_name(2);
     my $nb = $self->{'args'}->get_arg_constant(2);
+	my $first_ema_name = $self->{'first_ema'}->get_name(0);
+	my $second_ema_name = $self->{'second_ema'}->get_name(0);
+	my $third_ema_name = $self->{'third_ema'}->get_name(0);
 
    ($first, $last) = $self->update_interval($calc, $first, $last);
 
@@ -112,12 +115,12 @@ sub calculate_interval {
                defined($indic->{'values'}{$diff_name}[$i]) ? 1 : 0);
 
     # Get the EMA values and calculate and stores the MACD values
-    my $first_ema_value = $indic->get($self->{'first_ema'}->{'names'}[0], $i);
-    my $second_ema_value = $indic->get($self->{'second_ema'}->{'names'}[0], $i);
+    my $first_ema_value = $indic->get($first_ema_name, $i);
+    my $second_ema_value = $indic->get($second_ema_name, $i);
 
      #No need to calculate the 3rd EMA here, check_dependecies does it for us
     #$self->{'third_ema'}->calculate($calc, $i);
-    my $third_ema_value = $indic->get($self->{'third_ema'}->{'names'}[0], $i);
+    my $third_ema_value = $indic->get($third_ema_name, $i);
 
     my $macd = $first_ema_value - $second_ema_value;
     my $signal = $third_ema_value;
