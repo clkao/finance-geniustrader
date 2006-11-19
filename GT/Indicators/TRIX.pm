@@ -59,12 +59,12 @@ sub initialize {
     my ($self) = @_;
 
     $self->{'ema1'} = GT::Indicators::EMA->new( [ $self->{'args'}->get_arg_names() ] );
-    $self->{'ema2'} = 
-      GT::Indicators::EMA->new([ $self->{'args'}->get_arg_names(1) ], "EMA of ema1", 
-			       sub { $_[0]->indicators->get($self->{'ema1'}->get_name, $_[1]) });
-    $self->{'ema3'} = 
-      GT::Indicators::EMA->new([ $self->{'args'}->get_arg_names(1) ], "EMA of ema2", 
-			       sub { $_[0]->indicators->get($self->{'ema2'}->get_name, $_[1]) });
+
+    $self->{'ema2'} = GT::Indicators::EMA->new([ $self->{'args'}->get_arg_names(1),
+        "{I:EMA @{[$self->{'ema1'}->{'args'}->get_arg_names()]}}" ]);
+
+    $self->{'ema3'} = GT::Indicators::EMA->new([ $self->{'args'}->get_arg_names(1),
+        "{I:EMA @{[$self->{'ema2'}->{'args'}->get_arg_names()]}}" ]);
 }
 
 sub calculate {

@@ -75,20 +75,20 @@ sub initialize {
     # Initialize e1, e2, e3, e4, e5 and e6
     $self->{'e1'} = GT::Indicators::EMA->new([ $self->{'args'}[0] ]);
     
-    $self->{'e2'} = GT::Indicators::EMA->new([ $self->{'args'}[0] ],
-    "EMA of e1", sub { $_[0]->indicators->get($self->{'e1'}->get_name, $_[1]) });
-    
-    $self->{'e3'} = GT::Indicators::EMA->new([ $self->{'args'}[0] ],
-    "EMA of e2", sub { $_[0]->indicators->get($self->{'e2'}->get_name, $_[1]) });
-    
-    $self->{'e4'} = GT::Indicators::EMA->new([ $self->{'args'}[0] ],
-    "EMA of e3", sub { $_[0]->indicators->get($self->{'e3'}->get_name, $_[1]) });
-    
-    $self->{'e5'} = GT::Indicators::EMA->new([ $self->{'args'}[0] ],
-    "EMA of e4", sub { $_[0]->indicators->get($self->{'e4'}->get_name, $_[1]) });
-    
-    $self->{'e6'} = GT::Indicators::EMA->new([ $self->{'args'}[0] ],
-    "EMA of e5", sub { $_[0]->indicators->get($self->{'e1'}->get_name, $_[1]) });
+    $self->{'e2'} = GT::Indicators::EMA->new([ $self->{'args'}[0],
+        "{I:EMA @{[$self->{'e1'}->{'args'}->get_arg_names()]}}" ]);
+
+    $self->{'e3'} = GT::Indicators::EMA->new([ $self->{'args'}[0],
+        "{I:EMA @{[$self->{'e2'}->{'args'}->get_arg_names()]}}" ]);
+
+    $self->{'e4'} = GT::Indicators::EMA->new([ $self->{'args'}[0],
+        "{I:EMA @{[$self->{'e3'}->{'args'}->get_arg_names()]}}" ]);
+
+    $self->{'e5'} = GT::Indicators::EMA->new([ $self->{'args'}[0],
+        "{I:EMA @{[$self->{'e4'}->{'args'}->get_arg_names()]}}" ]);
+
+    $self->{'e6'} = GT::Indicators::EMA->new([ $self->{'args'}[0],
+        "{I:EMA @{[$self->{'e5'}->{'args'}->get_arg_names()]}}" ]);
 
     $self->add_indicator_dependency($self->{'e1'}, $self->{'args'}[0] * 5 - 4);
     $self->add_indicator_dependency($self->{'e2'}, $self->{'args'}[0] * 4 - 3);
