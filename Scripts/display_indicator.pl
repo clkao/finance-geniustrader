@@ -15,6 +15,7 @@ use GT::Eval;
 use Getopt::Long;
 use GT::DateTime;
 use GT::Tools qw(:timeframe);
+use Pod::Usage;
 
 GT::Conf::load();
 
@@ -43,8 +44,8 @@ GetOptions('full!' => \$full, "last-record" => \$last_record,
 	   "start=s" => \$start, "end=s" => \$end, "timeframe=s" => \$timeframe);
 $timeframe = GT::DateTime::name_to_timeframe($timeframe);
 # Create the indicator according to the arguments
-my $indicator_module = shift;
-my $code = shift;
+my $indicator_module = shift || pod2usage(verbose => 2);
+my $code = shift || pod2usage(verbose => 2);
 
 my $indicator = create_standard_object("$indicator_module",
 					@ARGV);

@@ -23,11 +23,18 @@ use GT::Portfolio;
 use GT::DateTime;
 use GT::Tools qw(:conf :timeframe);
 use Getopt::Long;
+use Pod::Usage;
 
 GT::Conf::load();
 
-=head1 ./graphic.pl [ --timeframe=timeframe ] [ --nb-item=100 ] \
-		    [ --start=1999-02-01 ] [ --end=2001-03-23 ] \
+=head1 NAME
+
+graphic.pl - generate charts in png format.
+
+=head1 SYNOPSIS
+
+./graphic.pl [ --timeframe=timeframe ] [ --nb-item=100 ] \
+		    [ --start=2005-06-01 ] [ --end=2006-01-01 ] \
 		    [ --type=candle|candlevol|candlevolplace|barchart|line|none ] [ --volume ]
 		    [ --volume-height=150 ] [ --title="Daily Chart" ] \
 		    [ --width=200 ] [ --height=230 ] [ --logarithmic ] \
@@ -35,18 +42,42 @@ GT::Conf::load();
                     [ --file=conf ] [ --driver={GD|ImageMagick} ] \
 		    <code>
 
-timeframe can be any of the available modules in GT/DateTime.  
-At the time of this writing that includes:
+=head2 Use "graphic.pl -man" to list all available options
 
-1min|5min|10min|15min|30min|hour|3hour|Day|Week|Month|Year
 
-=head1 Additionnal graphical elements
+=head1 DESCRIPTION
 
-Here's what it can look like :
+graphic.pl can generate charts in png format, including indicators and system signals,
+either as overlays of the original price data, or in different regions of the chart.
 
-  --add="New-Zone(100)" --add="Set-Scale(0,100)" --add="set-title(RSI,tiny)" \
-  --add="Histogram(Indicators::MOM)" \
+Various options are available to control color, size and other graphic properties.
+
+=head1 ADDITIONNAL GRAPHICAL ELEMENTS
+
+By default, only the price will be plotted, however, you can add other indicators,
+either as overlays or in different zones of the chart.
+
+To plot overlays, simply add them to the graphic. For instance:
+
+--add="Curve(Indicators::EMA 50, blue)"
+--add="Curve(Indicators::EMA 200, red)"
+
+To plot indicators in a different zone, first create a new-zone, then add the indicators:
+
+  --add="New-Zone(100)"
+  --add="Histogram(I:MACD/3, brown)"
+
+  --add="New-Zone(100)"
+  --add="Curve(I:MACD/1, red)"
+  --add="Curve(I:MACD/2, green)"
+
+
+  --add="New-Zone(100)"
+  --add="Set-Scale(0,100)" --add="set-title(RSI,tiny)" \
   --add="Curve(Indicators::RSI/3)"
+
+Full details about the available methods you can use with the --add option follow.
+
 
 =head2 New-Zone(height, [left, right, top, bottom])
 
@@ -137,13 +168,38 @@ This returns a portfolio that has been saved for a backtest of the
 system "systemname". The given directory must be a spool
 of backtests.
 
+=head1 PARAMETERS
+
+=head2 --timeframe
+
+The timeframe used to plot the graphic. Defaults to daily data.
+Valid values include:
+tick|1min|5min|10min|15min|30min|hour|2hour|3hour|4hour|day|week|month|year
+
+=head2 --nb-item=n
+
+Plot n periods in the given timeframe.
+
+=head2 --start=yyyy-mm-dd hh:nn:ss
+
+The start date used to plot the graphic.
+
+=head2 --end=yyyy-mm-dd hh:nn:ss
+
+The end date used to plot the graphic. This option overrides the --nb-item option.
+
+=head2 --type=candle|candlevol|candlevolplace|barchart|line|none
+
+The type of graphic to plot. none causes the price not to be displayed, however, overlays
+can still be sketched in the graphic.
+
 =head2 Configuration-File ( --file=conf )
 
 With this option, additional parameters are read from the
 configurationfile conf. Each line in this file corresponds to a
 command line parameter. Lines starting with # are ignored.
 
-Example:
+=head1 EXAMPLES
 
    --title=Stock of %c
    --add=Switch-Zone(0)
@@ -152,7 +208,7 @@ Example:
 
 =cut
 
-my $timeframe = 'day';
+my $tf = 'day';
 my $nb_item = 120;
 my ($start, $end) = ("", "");
 my ($width, $height) = ("", "200");
@@ -166,8 +222,9 @@ my $title = '';
 my $max_loaded_items = -1;
 my $filename = "";
 my $opt_driver = "";
+my $man = 0;
 
-Getopt::Long::Configure("pass_through");
+Getopt::Long::Configure("pass_through","auto_help");
 GetOptions("file=s" => \$filename );
 
 if ( open(CONF, "<$filename") ) {
@@ -182,7 +239,7 @@ if ( open(CONF, "<$filename") ) {
 }
 
 Getopt::Long::Configure("no_pass_through");
-GetOptions("timeframe=s" => \$timeframe, "nb-item=i" => \$nb_item,
+GetOptions("timeframe=s" => \$tf, "nb-item=i" => \$nb_item,
 	   "start=s" => \$start, "end=s" => \$end,
 	   "width=i" => \$width, "height=i" => \$height,
 	   "type=s" => \$type, "volume!" => \$volume,
@@ -190,16 +247,26 @@ GetOptions("timeframe=s" => \$timeframe, "nb-item=i" => \$nb_item,
 	   "max-loaded-items=i" => \$max_loaded_items,
 	   "logarithmic!" => \$logarithmic, "add=s" => \@add,
 	   "option=s" => \@options, "title=s" => \$title,
-	   "file=s" => \$filename, "driver=s" => \$opt_driver );
+	   "file=s" => \$filename, "driver=s" => \$opt_driver,
+	   "man!" => \$man);
 
 foreach (@options) {
     my ($key, $value) = split (/=/, $_);
     GT::Conf::set($key, $value);
 }
 
-my $code = shift;
+pod2usage( -verbose => 2) if ($man);
+my $code = shift || pod2usage(1);
 my $db = create_standard_object("DB::" . GT::Conf::get("DB::module"));
-$timeframe = GT::DateTime::name_to_timeframe($timeframe);
+my $timeframe = GT::DateTime::name_to_timeframe($tf);
+if (!defined($timeframe)) {
+	my $msg = "Unkown timeframe: $tf\nAvailable timeframes are:\n";
+	foreach (GT::DateTime::list_of_timeframe()) {
+		$msg .= "\t".GT::DateTime::name_of_timeframe($_) . "\n";
+	}
+	die($msg);
+}
+
 my ($q, $calc) = get_timeframe_data($code, $timeframe, $db, $max_loaded_items);
 
 my ($first, $last) = ($q->count() - $nb_item, $q->count() - 1);

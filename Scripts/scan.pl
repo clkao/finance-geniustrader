@@ -19,6 +19,7 @@ use GT::DateTime;
 use IPC::SysV qw(IPC_PRIVATE S_IRWXU IPC_NOWAIT);
 use IPC::Msg;
 use Getopt::Long;
+use Pod::Usage;
 
 GT::Conf::load();
 
@@ -39,7 +40,7 @@ GT::Systems.
 
 The list of detected signals is ouptut at the end and grouped by signal.
 
-=head1 PARAMETERS
+=head1 OPTIONS
 
 =over 4
 
@@ -47,7 +48,7 @@ The list of detected signals is ouptut at the end and grouped by signal.
 
 Runs the scan with the full history (it runs with two years by default)
 
-=item --timeframe="day|week|month|year"
+=item --timeframe="1min|5min|10min|15min|30min|hour|2hour|3hour|4hour|day|week|month|year"
 
 Runs the scan using the given timeframe.
 
@@ -69,7 +70,7 @@ GetOptions('full!' => \$full, 'verbose' => \$verbose,
 
 # Create all the framework
 my $list = GT::List->new;
-my $file = shift;
+my $file = shift || pod2usage(verbose => 2);
 if (! -e $file)
 {
     die "File $file doesn't exist.\n";
@@ -160,6 +161,7 @@ for (my $d = 0; $d < $list->count; $d++)
 					       $calc->current_timeframe);
     $first = 0 if ($full);
     $first = 0 if ($first < 0);
+
     if ($start) {
 	my $ndate = $calc->prices->find_nearest_following_date($start);
 	$first = $calc->prices->date($ndate);

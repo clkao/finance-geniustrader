@@ -17,6 +17,7 @@ use GT::Eval;
 use GT::DateTime;
 use Getopt::Long;
 use Time::localtime;
+use Pod::Usage;
 
 GT::Conf::load();
 
@@ -118,13 +119,13 @@ GetOptions("marged!" => \$marged, "source=s" => \$source,
 	   'template=s' => \$template, "detailed!" => \$detailed, );
 
 # Check the portfolio directory
-GT::Conf::default("GT::Portfolio::Directory", $ENV{'HOME'} . "/.gt/portfolio");
+GT::Conf::default("GT::Portfolio::Directory", GT::Conf::_get_home_path() . "/.gt/portfolio");
 my $pf_dir = GT::Conf::get("GT::Portfolio::Directory");
 mkdir $pf_dir if (! -d $pf_dir);
 
 # Load the portfolio
-my $pfname = shift;
-my $cmd = shift;
+my $pfname = shift || pod2usage(verbose => 2);
+my $cmd = shift || pod2usage(verbose => 2);
 my $pf;
 
 if ($pfname !~ m#^(./|/)#) {
@@ -144,7 +145,7 @@ my $db = create_db_object();
 if ($cmd eq "create") {
     
     $changes = 1;
-    my $cash = shift;
+    my $cash = shift || pod2usage(verbose => 2);
     if (-e $pfname) {
 	print "A portfolio with this name already exists. The current portfolio will be replaced !\n";
 	my $pf = GT::Portfolio->new();
@@ -162,7 +163,7 @@ if ($cmd eq "create") {
    my @orderlist;
    my $batchorder;
    if ($cmd eq "file") {
-   	my $file=shift;
+   	my $file=shift || pod2usage(verbose => 2);
    	# there is a batch file, read it in
    	open(FILE,"<$file") || die ("Can not open batch file $file");
 		@orderlist=<FILE>;
