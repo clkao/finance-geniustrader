@@ -6,12 +6,13 @@ package GT::DateTime;
 
 use strict;
 use vars qw(@ISA @EXPORT $PERIOD_TICK $PERIOD_1MIN $PERIOD_5MIN $PERIOD_10MIN
-	    $PERIOD_15MIN $PERIOD_30MIN $HOUR $PERIOD_3HOUR $DAY $WEEK $MONTH $YEAR %NAMES);
+	    $PERIOD_15MIN $PERIOD_30MIN $HOUR $PERIOD_2HOUR $PERIOD_3HOUR $PERIOD_4HOUR
+	    $DAY $WEEK $MONTH $YEAR %NAMES);
 
 require Exporter;
 @ISA = qw(Exporter);
 @EXPORT = qw($PERIOD_TICK $PERIOD_1MIN $PERIOD_5MIN $PERIOD_10MIN
-	     $PERIOD_15MIN $PERIOD_30MIN $HOUR $PERIOD_3HOUR $DAY $WEEK $MONTH $YEAR);
+	     $PERIOD_15MIN $PERIOD_30MIN $HOUR $PERIOD_2HOUR $PERIOD_3HOUR $PERIOD_4HOUR $DAY $WEEK $MONTH $YEAR);
 
 #ALL#  use Log::Log4perl qw(:easy);
 
@@ -22,7 +23,9 @@ $PERIOD_10MIN = 40;
 $PERIOD_15MIN = 45;
 $PERIOD_30MIN = 50;
 $HOUR = 60;
+$PERIOD_2HOUR = 62;
 $PERIOD_3HOUR = 64;
+$PERIOD_4HOUR = 66;
 $DAY = 70;
 $WEEK = 80;
 $MONTH = 90;
@@ -36,7 +39,9 @@ $YEAR = 100;
     $PERIOD_15MIN => "15min",
     $PERIOD_30MIN => "30min",
     $HOUR => "hour",
+    $PERIOD_2HOUR => "2hour",
     $PERIOD_3HOUR => "3hour",
+    $PERIOD_4HOUR => "4hour",
     $DAY => "day",
     $WEEK => "week",
     $MONTH => "month",
@@ -50,7 +55,9 @@ require GT::DateTime::10Min;
 require GT::DateTime::15Min;
 require GT::DateTime::30Min;
 require GT::DateTime::Hour;
+require GT::DateTime::2Hour;
 require GT::DateTime::3Hour;
+require GT::DateTime::4Hour;
 require GT::DateTime::Day;
 require GT::DateTime::Week;
 require GT::DateTime::Month;
@@ -64,7 +71,8 @@ GT::DateTime - Manage TimeFrames and provides date/time helper functions
 
 This module exports all the variable describing the available "periods"
 commonly used for trading : $PERIOD_TICK $PERIOD_1MIN, $PERIOD_5MIN,
-$PERIOD_10MIN, $PERIOD_15MIN, $PERIOD_30MIN, $HOUR, $PERIOD_3HOUR, $DAY, $WEEK, $MONTH, $YEAR.
+$PERIOD_10MIN, $PERIOD_15MIN, $PERIOD_30MIN, $HOUR, $PERIOD_2HOUR, 
+$PERIOD_3HOUR, $PERIOD_4HOUR, $DAY, $WEEK, $MONTH, $YEAR.
 
 The timeframes are represented by those variables which are only numbers.
 You can compare those numbers to know which timeframe is smaller or which
@@ -105,7 +113,9 @@ sub map_date_to_time {
     $timeframe == $PERIOD_15MIN && return GT::DateTime::15Min::map_date_to_time($date);
     $timeframe == $PERIOD_30MIN && return GT::DateTime::30Min::map_date_to_time($date);
     $timeframe == $HOUR  && return GT::DateTime::Hour::map_date_to_time($date);
+    $timeframe == $PERIOD_2HOUR  && return GT::DateTime::2Hour::map_date_to_time($date);
     $timeframe == $PERIOD_3HOUR  && return GT::DateTime::3Hour::map_date_to_time($date);
+    $timeframe == $PERIOD_4HOUR  && return GT::DateTime::4Hour::map_date_to_time($date);
     $timeframe == $DAY   && return GT::DateTime::Day::map_date_to_time($date);
     $timeframe == $WEEK  && return GT::DateTime::Week::map_date_to_time($date);
     $timeframe == $MONTH && return GT::DateTime::Month::map_date_to_time($date);
@@ -122,7 +132,9 @@ sub map_time_to_date {
     $timeframe == $PERIOD_15MIN && return GT::DateTime::15Min::map_time_to_date($time);
     $timeframe == $PERIOD_30MIN && return GT::DateTime::30Min::map_time_to_date($time);
     $timeframe == $HOUR  && return GT::DateTime::Hour::map_time_to_date($time);
+    $timeframe == $PERIOD_2HOUR  && return GT::DateTime::2Hour::map_time_to_date($time);
     $timeframe == $PERIOD_3HOUR  && return GT::DateTime::3Hour::map_time_to_date($time);
+    $timeframe == $PERIOD_4HOUR  && return GT::DateTime::4Hour::map_time_to_date($time);
     $timeframe == $DAY   && return GT::DateTime::Day::map_time_to_date($time);
     $timeframe == $WEEK  && return GT::DateTime::Week::map_time_to_date($time);
     $timeframe == $MONTH && return GT::DateTime::Month::map_time_to_date($time);
@@ -150,8 +162,8 @@ Returns the list of timeframes that are managed by the DateTime framework.
 sub list_of_timeframe {
     return (
 	    $PERIOD_TICK, $PERIOD_1MIN, $PERIOD_5MIN, $PERIOD_10MIN,
-	    $PERIOD_15MIN, $PERIOD_30MIN, $HOUR, $PERIOD_3HOUR,
-	    $DAY, $WEEK, $MONTH, $YEAR
+	    $PERIOD_15MIN, $PERIOD_30MIN, $HOUR, $PERIOD_2HOUR, $PERIOD_3HOUR,
+	    $PERIOD_4HOUR, $DAY, $WEEK, $MONTH, $YEAR
 	   );
 }
 
@@ -202,7 +214,9 @@ sub timeframe_ratio {
     $first == $PERIOD_15MIN && return (GT::DateTime::Hour::timeframe_ratio($second) / 4);
     $first == $PERIOD_30MIN && return (GT::DateTime::Hour::timeframe_ratio($second) / 2);
     $first == $HOUR && return GT::DateTime::Hour::timeframe_ratio($second);
+    $first == $PERIOD_2HOUR && return (GT::DateTime::Hour::timeframe_ratio($second) * 2);
     $first == $PERIOD_3HOUR && return (GT::DateTime::Hour::timeframe_ratio($second) * 3);
+    $first == $PERIOD_4HOUR && return (GT::DateTime::Hour::timeframe_ratio($second) * 4);
     $first == $DAY && return GT::DateTime::Day::timeframe_ratio($second);
     $first == $WEEK && return GT::DateTime::Week::timeframe_ratio($second);
     $first == $MONTH && return GT::DateTime::Month::timeframe_ratio($second);
