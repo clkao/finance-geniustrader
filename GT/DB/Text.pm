@@ -34,7 +34,7 @@ DB::text::directory  /home/projects/geniustrader/database
 DB::text::options ( "," , 2 , ".csv" , ('date' => 0, 'open' => 1, 'high' => 2, 'low' => 3, 'close' => 4, 'volume' => 5, 'Adj. Close*' => 6) )
 
 ","    - The field separator
- 2     - The Date format. Valid values are: 0 - YYYYMMDD Format; 1 - US Format; 2 - European Format
+ 2     - The Date format. Valid values are: 0 - YYYYMMDD Format; 1 - US Format (mm/dd/yyyy); 2 - European Format (dd/mm/yyyy)
 ".csv" - The extension of the data files
 
 The remaining fields represent the position of each data field inside each row of the data file
