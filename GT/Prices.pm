@@ -321,9 +321,10 @@ sub loadtxt {
 	    $date = $line[$fields{'date'}];
 
 	    # Decode the date from the text file to something useable
-	    # $date_format eq 0 : GeniusTrader Date Format
-	    # $date_format eq 1 : US sort of Date Format
-	    # $date_format eq 2 : EU sort of Date Format
+		# The hh:nn:ss part is optional
+	    # $date_format eq 0 : GeniusTrader Date Format (yyyy-mm-dd hh:nn:ss)
+	    # $date_format eq 1 : US sort of Date Format   (mm/dd/yyyy)
+	    # $date_format eq 2 : EU sort of Date Format   (dd/mm/yyyy)
 	    
 	    if ($date_format != 0) {
 		
@@ -387,7 +388,7 @@ This is an internal function, meant to be used only inside this object.
 =cut
 sub _binary_search {
 	my ($array_ref, $value) = @_;
-	my ($first, $last) = (0, scalar(@$array_ref));
+	my ($first, $last) = (0, scalar(@$array_ref)-1);
 
 	while ($first <= $last) {
 		my $middle = int(($first + $last) / 2);
