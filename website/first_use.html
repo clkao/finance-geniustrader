@@ -15,9 +15,29 @@
 You'll find below some step by step instructions that will help you
 use GeniusTrader for the first time.
 
-<h2>Extract the archives</h2>
+<h2>Windows Users</h2>
+<h3>Install Perl</h3>
+Genius Trader requires Perl.  You can download Perl from <a href='http://www.activestate.org'>http://www.activestate.org</a> at <a href='http://www.activestate.com/store/activeperl/download/'>http://www.activestate.com/store/activeperl/download/</a>.
+<h3>Install GeniusTrader</h3>
+After you have Perl installed in your system, the simplest way to use GeniusTrader is to run the <a href='http://www.geniustrader.org/cgi-bin/viewcvs.cgi/*checkout*/trunk/Windows_Installer/GeniusTrader.exe'>Genius Trader Windows Install</a> which will install all required dependencies as well as sample data.
 
-Once you downloaded both GT.tar.gz and Scripts.tar.hz from the main page, you can
+
+<h3>Test GeniusTrader</h3>
+To test GeniusTrader, open a console window, and try the following:
+
+<pre style="background-color: #eaeaea;">
+display_indicator.pl I:RSI 13000
+backtest.pl TFS 13000
+backtest.pl TFS[30,7,7] 13000
+</pre>
+
+<p>You should now read the <a href="doc/Scripts/">documentation of those
+scripts</a> to understand what they can do.
+
+<h2>Linux Users</h2>
+<h3>Extract the archives</h3>
+
+Once you downloaded both GT.tar.gz and Scripts.tar.gz from the main page, you can
 extract them in a new directory :
 <pre style="background-color: #eaeaea;">
 $ mkdir geniustrader
@@ -26,7 +46,7 @@ $ tar zxf ~/GT.tar.gz
 $ tar zxf ~/Scripts.tar.gz
 </pre>
 
-<h2>Install the dependencies</h2>
+<h3>Install the dependencies</h3>
 
 <p>GeniusTrader uses several external perl modules. You have to install them. You can do
 that by hand, or you can use the CPAN perl module or you can use the corresponding
@@ -40,7 +60,7 @@ modules...
 <li><a href="http://search.cpan.org/author/AMS/Storable-2.06/">Storable</a> (standard in perl 5.8, debian package for woody/perl 5.6: <a href="http://packages.debian.org/libstorable-perl">libstorable-perl</a>)</li>
 </ul>
 
-<h2>Setup your source of data</h2>
+<h3>Setup your source of data</h3>
 
 <p>In order to do something useful, you have to setup a source of data (prices).
 Various modules are available for that (check <a href="doc/GT/DB/">GT::DB::*</a>).
@@ -77,7 +97,7 @@ Aliases::Global::TFS    SY:TFS 50 10|CS:SY:TFS
 Aliases::Global::TFS[]  SY:TFS #1 #2|CS:SY:TFS #1|CS:Stop:Fixed #3
 </pre>
 
-<h2>Test GeniusTrader</h2>
+<h3>Test GeniusTrader</h3>
 
 That's it, GeniusTrader should be working now. Let's make some tests:
 <pre style="background-color: #eaeaea;">
