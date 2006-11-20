@@ -361,14 +361,36 @@ sub isin_create_from_local {
 
 Returns a prices and a calculator object with data for the required
 $code in the specified $timeframe. It uses $db object to fetch the data.
+If for instance, weekly data is requested, but only daily data is available,
+the weekly data is calculated from the daily data.
+
+Optionally, you can set the configuration file directive DB::timeframes_available
+to specify which timeframes are available.
+For instance:
+DB::timeframes_available 5min,hour,day
 
 =cut
 sub get_timeframe_data {
 my ($code, $timeframe, $db, $max_loaded_items) = @_;
 #WAR# WARN "Fetching all available data, because the max_loaded_items parameter was not set." unless(defined($max_loaded_items));
 $max_loaded_items = -1 unless(defined($max_loaded_items));
-my @tf = GT::DateTime::list_of_timeframe;
+my @tf;
+my $available_timeframes = GT::Conf::get('DB::timeframes_available');
 my $q;
+
+die("Max loaded items cannot be zero") if ($max_loaded_items==0);
+die("Parameter \$code not set in get_timeframe_data") if (!defined($code));
+die("Parameter \$timeframe not set in get_timeframe_data") if (!defined($timeframe));
+die("Parameter \$db not set in get_timeframe_data") if (!defined($db));
+
+if (defined($available_timeframes)) {
+	foreach (split(',', $available_timeframes)) {
+		push @tf, GT::DateTime::name_to_timeframe($_);
+	}
+	@tf = sort(@tf);
+} else {
+	@tf = GT::DateTime::list_of_timeframe;
+}
 
 #ERR#  ERROR  "Invalid db argument in get_timeframe_data" unless ( ref($db) =~ /GT::DB/);
 #ERR#  ERROR  "Timeframe parameter not set in get_timeframe_data." unless(defined($timeframe));
