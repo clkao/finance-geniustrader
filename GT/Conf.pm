@@ -26,7 +26,7 @@ then it looks at ~/.gt/options by default.
 =cut
 sub load {
     my ($file) = @_;
-    $file = $ENV{'HOME'} . "/.gt/options" if (! defined($file));
+    $file = _get_home_path() . "/.gt/options" if (! defined($file));
 
     return if (! -e $file);
     
@@ -57,7 +57,7 @@ Write all the current configuration in the given file.
 =cut
 sub store {
     my ($file) = @_;
-    $file = $ENV{'HOME'} . "/.gt/options" if (! defined($file));
+    $file = _get_home_path() . "/.gt/options" if (! defined($file));
 
     open (FILE, "> $file") || die "Can't write on $file: $!\n";
     foreach (sort keys %conf)
@@ -119,4 +119,21 @@ sub get_first {
 =back
 
 =cut
+
+#Helper function, returns the home directory
+#This is usually defined as the environment variable HOME on Unix like
+#systems, and HOMEDRIVE + HOMEPATH on Windows
+
+sub _get_home_path {
+	my $homedir = '';
+	if (defined($ENV{HOME})) {
+		$homedir = $ENV{HOME};
+	} elsif (defined($ENV{HOMEDRIVE}) && defined($ENV{HOMEPATH})) {
+		$homedir = $ENV{HOMEDRIVE} . $ENV{HOMEPATH};
+	} else {
+		warn "homedir not defined, may not be able to find configuration file";
+	}
+	return $homedir;
+}
+
 1;
