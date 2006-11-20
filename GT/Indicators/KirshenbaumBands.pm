@@ -5,7 +5,7 @@ package GT::Indicators::KirshenbaumBands;
 # version 2 or (at your option) any later version.
 
 use strict;
-use vars qw(@ISA @NAMES);
+use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
 use GT::Indicators;
 use GT::Indicators::EMA;
@@ -13,7 +13,8 @@ use GT::Indicators::StandardError;
 use GT::Prices;
 
 @ISA = qw(GT::Indicators);
-@NAMES = ("KB[#1]","KBSup[#1,#2]","KBInf[#1,#2]");
+@NAMES = ("KB[#1,#3]","KBSup[#1,#2,#3]","KBInf[#1,#2,#3]");
+@DEFAULT_ARGS = (20, 1.75, "{I:Prices CLOSE}");
 
 =head1 GT::Indicators::KirshenbaumBands
 
@@ -28,37 +29,21 @@ from NYU, submitted this rather unique trading band which is "de-trended".
 
 =cut
 
-sub new {
-    my $type = shift;
-    my $class = ref($type) || $type;
-    my ($args, $key, $func) = @_;
-    my $self = { 'args' => defined($args) ? $args : [ 20, 1.75 ] };
-
-    $args->[0] = 20 if (! defined($args->[0]));
-    $args->[1] = 1.75 if (! defined($args->[1]));
-    
-    if (defined($func)) {
-	$self->{'_func'} = $func;
-    } else {
-	$self->{'_func'} = $GET_LAST;
-	$key = 'LAST';
-    }
-						
-    return manage_object(\@NAMES, $self, $class, $args, $key);
-}
-
 sub initialize {
     my $self = shift;
 
-    $self->{'ema'} = GT::Indicators::EMA->new([ $self->{'args'}[0] ], 
-	$self->{'key'}, sub { $self->{'_func'}(@_) });
+    $self->{'ema'} = GT::Indicators::EMA->new([ $self->{'args'}->get_arg_names(1), $self->{'args'}->get_arg_names(3) ]);
     $self->{'standard_error'} = GT::Indicators::StandardError->new(
-	[ $self->{'args'}[0] ], $self->{'key'}, sub { $self->{'_func'}(@_) });
+	[ $self->{'args'}->get_arg_names(1), $self->{'args'}->get_arg_names(3) ]);
 
     $self->add_indicator_dependency($self->{'ema'}, 1);
     $self->add_indicator_dependency($self->{'standard_error'}, 1);
-    $self->add_prices_dependency($self->{'args'}[0]);
+    $self->add_prices_dependency($self->{'args'}->get_arg_constant(1));
 }
+
+=head2 GT::Indicators::KirshenbaumBands::calculate($calc, $day)
+
+=cut
 
 sub calculate {
     my ($self, $calc, $i) = @_;
@@ -68,7 +53,7 @@ sub calculate {
     my $kb_name = $self->get_name(0);
     my $kbsup_name = $self->get_name(1);
     my $kbinf_name = $self->get_name(2);
-    my $n = $self->{'args'}[1];
+    my $n = $self->{'args'}->get_arg_values($calc, $i, 2);
 
     return if ($indic->is_available($kb_name, $i) &&
 	       $indic->is_available($kbsup_name, $i) &&
