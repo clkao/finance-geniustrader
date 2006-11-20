@@ -1,0 +1,13 @@
+<SOFTPKG NAME="XML-LibXML" VERSION="1,58,0,0">
+	<TITLE>XML-LibXML</TITLE>
+	<ABSTRACT>Interface to Gnome libxml2 xml parsing and DOM library</ABSTRACT>
+	<AUTHOR>Christian Glahn</AUTHOR>
+	<IMPLEMENTATION>
+		<DEPENDENCY NAME="XML-SAX" VERSION="0,11,0,0" />
+		<DEPENDENCY NAME="XML-NamespaceSupport" VERSION="1,07,0,0" />
+		<DEPENDENCY NAME="XML-LibXML-Common" VERSION="0,0,0,0" />
+		<OS NAME="MSWin32" />
+		<ARCHITECTURE NAME="MSWin32-x86-multi-thread-5.8" />
+		<CODEBASE HREF="MSWin32-x86-multi-thread-5.8/XML-LibXML.tar.gz" />
+	</IMPLEMENTATION>
+</SOFTPKG>

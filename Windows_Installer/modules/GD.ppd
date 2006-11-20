@@ -1,0 +1,10 @@
+<SOFTPKG NAME="GD" VERSION="2,25,0,0">
+	<TITLE>GD</TITLE>
+	<ABSTRACT>Interface to Gd Graphics Library</ABSTRACT>
+	<AUTHOR>Lincoln Stein (lstein@cshl.org)</AUTHOR>
+	<IMPLEMENTATION>
+		<OS NAME="MSWin32" />
+		<ARCHITECTURE NAME="MSWin32-x86-multi-thread-5.8" />
+		<CODEBASE HREF="MSWin32-x86-multi-thread-5.8/GD.tar.gz" />
+	</IMPLEMENTATION>
+</SOFTPKG>

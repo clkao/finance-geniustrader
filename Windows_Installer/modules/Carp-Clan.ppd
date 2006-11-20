@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOFTPKG NAME="Carp-Clan" VERSION="5,3,0,0">
+  <IMPLEMENTATION>
+    <CODEBASE HREF="MSWin32-x86-multi-thread-5.8/Carp-Clan-5.3.tar.gz" />
+    <ARCHITECTURE NAME="MSWin32-x86-multi-thread-5.8" />
+    <OS NAME="MSWin32" />
+  </IMPLEMENTATION>
+  <ABSTRACT>Report errors from perspective of caller of a </ABSTRACT>
+  <AUTHOR>Steffen Beyer (sb@engelschall.com)</AUTHOR>
+  <TITLE>Carp-Clan</TITLE>
+</SOFTPKG>

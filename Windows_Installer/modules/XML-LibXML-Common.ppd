@@ -1,0 +1,10 @@
+<SOFTPKG NAME="XML-LibXML-Common" VERSION="0,13,0,0">
+	<TITLE>XML-LibXML-Common</TITLE>
+	<ABSTRACT>Routines and Constants common for XML::LibXML and XML::GDOME</ABSTRACT>
+	<AUTHOR>Christian Glahn &lt;christian.glahn@uibk.ac.at&gt;</AUTHOR>
+	<IMPLEMENTATION>
+		<OS NAME="MSWin32" />
+		<ARCHITECTURE NAME="MSWin32-x86-multi-thread-5.8" />
+		<CODEBASE HREF="MSWin32-x86-multi-thread-5.8/XML-LibXML-Common.tar.gz" />
+	</IMPLEMENTATION>
+</SOFTPKG>

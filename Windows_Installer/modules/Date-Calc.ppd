@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOFTPKG NAME="Date-Calc" VERSION="5,4,0,0">
+  <IMPLEMENTATION>
+    <CODEBASE HREF="MSWin32-x86-multi-thread-5.8/Date-Calc-5.4.tar.gz" />
+    <DEPENDENCY NAME="Bit-Vector" VERSION="6,4,0,0" />
+    <DEPENDENCY NAME="Carp-Clan" VERSION="5,3,0,0" />
+    <ARCHITECTURE NAME="MSWin32-x86-multi-thread-5.8" />
+    <OS NAME="MSWin32" />
+  </IMPLEMENTATION>
+  <ABSTRACT>Gregorian calendar date calculations</ABSTRACT>
+  <AUTHOR>Steffen Beyer (sb@engelschall.com)</AUTHOR>
+  <TITLE>Date-Calc</TITLE>
+</SOFTPKG>

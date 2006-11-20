@@ -1,0 +1,12 @@
+Add DB Data for MySQL ?
+
+Add necessary Perl modules
+	DBD::MySQL
+
+Add sample database and data
+	See db.sql for the data structure, and data.txt for the sample data
+
+
+The current latest version of Perl for Windows can be obtained here:
+
+http://downloads.activestate.com/ActivePerl/Windows/5.8/ActivePerl-5.8.7.813-MSWin32-x86-148120.msi
