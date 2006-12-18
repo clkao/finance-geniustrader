@@ -36,7 +36,7 @@ sub display {
     my $y_zero = $scale->convert_to_y_coordinate(0);
     $y_zero = 0 if ($y_zero < 0);
     my ($first_pt, $second_pt);
-    for(my $i = $start; $i < $end; $i++)
+    for(my $i = $start; $i <= $end; $i++)
     {
 	# Find two available points
         if ($self->{'source'}->is_available($i)) {
