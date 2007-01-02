@@ -28,7 +28,7 @@ sub load {
     my ($file) = @_;
     $file = _get_home_path() . "/.gt/options" if (! defined($file));
 
-    return if (! -e $file);
+    warn ("Could not find configuration file: $file") and return if (! -e $file);
     
     open (FILE, "< $file") || die "Can't open $file: $!\n";
     while (<FILE>)
