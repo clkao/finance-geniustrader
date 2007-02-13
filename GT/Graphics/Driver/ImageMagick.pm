@@ -102,10 +102,10 @@ sub filled_polygon {
 sub circle {
     my ($self, $p, $x, $y, $width, $height, $color) = @_;
 
-    my ($x, $y) = _convert_coord($p, $x, $y);
+    my ($x_, $y_) = _convert_coord($p, $x, $y);
     $width = int($width/2);
     $height = int($height/2);
-    my $data = "$x,$y $width,$height 0,360";
+    my $data = "$x_,$y_ $width,$height 0,360";
     $p->{'img'}->Draw(stroke=>_get_color($p, $color), primitive=>'ellipse', points=>$data, fill=>'none', strokewidth=>$p->{'linewidth'});
 }
 
