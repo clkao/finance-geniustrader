@@ -41,6 +41,7 @@ sub timeframe_ratio {
     $tf == $PERIOD_5MIN && return 12;
     $tf == $PERIOD_10MIN && return 6;
     $tf == $PERIOD_30MIN && return 2;
+	$tf == $HOUR && return 1;
 }
 
 1;
