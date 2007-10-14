@@ -199,7 +199,7 @@ sub resolve_object_alias {
     foreach my $kind ("Signals", "Indicators", "Systems", "CloseStrategy", 
 		      "MoneyManagement", "TradeFilters", "OrderFactory")
     {
-	foreach my $file ($ENV{'HOME'}."/.gt/aliases/".lc($kind), GT::Conf::get("Path::Aliases::$kind"))
+	foreach my $file (GT::Conf::_get_home_path()."/.gt/aliases/".lc($kind), GT::Conf::get("Path::Aliases::$kind"))
 	{
 	    next if not -e $file;
 	    open(ALIAS, "<$file") || die "Can't open $file : $!\n";
