@@ -98,15 +98,17 @@ retrieve the object from the database. Calls initialize for a new object.
 =cut
 sub manage_object {
     my ($repo, $names, $obj, $class, $args, $key) = @_;
+	my $object_name = '';
     
     # Create the various names of the object
     $obj->{'key'} = $key;
     for (my $i = 0; $i < scalar(@{$names}); $i++)
     {
 	$obj->{'names'}[$i] = build_object_name($names->[$i], $args, $key);
+	$object_name .= $obj->{'names'}[$i];
     }
     # Lookup the database with the first name
-    my $newobj = get_or_register_object($repo, $obj->{'names'}[0], $obj);
+    my $newobj = get_or_register_object($repo, $obj_name, $obj);
 
     if ($newobj == $obj) {
 	# We're really creating an object
