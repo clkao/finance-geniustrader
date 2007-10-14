@@ -60,7 +60,7 @@ sub new {
     my $class = ref($type) || $type;
 
     GT::Conf::default("DB::HTTP::directory",
-		      $ENV{'HOME'} . "/.gt/http-db-cache");
+		      GT::Conf::_get_home_path() . "/.gt/http-db-cache");
     
     my $self = { "directory" => GT::Conf::get("DB::HTTP::directory"),
                  "url" => GT::Conf::get("DB::HTTP::url"),

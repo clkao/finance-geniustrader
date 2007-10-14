@@ -39,7 +39,7 @@ sub get_name {
     my $name = $self->get_db_name($code);
     return $name if (defined($name) && $name);
     if (! $loaded_sharenames) {
-	my $file = "$ENV{'HOME'}/.gt/sharenames";
+	my $file = GT::Conf::_get_home_path()."/.gt/sharenames";
 	if (-e $file) {
 	    open(NAMES, "<$file") || die "Can't open $file : $!\n";
 	    foreach my $line (<NAMES>) {
