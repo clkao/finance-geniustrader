@@ -140,7 +140,8 @@ sub get_last_prices {
     my $q = GT::Prices->new($limit);
     $q->set_timeframe($timeframe);
 
-	my $sql = GT::Conf::get("DB::genericdbi::prices_sql") || die("Invalid configuration. You must specify a valid prices sql statment for your database in the options file");
+	my $sql = GT::Conf::get("DB::genericdbi::prices_sql::$timeframe");
+	if (!defined($sql)) { $sql = GT::Conf::get("DB::genericdbi::prices_sql") || die("Invalid configuration. You must specify a valid prices sql statment for your database in the options file")};
 	$sql =~ s/\$code/$code/;
 	$sql =~ s/\$timeframe/$timeframe/;
 	$sql =~ s/\$limit/$limit/;
