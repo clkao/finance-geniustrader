@@ -108,7 +108,7 @@ sub manage_object {
 	$object_name .= $obj->{'names'}[$i];
     }
     # Lookup the database with the first name
-    my $newobj = get_or_register_object($repo, $obj_name, $obj);
+    my $newobj = get_or_register_object($repo, $object_name, $obj);
 
     if ($newobj == $obj) {
 	# We're really creating an object
