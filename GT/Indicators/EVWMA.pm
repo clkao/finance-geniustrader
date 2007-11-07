@@ -1,4 +1,4 @@
-package GT::Indicators::EVWMA;
+ package GT::Indicators::EVWMA;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -71,7 +71,7 @@ sub calculate {
 	} else {
 
 	    # Calculate the following eVWMA
-	    $evwma = (($floating_shares - $prices->at($n)->[$VOLUME]) * $self->{'args'}->get_arg_values($calc, $i, $n - 1) + ($prices->at($n)->[$VOLUME] * self->{'args'}->get_arg_values($calc, $i, $n))) / $floating_shares;
+	    $evwma = (($floating_shares - $prices->at($n)->[$VOLUME]) * $self->{'args'}->get_arg_values($calc, $i, $n - 1) + ($prices->at($n)->[$VOLUME] * $self->{'args'}->get_arg_values($calc, $i, $n))) / $floating_shares;
 	}
         $calc->indicators->set($evwma_name, $i, $evwma);
     }
