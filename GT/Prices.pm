@@ -143,7 +143,6 @@ sub sort {
 	GT::DateTime::map_date_to_time($self->timeframe, $b->[$DATE])
     } @{$self->{'prices'}};
     $self->{'prices'} = \@prices;
-    $self->reindex;
 }
 
 =item C<< $p->reverse() >>
@@ -155,7 +154,6 @@ sub reverse {
     my ($self) = @_;
     my @prices = reverse @{$self->{'prices'}};
     $self->{'prices'} = \@prices;
-    $self->reindex;
 }
 
 =item C<< $p->convert_to_timeframe($timeframe) >>
@@ -285,7 +283,7 @@ Load the prices from the text file.
 sub loadtxt {
     my ($self, $file, $mark, $date_format, %fields) = @_;
 
-    open(FILE, "<$file") || die "Can't open $file: $!\n";
+    open(FILE, '<', "$file") || die "Can't open $file: $!\n";
     $self->{'prices'} = [];
     my ($open, $high, $low, $close, $volume, $date);
     my ($year, $month, $day);
@@ -357,7 +355,7 @@ Save the prices to the text file.
 =cut
 sub savetxt {
     my ($self, $file) = @_;
-    open(FILE, ">$file") || die "Can't write in $file: $!\n";
+    open(FILE, '>', "$file") || die "Can't write in $file: $!\n";
     foreach (@{$self->{'prices'}})
     {
 	print FILE join("\t", @{$_}) . "\n";
