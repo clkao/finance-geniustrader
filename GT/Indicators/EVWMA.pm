@@ -66,12 +66,12 @@ sub calculate {
 	if ($n == 0) {
 	    
 	    # Set eVWMA(0) as Today's Close
-	    $evwma = self->{'args'}->get_arg_values($calc, $i, $n);
+	    $evwma = $self->{'args'}->get_arg_values($calc, $i, $n);
 	    
 	} else {
 
 	    # Calculate the following eVWMA
-	    $evwma = (($floating_shares - $prices->at($n)->[$VOLUME]) * self->{'args'}->get_arg_values($calc, $i, $n - 1) + ($prices->at($n)->[$VOLUME] * self->{'args'}->get_arg_values($calc, $i, $n))) / $floating_shares;
+	    $evwma = (($floating_shares - $prices->at($n)->[$VOLUME]) * $self->{'args'}->get_arg_values($calc, $i, $n - 1) + ($prices->at($n)->[$VOLUME] * self->{'args'}->get_arg_values($calc, $i, $n))) / $floating_shares;
 	}
         $calc->indicators->set($evwma_name, $i, $evwma);
     }
