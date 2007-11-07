@@ -19,7 +19,12 @@ GT::Conf::default("Graphic::Marks::Width", 4);
 
 =head1 GT::Graphics::Object::Marks
 
-This graphical object display a serie of marks.
+This graphical object display a serie of '+' marks.
+
+It needs a data source with a single value per coordinate pair
+(in other words typical datasource for prices will not work)
+  my $graph_ds = GT::Graphics::DataSource::Prices->new($q);    # wrong
+  my $marks_ds = GT::Graphics::DataSource::Close->new($q);     # ok
 
 =cut
 

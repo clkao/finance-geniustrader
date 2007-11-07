@@ -46,6 +46,11 @@ sub display {
     my ($start, $end) = $self->{'source'}->get_selected_range();
     my $space = $scale->convert_to_x_coordinate($start + 1) -
 	        $scale->convert_to_x_coordinate($start);
+
+    my $y_zero = $scale->convert_to_y_coordinate(0);
+    $y_zero = 0 if ($y_zero < 0);
+    my $y_max = $zone->height;
+
     my ($first_pt, $second_pt);
     for(my $i = $start; $i <= $end; $i++)
     {
@@ -67,8 +72,32 @@ sub display {
 	my ($x2, $y2) = $scale->convert_to_coordinate($second_pt, $data2);
 	$x1 += int($space / 2);
 	$x2 += int($space / 2);
-	if ($zone->includes_point($x1, $y1) && $zone->includes_point($x2, $y2))
-	{
+
+        # rather than skip plotting the curve that exceeds the zone boundary
+        # this change will plot to the zone boundary
+        # line segments that lie outside the zone are not plotted
+        #if ($zone->includes_point($x1, $y1) && $zone->includes_point($x2, $y2))
+        #{
+        my $pt1 = $zone->includes_point($x1, $y1);
+        my $pt2 = $zone->includes_point($x2, $y2);
+
+        # if neither point within zone skip
+        if ( ! $pt1 && ! $pt2 ) {
+          # Shift the points
+          $first_pt = $second_pt;
+          next;
+        } elsif ( $pt1 && ! $pt2 ) {
+          # if pt1 but not pt2 within zone set pt2 at limit and draw
+          # clip at edge of zone pt2
+          $y2  = $y_max  if ($y2 > $y_max);
+          $y2  = $y_zero if ($y2 < $y_zero);
+        } elsif ( ! $pt1 && $pt2 ) {
+        # if not pt1 but pt2 within zone set pt1 at limit and draw
+          # clip at edge of zone pt1
+          $y1 = $y_max  if ($y1 > $y_max);
+          $y1 = $y_zero if ($y1 < $y_zero);
+        }
+
 	    my $oldlw = $driver->line_width($picture, $self->{'linewidth'});
 	    if ($self->{'aa'}) {
 		$driver->antialiased_line($picture, 
@@ -82,7 +111,7 @@ sub display {
 		    $self->{'fg_color'});
 	    }
 	    $driver->line_width($picture, $oldlw);
-	}
+
 	# Shift the points
 	$first_pt = $second_pt;
     }

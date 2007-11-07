@@ -36,6 +36,8 @@ sub display {
 	        $scale->convert_to_x_coordinate($start);
     my $y_zero = $scale->convert_to_y_coordinate(0);
     $y_zero = 0 if ($y_zero < 0);
+    my $y_max = $zone->height;
+
     my ($first_pt, $second_pt);
     for(my $i = $start; $i <= $end; $i++)
     {
@@ -66,6 +68,18 @@ sub display {
 	$x2 += int(($space-0.5) / 2);
 	$y1 = $zone->height if ($y1 > $zone->height);
 	$y2 = $zone->height if ($y2 > $zone->height);
+	# clip at top of zone
+	# $y1 = $zone->height if ($y1 > $zone->height);
+	# $y2 = $zone->height if ($y2 > $zone->height);
+	$y1  = $y_max if ($y1 > $y_max);
+	$y2  = $y_max if ($y2 > $y_max);
+	$y1l = $y_max if ($y1l > $y_max);
+	$y2l = $y_max if ($y2l > $y_max);
+	# clip at bottom of zone
+	$y1  = $y_zero if ($y1 < $y_zero);
+	$y2  = $y_zero if ($y2 < $y_zero);
+	$y1l = $y_zero if ($y1l < $y_zero);
+	$y2l = $y_zero if ($y2l < $y_zero);
 
 	my @points = (
 	    [$zone->absolute_coordinate($x1, $y1)],
