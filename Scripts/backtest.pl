@@ -292,7 +292,7 @@ if ($graph_file) {
 
 # Display the results
 $template = GT::Conf::get('Template::backtest') if ($template eq '');
-if ($template ne '') {
+if (defined($template) && $template ne '') {
   my $output;
 
   my $use = 'use HTML::Mason;use File::Spec;use Cwd;';

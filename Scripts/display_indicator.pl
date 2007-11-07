@@ -19,7 +19,9 @@ use Pod::Usage;
 
 GT::Conf::load();
 
-=head1 ./display_indicator.pl [ --full ] [ --timeframe=timeframe ] [ --last-record ] <indicatorname> <code> [args...]
+=head1 ./display_indicator.pl [ --full ] [--nb-items=100] [ --timeframe=timeframe ] [ --last-record ] <indicatorname> <code> [args...]
+
+nb-items controls how many database records are loaded.
 
 timeframe can be any of the available modules in GT/DateTime.  
 At the time of this writing that includes:
@@ -37,10 +39,10 @@ Args are passed to the new call that will create the indicator.
 =cut
 
 # Get all options
-my ($full, $last_record, $start, $end, $timeframe) = 
-    (0, 0, '', '', 'day');
+my ($full, $last_record, $start, $end, $timeframe, $nb_item) = 
+    (0, 0, '', '', 'day', -1);
 Getopt::Long::Configure("require_order");
-GetOptions('full!' => \$full, "last-record" => \$last_record, 
+GetOptions('full!' => \$full, "last-record" => \$last_record, 'nb-item=i' => \$nb_item,
 	   "start=s" => \$start, "end=s" => \$end, "timeframe=s" => \$timeframe);
 $timeframe = GT::DateTime::name_to_timeframe($timeframe);
 # Create the indicator according to the arguments
@@ -53,7 +55,7 @@ my $indicator = create_standard_object("$indicator_module",
 # Il faut créer tout le framework
 my $db = create_standard_object("DB::" . GT::Conf::get("DB::module"));
 my $indicator_name = $indicator->get_name;
-my ($q, $calc) = get_timeframe_data($code, $timeframe, $db);
+my ($q, $calc) = get_timeframe_data($code, $timeframe, $db, $nb_item);
 
 my $last = $q->count() - 1;
 my $first = $last - 200;
