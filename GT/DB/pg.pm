@@ -69,7 +69,7 @@ sub new {
 		
     my $connect_string = 'dbi:Pg:dbname=' . $self->{'dbname'};
     if ($self->{'dbhost'}) {
-	$connect_string .= "host=" . $self->{'dbhost'};
+	$connect_string .= ";host=" . $self->{'dbhost'};
     }
     $self->{'_dbh'} = DBI->connect($connect_string, $self->{'dbuser'},
     		$self->{'dbpasswd'}) || die "Couldn't connect to database !\n";
