@@ -75,7 +75,12 @@ sub display {
                 $scale->convert_to_x_coordinate($start);
     my $offset = int($space/2) - int($width/2);
     $offset = 0 if $offset < 1;
-    for(my $i = $start; $i <= $end; $i++)
+
+    my $y_zero = $scale->convert_to_y_coordinate(0);
+    $y_zero = 0 if ($y_zero < 0);
+    my $y_max = $zone->height;
+
+	for(my $i = $start; $i <= $end; $i++)
     {
 	my $data = $self->{'source'}->get($i);
 	my $low = $scale->convert_to_y_coordinate($data->[$LOW]);
@@ -84,6 +89,17 @@ sub display {
 	my $high = $scale->convert_to_y_coordinate($data->[$HIGH]);
 	my $x = $scale->convert_to_x_coordinate($i);
 	$x += $offset;
+	# clip $y at top of zone
+	$low = $y_max if ( $low > $y_max );
+	$open = $y_max if ( $open > $y_max );
+	$close = $y_max if ( $close > $y_max );
+	$high = $y_max if ( $high > $y_max );
+	# clip $y at bottom of zone
+	$low = $y_zero if ( $low < $y_zero );
+	$open = $y_zero if ( $open < $y_zero );
+	$close = $y_zero if ( $close < $y_zero );
+	$high = $y_zero if ( $high < $y_zero );
+
     if ($data->[$OPEN] < $data->[$CLOSE]) {
 	
 	    $driver->filled_rectangle($picture, 
