@@ -1,0 +1,288 @@
+
+
+Candelstick Codes
+-------------------
+
+Based on the work of Victor Likhovidov.
+
+Article excerpt is at
+http://www.traders.com/Documentation/FEEDbk_docs/Archive/1199/Abstracts_new/Likhovidov/Likhovidov.html
+
+Sample code for TA applications (like MetaStock etc) is at
+http://www.traders.com/Documentation/FEEDbk_docs/Archive/012000/TradersTips/TradersTips.html
+
+Other important work on this subject can be seen starting from
+http://trader.online.pl/MSZ/e-0-tytulowa-c.html
+
+I learnt general candlestick theory from
+
+a. Japanese Candlesticks Charting Techniques
+    - by Steve Nison
+      Prentice Hall
+
+b. Candlestick Charting Explained
+     - Gregory Morris
+       McGraw Hill
+       
+c. http://www.equis.com/Customer/Resources/TAAZ/
+
+
+The candelcodes are as follows -
+
+Candel		Total		Explanation		
+	
+0000000		0		Black, large body, no upper shadow, large lower shadow		
+						
+0000001		1		Black, large body, no upper shadow, medium lower shadow		
+						
+0000010		2		Black, large body, no upper shadow, small lower shadow		
+						
+0000011		3		Black, large body, no upper shadow, no lower shadow		
+						
+0000100		4		Black, large body, small upper shadow, large lower shadow		
+						
+0000101		5		Black, large body, small upper shadow, medium lower shadow		
+						
+0000110		6		Black, large body, small upper shadow, small lower shadow		
+						
+0000111		7		Black, large body, small upper shadow, no lower shadow		
+						
+0001000		8		Black, large body, medium upper shadow, large lower shadow		
+						
+0001001		9		Black, large body, medium upper shadow, medium lower shadow		
+						
+0001010		10		Black, large body, medium upper shadow, small lower shadow		
+						
+0001011		11		Black, large body, medium upper shadow, no lower shadow		
+						
+0001100		12		Black, large body, medium upper shadow, large lower shadow		
+						
+0001101		13		Black, large body, medium upper shadow, large lower shadow		
+						
+0001110		14		Black, large body, medium upper shadow, large lower shadow		
+						
+0001111		15		Black, large body, medium upper shadow, large lower shadow		
+						
+0010000		16		Black, medium body, no upper shadow, large lower shadow		
+						
+0010001		17		Black, medium body, no upper shadow, medium lower shadow		
+						
+0010010		18		Black, medium body, no upper shadow, small lower shadow		
+						
+0010011		19		Black, medium body, no upper shadow, no lower shadow		
+						
+0010100		20		Black, medium body, small upper shadow, large lower shadow		
+						
+0010101		21		Black, medium body, small upper shadow, medium lower shadow		
+						
+0010110		22		Black, medium body, small upper shadow, small lower shadow		
+						
+0010111		23		Black, medium body, small upper shadow, no lower shadow		
+						
+0011000		24		Black, medium body, medium upper shadow, large lower shadow		
+						
+0011001		25		Black, medium body, medium upper shadow, medium lower shadow		
+						
+0011010		26		Black, medium body, medium upper shadow, small lower shadow		
+						
+0011011		27		Black, medium body, medium upper shadow, no lower shadow		
+						
+0011100		28		Black, mediium body, medium upper shadow, large lower shadow		
+						
+0011101		29		Black, medium body, medium upper shadow, large lower shadow		
+						
+0011110		30		Black, medium body, medium upper shadow, large lower shadow		
+						
+0011111		31		Black, medium body, medium upper shadow, large lower shadow		
+						
+0100000		32		Black, small body, no upper shadow, large lower shadow		
+						
+0100001		33		Black, small body, no upper shadow, medium lower shadow		
+						
+0100010		34		Black, small body, no upper shadow, small lower shadow		
+						
+0100011		35		Black, small body, no upper shadow, no lower shadow		
+						
+0100100		36		Black, small body, small upper shadow, large lower shadow		
+						
+0100101		37		Black, small body, small upper shadow, medium lower shadow		
+						
+0100110		38		Black, small body, small upper shadow, small lower shadow		
+						
+0100111		39		Black, small body, small upper shadow, no lower shadow		
+						
+0101000		40		Black, small body, medium upper shadow, large lower shadow		
+						
+0101001		41		Black, small body, medium upper shadow, medium lower shadow		
+						
+0101010		42		Black, small body, medium upper shadow, small lower shadow		
+						
+0101011		43		Black, small body, medium upper shadow, no lower shadow		
+						
+0101100		44		Black, small body, medium upper shadow, large lower shadow		
+						
+0101101		45		Black, small body, medium upper shadow, large lower shadow		
+						
+0101110		46		Black, small body, medium upper shadow, large lower shadow		
+						
+0101111		47		Black, small body, medium upper shadow, large lower shadow		
+						
+0110000		48		Black, no body, no upper shadow, large lower shadow		
+						
+0110001		49		Black, no body, no upper shadow, medium lower shadow		
+						
+0110010		50		Black, no body, no upper shadow, small lower shadow		
+						
+0110011		51		Black, no body, no upper shadow, no lower shadow		
+						
+0110100		52		Black, no body, small upper shadow, large lower shadow		
+						
+0110101		53		Black, no body, small upper shadow, medium lower shadow		
+						
+0110110		54		Black, no body, small upper shadow, small lower shadow		
+						
+0110111		55		Black, no body, small upper shadow, no lower shadow		
+						
+0111000		56		Black, no body, medium upper shadow, large lower shadow		
+						
+0111001		57		Black, no body, medium upper shadow, medium lower shadow		
+						
+0111010		58		Black, no body, medium upper shadow, small lower shadow		
+						
+0111011		59		Black, no body, medium upper shadow, no lower shadow		
+						
+0111100		60		Black, no body, medium upper shadow, large lower shadow		
+						
+0111101		61		Black, no body, medium upper shadow, large lower shadow		
+						
+0111110		62		Black, no body, medium upper shadow, large lower shadow		
+						
+0111111		63		Black, no body, medium upper shadow, large lower shadow		
+						
+1000000		64		White, no body, no upper shadow, large lower shadow		
+						
+1000001		65		White, no body, no upper shadow, medium lower shadow		
+						
+1000010		66		White, no body, no upper shadow, small lower shadow		
+						
+1000011		67		White, no body, no upper shadow, no lower shadow		
+						
+1000100		68		White, no body, small upper shadow, large lower shadow		
+						
+1000101		69		White, no body, small upper shadow, medium lower shadow		
+						
+1000110		70		White, no body, small upper shadow, small lower shadow		
+						
+1000111		71		White, no body, small upper shadow, no lower shadow		
+						
+1001000		72		White, no body, medium upper shadow, large lower shadow		
+						
+1001001		73		White, no body, medium upper shadow, medium lower shadow		
+						
+1001010		74		White, no body, medium upper shadow, small lower shadow		
+						
+1001011		75		White, no body, medium upper shadow, no lower shadow		
+						
+1001100		76		White, no body, large upper shadow, large lower shadow		
+						
+1001101		77		White, no body, large upper shadow, medium lower shadow		
+						
+1001110		78		White, no body, large upper shadow, small lower shadow		
+						
+1001111		79		White, no body, large upper shadow, no lower shadow		
+						
+1010000		80		White, small body, no upper shadow, large lower shadow		
+						
+1010001		81		White, small body, no upper shadow, medium lower shadow		
+						
+1010010		82		White, small body, no upper shadow, small lower shadow		
+						
+1010011		83		White, small body, no upper shadow, no lower shadow		
+						
+1010100		84		White, small body, small upper shadow, large lower shadow		
+						
+1010101		85		White, small body, small upper shadow, medium lower shadow		
+						
+1010110		86		White, small body, small upper shadow, small lower shadow		
+						
+1010111		87		White, small body, small upper shadow, no lower shadow		
+						
+1011000		88		White, small body, medium upper shadow, large lower shadow		
+						
+1011001		89		White, small body, medium upper shadow, medium lower shadow		
+						
+1011010		90		White, small body, medium upper shadow, small lower shadow		
+						
+1011011		91		White, small body, medium upper shadow, no lower shadow		
+						
+1011100		92		White, small body, large upper shadow, large lower shadow		
+						
+1011101		93		White, small body, large upper shadow, medium lower shadow		
+						
+1011110		94		White, small body, large upper shadow, small lower shadow		
+						
+1011111		95		White, small body, large upper shadow, no lower shadow		
+						
+1100000		96		White, medium body, no upper shadow, large lower shadow		
+						
+1100001		97		White, medium body, no upper shadow, medium lower shadow		
+						
+1100010		98		White, medium body, no upper shadow, small lower shadow		
+						
+1100011		99		White, medium body, no upper shadow, no lower shadow		
+						
+1100100		100		White, medium body, small upper shadow, large lower shadow		
+						
+1100101		101		White, medium body, small upper shadow, medium lower shadow		
+						
+1100110		102		White, medium body, small upper shadow, small lower shadow		
+						
+1100111		103		White, medium body, small upper shadow, no lower shadow		
+						
+1101000		104		White, medium body, medium upper shadow, large lower shadow		
+						
+1101001		105		White, medium body, medium upper shadow, medium lower shadow		
+						
+1101010		106		White, medium body, medium upper shadow, small lower shadow		
+						
+1101011		107		White, medium body, medium upper shadow, no lower shadow		
+						
+1101100		108		White, medium body, large upper shadow, large lower shadow		
+						
+1101101		109		White, medium body, large upper shadow, medium lower shadow		
+						
+1101110		110		White, medium body, large upper shadow, small lower shadow		
+						
+1101111		111		White, medium body, large upper shadow, no lower shadow		
+						
+1110000		112		White, large body, no upper shadow, large lower shadow		
+						
+1110001		113		White, large body, no upper shadow, medium lower shadow		
+						
+1110010		114		White, large body, no upper shadow, small lower shadow		
+						
+1110011		115		White, large body, no upper shadow, no lower shadow		
+						
+1110100		116		White, large body, small upper shadow, large lower shadow		
+						
+1110101		117		White, large body, small upper shadow, medium lower shadow		
+						
+1110110		118		White, large body, small upper shadow, small lower shadow		
+						
+1110111		119		White, large body, small upper shadow, no lower shadow		
+						
+1111000		120		White, large body, medium upper shadow, large lower shadow		
+						
+1111001		121		White, large body, medium upper shadow, medium lower shadow		
+						
+1111010		122		White, large body, medium upper shadow, small lower shadow		
+						
+1111011		123		White, large body, medium upper shadow, no lower shadow		
+						
+1111100		124		White, large body, large upper shadow, large lower shadow		
+						
+1111101		125		White, large body, large upper shadow, medium lower shadow		
+						
+1111110		126		White, large body, large upper shadow, small lower shadow		
+						
+1111111		127		White, large body, large upper shadow, no lower shadow		
