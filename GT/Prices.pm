@@ -29,7 +29,7 @@ GT::Prices - A serie of prices
 
 =head1 DESCRIPTION
 
-GT::Prices stores all historic prices (open, high, low, close, volume).
+GT::Prices stores all historic prices (open, high, low, close, volume, date).
 
 =over
 
