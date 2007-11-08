@@ -4,6 +4,9 @@ package GT::List;
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
+# ras hack -- enhanced pod and load files with comments
+# $Id$
+
 use strict;
 
 =head1 NAME
@@ -102,11 +105,42 @@ Load data from a list of symbol.
 =cut
 sub load {
     my ($self, $file) = @_;
-    open(FILE, "<$file") || die "Can't open $file: $!\n";
+    # see pg 625 programming perl  open(FILE, "<", $file) || die "Can't open $file: $!\n";
+    open(FILE, "<", $file) || die "$0: error: Can't open file $file: $!\n";
     $self->{'symbol'} = [];
     while (defined($_=<FILE>))
     {
 	chomp;
+        # ignore blank and sorta blank lines
+=pod
+
+=head2 this is a ras hack version of List.pm
+
+  it therefore supports comments in loaded files. comments start
+  with a # and continue to end of line.
+  
+  blank lines and lines with only white space are ignored
+  
+  lines may also have data and a trailing comment. the comment is
+  separated from the data by whitespace.
+  
+  the data need can be indented too.
+  
+  examples:
+
+    V considered as column 1 of the line
+    # a comment line
+    AAPL # added to file on 25apr07
+    # MSFT # no longer a growth company
+        ADPI   # this one is indented with comment
+
+=cut
+        next if /^\s*$/;    # remove lines with only whitespace or nothing
+        # comments
+        next if /^#|^\s*#/;
+        # remove spaces at start of line, comments at end of lines
+        s/^\s*([^#\s]*)\s*#+\s*.*$/$1/;
+
 	$self->add($_);
     }
     close FILE;
@@ -119,7 +153,8 @@ Save list in a file.
 =cut
 sub save {
     my ($self, $file) = @_;
-    open(FILE, ">$file") || die "Can't write in $file: $!\n";
+    # see pg 625 programming perl  open(FILE, ">$file") || die "Can't write in $file: $!\n";
+    open(FILE, ">", $file) || die "Can't write in $file: $!\n";
     foreach (@{$self->{'symbol'}})
     {
 	print FILE "$_\n";
