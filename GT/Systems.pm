@@ -141,10 +141,9 @@ sub manage_object {
     GT::Registry::manage_object(\%OBJECT_REPOSITORY, @_);
 }
 
-=item C<< GT::Systems::Module->new($args, $key) >>
+=item C<< GT::Systems::Module->new($args) >>
 
-Create a new indicator with the given arguments. $key and $func are optional,
-they are useful for indicators which can use non-usual input streams.
+Create a new Systems with the given arguments. $args is optional.
 
 =cut
 sub new {
@@ -167,7 +166,7 @@ sub new {
 	$self->{'args'} = GT::ArgsTree->new(); # no args
     }
 
-    return manage_object(\@{"$class\::NAMES"}, $self, $class, $self->{'args'});
+    return manage_object(\@{"$class\::NAMES"}, $self, $class, $self->{'args'},'');
 }
 
 =back
