@@ -281,8 +281,12 @@ if ($start) {
 if ($end) {
     $last = $q->date($q->find_nearest_preceding_date($end));
     $last = $q->count() - 1 if (! defined($last));
-    $nb_item = $last - $first + 1;
+    if (!$start) {
+        $first = $last - $nb_item + 1;
+        $first = 0 if $first < 0;
+    }
 }
+$nb_item = $last - $first + 1;
 
 GT::Conf::default("Graphics::Driver", "GD");
 if ($opt_driver) {
