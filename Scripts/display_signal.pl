@@ -4,6 +4,9 @@
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
+# baseline Mar 17 2006 2293 bytes
+# $Id$
+
 use lib '..';
 
 use strict;
@@ -29,7 +32,7 @@ display_signal.pl
 
 =head1 DESCRIPTION
 
-Display the results of any given signal over a period of time. Mostly usefull for development purposes.
+Display the results of any given signal over a period of time. Mostly useful for development purposes.
 
 =head1 OPTIONS
 
@@ -42,6 +45,16 @@ Display signal results using all available data. By default, the script will onl
 The timeframe used to plot the graphic. Defaults to daily data.
 Valid values include:
 tick|1min|5min|10min|15min|30min|hour|2hour|3hour|4hour|day|week|month|year
+
+=head2 --start YYYY-MM-DD --end  YYYY-MM-DD
+
+the time span to run the evaluation on (no defaults, see --full)
+
+=head2 --change ( or -c )
+
+show on output only those dates that signal changed
+
+=head1 ARGUMENTS
 
 =head2 <signalname>
 
@@ -56,6 +69,8 @@ Use whatever symbols are available in your database.
 =head2 [args...]
 
 Args are passed to the new call that will create the signal.
+args is a string that specifies the signal in gt terms, spaces and other
+chars that the shell interprets will need to be quoted in some way.
 
 =head1 EXAMPLES
 
@@ -70,13 +85,26 @@ By default, use daily data, and display the last available 200 periods.
 Test for the EMA50 crossing over up EMA200.
 Do the test over the full available history data.
 
+NB  NB  NB  NB  NB  NB  NB  NB
+
+the securities symbol is placed on command line BEFORE the signal description
+
+NB  NB  NB  NB  NB  NB  NB  NB
+
 =cut
 
 # Get all options
-my ($full, $start, $end, $tf) = (0, '', '', 'day');
+my ($full, $start, $end, $tf)
+ = (0,     '',     '',   'day');
+
+my ($change)
+ = (0); # option to show only signal changes
+
 Getopt::Long::Configure('require_order');
 GetOptions('full!' => \$full, 'timeframe=s' => \$tf,
-	   'start=s' => \$start, 'end=s' => \$end);
+	   'start=s' => \$start, 'end=s' => \$end,
+           "change!" => \$change,
+          );
 my $timeframe = GT::DateTime::name_to_timeframe($tf);
 if (!defined($timeframe)) {
 	my $msg = "Unkown timeframe: $tf\nAvailable timeframes are:\n";
@@ -87,8 +115,15 @@ if (!defined($timeframe)) {
 }
 
 # Create the signal according to the arguments
-my $signal_module = shift || pod2usage(verbose => 2);
-my $code = shift || pod2usage(verbose => 2);
+my $signal_module = shift || pod2usage(verbose => 1);
+my $code = shift || pod2usage(verbose => 1);
+
+if ( $code =~ /{|}|:/ ) {
+  print STDERR "$0: warning: humm i read stock code as \"$code\"\n";
+  print STDERR "that looks a bit like signal description text to me\n";
+  print STDERR "\ncommand line order is\n$0 <signal_module_name> <code> <signal_description>\n\n";
+  print STDERR "$0 [ options ] <signal_module_name> <code> <signal_description_text>\n\n";
+}
 
 my $signal = create_standard_object($signal_module, @ARGV);
 
@@ -102,20 +137,34 @@ my $first = $last - 200;
 $first = 0 if ($full);
 $first = 0 if ($first < 0);
 
+# very rudimentary date format check
+my $dash_count;
+
 if ($start) {
+    $_ = $start;
+    print STDERR "\nthe only date format that i like is YYYY-MM-DD,\n"
+               . "i don't think --start=$start is going to do what you expect\n"
+      if ( ( $dash_count = $_ =~ tr/-//d ) != 2 );
     my $date = $calc->prices->find_nearest_following_date($start);
     $first = $calc->prices->date($date);
 }
 if ($end) {
+    $_ = $end;
+    print STDERR "\nthe only date format that i like is YYYY-MM-DD,\n"
+               . "i don't think --end=$end is going to do what you expect\n"
+      if ( ( $dash_count = $_ =~ tr/-//d ) != 2 );
     my $date = $calc->prices->find_nearest_preceding_date($end);
     $last = $calc->prices->date($date);
 }
 
-
+#print STDERR "first $first, last $last\n";
+#exit;
+print "\t$signal_module\n";
 # Launching the signal
 print "Testing signal $signal_name ...\n";
 $signal->detect_interval($calc, $first, $last);
 
+my $prior_state = undef;
 for(my $i = $first; $i <= $last; $i++)
 {
     for(my $n = 0; $n < $signal->get_nb_values; $n++)
@@ -123,8 +172,24 @@ for(my $i = $first; $i <= $last; $i++)
         my $name = $signal->get_name($n);
 
         if ($calc->signals->is_available($name, $i)) {
+          if ( ! $change ) {
             printf "%-20s[%s] = %s\n", $name, $q->at($i)->[$DATE],
                     ($calc->signals->get($name, $i) ? 'yes' : 'no');
+          }else{
+            # show only changes from prior
+            my $state = $calc->signals->get($name, $i);
+
+            if ( ! defined ( $prior_state ) ) {
+              printf "%-20s[%s] = %s\n", $name, $q->at($i)->[$DATE],
+               ($state ? 'yes' : 'no');
+            } else {
+              if ( $prior_state != $state ) {
+                printf "%-20s[%s] = %s\n", $name, $q->at($i)->[$DATE],
+                 ($state ? 'yes' : 'no');
+              }
+            }
+            $prior_state = $state;
+          }
         }
     }
 }

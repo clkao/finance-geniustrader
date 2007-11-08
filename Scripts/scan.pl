@@ -4,6 +4,9 @@
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
+# base version 22 May 2005 bytes 6478
+# $Id$
+
 use lib '..';
 
 use strict;
@@ -14,14 +17,21 @@ use GT::Calculator;
 use GT::List;
 use GT::Eval;
 use GT::Conf;
-use GT::Tools qw(:conf :generic);
+use GT::Tools qw(:conf :generic :timeframe);
 use GT::DateTime;
 use IPC::SysV qw(IPC_PRIVATE S_IRWXU IPC_NOWAIT);
 use IPC::Msg;
 use Getopt::Long;
 use Pod::Usage;
 
+use Date::Calc qw( Date_to_Days );
+#use Date::Manip;
+
 GT::Conf::load();
+
+( my $prog_name = $0 ) =~ s@^.*/@@;    # lets identify ourself
+
+=pod
 
 =head1 NAME
 
@@ -29,65 +39,318 @@ scan.pl - scan the market looking for signals
 
 =head1 SYNOPSIS
 
-./scan.pl [ options ] <market file> <date> <system file>
+./scan.pl [ options ] <market file> <date> <system file> [ <system file> ... ]
 
 =head1 DESCRIPTION
 
-Scan.pl will scan all stocks listed in <market file> looking
-for the signals indicated in <system file> at the given <date>. The system
-file can contain description of GT::Signals or description of
-GT::Systems.
+scan.pl will scan all stocks listed in <market file> looking
+for the signals indicated in each <system file> performing the analysis
+on the specified <date>. A system file must contain one or more description
+of GT::Signals or description of GT::Systems. You may list multiple system
+files on the command line. In the absence of a file standard input will
+be read instead.
 
-The list of detected signals is ouptut at the end and grouped by signal.
+NOTE -- if you omit a system file name scan.pl will happily wait forever
+attempting to read from stdin.
+
+The list of securities (code and name) that meet the specified signals
+is output at the end and grouped by signal.
+
+Output can be either text (default) or html.
+
+<market file> format:
+
+=over 4
+
+stock or index symbols one per line
+
+=back
+
+<date>
+
+the date to perform the analysis on. the date string can be in any format
+that Date::Manip (if installed) can parse or the defacto gt standard date
+format (YYYY-MM-DD HH:MM:SS) where time is optional
+
+<system file> format:
+
+=over 4
+
+one or more GT::Signals or GT::Systems descriptions each on a separate line
+
+lines starting with # are ignored (with the ras hack(s))
+
+=back
 
 =head1 OPTIONS
 
 =over 4
 
-=item --full
+=item --full (default - false)
 
 Runs the scan with the full history (it runs with two years by default)
 
-=item --timeframe="1min|5min|10min|15min|30min|hour|2hour|3hour|4hour|day|week|month|year"
+=item --verbose
 
-Runs the scan using the given timeframe.
+Makes scan.pl and invoked methods talkative (default - false)
+
+=item --start=date, --end=date
+
+Sets the start and end dates for the scan (defaults - none)
+start and end dates should be specified consistent with timeframe
+but this conversion will be done internally provided the dates
+can be parsed (note -- with the ras hack timeframe conversion is automatic)
+
+=item --timeframe=1min|5min|10min|15min|30min|hour|2hour|3hour|4hour|day|week|month|year
+
+Runs the scan using the given timeframe. (default - day)
 
 =item --nbprocess=2
 
 If you want to start two (or more) scans in parallel (useful for machines with several CPUs for example).
 
+=item --html
+
+Output is generated in html (default - false)
+
+=item --url="url"
+
+If html output enabled then embed this url as href (default - http://finance.yahoo.com/l?s=<code>)
+
 =back
+
+=head1 EXAMPLES (culled from devel archive)
+
+To scan for all stocks that are trading above both their 30 day and 150 day EMAs
+create a system file containing this GT::Signals description (as a single line)
+
+S:Generic:And {S:Generic:Above {I:Prices} {I:EMA 30}} {S:Generic:Above {I:Prices} {I:EMA 150}}
+
+To scan for all stocks that are trading below both their 30 day and 150 day EMAs
+create a system file containing this GT::Signals description (as a single line)
+
+S:Generic:And {S:Generic:Below {I:Prices} {I:EMA 30}} {S:Generic:Below {I:Prices} {I:EMA 150}}
 
 =cut
 
 # Manage options
 my ($full, $verbose, $timeframe, $start, $end, $nbprocess, $html, $url) = 
-   (0, 0, '', '', '', 1, 0, 'http://finance.yahoo.com/l?s=%s');
-GetOptions('full!' => \$full, 'verbose' => \$verbose, 
-	   'timeframe=s' => \$timeframe, "start=s" => \$start,
-	   "end=s" => \$end, 'nbprocess=s' => \$nbprocess,
-	   "html!" => \$html, "url=s" => \$url);
+   (0,     0,        '',         '',     '',   1,          0,     'http://finance.yahoo.com/l?s=%s');
+GetOptions( 'full!'		=> \$full,
+            'verbose+'		=> \$verbose,
+            'timeframe=s'	=> \$timeframe,
+            "start=s"		=> \$start,
+            "end=s"		=> \$end,
+            'nbprocess=s'	=> \$nbprocess,
+            "html!"		=> \$html,
+            "url=s"		=> \$url,
+           );
 
 # Create all the framework
 my $list = GT::List->new;
-my $file = shift || pod2usage(verbose => 2);
-if (! -e $file)
-{
-    die "File $file doesn't exist.\n";
-}
-$list->load($file);
 
+# get symbols filename from command line
+my $file = shift || pod2usage(verbose => 2);
+$list->load($file);    # checking done in sub $list->load
+
+# get date string from command line
 my $date = shift;
 
+
+##############################################################################
+#
+# if you don't like this date checking, thing you have found a bug and want
+# to test with and without it set skip_date_checks below to 1 all added code
+# will be bypassed
+#
+my $skip_date_checks = 0;    # set to 1 to skip all ras hack date checking
+
+goto SKIP_DATE_CHECKS if ( $skip_date_checks );
+#
+#
+##############################################################################
+
+# assumptions: date is the day of interest
+#              start and end dates define time span under analysis
+#              date is expected to be within that time span
+#              timeframe is the time period chunk size
+#              start and end dates must match the selected timeframe
+#
+#
+# datetime formats permitted
+# yyyy-mm-dd with or without leading zeros
+# yyyymmdd with required leading zeros
+# <date> hh:mm:ss with required separator and leading zeros
+if ( ! $date ) {
+  print STDERR "$prog_name: error: require date parameter\n\n";
+  print STDERR "date formats are YYYY-MM-DD with or without leading zeros\n";
+  print STDERR "                 YYYYMMDD leading zeros required\n\n";
+  print STDERR "time formats for sub day timeframes is:\n";
+  print STDERR "                 <date> HH:MM:SS\n\n";
+  print STDERR "explicit timeframe required if time included in date\n\n";
+  usage();
+  exit 1;
+}
+
+my $tf;
+my $time;
+my $err_msg;
+
+my $in_date = $date;
+my $in_start = $start if ( $start );
+my $in_end = $end if ( $end );
+
+if ( $timeframe ) {
+  $tf = GT::DateTime::name_to_timeframe($timeframe);
+} else {
+  # assume default is $DAY timeframe
+  $tf = $DAY;
+}
+
+my ( $d_yr, $d_mn, $d_dy, $d_tm );
+if ( ! parse_date_str( \$date, \$err_msg ) ) {
+  die "$prog_name: error: $err_msg\n";
+} else {
+  ( $d_yr, $d_mn, $d_dy, $d_tm ) = split /[- ]/, $date;
+ }
+
+my ( $s_yr, $s_mn, $s_dy, $s_tm );
+if ( $start ) {
+  if ( ! parse_date_str( \$start, \$err_msg ) ) {
+    die "$prog_name: error: \$err_msg\n";
+  } else {
+    ( $s_yr, $s_mn, $s_dy, $s_tm ) = split /[- ]/, $start;
+  }
+}
+
+my ( $e_yr, $e_mn, $e_dy, $e_tm );
+if ( $end ) {
+  if ( ! parse_date_str( \$end, \$err_msg ) ) {
+    die "$prog_name: error: \$err_msg\n";
+  } else {
+    ( $e_yr, $e_mn, $e_dy, $e_tm ) = split /[- ]/, $end;
+  }
+}
+
+if ( $start && $end ) {
+  # $start must be prior to $end
+  if (Date_to_Days($s_yr, $s_mn, $s_dy) >=
+      Date_to_Days($e_yr, $e_mn, $e_dy)) {
+    warn "$prog_name: --start date must be prior to --end date ($start before $end)\n";
+  }
+}
+  
+if ( $date && $end ) {
+  # $date must be $end or before
+  if (Date_to_Days($d_yr, $d_mn, $d_dy) >
+      Date_to_Days($e_yr, $e_mn, $e_dy)) {
+    warn "$prog_name: date must be prior to or equal --end date ($date before $end)\n";
+  }
+}
+  
+if ( $date && $start ) {
+  # $start must be prior to $date
+  if (Date_to_Days($s_yr, $s_mn, $s_dy) >=
+      Date_to_Days($d_yr, $d_mn, $d_dy)) {
+    warn "$prog_name: --start must be prior to date ($start before $date)\n";
+  }
+}
+
+# this is really debug code
+if ( $verbose ) {
+  print STDERR "\npre timeframe adjust:\n";
+  print STDERR "date:\t$date\n";
+  print STDERR "start:\t$start\n";
+  print STDERR "end:\t$end\n";
+}
+
+# timeframe relative date conversions
+if ( $start && $tf != $DAY ) {
+  $start = GT::DateTime::convert_date($start, $DAY, $tf);
+}
+
+if ( $end && $tf != $DAY ) {
+  $end = GT::DateTime::convert_date($end, $DAY, $tf);
+}
+
+if ( $tf != $DAY && $tf > $DAY ) {
+  $date = GT::DateTime::convert_date($date, $DAY, $tf);
+}
+
+# this is really debug code
+if ( $verbose ) {
+  print STDERR "\npost timeframe adjust:\n";
+  print STDERR "date:\t$date\n";
+  print STDERR "start:\t$start\n";
+  print STDERR "end:\t$end\n\n";
+}
+
+SKIP_DATE_CHECKS:
+
 # Build the list of systems to test
+# <> is last command line parameter -- filename of systems or signals
+# reads the entire file into the desc_systems array
+
+# read either the remaining file names on command line
+# or if none read stdin
 my @desc_systems = <>;
+# note -- i would like to do something like "|| die" above but that
+#         prevents perl from reading the entire file into array all at once
+#         plus reading all the filenames on command line including stdin
 my @list_systems = ();
 my $systems = {};
-foreach my $line (@desc_systems) 
-{
+my $buf = "";
+foreach my $line (@desc_systems) {
+
     chomp($line);
-    next if ($line =~ /^\s*#/);
+
+    # ras hack -- allow multi-line values in desc_systems files
+=pod
+
+=head2 this is a ras hack version of scan.pl
+
+  it therefore supports multi-line system-signal description files
+
+  description files can be formatted using the symbol '\' as the
+  line continuation symbol. it must appear as the last character
+  on the line before the trailing 'line terminator'. in unix that's
+  a '\n' character but on windoze who the hell knows. it's critical
+  that no whitespace appears between the \ and the newline.
+
+  example
+
+     S:Generic:And \
+       {S:Generic:CrossOverUp {I:SMA 5} {I:SMA 20}} \
+       {S:Generic:Increase {I:ADX}}
+
+  blank lines and lines that start with # are comments and ignored.
+  note if you comment out the first line of multi-line sys-sig desc
+  the entire is effectively commented out.
+
+  example
+
+     # the following signal description is commented out
+     #S:Generic:And {S:Generic:Above {I:Prices} {I:EMA 30}} \
+      {S:Generic:Above {I:Prices} {I:EMA 150}}
+
+=cut
+    if ( $line =~ /\\$/ ) {
+      $line =~ s/\\$//;     # remove \
+      $buf .= $line;        # save line
+      next;                 # get next line
+    } else {
+      $line = $buf . $line; # collect complete line into $line
+      $buf = '';            # reset line buffer
+    }
+
+    next if ($line =~ /^#|^\s+#|^$/);
+
+    # squeeze out extra spaces
+    $line =~ tr/[ \t]/[ \t]/s;     # squeeze out multiple adjacent whitespaces
+
+    # divide line into two pieces first word and rest of line
     if ($line =~ /^\s*(\S+)\s*(.*)$/) {
+
 	my $object = create_standard_object($1, $2);
 	my $number = extract_object_number($1);
 	my $name = get_standard_name($object);
@@ -96,6 +359,11 @@ foreach my $line (@desc_systems)
 	
 	$systems->{$name}{"object"} = $object;
 	$systems->{$name}{"number"} = $number;
+
+        warn "$prog_name doesn't deal with indicators, just systems and signals\n"
+         . "\"$object\" is an indicator, and will be ignored $!\n"
+         if ( ref($object) =~ /GT::Indicators::/ );
+
 	if (ref($object) =~ /GT::Systems/) {
 	    $systems->{$name}{"buy_signals"} = [];
 	    $systems->{$name}{"sell_signals"} = [];
@@ -145,15 +413,7 @@ for (my $d = 0; $d < $list->count; $d++)
     my $code = $list->get($d);
 
     my $db = create_standard_object("DB::" . GT::Conf::get("DB::module"));
-    my $q = $db->get_prices($code);
-    my $calc = GT::Calculator->new($q);
-    $calc->set_code($code);
-
-    if ($timeframe)
-    {
-	$calc->set_current_timeframe(
-	            GT::DateTime::name_to_timeframe($timeframe));
-    }
+	my ($q, $calc) = get_timeframe_data($code,$timeframe,$db);
 
     my $c = $calc->prices->count;
     my $last = $c - 1;
@@ -166,22 +426,27 @@ for (my $d = 0; $d < $list->count; $d++)
 	my $ndate = $calc->prices->find_nearest_following_date($start);
 	$first = $calc->prices->date($ndate);
     }
+
     if ($end) {
 	my $ndate = $calc->prices->find_nearest_preceding_date($end);
 	$last = $calc->prices->date($ndate);
     }
-    
+
     my $i;
     if ($calc->prices->has_date($date)) {
 	$i = $calc->prices->date($date);
     } else {
 	my $ndate = $calc->prices->find_nearest_preceding_date($date);
-	$i = $calc->prices->find_nearest_date($ndate);
+	$i = $calc->prices->date($ndate);
     }
 
+    # do the analyses
     my $n = 0;
     foreach (@list_systems)
     {
+
+        print STDERR "working " . $calc->code . " " if ($verbose >= 1);
+    
 	my $object = $systems->{$_}{'object'};
 	my $number = $systems->{$_}{'number'};
 	if (ref($object) =~ /GT::Systems/) {
@@ -199,6 +464,9 @@ for (my $d = 0; $d < $list->count; $d++)
 	    }
 	}
 	$n++;
+
+        print STDERR "spec $n\n" if ($verbose >= 1);
+
     }
 
     $db->disconnect;
@@ -224,30 +492,53 @@ foreach my $name (@list_systems) {
 	print "\nBuy signal: $name\n";
 	print "</p>" if ($html);
 	print "<ul>" if ($html);
-	foreach my $code (sort { $a <=> $b || $a cmp $b } @{$systems->{$name}{'buy_signals'}}) {
+#      {
+#        no warnings qw(numeric);
+#	foreach my $code (sort { $a <=> $b || $a cmp $b } @{$systems->{$name}{'buy_signals'}}) {
+	foreach my $code (sort scan_sort_sub @{$systems->{$name}{'buy_signals'}}) {
 	    display_item($db, $code, $html, $url);
 	}
+#      }
 	print "</ul>" if ($html);
 	print "<p>" if ($html);
 	print "\nSell signal: $name\n";
 	print "</p>" if ($html);
 	print "<ul>" if ($html);
-	foreach my $code (sort { $a <=> $b || $a cmp $b } @{$systems->{$name}{'sell_signals'}}) {
+#      {
+#        no warnings qw(numeric);
+#	foreach my $code (sort { $a <=> $b || $a cmp $b } @{$systems->{$name}{'sell_signals'}}) {
+	foreach my $code (sort scan_sort_sub @{$systems->{$name}{'sell_signals'}}) {
 	    display_item($db, $code, $html, $url);
 	}
+#      }
 	print "</ul>" if ($html);
     } elsif (ref($object) =~ /GT::Signals/) {
 	print "<p>" if ($html);
 	print "\nSignal: $name\n";
 	print "</p>" if ($html);
 	print "<ul>" if ($html);
-	foreach my $code (sort { $a <=> $b || $a cmp $b } @{$systems->{$name}{'signals'}}) {
-	    display_item($db, $code, $html, $url);
-	}
+       foreach my $code (sort scan_sort_sub @{$systems->{$name}{'signals'}}) {
+           display_item($db, $code, $html, $url);
+       }
+#      {
+#        no warnings qw(numeric);
+#	foreach my $code (sort { $a <=> $b || $a cmp $b } @{$systems->{$name}{'signals'}}) {
+#	    display_item($db, $code, $html, $url);
+#	}
+#      }
 	print "</ul>" if ($html);
     }
 }
 $db->disconnect;
+
+
+sub scan_sort_sub {
+  no warnings qw(numeric);
+  $a <=> $b
+      ||
+  $a cmp $b
+}
+
 
 sub display_item {
     my ($db, $code, $html, $url) = @_;
@@ -266,3 +557,174 @@ sub display_item {
 	print " $code - $name\n";
     }
 }
+
+
+sub usage {
+  print STDERR "$prog_name [ options ] symbols_file date spec_file [ spec_file ... ]\n";
+  print STDERR "\n";
+  print STDERR "where symbols_file is a file containing one symbol code per line\n";
+  print STDERR "      standard date format is YYYY-MM-DD\n";
+  print STDERR "      spec_file is a file containing one or more\n";
+  print STDERR "      system or signal specifications\n";
+  print STDERR "\n";
+  print STDERR "      multiple specification files will be read or stdin if not supplied\n";
+  print STDERR "\n";
+  print STDERR "      date can include optional time: <date>' HH:MM:SS'\n";
+  if ( eval { require Date::Manip } ) {
+    print STDERR "\n  ah! since you have Date::Manip available date strings can also be specified\n";
+    print STDERR "  in any format that Date::Manip can parse. common useful strings include:\n";
+    print STDERR "  'today', 'yesterday', 'last friday', '6 months ago', '1st of last month'\n";
+    print STDERR "  are all simple examples that make date entry much more human-date relative\n";
+    print STDERR "  \"perldoc -t Date::Manip\" for the gory details on date string parsing\n";
+  }  
+  print STDERR "\n";
+  print STDERR "for the full story on $prog_name try \"perldoc -t $prog_name\" for more details\n";
+  print STDERR "\n";
+}
+
+
+sub parse_date_str {
+  #
+  # inputs: date string reference var required
+  #         error string reference var (optional)
+  # returns 1 for good date
+  #         zero (null) for bad date
+  #
+  # notes: @ if called in void context with bad date value the internal
+  #          error handling will put error message text on stderr and die called
+  #        @ date ref var may be altered to conform to std date-time format
+  #        @ error string will contain details about bad date-time string
+  #
+  # usage examples
+  # typical usage in perl script
+  # my $err_msg;
+  # if ( ! parse_date_str( \$date, \$err_msg ) ) {
+  #   die "$prog_name: error: $err_msg\n";
+  # }
+  #
+  # usage using internal error handling
+  # my $date = "24oct07";
+  # parse_date_str( \$date  );
+  #
+  my ( $dtstref, $errref ) = @_;
+
+  if ( eval { require Date::Manip } ) {
+    use Date::Manip qw(ParseDate UnixDate);
+    if ( $$dtstref =~ m/[- :\w\d]/ ) {
+      if ( my $date = ParseDate($$dtstref) ) {
+        $$dtstref = UnixDate("$date", "%Y-%m-%d %T");
+      }
+    }
+  }
+  # dates only allow digits, date separator is '-', time separator is ':'
+  # date and time field separator is a single space not even a tab
+  #
+  # timeframe seps: '-' day and week
+  #                 '/' month
+  #                 '_' date and time part separator
+  if ( $$dtstref =~ m/[^- :\d]/ ) {
+    # bad chars in date string
+    $$errref = "invalid character in date \"$$dtstref\"" if ( $errref );
+    return if defined wantarray;
+    die "pds: invalid character in date \"$$dtstref\"\n";
+  }
+  my ( $year, $mon, $day, $time )
+    = $$dtstref =~ /^(\d{4})-?(\d{2})-?(\d{2})\s?([\d:]+)*$/;
+    # not capturing time field separator intentionally
+  if ( ! $year || ! $mon || ! $day ) {
+    $$errref = "bad date format \"$$dtstref\"" if ( $errref );
+    return if defined wantarray;
+    die "pds: bad date format \"$$dtstref\"\n";
+  }
+
+  # valididate date
+  if ( ! Date::Calc::check_date($year, $mon, $day) ) {
+    $$errref = "invalid date \"$$dtstref\"" if ( $errref );
+    return if defined wantarray;
+    die "pds: invalid date \"$$dtstref\"\n";
+  }
+
+  # valididate time
+  if ( $time ) {
+    my ( $hour, $min, $sec ) = split /:/, $time;
+    if ( ! Date::Calc::check_time($hour, $min, $sec) ) {
+      #print STDERR "pds: invalid time \"$hour:$min:$sec\"\n";
+      #return 0 if ( defined wantarray );
+      $$errref = "invalid time \"$time\"" if ( $errref );
+      return if defined wantarray;
+      die "pds: invalid time \"$time\"\n";
+    }
+  }
+
+  # good date
+  # clear err just in case
+  $$errref = "" if ( $errref );
+
+  return 1;
+
+  # ras hack -- describe parse_date_str features in pod
+=pod
+
+=head2 this is a ras hack version of scan.pl that includes date string checks
+
+ if the user has Date::Manip installed it allows the use of date strings
+ that can be parsed by Date::Manip in addition the to defacto standard
+ date-time format accepted by GT (YYYY-MM-DD HH:MM:SS) time part is optional
+
+ Date::Manip is not required, without it users cannot use short-cuts to
+ specify date strings. such short cuts include
+ --start '6 months ago'
+ --end 'today'
+
+ the date string checking includes verifying the date string format
+ is valid and the date is a valid date (and time if provided)
+
+ errors will be displayed and the script will terminate.
+
+ the script also validates that the dates specified are consistent
+ with respect to their purpose (--start is earlier than --end etc)
+
+ finally, appropriate timeframe conversion is performed so the user
+ need not convert command line date strings from the day time to
+ say week or month as it will be done automagically.
+
+ usage examples:
+
+ with market_file (a file) containing the next 2 lines:
+ JAVA
+ AAPL
+
+ with system_file (a file) containing the next 6 lines:
+ # example system_file
+ #
+ # todays price close was above open
+ 
+ S:Generic:Above { I:Prices CLOSE } { I:Prices OPEN }
+ # end of system_file
+
+ with Date::Manip installed
+ %    scan.pl --timeframe day --start '6 months ago' --end 'today' market_file \
+  'today' system_file
+ prints
+
+ Signal: S:Generic:Above {I:Prices CLOSE} {I:Prices OPEN}
+  AAPL - APPLE INC
+
+ replace day with week and you will (should) get:
+
+ Signal: S:Generic:Above {I:Prices CLOSE} {I:Prices OPEN}
+  AAPL - APPLE INC
+  JAVA - SUN MICROSYS INC
+
+
+ without Date::Manip you will need to use:
+ %    scan.pl --timeframe day --start 2007-04-24 --end 2007-10-24 market_file \
+  2007-10-24 system_file
+ or
+ %    scan.pl --timeframe week --start 2007-04-24 --end 2007-10-24 market_file \
+  2007-10-24 system_file
+ and should get the same results respectively
+
+=cut
+} # sub parse_date_str
+

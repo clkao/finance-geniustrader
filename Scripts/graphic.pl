@@ -22,7 +22,7 @@ use GT::BackTest::Spool;
 use GT::Portfolio;
 use GT::DateTime;
 use GT::Tools qw(:conf :timeframe);
-use Getopt::Long;
+use Getopt::Long 2.33;
 use Pod::Usage;
 
 GT::Conf::load();
