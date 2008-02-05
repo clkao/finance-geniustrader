@@ -4,6 +4,9 @@ package GT::DB::Text;
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
+# baseline  9 Jul 2005  5304 bytes
+# $Id$
+
 use strict;
 our @ISA = qw(GT::DB);
 
@@ -29,15 +32,32 @@ how to read the Text file:
 
 DB::module Text
 
-DB::text::directory  /home/projects/geniustrader/database
+DB::Text::directory  /home/projects/geniustrader/database
 
-DB::text::options ( "," , 2 , ".csv" , ('date' => 0, 'open' => 1, 'high' => 2, 'low' => 3, 'close' => 4, 'volume' => 5, 'Adj. Close*' => 6) )
-
-","    - The field separator
- 2     - The Date format. Valid values are: 0 - YYYYMMDD Format; 1 - US Format (mm/dd/yyyy); 2 - European Format (dd/mm/yyyy)
-".csv" - The extension of the data files
+                     +- "," - The field separator
+                     |
+                     |    +- 2 - The Date format. Valid values are:
+                     |    |      0 - YYYY-MM-DD Format (default gt format)
+                     |    |      1 - US Format (mm/dd/yyyy)
+                     |    |      2 - European Format (dd/mm/yyyy)
+                     |    |
+                     |    |      +- ".csv" - The extension of the data files
+                     |    |      |
+                     |    |      |        +- column data and column number 0 ... n-1
+                     |    |      |        |
+DB::Text::options ( "," , 2 , ".csv" , ('date' => 0, 'open' => 1, 'high' => 2, 'low' => 3, 'close' => 4, 'volume' => 5, 'Adj. Close*' => 6) )
 
 The remaining fields represent the position of each data field inside each row of the data file
+
+For the sample data files 13000.txt, etc you must set DB::Text::options in your
+options file (.gt/options) to
+
+                      V must be the tab character
+ DB::Text::options ( "	" , 0 , ".txt" , ("date" => 5, "open" => 0, "high" => 1, "low" => 2, "close" => 3, "volume" => 4, "Adj. Close*" => 3) )
+or you can use
+ DB::Text::options ( "\t" , 0 , ".txt" , ("date" => 5, "open" => 0, "high" => 1, "low" => 2, "close" => 3, "volume" => 4, "Adj. Close*" => 3) )
+
+if the The field separator is longer than 1 character (but not "\t") a warning will be issued
 
 =head2 new()
 
@@ -53,18 +73,20 @@ sub new {
 
     GT::Conf::default('DB::Text::options', '( "," , 2 , ".csv" , ("date" => 0, "open" => 1, "high" => 2, "low" => 3, "close" => 4, "volume" => 5, "Adj. Close*" => 6) )');
 
-
     my $options=GT::Conf::get("DB::Text::options");
 #( "\t" , 2 , ".txt" , ( 'open' , 0, 'high' , 1, 'low' , 2, 'close' , 3, %'volume' , 4, 'date' , 5 ) )
-    if ( $options =~/^\(\s+\"(.+)\"\s+,\s+(.+)\s+,\s+\"(.+)\"\s+,\s+(\(.+)\s+\)$/ )
+    if ( $options =~ /^\(\s+\"(.+)\"\s+,\s+(.+)\s+,\s+\"(.+)\"\s+,\s+(\(.+)\s+\)$/ )
     {
 	    my $mark=$1;
-    	my $date_format=$2;
+            if ( $mark != "\t" && length($mark) > 1 ) {
+               warn "GT::Text::new: warning: the separator value \"$mark\" is more than one character\n"
+            }
+	    my $date_format=$2;
 	    my $extention=$3;
 	    my $fields=$4;
 
 	    $self->{'mark'} = $mark;
-        $self->{'date_format'} = $date_format;
+	    $self->{'date_format'} = $date_format;
 	    $self->{'extention'} = $extention;
 
         #( 'date' => 0, 'open' => 1, 'high' => 2, 'low' => 3, 'close' => 4, 'volume' => 5, 'Adj. Close*' => 6)
@@ -117,17 +139,17 @@ sub set_directory {
 Set up all available options required to load text files.
 
 By default :
-- Mark is a tabulation ("\t")
+ - Mark is a tabulation ("\t")
 
-- Date Format
-    0 : GeniusTrader Date Format
-    1 : US sort of Date Format
-    2 : EU sort of Date Format
+ - Date Format
+    0 : GeniusTrader Date Format (YYYY-MM-DD)
+    1 : US sort of Date Format (mm/dd/yyyy)
+    2 : EU sort of Date Format (dd/mm/yyyy)
 
-- Extention
+ - Extention
     ".txt"
 
-- Fields Map
+ - Fields Map
      %fields = ('open' => 0, 'high' => 1, 'low' => 2, 'close' => 3,
      %'volume' => 4, 'date' => 5);
 
