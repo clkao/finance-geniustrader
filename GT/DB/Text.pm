@@ -4,8 +4,7 @@ package GT::DB::Text;
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
-# baseline  9 Jul 2005  5304 bytes
-# $Id$
+# new version joao costa circa nov 07
 
 use strict;
 our @ISA = qw(GT::DB);
@@ -14,6 +13,7 @@ use GT::DB;
 use GT::Prices;
 use GT::Conf;
 use GT::DateTime;
+use Date::Manip;
 
 =head1 DB::Text access module
 
@@ -24,40 +24,45 @@ text files.
 
 =head2 Configuration
 
-You must set the GT::Text::directory configuration item to tell where
-the quotes are usually stored.
-
-You can optionally set the GT::Text::options configuration item to tell GT
-how to read the Text file:
+All configuration items are required
 
 DB::module Text
 
-DB::Text::directory  /home/projects/geniustrader/database
+DB::text::directory  path where files are stored
 
-                     +- "," - The field separator
-                     |
-                     |    +- 2 - The Date format. Valid values are:
-                     |    |      0 - YYYY-MM-DD Format (default gt format)
-                     |    |      1 - US Format (mm/dd/yyyy)
-                     |    |      2 - European Format (dd/mm/yyyy)
-                     |    |
-                     |    |      +- ".csv" - The extension of the data files
-                     |    |      |
-                     |    |      |        +- column data and column number 0 ... n-1
-                     |    |      |        |
-DB::Text::options ( "," , 2 , ".csv" , ('date' => 0, 'open' => 1, 'high' => 2, 'low' => 3, 'close' => 4, 'volume' => 5, 'Adj. Close*' => 6) )
+DB::text::marker  string which delimits fields in each row of the data file
 
-The remaining fields represent the position of each data field inside each row of the data file
+DB::text::file_extension  string to be appended to the code file name when 
+searching the data file.  for instance, if the data file is called EURUSD.csv
+this variable would have the value .csv
 
-For the sample data files 13000.txt, etc you must set DB::Text::options in your
-options file (.gt/options) to
+if you have data in different timeframes, for instance, EURUSD_hour.csv and
+EURUSD_day.csv, use the following value for this directive:
 
-                      V must be the tab character
- DB::Text::options ( "	" , 0 , ".txt" , ("date" => 5, "open" => 0, "high" => 1, "low" => 2, "close" => 3, "volume" => 4, "Adj. Close*" => 3) )
-or you can use
- DB::Text::options ( "\t" , 0 , ".txt" , ("date" => 5, "open" => 0, "high" => 1, "low" => 2, "close" => 3, "volume" => 4, "Adj. Close*" => 3) )
+DB::text::file_extension  _$timeframe.csv
 
-if the The field separator is longer than 1 character (but not "\t") a warning will be issued
+DB::text::fields::datetime  Column index where to find the period datetime field.
+Indexes are 0 based.  For the particular case of datetime, can contain
+multiple indexes, useful when date and time are separate columns in the data
+file.  The date time format is anything that can be understood by Date::Manip.
+A typical example would be YYYY-MM-DD HH:NN:SS
+
+
+DB::text::fields::open Column index where to find the period open field.
+Indexes are 0 based.  
+
+DB::text::fields::low Column index where to find the period low field.
+Indexes are 0 based.  
+
+DB::text::fields::high Column index where to find the period high field.
+Indexes are 0 based.  
+
+DB::text::fields::close Column index where to find the period close field.
+Indexes are 0 based.  
+
+DB::text::fields::volume Column index where to find the period volume field.
+Indexes are 0 based.  
+
 
 =head2 new()
 
@@ -71,44 +76,24 @@ sub new {
 
     my $self = { "directory" => GT::Conf::get("DB::Text::directory")};
 
-    GT::Conf::default('DB::Text::options', '( "," , 2 , ".csv" , ("date" => 0, "open" => 1, "high" => 2, "low" => 3, "close" => 4, "volume" => 5, "Adj. Close*" => 6) )');
+    GT::Conf::default('DB::Text::marker', "\t");
+    GT::Conf::default('DB::Text::file_extension', '.txt');
+    GT::Conf::default('DB::Text::fields::datetime', '5');
+    GT::Conf::default('DB::Text::fields::open', '0');
+    GT::Conf::default('DB::Text::fields::low', '2');
+    GT::Conf::default('DB::Text::fields::high', '1');
+    GT::Conf::default('DB::Text::fields::close', '3');
+    GT::Conf::default('DB::Text::fields::volume', '4');
 
-    my $options=GT::Conf::get("DB::Text::options");
-#( "\t" , 2 , ".txt" , ( 'open' , 0, 'high' , 1, 'low' , 2, 'close' , 3, %'volume' , 4, 'date' , 5 ) )
-    if ( $options =~ /^\(\s+\"(.+)\"\s+,\s+(.+)\s+,\s+\"(.+)\"\s+,\s+(\(.+)\s+\)$/ )
-    {
-	    my $mark=$1;
-            if ( $mark != "\t" && length($mark) > 1 ) {
-               warn "GT::Text::new: warning: the separator value \"$mark\" is more than one character\n"
-            }
-	    my $date_format=$2;
-	    my $extention=$3;
-	    my $fields=$4;
+	$self->{'mark'} = GT::Conf::get('DB::Text::marker');
+	$self->{'extension'} = GT::Conf::get('DB::Text::file_extension');
+	$self->{'datetime'} = GT::Conf::get('DB::Text::fields::datetime');
+	$self->{'open'} = GT::Conf::get('DB::Text::fields::open');
+	$self->{'low'} = GT::Conf::get('DB::Text::fields::low');
+	$self->{'high'} = GT::Conf::get('DB::Text::fields::high');
+	$self->{'close'} = GT::Conf::get('DB::Text::fields::close');
+	$self->{'volume'} = GT::Conf::get('DB::Text::fields::volume');
 
-	    $self->{'mark'} = $mark;
-	    $self->{'date_format'} = $date_format;
-	    $self->{'extention'} = $extention;
-
-        #( 'date' => 0, 'open' => 1, 'high' => 2, 'low' => 3, 'close' => 4, 'volume' => 5, 'Adj. Close*' => 6)
-        #( 'open' => 0, 'high' => 1, 'low' => 2, 'close' => 3, 'volume' => 4, 'date' => 5 ) )
-        if ( $fields =~/^.*(,|\()\s*'open'\s*=>\s*(\d+)\s*(,|\)).*$/  )
-	    {	$self->{'open'} = $2;	}
-
-    	if ( $fields =~/^.*(,|\()\s*'high'\s*=>\s*(\d+)\s*(,|\)).*$/ )
-    	{	$self->{'high'} = $2;	}
-
-    	if ( $fields =~/^.*(,|\()\s*'low'\s*=>\s*(\d+)\s*(,|\)).*$/ )
-    	{	$self->{'low'} = $2;	}
-
-    	if ( $fields =~/^.*(,|\()\s*'close'\s*=>\s*(\d+)\s*(,|\)).*$/ )
-    	{	$self->{'close'} = $2;	}
-
-    	if ( $fields =~/^.*(,|\()\s*'volume'\s*=>\s*(\d+)\s*(,|\)).*$/ )
-    	{	$self->{'volume'} = $2;	}
-
-    	if ( $fields =~/^.*(,|\()\s*'date'\s*=>\s*(\d+)\s*(,|\)).*$/ )
-    	{	$self->{'date'} = $2;	}
-    }
     return bless $self, $class;
 }
 
@@ -133,44 +118,6 @@ sub set_directory {
     $self->{'directory'} = $dir;
 }
 
-
-=head2 $db->set_options($mark, $date_format, $extention, %fields)
-
-Set up all available options required to load text files.
-
-By default :
- - Mark is a tabulation ("\t")
-
- - Date Format
-    0 : GeniusTrader Date Format (YYYY-MM-DD)
-    1 : US sort of Date Format (mm/dd/yyyy)
-    2 : EU sort of Date Format (dd/mm/yyyy)
-
- - Extention
-    ".txt"
-
- - Fields Map
-     %fields = ('open' => 0, 'high' => 1, 'low' => 2, 'close' => 3,
-     %'volume' => 4, 'date' => 5);
-
-=cut
-
-sub set_options {
-    my ($self, $mark, $date_format, $extention, %fields) = @_;
-
-    if ($mark) { $self->{'mark'} = $mark; }
-    if ($date_format) {$self->{'date_format'} = $date_format; }
-    if ($extention) { $self->{'extention'} = $extention; }
-    if (%fields) {
-	$self->{'open'} = $fields{'open'};
-	$self->{'high'} = $fields{'high'};
-	$self->{'low'} = $fields{'low'};
-	$self->{'close'} = $fields{'close'};
-	$self->{'volume'} = $fields{'volume'};
-	$self->{'date'} = $fields{'date'};
-    }
-}
-
 =head2 $db->get_prices($code, $timeframe)
 
 Returns a GT::Prices object containing all known prices for the symbol $code.
@@ -180,37 +127,63 @@ Returns a GT::Prices object containing all known prices for the symbol $code.
 sub get_prices {
     my ($self, $code, $timeframe) = @_;
     $timeframe = $DAY unless ($timeframe);
-    die "Intraday support not implemented in DB::Text" if ($timeframe < $DAY);
-    return GT::Prices->new() if ($timeframe > $DAY);
+
+    my @datetime_fields = split(',',$self->{'datetime'});
+	my $datetime_fields_count = scalar(@datetime_fields);
 
     my $prices = GT::Prices->new;
     $prices->set_timeframe($timeframe);
 
-    if (!exists($self->{'mark'})) { $self->{'mark'} = "\t"; }
-    if (!exists($self->{'date_format'})) { $self->{'date_format'} = 0; }
-    if (!exists($self->{'extention'})) { $self->{'extention'} = ".txt"; }
-    if (!exists($self->{'open'})) { $self->{'open'} = 0; }
-    if (!exists($self->{'high'})) { $self->{'high'} = 1; }
-    if (!exists($self->{'low'})) { $self->{'low'} = 2; }
-    if (!exists($self->{'close'})) { $self->{'close'} = 3; }
-    if (!exists($self->{'volume'})) { $self->{'volume'} = 4; }
-    if (!exists($self->{'date'})) { $self->{'date'} = 5;}
+	my $extension = $self->{'extension'};
+	my $tfname = GT::DateTime::name_of_timeframe($timeframe);
+	$extension =~ s/\$timeframe/$tfname/g;
 
-    my %fields = ('open' => $self->{'open'}, 'high' => $self->{'high'},
-                  'low' => $self->{'low'}, 'close' => $self->{'close'},
-		  'volume' => $self->{'volume'}, 'date' => $self->{'date'});
+	my $file = $self->{'directory'} . "/$code" . $extension;
 
-    $prices->loadtxt($self->{'directory'} . "/$code" . $self->{'extention'},
-		     $self->{'mark'}, $self->{'date_format'},
-		     %fields);
+    open(FILE, "<$file") || (warn "Can't open $file: $!\n" and return GT::Prices->new());
+
+    my ($open, $high, $low, $close, $volume, $date);
+    my ($year, $month, $day);
+
+
+	#TODO
+	#Date::Manip requires this to be defined
+	#there probably is a better way of doing this
+	#rather than defining it here, but it works
+	#for now
+	$ENV{'TZ'} = 'GMT' unless(defined($ENV{'TZ'})); 
+
+    # Process each line in $file...
+    while (defined($_=<FILE>))
+    {
+		next if (/^[#<]/); #Skip comments and METASTOCK ascii file header
+	    # Get and split the line with $mark
+	    chomp;
+	    my @line = split($self->{'mark'});
+
+	    # Get and swap all necessary fields according to the fields map
+	    $open = $line[$self->{'open'}];
+	    $high = $line[$self->{'high'}];
+	    $low = $line[$self->{'low'}];
+	    $close = $line[$self->{'close'}];
+	    $volume = $line[$self->{'volume'}] or $volume = 0; #some datasets don't include volume
+		my $datetime=$line[$datetime_fields[0]];
+		for (my $i=1; $i<$datetime_fields_count;$i++) {
+			$datetime .= ' '.$line[$datetime_fields[$i]];
+		}
+		$date = &UnixDate($datetime, '%Y-%m-%d %H:%M:%S');
+
+	    # Add all data within the GT::Prices object
+	    $prices->add_prices([ $open, $high, $low, $close, $volume, $date ]);
+    }
+    close FILE;
+
     return $prices;
 }
 
 =pod
 
 =head2 $db->get_last_prices($code, $limit, $timeframe)
-
-NOT SUPPORTED for text db.
 
 Returns a GT::Prices object containing the $limit last known prices for
 the symbol $code.
@@ -219,17 +192,25 @@ the symbol $code.
 sub get_last_prices {
     my ($self, $code, $limit, $timeframe) = @_;
 
-    return get_prices($self, $code, $timeframe) if ($limit==-1);
-    die "get_last_prices not supported with text database\n";
+	warn "$limit parameter ignored in DB::Text::get_last_prices. loading entire dataset." if ($limit > -1);
+    return get_prices($self, $code, $timeframe,-1);
 }
 
 sub has_code {
     my ($self, $code) = @_;
-    my $file = ($self->{'directory'} . "/$code" . $self->{'extention'});
-    if (-e $file) {
-	return 1;
-    }
-    return 0;
+	my $extension = $self->{'extension'};
+	$extension =~ s/\$timeframe/\.\*/g;
+	my $file_exists = 0;
+    my $file_pattern = "$code$extension";
+
+	if ($extension =~ /\*/) {
+	  eval "use File::Find;";
+	  find (  sub {	$file_exists = 1 if ($_ =~ /$file_pattern/);  },$self->{'directory'});
+	} else {
+      $file_exists = 1 if (-e $file_pattern);
+	}
+
+	return $file_exists;
 }
 
 1;
