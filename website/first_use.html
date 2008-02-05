@@ -1,8 +1,8 @@
 <html>
 <head>
-<title>GeniusTrader - first use</title>
+  <title>GeniusTrader - first use</title>
 </head>
-<body bgcolor="#ffffff">
+<body style="background-color: rgb(255, 255, 255);">
 
 <!--#include virtual="box.html" -->
 
@@ -17,90 +17,95 @@ use GeniusTrader for the first time.
 
 <h2>Windows Users</h2>
 <h3>Install Perl</h3>
-Genius Trader requires Perl.  You can download Perl from <a href='http://www.activestate.org'>http://www.activestate.org</a> at <a href='http://www.activestate.com/store/activeperl/download/'>http://www.activestate.com/store/activeperl/download/</a>.
-<h3>Install GeniusTrader</h3>
-After you have Perl installed in your system, the simplest way to use GeniusTrader is to run the <a href='http://www.geniustrader.org/cgi-bin/viewcvs.cgi/*checkout*/trunk/Windows_Installer/GeniusTrader.exe'>Genius Trader Windows Install</a> which will install all required dependencies as well as sample data.
+Genius Trader requires Perl. You can download Perl from <a
+ href="http://www.activestate.org">http://www.activestate.org</a> at <a
+ href="http://www.activestate.com/store/activeperl/download/">http://www.activestate.com/store/activeperl/download/</a>.
 
+<h3>Install GeniusTrader</h3>
+After you have Perl installed in your system, the simplest way to use
+GeniusTrader is to run the <a
+ href="http://www.geniustrader.org/cgi-bin/viewcvs.cgi/*checkout*/trunk/Windows_Installer/GeniusTrader.exe">Genius
+Trader Windows Install</a> which will install all required dependencies
+as well as sample data.
 
 <h3>Test GeniusTrader</h3>
 To test GeniusTrader, open a console window, and try the following:
-
 <pre style="background-color: #eaeaea;">
 display_indicator.pl I:RSI 13000
 backtest.pl TFS 13000
 backtest.pl TFS[30,7,7] 13000
 </pre>
-
-<p>You should now read the <a href="doc/Scripts/">documentation of those
+<p>You should now read the <a href="doc/Scripts/">documentation of
+those
 scripts</a> to understand what they can do.
+</p>
 
 <h2>Linux Users</h2>
 <h3>Extract the archives</h3>
-
-Once you downloaded both GT.tar.gz and Scripts.tar.gz from the main page, you can
+Once you downloaded both GT.tar.gz and Scripts.tar.gz from the main
+page, you can
 extract them in a new directory :
-<pre style="background-color: #eaeaea;">
-$ mkdir geniustrader
-$ cd geniustrader
-$ tar zxf ~/GT.tar.gz
-$ tar zxf ~/Scripts.tar.gz
-</pre>
+<pre style="background-color: rgb(234, 234, 234);">$ mkdir geniustrader<br>$ cd geniustrader<br>$ tar zxf ~/GT.tar.gz<br>$ tar zxf ~/Scripts.tar.gz<br></pre>
 
 <h3>Install the dependencies</h3>
-
-<p>GeniusTrader uses several external perl modules. You have to install them. You can do
-that by hand, or you can use the CPAN perl module or you can use the corresponding
-packages of your linux distribution. Take care, some of those modules depends on other
+<p>GeniusTrader uses several external perl modules. You have to install
+them. You can do
+that by hand, or you can use the CPAN perl module or you can use the
+corresponding
+packages of your linux distribution. Take care, some of those modules
+depends on other
 modules...
+</p>
 <ul>
-<li><a href="http://search.cpan.org/author/STBEY/Date-Calc-5.3/">Date::Calc</a> (debian package: <a href="http://packages.debian.org/libdate-calc-perl">libdate-calc-perl</a>)</li>
-<li><a href="http://search.cpan.org/author/RAM/Getargs-Long-0.1.3/">Getargs::Long</a> (debian package: <a href="http://packages.debian.org/libgetargs-long-perl">libgetargs-long-perl</a>)</li>
-<li><a href="http://search.cpan.org/author/PHISH/XML-LibXML-1.53/">XML::LibXML</a> (debian package: <a href="http://packages.debian.org/libxml-libxml-perl">libxml-libxml-perl</a>)</li>
-<li><a href="http://search.cpan.org/~pmqs/Compress-Zlib-1.33/">Compress::Zlib</a> (debian package: <a href="http://packages.debian.org/libcompress-zlib-perl">libcompress-zlib-perl</a>)</li>
-<li><a href="http://search.cpan.org/author/AMS/Storable-2.06/">Storable</a> (standard in perl 5.8, debian package for woody/perl 5.6: <a href="http://packages.debian.org/libstorable-perl">libstorable-perl</a>)</li>
+  <li><a href="http://search.cpan.org/author/STBEY/Date-Calc-5.3/">Date::Calc</a>
+(debian package: <a href="http://packages.debian.org/libdate-calc-perl">libdate-calc-perl</a>)</li>
+  <li><a href="http://search.cpan.org/author/RAM/Getargs-Long-0.1.3/">Getargs::Long</a>
+(debian package: <a
+ href="http://packages.debian.org/libgetargs-long-perl">libgetargs-long-perl</a>)</li>
+  <li><a href="http://search.cpan.org/author/PHISH/XML-LibXML-1.53/">XML::LibXML</a>
+(debian package: <a
+ href="http://packages.debian.org/libxml-libxml-perl">libxml-libxml-perl</a>)</li>
+  <li><a href="http://search.cpan.org/%7Epmqs/Compress-Zlib-1.33/">Compress::Zlib</a>
+(debian package: <a
+ href="http://packages.debian.org/libcompress-zlib-perl">libcompress-zlib-perl</a>)</li>
+  <li><a href="http://search.cpan.org/author/AMS/Storable-2.06/">Storable</a>
+(standard in perl 5.8, debian package for woody/perl 5.6: <a
+ href="http://packages.debian.org/libstorable-perl">libstorable-perl</a>)</li>
+</ul>
+the new GT::DB::Text.pm requires Date::Manip ...
+it will enhance usability elsewhere
+and is recommended even if you don't use DB::Text.<br>
+<ul>
+  <li><a href="http://search.cpan.org/~sbeck/Date-Manip-5.48/">Date::Manip</a>
+(debian package: <a href="http://packages.debian.org/libdate-manip-perl">libdate-manip-perl</a>)</li>
 </ul>
 
 <h3>Setup your source of data</h3>
-
-<p>In order to do something useful, you have to setup a source of data (prices).
+<p>In order to do something useful, you have to setup a source of data
+(prices).
 Various modules are available for that (check <a href="doc/GT/DB/">GT::DB::*</a>).
 Since you may not have any data, I'll give you some <a
-href="examples/data.tar.gz">sample data</a>. Extract this archive near the two other
+ href="examples/data.tar.gz">sample data</a>. Extract this archive near
+the two other
 archives that you already extracted:
-<pre style="background-color: #eaeaea;">
-$ tar zxf ~/data.tar.gz
-</pre>
+</p>
+<pre style="background-color: rgb(234, 234, 234);">$ tar zxf ~/data.tar.gz<br></pre>
 <p>Now, you have to create the GT configuration file:
-<pre style="background-color: #eaeaea;">
-$ mkdir ~/.gt
-$ vim ~/.gt/options
-</pre>
-<p>Copy and paste the following text in your configuration file, and edit the directories
+</p>
+<pre style="background-color: rgb(234, 234, 234);">$ mkdir ~/.gt<br>$ vim ~/.gt/options<br></pre>
+<p>Copy and paste the following text in your configuration file, and
+edit the sample data and font directories
 so that they match your real directories of course:
-<pre style="background-color: #eaeaea;">
-DB::module Text
-DB::text::directory /home/rhertzog/geniustrader/data
-DB::text::options ( "	" , 0 , ".txt" , ("date" => 5, "open" => 0, "high" => 1, "low" => 2, "close" => 3, "volume" => 4, "Adj. Close*" => 3) )
-
-Brokers::module SelfTrade
-
-Path::Font::Arial /usr/X11R6/lib/X11/fonts/TrueType/arial.ttf
-Path::Font::Courier /usr/X11R6/lib/X11/fonts/TrueType/couri.ttf
-Path::Font::Times /usr/X11R6/lib/X11/fonts/TrueType/times.ttf
-
-Analysis::ReferenceTimeFrame year
-
-#Graphic::BackgroundColor black
-#Graphic::ForegroundColor white
-
-Aliases::Global::TFS    SY:TFS 50 10|CS:SY:TFS
-Aliases::Global::TFS[]  SY:TFS #1 #2|CS:SY:TFS #1|CS:Stop:Fixed #3
-</pre>
+</p>
+<pre style="background-color: rgb(234, 234, 234);">DB::module Text<br>DB::text::directory <span
+ style="font-style: italic;">/home/rhertzog/geniustrader/data<br></span># relying on DB::Text defaults for sample database access<br><br>Brokers::module SelfTrade<br><br>Path::Font::Arial <span
+ style="font-style: italic;">/usr/X11R6/lib/X11/fonts/TrueType/</span>arial.ttf<br>Path::Font::Courier <span
+ style="font-style: italic;">/usr/X11R6/lib/X11/fonts/TrueType/</span>couri.ttf<br>Path::Font::Times <span
+ style="font-style: italic;">/usr/X11R6/lib/X11/fonts/TrueType/</span>times.ttf<br><br>Analysis::ReferenceTimeFrame year<br><br>#Graphic::BackgroundColor black<br>#Graphic::ForegroundColor white<br><br>Aliases::Global::TFS    SY:TFS 50 10|CS:SY:TFS<br>Aliases::Global::TFS[]  SY:TFS #1 #2|CS:SY:TFS #1|CS:Stop:Fixed #3<br></pre>
 
 <h3>Test GeniusTrader</h3>
-
 That's it, GeniusTrader should be working now. Let's make some tests:
-<pre style="background-color: #eaeaea;">
+<pre style="background-color: rgb(234, 234, 234);">
 $ cd Scripts
 $ ./display_indicator.pl I:RSI 13000 | less
 [...]
@@ -109,15 +114,14 @@ $ ./backtest.pl TFS 13000 | less
 $ ./backtest.pl TFS[30,7,7] 13000 | less
 [...]
 </pre>
-<p>You should now read the <a href="doc/Scripts/">documentation of those
-scripts</a> to understand what they can do.
+<p>You should now read the <a href="doc/Scripts/">documentation of
+those
+scripts</a> to understand what they can do.</p>
 
 <h2>Have questions ?</h2>
-
 If you have questions, please join the mailing list (cf <a
-href="index.html">homepage</a>), we'll try to help you.
+ href="index.html">homepage</a>), we'll try to help you.
 
-<hr />
-Copyright 2000-2004 Raphaël Hertzog &amp; Fabien Fulhaber
+<hr>Copyright 2000-2008 Raphaël Hertzog &amp; Fabien Fulhaber
 </body>
 </html>
