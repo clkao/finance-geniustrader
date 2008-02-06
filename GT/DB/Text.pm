@@ -4,6 +4,7 @@ package GT::DB::Text;
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
+# includes fix for timeframes > day
 # new version joao costa circa nov 07
 
 use strict;
@@ -85,14 +86,14 @@ sub new {
     GT::Conf::default('DB::Text::fields::close', '3');
     GT::Conf::default('DB::Text::fields::volume', '4');
 
-	$self->{'mark'} = GT::Conf::get('DB::Text::marker');
-	$self->{'extension'} = GT::Conf::get('DB::Text::file_extension');
-	$self->{'datetime'} = GT::Conf::get('DB::Text::fields::datetime');
-	$self->{'open'} = GT::Conf::get('DB::Text::fields::open');
-	$self->{'low'} = GT::Conf::get('DB::Text::fields::low');
-	$self->{'high'} = GT::Conf::get('DB::Text::fields::high');
-	$self->{'close'} = GT::Conf::get('DB::Text::fields::close');
-	$self->{'volume'} = GT::Conf::get('DB::Text::fields::volume');
+    $self->{'mark'} = GT::Conf::get('DB::Text::marker');
+    $self->{'extension'} = GT::Conf::get('DB::Text::file_extension');
+    $self->{'datetime'} = GT::Conf::get('DB::Text::fields::datetime');
+    $self->{'open'} = GT::Conf::get('DB::Text::fields::open');
+    $self->{'low'} = GT::Conf::get('DB::Text::fields::low');
+    $self->{'high'} = GT::Conf::get('DB::Text::fields::high');
+    $self->{'close'} = GT::Conf::get('DB::Text::fields::close');
+    $self->{'volume'} = GT::Conf::get('DB::Text::fields::volume');
 
     return bless $self, $class;
 }
@@ -128,53 +129,57 @@ sub get_prices {
     my ($self, $code, $timeframe) = @_;
     $timeframe = $DAY unless ($timeframe);
 
+    return GT::Prices->new() if ($timeframe > $DAY);
+
     my @datetime_fields = split(',',$self->{'datetime'});
-	my $datetime_fields_count = scalar(@datetime_fields);
+    my $datetime_fields_count = scalar(@datetime_fields);
 
     my $prices = GT::Prices->new;
     $prices->set_timeframe($timeframe);
 
-	my $extension = $self->{'extension'};
-	my $tfname = GT::DateTime::name_of_timeframe($timeframe);
-	$extension =~ s/\$timeframe/$tfname/g;
+    my $extension = $self->{'extension'};
+    my $tfname = GT::DateTime::name_of_timeframe($timeframe);
+    $extension =~ s/\$timeframe/$tfname/g;
 
-	my $file = $self->{'directory'} . "/$code" . $extension;
+    my $file = $self->{'directory'} . "/$code" . $extension;
 
-    open(FILE, "<$file") || (warn "Can't open $file: $!\n" and return GT::Prices->new());
+    #open(FILE, "<$file") || (warn "Can't open $file: $!\n" and return GT::Prices->new());
+    open(FILE, "<", "$file")
+     || (warn "Can't open $file: $!\n" and return GT::Prices->new());
 
     my ($open, $high, $low, $close, $volume, $date);
     my ($year, $month, $day);
 
 
-	#TODO
-	#Date::Manip requires this to be defined
-	#there probably is a better way of doing this
-	#rather than defining it here, but it works
-	#for now
-	$ENV{'TZ'} = 'GMT' unless(defined($ENV{'TZ'})); 
+    #TODO
+    #Date::Manip requires this to be defined
+    #there probably is a better way of doing this
+    #rather than defining it here, but it works
+    #for now
+    $ENV{'TZ'} = 'GMT' unless(defined($ENV{'TZ'})); 
 
     # Process each line in $file...
     while (defined($_=<FILE>))
     {
-		next if (/^[#<]/); #Skip comments and METASTOCK ascii file header
-	    # Get and split the line with $mark
-	    chomp;
-	    my @line = split($self->{'mark'});
+        next if (/^[#<]/); #Skip comments and METASTOCK ascii file header
+        # Get and split the line with $mark
+        chomp;
+        my @line = split($self->{'mark'});
 
-	    # Get and swap all necessary fields according to the fields map
-	    $open = $line[$self->{'open'}];
-	    $high = $line[$self->{'high'}];
-	    $low = $line[$self->{'low'}];
-	    $close = $line[$self->{'close'}];
-	    $volume = $line[$self->{'volume'}] or $volume = 0; #some datasets don't include volume
-		my $datetime=$line[$datetime_fields[0]];
-		for (my $i=1; $i<$datetime_fields_count;$i++) {
-			$datetime .= ' '.$line[$datetime_fields[$i]];
-		}
-		$date = &UnixDate($datetime, '%Y-%m-%d %H:%M:%S');
+        # Get and swap all necessary fields according to the fields map
+        $open = $line[$self->{'open'}];
+        $high = $line[$self->{'high'}];
+        $low = $line[$self->{'low'}];
+        $close = $line[$self->{'close'}];
+        $volume = $line[$self->{'volume'}] or $volume = 0; #some datasets don't include volume
+        my $datetime=$line[$datetime_fields[0]];
+        for (my $i=1; $i<$datetime_fields_count;$i++) {
+            $datetime .= ' '.$line[$datetime_fields[$i]];
+        }
+        $date = &UnixDate($datetime, '%Y-%m-%d %H:%M:%S');
 
-	    # Add all data within the GT::Prices object
-	    $prices->add_prices([ $open, $high, $low, $close, $volume, $date ]);
+        # Add all data within the GT::Prices object
+        $prices->add_prices([ $open, $high, $low, $close, $volume, $date ]);
     }
     close FILE;
 
@@ -192,25 +197,25 @@ the symbol $code.
 sub get_last_prices {
     my ($self, $code, $limit, $timeframe) = @_;
 
-	warn "$limit parameter ignored in DB::Text::get_last_prices. loading entire dataset." if ($limit > -1);
+    warn "$limit parameter ignored in DB::Text::get_last_prices. loading entire dataset." if ($limit > -1);
     return get_prices($self, $code, $timeframe,-1);
 }
 
 sub has_code {
     my ($self, $code) = @_;
-	my $extension = $self->{'extension'};
-	$extension =~ s/\$timeframe/\.\*/g;
-	my $file_exists = 0;
+    my $extension = $self->{'extension'};
+    $extension =~ s/\$timeframe/\.\*/g;
+    my $file_exists = 0;
     my $file_pattern = "$code$extension";
 
-	if ($extension =~ /\*/) {
-	  eval "use File::Find;";
-	  find (  sub {	$file_exists = 1 if ($_ =~ /$file_pattern/);  },$self->{'directory'});
-	} else {
-      $file_exists = 1 if (-e $file_pattern);
-	}
+    if ($extension =~ /\*/) {
+        eval "use File::Find;";
+        find (  sub { $file_exists = 1 if ($_ =~ /$file_pattern/);  },$self->{'directory'});
+    } else {
+        $file_exists = 1 if (-e $file_pattern);
+    }
 
-	return $file_exists;
+    return $file_exists;
 }
 
 1;
