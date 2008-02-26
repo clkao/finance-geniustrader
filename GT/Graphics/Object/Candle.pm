@@ -4,6 +4,9 @@ package GT::Graphics::Object::Candle;
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
+# ras hack based on trunk version dated 30may05
+# $Id$
+
 use strict;
 use vars qw(@ISA);
 @ISA = qw(GT::Graphics::Object);
@@ -76,9 +79,13 @@ sub display {
     my $offset = int($space/2) - int($width/2);
     $offset = 0 if $offset < 1;
 
-    my $y_zero = $scale->convert_to_y_coordinate(0);
-    $y_zero = 0 if ($y_zero < 0);
-    my $y_max = $zone->height;
+    # only $y_min and $y_max are significant
+    my ($x_min, $y_min) = $scale->get_value_from_coordinate($start, 0);
+    my ($x_max, $y_max) = $scale->get_value_from_coordinate($end, $zone->height-1);
+
+    # these are coordinate values of $y_min and $y_max
+    my $yc_min = $scale->convert_to_y_coordinate($y_min);
+    my $yc_max = $scale->convert_to_y_coordinate($y_max);
 
 	for(my $i = $start; $i <= $end; $i++)
     {
@@ -89,16 +96,17 @@ sub display {
 	my $high = $scale->convert_to_y_coordinate($data->[$HIGH]);
 	my $x = $scale->convert_to_x_coordinate($i);
 	$x += $offset;
+
 	# clip $y at top of zone
-	$low = $y_max if ( $low > $y_max );
-	$open = $y_max if ( $open > $y_max );
-	$close = $y_max if ( $close > $y_max );
-	$high = $y_max if ( $high > $y_max );
+        $low   = $yc_max if ( $low   > $yc_max );
+        $open  = $yc_max if ( $open  > $yc_max );
+        $close = $yc_max if ( $close > $yc_max );
+        $high  = $yc_max if ( $high  > $yc_max );
 	# clip $y at bottom of zone
-	$low = $y_zero if ( $low < $y_zero );
-	$open = $y_zero if ( $open < $y_zero );
-	$close = $y_zero if ( $close < $y_zero );
-	$high = $y_zero if ( $high < $y_zero );
+        $low   = $yc_min if ( $low   < $yc_min );
+        $open  = $yc_min if ( $open  < $yc_min );
+        $close = $yc_min if ( $close < $yc_min );
+        $high  = $yc_min if ( $high  < $yc_min );
 
     if ($data->[$OPEN] < $data->[$CLOSE]) {
 	

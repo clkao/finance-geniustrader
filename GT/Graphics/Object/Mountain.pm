@@ -4,6 +4,9 @@ package GT::Graphics::Object::Mountain;
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
+# ras version -- includes gmargo@pacbell.net patch 12dec06
+# $Id$
+
 use strict;
 use vars qw(@ISA);
 @ISA = qw(GT::Graphics::Object);
@@ -34,8 +37,14 @@ sub display {
     my $space = $scale->convert_to_x_coordinate($start + 1) -
 	        $scale->convert_to_x_coordinate($start);
     my $y_zero = $scale->convert_to_y_coordinate(0);
-    $y_zero = 0 if ($y_zero < 0);
-    my $y_max = $zone->height;
+
+    # only $y_min and $y_max are significant
+    my ($x_min, $y_min) = $scale->get_value_from_coordinate($start, 0);
+    my ($x_max, $y_max) = $scale->get_value_from_coordinate($end, $zone->height-1);
+
+    # these are coordinate values of $y_min and $y_max
+    my $yc_min = $scale->convert_to_y_coordinate($y_min);
+    my $yc_max = $scale->convert_to_y_coordinate($y_max);
 
 	my ($first_pt, $second_pt);
     for(my $i = $start; $i <= $end; $i++)
@@ -58,14 +67,13 @@ sub display {
 	my ($x2, $y2) = $scale->convert_to_coordinate($second_pt, $data2);
 	$x1 += int($space / 2);
 	$x2 += int(($space-0.5) / 2);
+
 	# clip at top of zone
-	# $y1 = $zone->height if ($y1 > $zone->height);
-	# $y2 = $zone->height if ($y2 > $zone->height);
-	$y1  = $y_max if ($y1 > $y_max);
-	$y2  = $y_max if ($y2 > $y_max);
+	$y1 = $yc_max if ($y1 > $yc_max);
+	$y2 = $yc_max if ($y2 > $yc_max);
 	# clip at bottom of zone
-	$y1  = $y_zero if ($y1 < $y_zero);
-	$y2  = $y_zero if ($y2 < $y_zero);
+	$y1 = $yc_min if ($y1 < $yc_min);
+	$y2 = $yc_min if ($y2 < $yc_min);
 
 	my @points = (
 	    [$zone->absolute_coordinate($x1, $y1)],

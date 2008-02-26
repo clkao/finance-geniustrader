@@ -47,9 +47,13 @@ sub display {
     my $space = $scale->convert_to_x_coordinate($start + 1) -
 	        $scale->convert_to_x_coordinate($start);
 
-    my $y_zero = $scale->convert_to_y_coordinate(0);
-    $y_zero = 0 if ($y_zero < 0);
-    my $y_max = $zone->height;
+    # only $y_min and $y_max are significant
+    my ($x_min, $y_min) = $scale->get_value_from_coordinate($start, 0);
+    my ($x_max, $y_max) = $scale->get_value_from_coordinate($end, $zone->height-1);
+
+    # these are coordinate values of $y_min and $y_max
+    my $yc_min = $scale->convert_to_y_coordinate($y_min);
+    my $yc_max = $scale->convert_to_y_coordinate($y_max);
 
     my ($first_pt, $second_pt);
     for(my $i = $start; $i <= $end; $i++)
@@ -73,30 +77,15 @@ sub display {
 	$x1 += int($space / 2);
 	$x2 += int($space / 2);
 
-        # rather than skip plotting the curve that exceeds the zone boundary
-        # this change will plot to the zone boundary
-        # line segments that lie outside the zone are not plotted
-        #if ($zone->includes_point($x1, $y1) && $zone->includes_point($x2, $y2))
-        #{
-        my $pt1 = $zone->includes_point($x1, $y1);
-        my $pt2 = $zone->includes_point($x2, $y2);
+        # rather than skip plotting the curve that exceeds a zone boundary
+        # this change will plot to and along the zone boundary
 
-        # if neither point within zone skip
-        if ( ! $pt1 && ! $pt2 ) {
-          # Shift the points
-          $first_pt = $second_pt;
-          next;
-        } elsif ( $pt1 && ! $pt2 ) {
-          # if pt1 but not pt2 within zone set pt2 at limit and draw
-          # clip at edge of zone pt2
-          $y2  = $y_max  if ($y2 > $y_max);
-          $y2  = $y_zero if ($y2 < $y_zero);
-        } elsif ( ! $pt1 && $pt2 ) {
-        # if not pt1 but pt2 within zone set pt1 at limit and draw
-          # clip at edge of zone pt1
-          $y1 = $y_max  if ($y1 > $y_max);
-          $y1 = $y_zero if ($y1 < $y_zero);
-        }
+        # clip at top of zone
+        $y1 = $yc_max if ($y1 > $yc_max);
+        $y2 = $yc_max if ($y2 > $yc_max);
+        # clip at bottom of zone
+        $y1 = $yc_min if ($y1 < $yc_min);
+        $y2 = $yc_min if ($y2 < $yc_min);
 
 	    my $oldlw = $driver->line_width($picture, $self->{'linewidth'});
 	    if ($self->{'aa'}) {
