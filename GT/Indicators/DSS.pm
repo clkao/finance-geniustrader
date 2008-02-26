@@ -12,11 +12,11 @@ use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 use GT::ArgsTree;
 use GT::Indicators;
 use GT::Indicators::EMA;
-use GT::Indicators::Generic::Divide;
+use GT::Indicators::STO;
 
 @ISA = qw(GT::Indicators);
 @NAMES = ("DSS-BLAU[#*]");
-@DEFAULT_ARGS = (3,3,1,"{I:Prices CLOSE}");
+@DEFAULT_ARGS = (5,7,3,"{I:Prices CLOSE}");
 
 =head1 NAME
 
@@ -36,15 +36,15 @@ Stochastic-Indictor.
 
 =over
 
-=item Period 1 (default 3)
+=item Period 1 (default 5)
 
 The period of the minimum/maximum.
 
-=item Period 2 (default 3)
+=item Period 2 (default 7)
 
 The period of the first EMA
 
-=item Period 3 (default 1)
+=item Period 3 (default 3)
 
 The period of the second EMA
 
@@ -62,46 +62,34 @@ The source of which the indicators is calculated.
 This link is unfortunately only in german:
 
 http://www.trading-konzepte.de/indikator/dss-blau.htm
+defaults taken from the recommendations of William Blau to be
+seen in "Technical Analysis of Stocks & Commodities, Jan 1991"
 
 =cut
 
 
 sub initialize {
     my ($self) = @_;
+    my $sto1 = "{I:STO/1 " . $self->{'args'}->get_arg_names(1) . " 1 1 1 " . $self->{'args'}->get_arg_names(4) . "}";
+    $self->{'ema1'} = GT::Indicators::EMA->new([ $self->{'args'}->get_arg_names(2), $sto1 ]);
+    $self->{'ema2'} = GT::Indicators::EMA->new([ $self->{'args'}->get_arg_names(3),
+        "{I:EMA @{[$self->{'ema1'}->{'args'}->get_arg_names()]}}" ]);
 
-    my $hhigh = "{Indicators::Generic::MaxInPeriod " . " " .
-	$self->{'args'}->get_arg_names(1) . " " . $self->{'args'}->get_arg_names(4) . "}";
-    my $llow = "{Indicators::Generic::MinInPeriod " .
-	$self->{'args'}->get_arg_names(1) . " " . $self->{'args'}->get_arg_names(4) . "}";
-    my $diff1 = "{Indicators::Generic::Eval " . $self->{'args'}->get_arg_names(4) . " - " . $llow . "}";
-    my $diff2 = "{Indicators::Generic::Eval " . $hhigh . " - " . $llow . "}";
-
-    $self->{'div'} = GT::Indicators::Generic::Divide->new( [ $diff1, $diff2 ] );
-
-    $self->{'ema1'} = 
-      GT::Indicators::EMA->new([ $self->{'args'}->get_arg_names(2) ], "EMA of div", 
-			       sub { $_[0]->indicators->get($self->{'div'}->get_name, $_[1]) });
-    $self->{'ema2'} = 
-      GT::Indicators::EMA->new([ $self->{'args'}->get_arg_names(3) ], "EMA of EMA1", 
-			       sub { $_[0]->indicators->get($self->{'ema1'}->get_name, $_[1]) });
 }
 
 sub calculate {
     my ($self, $calc, $i) = @_;
     my $indic = $calc->indicators;
     my $name = $self->get_name();
-    my $nb1 = $self->{'args'}->get_arg_values($calc, $i, 1);
     my $nb2 = $self->{'args'}->get_arg_values($calc, $i, 2);
     my $nb3 = $self->{'args'}->get_arg_values($calc, $i, 3);
 
-    return if (!defined($nb1) || !defined($nb2) || !defined($nb3) );
+    return if (!defined($nb2) || !defined($nb3) );
 
     # Calculate the depencies
     $self->remove_volatile_dependencies();
-    $self->add_volatile_indicator_dependency( $self->{'div'}, $nb1 * 3 - 2);
-    $self->add_volatile_indicator_dependency( $self->{'ema1'}, $nb2 * 2 - 1 );
-    $self->add_volatile_indicator_dependency( $self->{'ema2'}, $nb3 );
-
+    $self->add_volatile_indicator_dependency( $self->{'ema1'}, $nb2*2-1);
+    $self->add_volatile_indicator_dependency( $self->{'ema2'}, $nb3);
     return if ($calc->indicators->is_available($name, $i));
     return if (! $self->check_dependencies($calc, $i));
 
