@@ -73,7 +73,7 @@ sub load {
 
     # changed from "< $file" per pg 625 programming perl 3rd ed.
     open (FILE, "<", $file) || die "Can't open $file: $!\n";
-    my $buf;
+    my $buf = '';
     while (<FILE>)
     {
 	chomp;
