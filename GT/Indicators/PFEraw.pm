@@ -6,6 +6,9 @@ package GT::Indicators::PFEraw;
 
 # Standards-Version: 1.0
 
+# ras hack based on version dated 24 Apr 2005 2099 bytes
+# $Id$
+
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
@@ -29,7 +32,7 @@ GT::Indicators::PFE - Polarized Fractal Efficiency
 
 =item Period (default 10)
 
-The first argument is the period used to calculed the average.
+The first argument is the period used to calculate the average.
 
 =item Exponent (default 2)
 
@@ -49,7 +52,6 @@ Set this factor to 200 for values > 1000
 
 =cut
 
-
 sub initialize {
     my ($self) = @_;
 }
@@ -67,26 +69,25 @@ sub calculate {
     return if ($calc->indicators->is_available($name, $i));
     return if (! $self->check_dependencies($calc, $i));
 
-    my $pfe = $self->{'args'}->get_arg_values($calc, $i, 4) - $self->{'args'}->get_arg_values($calc, $i-$length, 4);
-    $pfe = $pfe**$exp;#$pfe;
-    $pfe = sqrt( $pfe + $length**$exp );
+    my $pfe = $self->{'args'}->get_arg_values($calc, $i, 4)
+              - $self->{'args'}->get_arg_values($calc, $i-$length, 4);
+    $pfe = sqrt( ($pfe/$factor)**$exp + $length**$exp );
 
     my $c2c = 0;
     for (my $counter=$i-$length+1; $counter<=$i; $counter++) {
-      my $diff = ( $self->{'args'}->get_arg_values($calc, $counter, 4) - 
-		   $self->{'args'}->get_arg_values($calc, $counter-1, 4) );
-      $c2c += sqrt ( $diff**$exp + 1 );
+        my $diff = $self->{'args'}->get_arg_values($calc, $counter, 4)
+                   - $self->{'args'}->get_arg_values($calc, $counter-1, 4);
+        $c2c += sqrt ( ($diff/$factor)**$exp + 1 );
     }
 
-    my $frac = 0;
-    my $arg = $self->{'args'}->get_arg_values($calc, $i, 4) - $self->{'args'}->get_arg_values($calc, $i-$length, 4);
+    my $arg = $self->{'args'}->get_arg_values($calc, $i, 4)
+              - $self->{'args'}->get_arg_values($calc, $i-$length, 4);
     if ( $arg > 0 ) {
-      $frac = ( $pfe/$c2c*100 );
+        $pfe = ( $pfe/$c2c*100 );
     } else {
-      $frac = ( -$pfe/$c2c*100 );
+        $pfe = ( -$pfe/$c2c*100 );
     }
 
-    my $pfe = $frac;
     $indic->set($name, $i, $pfe);
 }
 
