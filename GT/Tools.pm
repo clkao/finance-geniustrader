@@ -4,19 +4,28 @@ package GT::Tools;
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
+# baseline 8 Jun 2005 9830 bytes
+# $Id$
+
 use strict;
 use vars qw(@ISA @EXPORT_OK %EXPORT_TAGS $PI);
 
 require Exporter;
 @ISA = qw(Exporter);
-@EXPORT_OK = qw(min max extract_object_number resolve_alias
-		resolve_object_alias PI sign long_name short_name
-		isin_checksum isin_validate isin_create_from_local get_timeframe_data);
+#
+# these are ordered and grouped to correspond with %EXPORT_TAGS
+#
+@EXPORT_OK = qw(min max PI sign
+                extract_object_number
+                resolve_alias resolve_object_alias long_name short_name
+                isin_checksum isin_validate isin_create_from_local
+                get_timeframe_data parse_date_str
+                );
 %EXPORT_TAGS = ("math" => [qw(min max PI sign)], 
 		"generic" => [qw(extract_object_number)],
 		"conf" => [qw(resolve_alias resolve_object_alias long_name short_name)],
 		"isin" => [qw(isin_checksum isin_validate isin_create_from_local)],
-		"timeframe" => [qw(get_timeframe_data)]
+                "timeframe" => [qw(get_timeframe_data parse_date_str)]
 		);
 
 use GT::Prices;
@@ -30,7 +39,20 @@ GT::Tools - Various helper functions
 =head1 DESCRIPTION
 
 This modules provides several helper functions that can be used in all
-modules.
+modules and scripts.
+
+=over 4
+
+ there are 5 groupings
+   math      -- min, max, pi, sign
+   generic   -- extract_object_number
+   conf      -- resolve_alias resolve_object_alias long_name short_name
+   isin      -- isin_checksum isin_validate isin_create_from_local
+   timeframe -- get_timeframe_data parse_date_str
+
+=back
+
+=head2 math
 
 It provides mathematical functions, that can be imported with
 use GT::Tools qw(:math) :
@@ -55,18 +77,6 @@ Returns 1 for a positive (or null) value, -1 for a negative value.
 
 =back
 
-It provides helper functions to manage arguments in "Generic" objects.
-You can import those functions with use GT::Tools qw(:generic) :
-
-=over 4
-
-=item C<< extract_object_number(@args) >>
-
-Returns the number associated to the first the object described
-by the arguments. 
-
-=back
-
 =cut
 sub PI() { 3.14159265 }
 
@@ -77,6 +87,10 @@ sub max {
 	    warn "GT::Tools::max called with undef argument !\n";
 	    next;
 	}
+        if ( ! m/\d/ ) {
+#           warn "GT::Tools::max called with non-numeric argument \"$_\" !\n";
+            next;
+        }
 	$max = ($_ > $max) ? $_ : $max;
     }
     return $max;
@@ -89,6 +103,10 @@ sub min {
 	    warn "GT::Tools::min called with undef argument !\n";
 	    next;
 	}
+        if ( ! m/\d/ ) {
+#           warn "GT::Tools::min called with non-numeric argument \"$_\" !\n";
+            next;
+        }
 	$min = ($_ < $min) ? $_ : $min;
     }
     return $min;
@@ -98,6 +116,23 @@ sub sign {
     ($_[0] >= 0) ? 1 : -1;
 }
 
+=pod
+
+=head2 generic
+
+=back
+
+It provides helper functions to manage arguments in "Generic" objects.
+You can import those functions with use GT::Tools qw(:generic) :
+
+=over 4
+
+=item C<< extract_object_number(@args) >>
+
+Returns the number associated to the first the object described
+by the arguments. 
+
+=cut
 sub extract_object_number {
     my ($name) = shift;
     if ($name =~ m#/(\d+)$#)
@@ -109,7 +144,11 @@ sub extract_object_number {
 
 =pod
 
+=head2 conf
+
 And a few other very-specific functions :
+
+use GT::Tools qw(:conf) :
 
 =over
 
@@ -135,7 +174,8 @@ sub resolve_alias {
     }
     if (! $sysname)
     {
-	die "Alias `$alias' doesn't exist !\n";
+        die "$0: error: Alias `$alias' wasn't found in options file!"
+         .  "\nkey looked for was \"Aliases::Global::$name\"\n";
     }
     # The alias content may list another alias ...
     while ($sysname !~ /\|/) {
@@ -195,14 +235,17 @@ sub resolve_object_alias {
     GT::Conf::default('Path::Aliases::MoneyManagement', '/usr/share/geniustrader/aliases/moneymanagement');
     GT::Conf::default('Path::Aliases::TradeFilters', '/usr/share/geniustrader/aliases/tradefilters');
     GT::Conf::default('Path::Aliases::OrderFactory', '/usr/share/geniustrader/aliases/orderfactory');
+    GT::Conf::default('Path::Aliases::Analyzers', '/usr/share/geniustrader/aliases/analyzers');
     
     foreach my $kind ("Signals", "Indicators", "Systems", "CloseStrategy", 
-		      "MoneyManagement", "TradeFilters", "OrderFactory")
+                      "MoneyManagement", "TradeFilters", "OrderFactory",
+                      "Analyzers")
     {
-	foreach my $file (GT::Conf::_get_home_path()."/.gt/aliases/".lc($kind), GT::Conf::get("Path::Aliases::$kind"))
+        foreach my $file (GT::Conf::_get_home_path()."/.gt/aliases/".lc($kind),
+         GT::Conf::get("Path::Aliases::$kind"))
 	{
 	    next if not -e $file;
-	    open(ALIAS, "<$file") || die "Can't open $file : $!\n";
+            open(ALIAS, "<", "$file") || die "Can't open $file : $!\n";
 	    while (defined($_=<ALIAS>)) {
 		if (/^\s*(\S+)\s+(.*)$/) {
 		    GT::Conf::default("Aliases::$kind\::$1", $2);
@@ -213,7 +256,7 @@ sub resolve_object_alias {
     }
     
     # Lookup the alias
-    my $def = GT::Conf::get("Aliases::$alias");
+    my $def = GT::Conf::get("Aliases\::$alias");
     
     my $n = 1;
     foreach my $arg (GT::ArgsTree::args_to_ascii(@param))
@@ -228,7 +271,7 @@ sub resolve_object_alias {
 	$def =~ s|(\d+)\/(\d+)| $1 / $2 |eg;
 	$def =~ s|(\d+)\+(\d+)| $1 + $2 |eg;
 	$def =~ s|(\d+)\-(\d+)| $1 - $2 |eg;
-    };
+    } if $def;
     
     return $def;
 }
@@ -243,19 +286,23 @@ names. The recognized abreviations are :
 
 =over
 
+=item Analyzers:: = A:
+
+=item CloseStrategy:: = CS:
+
+=item Generic:: = G:
+
 =item Indicators:: = I:
+
+=item MoneyManagement:: = MM:
+
+=item OrderFactory:: = OF:
 
 =item Signals:: = S:
 
 =item Systems:: = SY:
 
-=item CloseStrategy:: = CS:
-
-=item OrderFactory:: = OF:
-
 =item TradeFilters:: = TF:
-
-=item MoneyManagement:: = MM:
 
 =back
 
@@ -271,6 +318,7 @@ sub long_name {
     $name =~ s/SY::?/Systems::/g;
     $name =~ s/S::?/Signals::/g;
     $name =~ s/I::?/Indicators::/g;
+    $name =~ s/G::?/Generic::/g;
     $name =~ s/:+/::/g;
 
     return $name;
@@ -278,6 +326,7 @@ sub long_name {
 sub short_name {
     my ($name) = @_;
 
+    $name  =~ s/Generic::?/G:/g;
     $name  =~ s/Indicators::?/I:/g;
     $name  =~ s/Systems::?/SY:/g;
     $name  =~ s/Signals::?/S:/g;
@@ -291,6 +340,9 @@ sub short_name {
     return $name;
 }
 
+=head2 isin
+
+use GT::Tools qw(:isin) :
 =item C<< isin_checksum($code) >>
 
 This computes the checksum of a given code. The whole ISIN is returned.
@@ -357,6 +409,10 @@ sub isin_create_from_local {
     return $isin;
 }
 
+=head2 timeframe
+
+use GT::Tools qw(:timeframe) :
+
 =item C<< GetTimeFrameData ($code, $timeframe, $db, $max_loaded_items) >>
 
 Returns a prices and a calculator object with data for the required
@@ -413,6 +469,158 @@ if ($q->timeframe != $timeframe) {
 
 return ($q, $calc);
 }
+
+=back
+
+=cut
+
+sub parse_date_str {
+    #
+    # inputs: date string reference var required
+    #         error string reference var (optional)
+    # returns 1 for good date
+    #         zero (null) for bad date
+    #
+    # notes: @ if called in void context with bad date value the internal
+    #          error handling will put error message text on stderr and die called
+    #        @ date ref var may be altered to conform to std date-time format
+    #        @ error string will contain details about bad date-time string
+    #
+    # usage examples
+    # typical usage in perl script
+    # my $err_msg;
+    # if ( ! parse_date_str( \$date, \$err_msg ) ) {
+    #   die "$prog_name: error: $err_msg\n";
+    # }
+    #
+    # usage using internal error handling
+    # my $date = "24oct07";
+    # parse_date_str( \$date  );
+    #
+    my ( $dtstref, $errref ) = @_;
+
+    if ( eval { require Date::Manip } ) {
+        use Date::Manip qw(ParseDate UnixDate);
+        if ( $$dtstref =~ m/[- :\w\d]/ ) {
+            if ( my $date = ParseDate($$dtstref) ) {
+                $$dtstref = UnixDate("$date", "%Y-%m-%d %T");
+            }
+        }
+    }
+    # dates only allow digits, date separator is '-', time separator is ':'
+    # date and time field separator is a single space not even a tab
+    #
+    # timeframe seps: '-' day and week
+    #                 '/' month
+    #                 '_' date and time part separator
+    if ( $$dtstref =~ m/[^- :\d]/ ) {
+      # bad chars in date string
+      $$errref = "invalid character in date \"$$dtstref\"" if ( $errref );
+      return if defined wantarray;
+      die "pds: invalid character in date \"$$dtstref\"\n";
+    }
+    my ( $year, $mon, $day, $time )
+        = $$dtstref =~ /^(\d{4})-?(\d{2})-?(\d{2})\s?([\d:]+)*$/;
+        # not capturing time field separator intentionally
+    if ( ! $year || ! $mon || ! $day ) {
+        $$errref = "bad date format \"$$dtstref\"" if ( $errref );
+        return if defined wantarray;
+        die "pds: bad date format \"$$dtstref\"\n";
+    }
+
+    # valididate date
+    if ( ! Date::Calc::check_date($year, $mon, $day) ) {
+        $$errref = "invalid date \"$$dtstref\"" if ( $errref );
+        return if defined wantarray;
+        die "pds: invalid date \"$$dtstref\"\n";
+    }
+
+    # valididate time
+    if ( $time ) {
+        my ( $hour, $min, $sec ) = split /:/, $time;
+        if ( ! Date::Calc::check_time($hour, $min, $sec) ) {
+          #print STDERR "pds: invalid time \"$hour:$min:$sec\"\n";
+          #return 0 if ( defined wantarray );
+          $$errref = "invalid time \"$time\"" if ( $errref );
+          return if defined wantarray;
+          die "pds: invalid time \"$time\"\n";
+        }
+    }
+
+    # good date
+    # clear err just in case
+    $$errref = "" if ( $errref );
+
+    return 1;
+
+    # ras hack -- describe parse_date_str features in pod
+=pod
+
+=head2 this is a ras hack version of GT/Tools.pm
+
+=item C<< parse_date_str ( \$date_string, \$err_msg ) >>
+
+ Returns 1 if \$date_string is valid parsable date, zero (or null) otherwise
+ \$date_string will be altered to be a gt compliant date string on return
+ \$err_msg is optional
+
+ notes: @ input params must be references to the object
+        @ if called in void context with bad date value the internal
+          error handling will put error message text on stderr and die called
+        @ date ref var may be altered to conform to std date-time format
+        @ error string will contain details about bad date-time string
+
+ if the user has Date::Manip installed it allows the use of date strings
+ that can be parsed by Date::Manip in addition the to defacto standard
+ date-time format accepted by GT (YYYY-MM-DD HH:MM:SS) time part is optional
+
+ Date::Manip is not required, without it users cannot use short-cuts to
+ specify date strings. such short cuts include
+ --start '6 months ago'
+ --end 'today'
+
+ the date string checking includes verifying the date string format
+ is valid and the date is a valid date (and time if provided)
+
+ errors will be displayed and the script will terminate.
+
+ the script also validates that the dates specified are consistent
+ with respect to their purpose (--start is earlier than --end etc)
+
+ finally, appropriate timeframe conversion is performed so the user
+ need not convert command line date strings from the day time to
+ say week or month as it will be done automagically.
+
+=head1 application usage examples:
+
+ with Date::Manip installed
+ %    scan.pl --timeframe day --start '6 months ago' --end 'today' market_file \
+  'today' system_file
+
+ without Date::Manip you will need to use:
+ %    scan.pl --timeframe day --start 2007-04-24 --end 2007-10-24 market_file \
+  2007-10-24 system_file
+ or
+ %    scan.pl --timeframe week --start 2007-04-24 --end 2007-10-24 market_file \
+  2007-10-24 system_file
+
+=head1 parse_date_str usage in application script
+
+  use GT::Tools qw( :timeframe );  # tag name to get &parse_date_str visibility
+
+  my $err_msg;
+  # get date string from command line
+  my $date = shift;
+
+  my ( $d_yr, $d_mn, $d_dy, $d_tm );
+  if ( ! parse_date_str( \$date, \$err_msg ) ) {
+    die "$prog_name: error: $err_msg\n";
+  } else {
+    ( $d_yr, $d_mn, $d_dy, $d_tm ) = split /[- ]/, $date;
+  }
+
+=cut
+} # sub parse_date_str
 
 =back
 
