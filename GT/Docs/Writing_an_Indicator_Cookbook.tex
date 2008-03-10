@@ -1,0 +1,615 @@
+% This file was converted to LaTeX by Writer2LaTeX ver. 0.4
+% see http://www.hj-gym.dk/~hj/writer2latex for more info
+\documentclass[11pt,twoside]{article}
+\usepackage{color}
+\usepackage{calc}
+\usepackage{hyperref}
+\usepackage{listings}
+\lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt}
+\lstset{% general command to set parameter(s)
+basicstyle=\color{red}\scriptsize,
+language=perl,
+showstringspaces=false,
+firstnumber=auto
+}
+\hypersetup{colorlinks=true, linkcolor=blue, filecolor=blue, pagecolor=blue, urlcolor=blue}
+% Text styles
+% Outline numbering
+\setcounter{secnumdepth}{2}
+\renewcommand\thesection{\arabic{section}}
+\renewcommand\thesubsection{\arabic{section}.\arabic{subsection}}
+% Pages styles (master pages)
+\makeatletter
+\newcommand\ps@Standard{%
+\renewcommand\@oddhead{}%
+\renewcommand\@evenhead{}%
+\renewcommand\@oddfoot{}%
+\renewcommand\@evenfoot{}%
+\setlength\paperwidth{8.5in}\setlength\paperheight{11in}\setlength\voffset{-1in}\setlength\hoffset{-1in}\setlength\topmargin{1in}\setlength\headheight{12pt}\setlength\headsep{0cm}\setlength\footskip{12pt+0cm}\setlength\textheight{11in-1in-1in-0cm-12pt-0cm-12pt}\setlength\oddsidemargin{1.25in}\setlength\textwidth{8.5in-1.25in-1.25in}
+\renewcommand\thepage{\arabic{page}}
+\setlength{\skip\footins}{0.0398in}\renewcommand\footnoterule{\vspace*{-0.0071in}\noindent\textcolor{black}{\rule{0.25\columnwidth}{0.0071in}}\vspace*{0.0398in}}
+}
+\makeatother
+\pagestyle{Standard}
+\author{Thomas Weigert, {\tt weigert@mst.edu}}
+\title{Writing an Indicator Cookbook}
+\date{March 2008}
+% footnotes configuration
+\makeatletter
+\renewcommand\thefootnote{\arabic{footnote}}
+\makeatother
+\title{Writing an Indicator Cookbook}
+\begin{document}
+%\clearpage\pagestyle{Standard}
+\maketitle
+
+\section{Introduction}
+This note attempts to summarize lessons learned writing GT indicators,
+in the hope that this will be useful to other GT developers. I shall
+use the Bollinger Band indicator as a starting point and annotate its
+implementation. Subsequent sections will illustrate more advanced
+aspects of writing indicators.
+
+In the following, code fragments are typeset in red courier font.
+Throughout the examples, \lstinline!$self! refers to an
+indicator object. Numbered code lines are from the code for the
+Bollinger Band indicator; unnumbered code lines are other examples.
+
+\section{Header}
+The first section sets up the module and loads the necessary
+dependencies.
+
+\subsection{Package definition and object initialization}
+Define a package for this indicator. The following use clauses are
+standard for all indicators. Then define this package to be an instance
+of the indicator object.
+
+\begin{lstlisting}[name=example]
+package GT::Indicators::BOL;
+
+use strict;
+use vars qw(@ISA @NAMES @DEFAULT_ARGS);
+use GT::Indicators;
+@ISA = qw(GT::Indicators);
+\end{lstlisting}
+
+\subsection{Included packages}
+Load all packages this indicator depends on. For example, Bollinger
+Bands are moving averages that envelope a securities price. It consists
+of three series: A simple moving average of the security, and two
+series plotted \textit{n} standard deviation levels above and below the
+moving average. Thus, in this particular case, we need three other
+indicators: the I:SMA, I:StandardDeviation, and I:Prices.
+
+\begin{lstlisting}[name=example]
+use GT::Indicators::SMA;
+use GT::Indicators::StandardDeviation;
+use GT::Prices;
+\end{lstlisting}
+
+\subsection{Input parameters}
+The default argument statement defines the default values for the input
+parameters of the indicator. These are either constant values or they
+depend on the current value of another series. In this example, the
+first two parameters are by default given the constant values 20 and 2,
+respectively. The third parameter is the result of evaluating the
+indicator \lstinline!{I:Prices CLOSE}! at the current period,
+yielding the current close of the prices array. 
+\begin{lstlisting}[name=example]
+@DEFAULT_ARGS = (20, 2, "{I:Prices CLOSE}");
+\end{lstlisting}
+The arguments of the indicator are accessed via the methods, where
+\lstinline!$n! is the number of the argument (starting at 1),
+\lstinline!$calc! is a calculator, and \lstinline!$i!
+is the current period.
+\begin{lstlisting}[numbers=none]
+$self->{args}->get_arg_constant($n)
+$self->{args}->get_arg_names($n)
+$self->{args}->get_arg_values($calc, $i, $n)
+\end{lstlisting}
+
+The first form requires that the argument is a constant, which can be
+tested by
+\begin{lstlisting}[numbers=none]
+$self->{args}->get_arg_constant($n).
+\end{lstlisting}
+The second form will obtain names of the corresponding argument (for
+constant arguments, the name is the same as its
+value).\footnote{Several indicators use
+\lstinline!get_arg_names! in a context where the argument is
+not guaranteed to be constant, and thus will fail when a non-constant
+parameter is given (e.g., the name of a series).} The final form
+obtains both constant and non-constant values for a given period (of
+course, constants are the same for all periods).
+
+\section[Output values]{\label{bkm:Ref192524690}Output values}
+Indicators will produce one or more output series. In other words, for
+each period, and indicator will output one or more values. Output
+values are defined in the names clause:
+
+\begin{lstlisting}[name=example]
+@NAMES = ("BOL[#1,#3]","BOLSup[#1,#2,#3]","BOLInf[#1,#2,#3]");
+\end{lstlisting}
+In this instance, we define three output series for Bollinger Bands: the
+moving average, and the upper and lower bands. These values can be
+referred to by the names given in the above clause, where the arguments
+(hashed numbers in brackets) are replaced by the corresponding input
+parameters of the indicator. The symbol \lstinline!#*! is
+replaced by all input parameters of the indicator.
+
+The name of an indicator can be either used literally as a string, or it
+can be obtained by the following method, where \lstinline!$n!
+refers to the position of the name (starting at
+\lstinline!0!):
+\begin{lstlisting}[numbers=none]
+$self->get_name($n)
+\end{lstlisting}
+
+The output values are set and read via a calculator
+\lstinline!$calc!, where \lstinline!$name! is the
+name of the output value and \lstinline!$i! is the period:
+\begin{lstlisting}[numbers=none]
+$calc->indicators->get($name, $i)
+$calc->indicators->set($name, $i, $value)
+\end{lstlisting}
+
+
+\section{Initialization}
+If an indicator requires intermediate series to compute its value or
+requires data from past periods, these are set up in the initialization
+method. This method is passed an indicator object as the single
+parameter:
+
+\begin{lstlisting}[name=example]
+sub initialize {
+    my ($self) = @_;
+\end{lstlisting}
+
+\subsection[Intermediate series]{Intermediate series}
+Many indicators depend in their computation on other series. For
+example, Bollinger bands need the simple moving average of the price of
+the security for each period, as well as the standard deviation of the
+price of the security for each period. Both of these intermediate
+values form a series. Each intermediate series must be created in the
+initialization method and be assigned to an attribute of the indicator.
+A series is created by calling the new method on its class and passing
+the appropriate arguments, or by evaluating the textual representation
+of the indicator defining the series. These intermediate series may
+rely on output values or on temporary data, see Section 7.2. For
+Bollinger Band we define the I:SMA and I:StandardDeviation as
+intermediate series, passing both the first (period) and third (data
+array the indicator is applied to, typically I:Prices) arguments. If
+the indicator was not given any parameters upon creation, the default
+values are used.
+
+\begin{lstlisting}[name=example]
+    $self->{'sma'} = GT::Indicators::SMA->new([
+       $self->{'args'}->get_arg_names(1),$self->{'args'}->get_arg_names(3)]);
+    $self->{'sd'} = GT::Indicators::StandardDeviation->new([
+       $self->{'args'}->get_arg_names(1),$self->{'args'}->get_arg_names(3)]);
+\end{lstlisting}
+During the computation of the indicator, the intermediate series is
+either computed via the dependency mechanism (see Section 4.2) or by
+explicitly computing the series via:
+
+\begin{lstlisting}[name=example]
+$self->{'sma'}->calculate($calc, $i)
+$self->{'sma'}->calculate_interval($calc, $i, $j)
+\end{lstlisting}
+where \lstinline!$calc! is a calculator, and
+\lstinline!$i! and \lstinline!$j! are time periods.
+The values of these series are obtained via the standard get method,
+e.g., the \textit{i}th value of the SMA is obtained via
+\begin{lstlisting}[name=example]
+$calc->indicators->set($self->{'sma'}->get_name, $i)
+\end{lstlisting}
+
+\subsection[Dependencies]{\label{bkm:Ref192502803}Dependencies}
+Many indicators depend on past data to calculate their current value,
+either on past price information, or on the previous values of the
+indicator or on the previous value of intermediate series. A key
+feature of GT is that the computation of those past values can be
+largely driven automatically through a dependency mechanism. We can
+declare the current value of an indicator to be dependent on the
+previous values of its parameters, or of other series, or of the price
+information it is operating on. Such dependencies are declared for
+\textit{n} periods of data; when updating dependencies those \textit{n}
+values will be ensured to be available. To satisfy dependencies may in
+turn require additional data, the computing the dependencies may in
+turn depend on other values. The dependency mechanism propagates
+automatically until all dependencies are satisfied. 
+
+Determining the correct dependencies is important to be able to compute
+the indicator both correctly and efficiently. If too little data is
+available, an indicator may not be able to be computed, at best, or may
+give incorrect results, at worst. If too much data is required, less
+history of an indicator can be computed.
+
+When the dependencies are known at the time the indicator is created,
+the dependencies are defined in the initialization section (volatile
+dependencies see Section 7.3, allow dependencies to be computed
+dynamically during the computation of the values of the indicator). The
+following methods can be used to define dependencies:
+\begin{lstlisting}[numbers=none]
+$self->add_indicator_dependency($indic, $p)
+$self->add_arg_dependency($n, $p)
+$self->add_prices_dependency($p)
+\end{lstlisting}
+
+where \lstinline!$indic! is an indicator,
+\lstinline!$n! refers to the \textit{n}-th parameter of the
+indicator (counting from 1), and \lstinline!$p! is the number
+of periods of data this value depends on. The first form states that
+the current value of the indicator depends on \lstinline!$p!
+periods of data of indicator \lstinline!$indic!. The second
+form states that the indicator depends on \lstinline!$p!
+periods of data referenced by parameter \lstinline!$n!. The
+third form states that the indicator depends on \lstinline!$p!
+periods of data of the input series (this form of dependency is only
+needed when the indicator depends on more data periods than is
+established by the dependency mechanism).\footnote{While it can be
+found in a number of indicators, this indicator is rarely (if ever)
+needed.}
+
+For the Bollinger Bands, each value depends on the current value of the
+moving average and the standard deviation. However, dependencies
+require at least one day of data, and thus the below declare the
+current value to be dependent of 1 day of data of the moving average
+and the standard deviation. Note that each of these in turn require
+data to be computed, but that dependency is declared as part of the
+definition of these indicators, and is automatically accounted for by
+the dependency mechanism.
+
+\begin{lstlisting}[name=example]
+   $self->add_indicator_dependency($self->{'sma'}, 1);
+   $self->add_indicator_dependency($self->{'sd'}, 1);
+\end{lstlisting}
+The Bollinger Band indicator in addition establishes a dependency on the
+period passed as the first parameter, assuming that parameter is
+constant. However, this declaration is technically not necessary, as
+this dependency is already established by the dependencies of the
+intermediate series.
+
+\begin{lstlisting}[name=example]
+    if ($self->{'args'}->is_constant(1)) {
+        $self->add_prices_dependency($self->{'args'}->get_arg_constant(1));
+    }
+
+}
+\end{lstlisting}
+\section{Calculating the value of the indicator}
+The GT framework provides two means of calculating the value of an
+indicator: we can either compute a single value of the indicator, given
+its dependencies, or we can compute the value of the indicator
+throughout a given interval. One or the other of these methods must be
+defined,\footnote{Note that if the \lstinline!calculate!
+method is omitted, the indicator may fail if this method is indirectly
+invoked (e.g., when running anashell.pl), as this method is not defined
+in the superclass. It is safer to omit the
+\lstinline!calculate_interval! method.} albeit often both
+methods are given. Typically, calculating the value of the indicator
+over the full interval required will be faster, potentially much faster
+as calculating the value of the indicator one period at a time may
+often repeat much of the computation needlessly.
+
+
+\subsection{Calculating a single value of the indicator}
+The current value of the indicator is computed by the
+\lstinline!calculate! method, which takes as arguments a
+calculator and the current period. This method typically follows the
+following steps:
+
+\begin{lstlisting}[name=example]
+sub calculate {
+    my ($self, $calc, $i) = @_;
+\end{lstlisting}
+
+\paragraph{Define temporary variables.}
+
+Several temporaries are defined for convenience: The distance of the
+upper and lower bands from the moving average, as determined by the
+second parameter, the names of the intermediate series used, and the
+names of the output values.
+
+\begin{lstlisting}[name=example]
+    my $nsd = $self->{'args'}->get_arg_values($calc, $i, 2);
+    my $sma_name = $self->{'sma'}->get_name;
+    my $sd_name = $self->{'sd'}->get_name;
+    my $bol_name = $self->get_name(0);
+    my $bolsup_name = $self->get_name(1);
+    my $bolinf_name = $self->get_name(2);
+
+\end{lstlisting}
+\paragraph{Return if the required values of the indicator are already available; these may have been computed earlier.}
+
+\begin{lstlisting}[name=example]
+    return if ($calc->indicators->is_available($bol_name, $i) &&
+               $calc->indicators->is_available($bolsup_name, $i) &&
+               $calc->indicators->is_available($bolinf_name, $i));
+\end{lstlisting}
+
+\paragraph{Return if the dependencies required to compute the value of this
+indicator are not satisfied.}
+
+This check will attempt to compute the
+dependencies but fail when the dependencies cannot be computed. This
+triggers the dependency mechanism.
+
+\begin{lstlisting}[name=example]
+    return if (! $self->check_dependencies($calc, $i));
+
+\end{lstlisting}
+
+\paragraph{Compute the current value of the indicator.}
+
+For the Bollinger Band indicator, we first obtain the values of the
+moving average and the standard deviation. The upper band is obtained
+by adding the appropriate factor of the standard deviation to the
+moving average; the lower band is calculated similarly.
+
+\begin{lstlisting}[name=example]
+    my $sma_value = $calc->indicators->get($sma_name, $i);
+    my $sd_value = $calc->indicators->get($sd_name, $i);
+
+    my $bolsup_value = $sma_value + ($nsd * $sd_value);
+    my $bolinf_value = $sma_value - ($nsd * $sd_value);
+
+\end{lstlisting}
+Note that computing the current value of the indicator may in fact
+require iterating over past periods.
+
+\paragraph{Update the output values for the current period.}
+
+For the Bollinger Band store the moving average value into the first
+output series, the upper band value into the second output series, and
+the lower band value into the last output series.
+
+\begin{lstlisting}[name=example]
+    $calc->indicators->set($bol_name, $i, $sma_value);
+    $calc->indicators->set($bolsup_name, $i, $bolsup_value);
+    $calc->indicators->set($bolinf_name, $i, $bolinf_value);
+}
+
+\end{lstlisting}
+
+\subsection[Calculating a the indicator throughout an
+interval]{\label{bkm:Ref192603010}Calculating a the indicator
+throughout an interval}
+The \lstinline!calculate_interval! method computes the value of
+the indicator over a given interval. It is passed a calculator as well
+as the beginning and end of the interval of interest. This method can
+be obtained systematically from the \lstinline!calculate!
+method by the following steps:
+
+\begin{enumerate}
+\item Change all occurrences of \lstinline!get_arg_values! to the
+corresponding \lstinline!get_arg_constant!
+\item Change all occurrences of \lstinline!check_dependencies! to
+the corresponding \lstinline!check_dependencies_interval!
+\item Change all occurrences of \lstinline!is_available! to the
+corresponding \lstinline!is_available_interval!
+\item Compute the current value of the indicator within a loop from the
+beginning of the interval to the end of the interval.
+\end{enumerate}
+
+\begin{lstlisting}[name=example]
+sub calculate_interval {
+    my ($self, $calc, $first, $last) = @_;
+    my $nsd = $self->{'args'}->get_arg_constant(2);
+    my $sma_name = $self->{'sma'}->get_name;
+    my $sd_name = $self->{'sd'}->get_name;
+    my $bol_name = $self->get_name(0);
+    my $bolsup_name = $self->get_name(1);
+    my $bolinf_name = $self->get_name(2);
+
+    return if ($calc->indicators->is_available_interval($bol_name, $first, $last) &&
+               $calc->indicators->is_available_interval($bolsup_name, $first, $last) &&
+               $calc->indicators->is_available_interval($bolinf_name, $first, $last));
+    return if (! $self->check_dependencies_interval($calc, $first, $last));
+
+    for (my $i=$first;$i<=$last;$i++) {
+      my $sma_value = $calc->indicators->get($sma_name, $i);
+      my $sd_value = $calc->indicators->get($sd_name, $i);
+
+      my $bolsup_value = $sma_value + ($nsd * $sd_value);
+      my $bolinf_value = $sma_value - ($nsd * $sd_value);
+
+      $calc->indicators->set($bol_name, $i, $sma_value);
+      $calc->indicators->set($bolsup_name, $i, $bolsup_value);
+      $calc->indicators->set($bolinf_name, $i, $bolinf_value);
+    }
+}
+\end{lstlisting}
+
+\section{End of file}
+As common practice in Perl modules, conclude the file with a successful
+value.
+
+\begin{lstlisting}[name=example]
+1;
+\end{lstlisting}
+
+\section{Additional capabilities}
+There are a number of additional tools provided by GT which are not
+leveraged in the Bollinger Bands indicator illustrated above. These are
+discussed below.
+
+\subsection[Temporary series]{\label{bkm:Ref192502379}Temporary series}
+In addition to storing results in output values, as discussed in Section
+3, and indicator may also store data into temporary series that are not
+visible outside of the indicator. To create a temporary series, assign
+a I:Generic:Container indicator to an attribute of the indicator
+object:
+\begin{lstlisting}[numbers=none]
+$self->{'temp'} = GT::Indicators::Generic::Container->new(['temp']);
+\end{lstlisting}
+
+Above creates a new temporary series with the name
+\lstinline!temp!. This series is an indicator and thus values
+can be read and written to this series as to any indicator:
+\begin{lstlisting}[numbers=none]
+$calc->indicators->get($self->{'temp'}->get_name, $i)
+$calc->indicators->set($self->{'temp'}->get_name, $i, $value)
+\end{lstlisting}
+
+\subsection[Constructing intermediate series from other
+series]{\label{bkm:Ref192502529}Constructing intermediate series from
+other series}
+An intermediate series may rely on another intermediate series, on a
+temporary series, or on an output series. In this situation, when
+defining an intermediate series, the dependent series are provided as
+parameters.
+
+For example, to define a standard moving average of the upper band of
+the Bollinger Band indicator:
+\begin{lstlisting}[numbers=none]
+$self->{'upper'} = GT::Indicators::SMA->new([$self->{'args'}->get_arg_names(1),
+                           "{I:Generic:ByName " . $self->get_name(1) . "}" ]);
+\end{lstlisting}
+
+This constructs an intermediate SMA series of the second output value of
+the current indicator, with the period taken from the first parameter
+of the current indicator and assigns it to an attribute of the
+indicator object.
+
+Similarly one constructs the simple moving average of the temp indicator
+from Section 7.1 as
+\begin{lstlisting}[numbers=none]
+$self->{'sma'} = GT::Indicators::SMA->new([ $self->{'args'}->get_arg_names(1),
+                             "{I:Generic:ByName temp}" ]);
+\end{lstlisting}
+
+It appears that it is not possible to construct a new series that based
+on an intermediate series. As a workaround, explicitly specify that
+intermediate series in the construction of the second
+series.\footnote{This will involve a duplication of the computation
+of this series. Implement a means of obtaining the value of the
+intermediate series to avoid needless duplicate computation.}
+
+\subsection[Volatile dependencies]{\label{bkm:Ref192505424}Volatile
+dependencies}
+It is also possible for indicator dependencies to dynamically change
+during the computation of a series, either by the length of the
+dependency being computed at each iteration, or by it depending on the
+value of a series. Dynamically changing dependencies are referred to as
+``volatile''. They are defined analogously to static dependencies using
+the following methods, where \lstinline!$indic! is an
+indicator, \lstinline!$n! refers to the \textit{n}-th
+parameter of the indicator (counting from 1), and
+\lstinline!$p! is the number of periods of data this value
+depends on:
+\begin{lstlisting}[numbers=none]
+$self->add_volatile_indicator_dependency($indic, $p)
+$self->add_volatile_arg_dependency($n, $p)
+$self->add_volatile_prices_dependency($p)
+\end{lstlisting}
+
+Before defining volatile dependencies, all volatile dependencies from
+the previous period must be removed through calling
+\begin{lstlisting}[numbers=none]
+$self->remove_volatile_dependencies()
+\end{lstlisting}
+
+Volatile dependencies are mostly useful only when indicators are
+calculated one period at a time (i.e., in the
+\lstinline!calculate! method).\footnote{Note that several
+indicators add volatile indicators in the
+\lstinline!calculate_interval! method. This will work only if
+careful attention is paid to that the dependency period is correctly
+obtained. In many such situations, the dependency period is established
+correctly only when the corresponding parameter is both constant and
+positive. Further, unless the dependencies are updated throughout the
+loop, they reduce to static dependencies (in those situations, if
+calculate is desired to support volatile dependencies, it is useful to
+define the volatile dependencies also in \lstinline!calculate_interval!
+to avoid duplicated dependency computation in calculate where static
+dependencies defined).}
+
+\section{Styles of calculating indicators}
+The value of an indicator in the following three ways: (i) by obtaining
+the value of an input data series, (ii) by applying an indicator to a
+data series (either an input series or a temporary our output series,
+or (iii) by performing some computation on the current or past values
+of one or more available data series. These can be combined in
+arbitrary ways.
+
+The Bollinger Band indicator above used each of these: It obtains the
+value of the input data series, applies two indicators (SMA,
+StandardDeviation) to these values, and then performs a calculation on
+the current value of these indicators. Other indicators require more
+complicated scenarios: For example, an indicator may require smoothing
+of the calculated value (as in the stochastic indicator I:STO, the
+Fisher indicator I:FISH, or the Volume Oscillator I:VOSC). The
+stochastic momentum indicator (I:SMI) first obtains values from an
+input series and applies an indicator to these values, then performs
+some calculation to produce a temporary series, then applies smoothing
+to these temporary series, perform some computation on the results, and
+apply a final smoothing. These more complicated calculations can be
+constructed in the following manner: Consider the dependencies required
+by each of the steps in the calculation and begin the calculation at
+the earliest point in the chain of dependencies.
+
+\begin{enumerate}
+\item The current or previous value of an indicator can always be obtained
+as described above.
+\item If an indicator application is not the final step, then calculate the
+value of that indicator starting from the earliest period it satisfies
+a dependency for subsequent computations up to the current period.
+\item If a computation on current or past values of one or more series is
+not the final step, then calculate all subsequent values in a loop from
+the earliest period the computation satisfies a dependency for
+subsequent computations up to the current period.
+\end{enumerate}
+
+For example, the following is the \lstinline!calculate! method
+for I:VOSC. The oscillator is calculated by first computing the value
+of the volume and then smoothing that value with a period given by the
+first parameter. The smoothing is performed after the computation of
+the volume measure, and thus the indicator first computes sufficient
+data values for the smoothing operator in the loop on lines 11-25.
+After that the smoothing operator is applied (line 27).
+
+\begin{lstlisting}[numbers=none]
+sub calculate {
+    my ($self, $calc, $i) = @_;
+    my $vosc_name = $self->get_name(0);
+    my $volume_name = $self->get_name(1);
+    my $volume = 0;
+
+    return if ($calc->indicators->is_available($vosc_name, $i));
+    return if (! $self->check_dependencies($calc, $i));
+
+    my $nb_days = $self->{'args'}->get_arg_values($calc, $i, 1);
+    for (my $n = 0; $n < $nb_days; $n++) {
+
+    next if $calc->indicators->is_available($volume_name, $i - $n);
+    if ($calc->prices->at($i - $n)->[$CLOSE] > $calc->prices->at($i - $n)->[$OPEN]) {
+       $volume = $calc->prices->at($i - $n)->[$VOLUME];
+    }
+    if ($calc->prices->at($i - $n)->[$CLOSE] < $calc->prices->at($i - $n)->[$OPEN]) {
+       $volume = -$calc->prices->at($i - $n)->[$VOLUME];
+    }
+    if ($calc->prices->at($i - $n)->[$CLOSE] eq $calc->prices->at($i - $n)->[$OPEN]) {
+       $volume = 0;
+    }
+    $calc->indicators->set($volume_name, $i - $n, $volume);
+
+    }
+
+    $self->{'sma'}->calculate($calc, $i);
+    my $vosc_value = $calc->indicators->get($self->{'sma'}->get_name, $i);
+    $calc->indicators->set($vosc_name, $i, $vosc_value);
+}
+\end{lstlisting}
+The transformation to the \lstinline!calculate_interval! method
+is similar to as described in Section 5.2, with the exception that the
+bounds of any loop used in \lstinline!calculate! will have to
+take the required data history in account. For an example of a more
+complex indicator as well as for the transformation of the
+\lstinline!calculate_interval! method see the Stochastic
+Momentum Indicator I:SMI.
+
+\section{Documentation}
+Adequate documentation in pod format should be provided for each
+indicator.
+\end{document}
