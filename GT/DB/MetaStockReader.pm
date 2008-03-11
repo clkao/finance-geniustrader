@@ -15,6 +15,7 @@ package GT::DB::MetaStockReader;
 #		: test if security already exists before putting in the table.
 # v1.6 04/06/2005 : Changed the DB object interface to allow better timeframe support (João Costa)
 
+# ras 9mar08 : pod explaining GT::DB::MetaStockReader and GT::DB::MetaStock usage
 
 use strict;
 use vars qw(@ISA);
@@ -32,6 +33,11 @@ use GT::DateTime;
 
 The MetaStockReader access module is able to retrieve quotes from almost any
 type of MetaStock database.
+
+This module does not require any other code
+to support its operation and it is not intended to be used with
+GT::DB::MetaStock and, although named MetaStockReader, it is not
+the companion program required by GT::DB::MetaStock.
 
 =head2 Synopsis
 
@@ -57,6 +63,9 @@ directory.
 The XMASTER file all the others security (*.MWD) of your directory.
 
 =head2 Configuration
+
+NOTE: this module supercedes the module GT::DB::MetaStock. do not attempt
+to use both.
 
 You can indicate the directory which contains the MetaStock database
 by setting the DB::metastock::directory configuration item.

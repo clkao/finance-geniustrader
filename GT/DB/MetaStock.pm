@@ -15,17 +15,32 @@ use GT::DateTime;
 
 =head2 Overview
 
-The MetaStock access module is able to retrieve quotes from almost any type of MetaStock/Computrac database.
+The MetaStock access module is able to retrieve quotes from almost any
+type of MetaStock/Computrac database.
 
 =head2 Note
 
-This module simply call the software "MetaStockReader" to get quotes, with a directory and a symbol as main parameters. Please refer to it's source if you want to learn more about it.
+This module calls the binary program identified by the $HOME/.gt/options
+file option "DB::metastock::program" ("/bourse/tools/MetaStockReader" by default)
+to get quotes from your metastock database.
+
+$HOME/.gt/options file option
+"DB::metastock::directory" must indicate the directory of the metastock database.
+(no default).
+
+Please refer to /bourse/tools/MetaStockReader source if you want to learn
+more about it.
+
+NOTE: this module and the companion binary program has been depreciated
+in favor of the stand-alone perl module (unfortunately) also named
+MetaStockReader. refer to that modules pod
 
 =head2 Configuration
 
 You can indicate the directory which contains the MetaStock database
 by setting the DB::metastock::directory configuration item. You can
-also set DB::metastock::program to indicate where the MetaStockReader.
+also set DB::metastock::program to indicate where the MetaStockReader
+binary program is located (complete pathname).
 
 =head2 new()
 
