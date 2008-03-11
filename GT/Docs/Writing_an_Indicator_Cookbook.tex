@@ -1,5 +1,3 @@
-% This file was converted to LaTeX by Writer2LaTeX ver. 0.4
-% see http://www.hj-gym.dk/~hj/writer2latex for more info
 \documentclass[11pt,twoside]{article}
 \usepackage{color}
 \usepackage{calc}
@@ -188,11 +186,23 @@ values are used.
     $self->{'sd'} = GT::Indicators::StandardDeviation->new([
        $self->{'args'}->get_arg_names(1),$self->{'args'}->get_arg_names(3)]);
 \end{lstlisting}
+Note that when such an intermediate series uses other series as its arguments,
+these cannot be defined by their constructor functions but must be given
+in their textual representation. For example, the following doubly smoothes
+the SMA above:
+\begin{lstlisting}[numbers=none]
+    $self->{'sma'} = GT::Indicators::SMA->new([
+       $self->{'args'}->get_arg_names(1), 
+       '{I:SMA '.$self->{'args'}->get_arg_names(1).' '
+           .$self->{'args'}->get_arg_names(3).'}']);
+\end{lstlisting}
+
+
 During the computation of the indicator, the intermediate series is
 either computed via the dependency mechanism (see Section 4.2) or by
 explicitly computing the series via:
 
-\begin{lstlisting}[name=example]
+\begin{lstlisting}[numbers=none]
 $self->{'sma'}->calculate($calc, $i)
 $self->{'sma'}->calculate_interval($calc, $i, $j)
 \end{lstlisting}
@@ -200,7 +210,7 @@ where \lstinline!$calc! is a calculator, and
 \lstinline!$i! and \lstinline!$j! are time periods.
 The values of these series are obtained via the standard get method,
 e.g., the \textit{i}th value of the SMA is obtained via
-\begin{lstlisting}[name=example]
+\begin{lstlisting}[numbers=none]
 $calc->indicators->set($self->{'sma'}->get_name, $i)
 \end{lstlisting}
 
@@ -461,7 +471,7 @@ defining an intermediate series, the dependent series are provided as
 parameters.
 
 For example, to define a standard moving average of the upper band of
-the Bollinger Band indicator:
+the Bollinger Band indicator (within the computation of the Bollinger Band indicator) use:
 \begin{lstlisting}[numbers=none]
 $self->{'upper'} = GT::Indicators::SMA->new([$self->{'args'}->get_arg_names(1),
                            "{I:Generic:ByName " . $self->get_name(1) . "}" ]);
@@ -472,19 +482,24 @@ the current indicator, with the period taken from the first parameter
 of the current indicator and assigns it to an attribute of the
 indicator object.
 
-Similarly one constructs the simple moving average of the temp indicator
-from Section 7.1 as
+Similarly one can construct a series that depends on a temporary series
+or an intermediate series. For example, the simple moving average of the
+temp indicator from Section 7.1 is defined as follows:
 \begin{lstlisting}[numbers=none]
-$self->{'sma'} = GT::Indicators::SMA->new([ $self->{'args'}->get_arg_names(1),
+$self->{'sma1'} = GT::Indicators::SMA->new([ $self->{'args'}->get_arg_names(1),
                              "{I:Generic:ByName temp}" ]);
 \end{lstlisting}
-
-It appears that it is not possible to construct a new series that based
-on an intermediate series. As a workaround, explicitly specify that
-intermediate series in the construction of the second
-series.\footnote{This will involve a duplication of the computation
-of this series. Implement a means of obtaining the value of the
-intermediate series to avoid needless duplicate computation.}
+The further smoothing of the simple moving average of the upper Bollinger
+Band (see above) can be defined by\footnote{This requires a correction 
+to the I:Generic:ByName indicator available from the mailing list archives 
+at http://www.geniustrader.org/lists/devel/msg02362.html.}
+\begin{lstlisting}[numbers=none]
+$self->{'sma2'} = GT::Indicators::SMA->new([ $self->{'args'}->get_arg_names(1),
+                       "{I:Generic:ByName `" . $self->{'upper'}->get_name . "}" ]);
+\end{lstlisting}
+If the intermediate series has multiple outputs, the proper name must be used
+(e.g., use \lstinline!get_name($n)! to construct a series based on the 
+{\em n}th output value of the intermediate series.
 
 \subsection[Volatile dependencies]{\label{bkm:Ref192505424}Volatile
 dependencies}
@@ -612,4 +627,12 @@ Momentum Indicator I:SMI.
 \section{Documentation}
 Adequate documentation in pod format should be provided for each
 indicator.
+
+\section{Observations and difficulties}
+The following contains a collection of observations I made in writing 
+indicators and difficulties that I encountered. I do not have explanations
+for all of these, so please take them with a grain of salt.
+
+
+
 \end{document}
