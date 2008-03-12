@@ -1,10 +1,14 @@
 package GT::Indicators::EMA;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
+# Copyright 2008 Thomas Weigert
+# Based on and for GeniusTrader (C) 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
 # Standards-Version: 1.0
+
+# $Id$
 
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
@@ -31,7 +35,7 @@ recent prices ...
 
 =item Period (default 20)
 
-The first argument is the period used to calculed the average.
+The first argument is the period used to calculate the average.
 
 =item Other data input
 
@@ -41,13 +45,25 @@ This is usually an indicator (detailed via {I:MyIndic <param>}).
 
 =back
 
+=head2 Calculation
+
+alpha = 2 / ( N + 1 )
+EMA[n] = EMA[n-1] + alpha * ( INPUT - EMA[n-1] )
+
+In TA, the first value is often constructed as SMA(N).
+
+Note: One criticism could be that the EMA is calculated starting
+from the designated period. But actually the EMA goes all the way back
+to the beginning of the available data. But in all tools I checked they
+start computation from the loaded data on.
+
 =head2 Creation
 
  GT::Indicators::EMA->new()
  GT::Indicators::EMA->new([20])
 
 If you need a 30 days EMA of the opening prices you can write
-one of those lines :
+one of these lines:
 
  GT::Indicators::EMA->new([30, "{I:Prices OPEN}"])
 
@@ -62,139 +78,59 @@ sub initialize {
     my ($self) = @_;
 
     $self->{'sma'} = GT::Indicators::SMA->new([ $self->{'args'}->get_arg_names() ]);
-    $self->add_indicator_dependency($self->{'sma'}, $self->{'args'}->get_arg_constant(1));
-    $self->add_prices_dependency($self->{'args'}->get_arg_constant(1));
+    $self->add_indicator_dependency($self->{'sma'}, 1);
+
 }
 
 sub calculate {
     my ($self, $calc, $i) = @_;
-    my $nb = $self->{'args'}->get_arg_values($calc, $i, 1);
+    my $indic = $calc->indicators;
     my $name = $self->get_name;
-    my $days_required = 0;
-    if (! $self->{'args'}->is_constant(2)) {
-    $days_required = $self->{'args'}->get_arg_object(2)->days_required;
-    }
-    my $d2 = $self->{'sma'}->days_required + $nb;
-    $days_required = ($days_required > $d2) ? $days_required : $d2;
+    my $before = 1;
 
+    my $nb = $self->{'args'}->get_arg_values($calc, $i, 1);
     return if (! defined($nb));
 
-    $self->remove_volatile_dependencies();
-    $self->add_volatile_arg_dependency(2, $nb);
-
-    return if ($calc->indicators->is_available($name, $i));
-    return if (! $self->check_dependencies($calc, $i));
+    return if ($indic->is_available($name, $i));
+    return if ($before && ! $self->check_dependencies($calc, $i));
 
     my $alpha = 2 / ($nb + 1);
 
-    my $ema = $self->{'args'}->get_arg_values($calc, $i - $nb + 1, 2);
-
-    if ($calc->indicators->is_available($name, $i-$nb))
-    {
-    $ema = $calc->indicators->get($name, $i-$nb);
-    } elsif ($i - $days_required >= 4*$nb - 1)
-    {
-    my @ema = ();
-    for (my $bar = $i - 3*$nb; $bar <= $i-$nb; $bar++)
-    {
-        if (defined ($ema[$bar-$nb]))
-        {
-        $ema = $ema[$bar-$nb];
-        } else
-        {
-        # This may look a bit dodgy but if the next line is omitted, SMA.pm uses calculate_interval
-        # which fails in this context. Actually, this might be a bug in SMA.pm.
-        $self->{'sma'}->calculate($calc, $bar - $nb);
-        $ema = $calc->indicators->get($self->{'sma'}->get_name(0), $bar-$nb);
-        }
-        for(my $n = $bar - $nb + 1; $n <= $bar; $n++)
-        {
-        $ema *= (1 - $alpha);
-        $ema += ($alpha * $self->{'args'}->get_arg_values($calc, $n, 2));
-        }
-        $ema[$bar] = $ema;
+    my $oldema = $indic->get($name, $i - 1);
+    my $ema;
+    if (defined $oldema) {
+      $ema = $alpha * ($self->{'args'}->get_arg_values($calc, $i, 2) - $oldema) + $oldema;
+    } else {
+      $ema = $indic->get($self->{'sma'}->get_name, $i);
+      $before = 0;
     }
-    } elsif ($i - $days_required >= 2*$nb - 1)
-    {
-    $self->{'sma'}->calculate($calc, $i - $nb);
-    $ema = $calc->indicators->get($self->{'sma'}->get_name(0), $i-$nb);
-    }
+    $indic->set($name, $i, $ema);
 
-    return if (! defined($ema));
-
-    for(my $n = $i - $nb + 1; $n <= $i; $n++)
-    {
-       $ema *= (1 - $alpha);
-       $ema += ($alpha * $self->{'args'}->get_arg_values($calc, $n, 2));
-    }
-
-    $calc->indicators->set($name, $i, $ema);
 }
 
 sub calculate_interval {
     my ($self, $calc, $first, $last) = @_;
+    my $indic = $calc->indicators;
     my $name = $self->get_name;
 
+    my $nb = $self->{'args'}->get_arg_constant(1);
+    return if (! defined($nb));
 
-    #If the EMA period is not a constant value,
-    #use the default non-optimized calculate_interval
-    if (!$self->{'args'}->is_constant(1)) {
-      ($first, $last) = $self->update_interval($calc, $first, $last);
-      return if ($calc->indicators->is_available_interval($name, $first, $last));
-      return if (! $self->check_dependencies_interval($calc, $first, $last));
-      GT::Indicators::calculate_interval(@_);
-      return;
-    }
+    return if ($indic->is_available_interval($name, $first, $last));
+    # Don't need to calculate all SMA values, just the first data point.
+    $self->{'sma'}->calculate($calc, $first);
 
-    my $nb = $self->{'args'}->get_arg_constant(1);  #Period of the EMA
-    my $smooth_constant = 2 / (1 + $nb);   #Applies appropriate weighting to
-                                           #the most recent price relative to
-                                           #the previous EMA
-    my $smooth_periods = 2 * $nb;  #The larger this value,
-                                   #the more accurate, slower and more data
-                                   #periods dependent the calculation.
-                                   #If you calculate for a large interval
-                                   #this is only relevant for the first few
-                                   #periods. It should always greater than $nb
+    return unless $self->dependencies_are_available($calc, $first);
 
-    return if ($calc->indicators->is_available_interval($name, $first, $last));
+    my $alpha = 2 / ($nb + 1);
 
-    my $first_smooth = $first - $smooth_periods;
-    my $first_sma = $first_smooth - $nb;
+    $indic->set($name, $first, $indic->get($self->{'sma'}->get_name, $first));
 
-
-    if ($first_sma < 0) {
-        $first = $nb + 1 if ($first < $nb + 1);
-        $first_smooth = $nb;
-        $first_sma = 0;
-    }
-	return if ($first > $last); #This means not enough data available.
-
-    my $sum = 0;
-    #Calculate the SMA for the first day
-    for(my $i = $first_sma; $i < $first_smooth; $i++) {
-        my $quote = $self->{'args'}->get_arg_values($calc, $i, 2);
-        $sum+=$quote;
-    }
-
-    #Based on the first smooth period SMA, calculate
-    #the following smooth periods EMA
-    my $previous_ema = ($sum/$nb);
-    for(my $i = $first_smooth; $i < $first; $i++)
-    {
-        my $quote = $self->{'args'}->get_arg_values($calc, $i, 2);
-
-        my $ema_value = ($smooth_constant * ($quote - $previous_ema)) + $previous_ema;
-        $previous_ema = $ema_value;
-    }
-
-    #Calculate and set the EMA for the following interval periods
-    for(my $i = $first ; $i <= $last; $i++)
-    {
-        my $quote = $self->{'args'}->get_arg_values($calc, $i, 2);
-
-        my $ema_value = ($smooth_constant * ($quote - $previous_ema)) + $previous_ema;
-        $calc->indicators->set($name, $i, $ema_value);
-        $previous_ema = $ema_value;
+    for (my $i=$first+1;$i<=$last;$i++) {
+      my $oldema = $indic->get($name, $i - 1);
+      my $ema = $alpha * ($self->{'args'}->get_arg_values($calc, $i, 2) - $oldema) + $oldema;
+      $indic->set($name, $i, $ema);
     }
 }
+
+1;
