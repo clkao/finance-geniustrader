@@ -1,8 +1,15 @@
 package GT::Indicators::STO;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
+# Copyright 2008 by Karsten Wipple and Thomas Weigert
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
+
+# based on version dated 24 Apr 2005, 7914 bytes
+# significant improvements Karsten Wipple and Thomas Weigert
+# $Id$
+
+# Standards-Version: 1.0
 
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
@@ -23,20 +30,55 @@ use GT::Prices;
 
 =head2 Overview
 
-Developed by George C. Lane in the late 1950s, the Stochastic Oscillator is a momentum indicator that shows the location of the current close relative to the high/low range over a set number of periods. Closing levels that are consistently near the top of the range indicate accumulation (buying pressure) and those near the bottom of the range indicate distribution (selling pressure).
+Developed by George C. Lane in the late 1950s, the Stochastic Oscillator
+is a momentum indicator that shows the location of the current close
+relative to the high/low range over a set number of periods. Closing
+levels that are consistently near the top of the range indicate
+accumulation (buying pressure) and those near the bottom of the range
+indicate distribution (selling pressure).
 
 =head2 Calculation
 
 %K Fast = 100 * ((Last - Lowest Low(n)) / (Highest High(n) - Lowest Low(n)))
-%D Fast = M-days SMA of %K Fast
+ %D Fast = M-periods SMA of %K Fast
 
-%K Slow = A-days SMA of %K Fast
-%D Slow = B-days SMA of %K Slow
+ %K Slow = A-periods SMA of %K Fast
+ %D Slow = B-periods SMA of %K Slow
+
+=head2  possibly helpful information:
+
+ %K Fast corresponds to STO/1, %D Fast to STO/2, %K Slow to STO/3
+ and %D Slow to STO/4
+
+ %K Slow may also be known as the stochastic oscillator
+ %D Slow is also known as the signal line
+ 
+=head2  arguments and defaults for STO
+
+STO accepts 7 arguments, the defaults are, in order:
+5, 3, 3, 3, {I:Prices HIGH}, {I:Prices LOW}, {I:Prices CLOSE}
+
+ The first argument is the Period n used in the formula above and for
+ each of the subsequent SMA periods.
+
+ The second argument is M-periods, the third is A-periods, fourth is B-periods.
+
+ 
+By default the data used is price, which can be changed by specifying
+different indicators. the order is High(n), Low(n), Last in the %K Fast
+formula above.
+
+Note that Metastock calculates the slowing via a sum of the last M-periods, 
+rather than a SMA. Metastock displays %K Slow and %D Slow.
 
 =head2 Examples
 
 GT::Indicators::STO->new()
 GT::Indicators::STO->new([14, 3, 3, 3])
+
+ --add=Curve(Indicators::STO/3, black)  # %K Slow oscillator
+ --add=Curve(Indicators::STO/4, red)    # %D Slow signal line
+ 
 
 =head2 Links
 
@@ -65,6 +107,14 @@ sub initialize {
     # Initialize %D Slow
     $self->{'%d_slow'} = GT::Indicators::SMA->new([ $self->{'args'}->get_arg_names(4),
 			    "{I:Generic:ByName " . $self->{'%k_slow'}->get_name(0) . "}" ]);
+
+    # Now add dependencies
+    my $nb_days = ($self->{'args'}->get_arg_constant(2) > $self->{'args'}->get_arg_constant(3)+$self->{'args'}->get_arg_constant(4)) ? 
+     $self->{'args'}->get_arg_constant(2) : $self->{'args'}->get_arg_constant(3)+$self->{'args'}->get_arg_constant(4);
+    $self->add_indicator_dependency($self->{'min'}, $nb_days);
+    $self->add_indicator_dependency($self->{'max'}, $nb_days);
+    $self->add_arg_dependency(7, $nb_days + $self->{'args'}->get_arg_constant(1) - 1);
+
 }
 
 =pod
@@ -89,15 +139,8 @@ sub calculate {
 	       $indic->is_available($k_slow_name, $i) &&
 	       $indic->is_available($d_slow_name, $i));
 
-    my $max = ($self->{'args'}->get_arg_values($calc, $i, 2) > $self->{'args'}->get_arg_values($calc, $i, 3)) ? 
-      $self->{'args'}->get_arg_values($calc, $i, 2) : $self->{'args'}->get_arg_values($calc, $i, 3);
-    my $nb = $self->{'args'}->get_arg_values($calc, $i, 1) + $max + $self->{'args'}->get_arg_values($calc, $i, 4);
-    my $nb_days = $max + $self->{'args'}->get_arg_values($calc, $i, 4);
-
-    $self->remove_volatile_dependencies();
-    $self->add_volatile_indicator_dependency($self->{'min'}, $nb);
-    $self->add_volatile_indicator_dependency($self->{'max'}, $nb);
-    $self->add_volatile_arg_dependency(7, $nb_days + $self->{'args'}->get_arg_values($calc, $i, 1) - 1);
+    my $nb_days = ($self->{'args'}->get_arg_values($calc, $i, 2) > $self->{'args'}->get_arg_values($calc, $i, 3)+$self->{'args'}->get_arg_values($calc, $i, 4)) ? 
+      $self->{'args'}->get_arg_values($calc, $i, 2) : $self->{'args'}->get_arg_values($calc, $i, 3)+$self->{'args'}->get_arg_values($calc, $i, 4);
 
     return if (! $self->check_dependencies($calc, $i));
 
@@ -155,15 +198,8 @@ sub calculate_interval {
 	       $indic->is_available_interval($k_slow_name, $first, $last) &&
 	       $indic->is_available_interval($d_slow_name, $first, $last));
 
-    my $max = ($self->{'args'}->get_arg_constant(2) > $self->{'args'}->get_arg_constant(3)) ? 
-      $self->{'args'}->get_arg_constant(2) : $self->{'args'}->get_arg_constant(3);
-    my $nb = $self->{'args'}->get_arg_constant(1) + $max + $self->{'args'}->get_arg_constant(4);
-    my $nb_days = $max + $self->{'args'}->get_arg_constant(4);
-
-    $self->remove_volatile_dependencies();
-    $self->add_volatile_indicator_dependency($self->{'min'}, $nb);
-    $self->add_volatile_indicator_dependency($self->{'max'}, $nb);
-    $self->add_volatile_arg_dependency(7, $nb_days + $self->{'args'}->get_arg_constant(1) - 1);
+    my $nb_days = ($self->{'args'}->get_arg_constant(2) > $self->{'args'}->get_arg_constant(3)+$self->{'args'}->get_arg_constant(4)) ? 
+      $self->{'args'}->get_arg_constant(2) : $self->{'args'}->get_arg_constant(3)+$self->{'args'}->get_arg_constant(4);
 
     return if (! $self->check_dependencies_interval($calc, $first, $last));
 
