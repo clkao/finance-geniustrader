@@ -1,18 +1,24 @@
 package GT::Indicators::RSquare;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
+# standards upgrade and major corrections Copyright 2008 Thomas Weigert
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
+# $Id$
+
+# Standards-Version: 1.0
+
 use strict;
-use vars qw(@ISA @NAMES);
+use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
 use GT::Indicators;
 use GT::Indicators::BPCorrelation;
 use GT::Prices;
 
 @ISA = qw(GT::Indicators);
-@NAMES = ("RSquare[#1]");
+@NAMES = ("RSquare[#1, #2]");
+@DEFAULT_ARGS = (14, "{I:Prices CLOSE}");
 
 =pod
 
@@ -28,21 +34,13 @@ Pwr(Corr(Cum(1),C,14,0),2)
  
 =cut
 
-sub new {
-    my $type = shift;
-    my $class = ref($type) || $type;
-    my ($args) = @_;
-    my $self = { 'args' => defined($args) ? $args : [ 14 ] };
-
-    $args->[0] = 14 if (! defined($args->[0]));
-       
-    return manage_object(\@NAMES, $self, $class, $self->{'args'}, "");
-}
-
 sub initialize {
     my $self = shift;
 
-    $self->{'correlation'} = GT::Indicators::BPCorrelation->new([ $self->{'args'}[0] ], "i,Close", sub { return $_[1] + 1 }, sub { return $_[0]->prices->at($_[1])->[$LAST] } );
+    $self->{'correlation'} = GT::Indicators::BPCorrelation->new([ 
+                                 $self->{'args'}->get_arg_constant(1),
+                                 '{I:Generic:Cum 1 }',
+                                 $self->{'args'}->get_arg_names(2) ]);
 
     $self->add_indicator_dependency($self->{'correlation'}, 1);
     $self->add_prices_dependency(2);
@@ -58,7 +56,7 @@ sub calculate {
     my ($self, $calc, $i) = @_;
     my $indic = $calc->indicators;
     my $prices = $calc->prices;
-    my $period = $self->{'args'}[0];
+    my $period = $self->{'args'}->get_arg_constant(1);
     my $correlation_name = $self->{'correlation'}->get_name;
     my $name = $self->get_name;
 

@@ -1,16 +1,22 @@
 package GT::Indicators::MaxDrawDown;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
+# standards upgrade Copyright 2005 Thomas Weigert
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
+# $Id$
+
+# Standards-Version: 1.0
+
 use strict;
-use vars qw(@ISA @NAMES);
+use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
 use GT::Indicators;
 
 @ISA = qw(GT::Indicators);
-@NAMES = ("MaxDrawDown");
+@NAMES = ("MaxDrawDown[#1]");
+@DEFAULT_ARGS = ("{I:Prices CLOSE}");
 
 =pod
 
@@ -22,22 +28,6 @@ Calculate the MaxDrawDown, which is the worst percentage loss after reaching a m
 
 =cut
 
-sub new {
-    my $type = shift;
-    my $class = ref($type) || $type;
-    my ($args, $key, $func) = @_;
-    my $self = { 'args' => defined($args) ? $args : [] };
-    
-    if (defined($func)) {
-	$self->{'_func'} = $func;
-    } else {
-	$self->{'_func'} = $GET_LAST;
-	$key = 'LAST';
-    }
-
-    return manage_object(\@NAMES, $self, $class, $self->{'args'}, $key);
-}
-
 sub initialize {
     my ($self) = @_;
 
@@ -46,22 +36,20 @@ sub initialize {
 
 sub calculate {
     my ($self, $calc, $i) = @_;
-    my $nb = $self->{'args'}[0];
-    my $getvalue = $self->{'_func'};
     my $name = $self->get_name;
     my $current_draw_down = 0;
     my $max_draw_down = 0;
     
     return if (! $self->check_dependencies($calc, $i));
 
-    my $high = &$getvalue($calc, 0);
+    my $high = $self->{'args'}->get_arg_values($calc, 0, 1);
     
     for (my $n = 0; $n <= $i; $n++) {
 	
-	if (&$getvalue($calc, $n) > $high) {
-	    $high = &$getvalue($calc, $n);
+        if ($self->{'args'}->get_arg_values($calc, $n, 1) > $high) {
+            $high = $self->{'args'}->get_arg_values($calc, $n, 1);
 	} else {
-	    $current_draw_down = ($high - &$getvalue($calc, $n)) * 100 / $high;
+            $current_draw_down = ($high - $self->{'args'}->get_arg_values($calc, $n, 1)) * 100 / $high;
 	}
 	if ($current_draw_down > $max_draw_down) {
 	    $max_draw_down = $current_draw_down;

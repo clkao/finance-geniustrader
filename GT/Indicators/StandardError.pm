@@ -1,18 +1,25 @@
 package GT::Indicators::StandardError;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
+# standards upgrade Copyright 2005 Thomas Weigert
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
+# requires Thomas Weigert revision to GT::Indicators::LinearRegression
+# $Id$
+
+# Standards-Version: 1.0
+
 use strict;
-use vars qw(@ISA @NAMES);
+use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
 use GT::Indicators;
 use GT::Indicators::LinearRegression;
 use GT::Prices;
 
 @ISA = qw(GT::Indicators);
-@NAMES = ("StandardError[#1]");
+@NAMES = ("StandardError[#1, #2]");
+@DEFAULT_ARGS = (20, "{I:Prices CLOSE}");
 
 =pod
 
@@ -40,38 +47,27 @@ Standard Error = Square Root of AE
 
 =cut
 
-sub new {
-    my $type = shift;
-    my $class = ref($type) || $type;
-    my ($args, $key, $func) = @_;
-    my $self = { 'args' => defined($args) ? $args : [ 20 ] };
-
-    $args->[0] = 20 if (! defined($args->[0]));
-    
-    if (defined($func)) {
-	$self->{'_func'} = $func;
-    } else {
-	$self->{'_func'} = $GET_LAST;
-	$key = 'LAST';
-    }
-						
-    return manage_object(\@NAMES, $self, $class, $args, $key);
-}
-
 sub initialize {
     my $self = shift;
 
-    $self->{'linear_regression_line'} = GT::Indicators::LinearRegression->new([ $self->{'args'}[0] ], $self->{'key'}, sub { return $_[1] }, sub { $self->{'_func'}(@_) } );
+    # Linear regression of the CLOSE against the sequence number
+    $self->{'linear_regression_line'} = GT::Indicators::LinearRegression->new([
+     $self->{'args'}->get_arg_names(1), $self->{'args'}->get_arg_names(2) ]);
+#   # What are the arguments to the linear regression?
+#   $self->{'linear_regression_line'} = GT::Indicators::LinearRegression->new([
+#    $self->{'args'}->get_arg_names(1),
+#    $self->{'args'}->get_arg_names(2),
+#    $self->{'args'}->get_arg_names(2)]);
 
-    $self->add_indicator_dependency($self->{'linear_regression_line'}, $self->{'args'}[0]);
-    $self->add_prices_dependency($self->{'args'}[0]);
+    $self->add_indicator_dependency($self->{'linear_regression_line'},
+     $self->{'args'}->get_arg_constant(1));
+    $self->add_prices_dependency($self->{'args'}->get_arg_constant(1));
 }
 
 sub calculate {
     my ($self, $calc, $i) = @_;
     my $indic = $calc->indicators;
-    my $period = $self->{'args'}[0];
-    my $getvalue = $self->{'_func'};
+    my $period = $self->{'args'}->get_arg_constant(1);
     my $linear_regression_coefficient_a_name = $self->{'linear_regression_line'}->get_name(1);
     my $linear_regression_coefficient_b_name = $self->{'linear_regression_line'}->get_name(2);
     my $standard_error_name = $self->get_name;
@@ -91,7 +87,9 @@ sub calculate {
 	my $linear_regression_line_value = $a * $n + $b;
 	
 	# Calculate the distance from the linear regression line
-	my $d = &$getvalue($calc, $n) - $linear_regression_line_value;
+        my $d = $self->{'args'}->get_arg_values($calc, $n, 2)
+              - $linear_regression_line_value;
+#       my $d = $get_arg_values($calc, $n, 2) - $linear_regression_line_value;
 
 	# Calculate the sum of the squared errors
 	$sum_of_the_squared_errors += ($d ** 2);

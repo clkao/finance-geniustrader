@@ -1,8 +1,14 @@
 package GT::Indicators::KirshenbaumBands;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
+# standards upgrade Copyright 2005 Thomas Weigert
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
+
+# original base date 24 Apr 2005 3206 bytes
+# $Id$
+
+# Standards-Version: 1.0
 
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
@@ -20,7 +26,12 @@ use GT::Prices;
 
 =head2 Overview
 
-Kirshenbaum Bands are similar to Bollinger Bands, in that they measure market volatility. However, rather than use Standard Deviation of a moving average for band with, they use Standard Error of linear regression lines of the Close. This has the effect of measuring volatility around the current trend, instead of measuring volatility for changes in trend.
+Kirshenbaum Bands are similar to Bollinger Bands, in that they measure
+market volatility. However, rather than use Standard Deviation of
+a moving average for band with, they use Standard Error of linear
+regression lines of the Close. This has the effect of measuring
+volatility around the current trend, instead of measuring volatility for
+changes in trend.
 
 =head2 Author
 
