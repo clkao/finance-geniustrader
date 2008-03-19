@@ -18,9 +18,11 @@ use GT::Prices;
 @NAMES = ("Test[#1,#2,#3,#4]","CM[#1]");
 @DEFAULT_ARGS = (5, 3, 3, "EMA", "Generic::MinInPeriod", "{I:Prices CLOSE}" );
 
-=pod
+=head1 NAME
 
-=item Instructions:
+GT::Indicators::Test - Indicator to test embedding of indicators
+
+=head1 DESCRIPTION
 
 This indicator functions as a test rig to ensure that another indicator
 is robust in the presence of complex embedding into other indicators.

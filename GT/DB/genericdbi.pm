@@ -61,6 +61,7 @@ Example:
 Example:
 
 	SELECT name FROM stockinfo WHERE symbol = '$code';
+
 =back
 
 =head2 Functions
@@ -159,6 +160,8 @@ sub get_last_prices {
 
 Returns the name of the stock designated by $code.
 
+=back
+
 =cut
 sub get_db_name {
     my ($self, $code) = @_;
@@ -172,9 +175,4 @@ sub get_db_name {
     return $res->[0];
 }
 
-=pod
-
-=back
-
-=cut
 1;

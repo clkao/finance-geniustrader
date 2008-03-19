@@ -120,8 +120,6 @@ sub sign {
 
 =head2 generic
 
-=back
-
 It provides helper functions to manage arguments in "Generic" objects.
 You can import those functions with use GT::Tools qw(:generic) :
 
@@ -131,6 +129,8 @@ You can import those functions with use GT::Tools qw(:generic) :
 
 Returns the number associated to the first the object described
 by the arguments. 
+
+=back
 
 =cut
 sub extract_object_number {
@@ -557,6 +557,8 @@ sub parse_date_str {
 =pod
 
 =head2 this is a ras hack version of GT/Tools.pm
+
+=over
 
 =item C<< parse_date_str ( \$date_string, \$err_msg ) >>
 

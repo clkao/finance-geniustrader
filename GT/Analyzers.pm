@@ -95,6 +95,8 @@ sub new {
 
 Default method that does nothing.
 
+=back
+
 =cut
 
 sub initialize { 1; }

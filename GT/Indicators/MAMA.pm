@@ -33,6 +33,8 @@ please see Ehlers work
 
 =item Period (default 20)
 
+=back
+
 =head2 Creation
 
  GT::Indicators::MAMA->new()
