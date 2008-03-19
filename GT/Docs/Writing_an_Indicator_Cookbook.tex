@@ -48,6 +48,17 @@ use the Bollinger Band indicator as a starting point and annotate its
 implementation. Subsequent sections will illustrate more advanced
 aspects of writing indicators.
 
+In terms of terminology, an indicator defines a time series. In general,
+a time series is a sequence of data values, ordered linearly by time. The
+prices of a market are also a time series (and also an indicator, see \lstinline!I:Prices!). An indicator is constructed by some or all of the following:
+\begin{itemize}
+\item one or more time series
+\item an application of a transformation to a time series
+\item the sequential application of a computation on the individual
+values of one or more time series.
+\end{itemize}
+
+
 In the following, code fragments are typeset in red courier font.
 Throughout the examples, \lstinline!$self! refers to an
 indicator object. Numbered code lines are from the code for the
@@ -120,6 +131,13 @@ parameter is given (e.g., the name of a series).} The final form
 obtains both constant and non-constant values for a given period (of
 course, constants are the same for all periods).
 
+Most indicators as currently defined perform no type checking on their
+parameters, resulting in fatal errors when parameters of the wrong type
+are passed. Care must be taken to pass constant parameters when such are
+expected, and time series as parameters, where those are required.\footnote{Preoper
+run time checking of parameter types is advisable when writing a new
+indicator.}
+
 \section[Output values]{\label{bkm:Ref192524690}Output values}
 Indicators will produce one or more output series. In other words, for
 each period, and indicator will output one or more values. Output
@@ -135,17 +153,23 @@ referred to by the names given in the above clause, where the arguments
 parameters of the indicator. The symbol \lstinline!#*! is
 replaced by all input parameters of the indicator.
 
-The name of an indicator can be either used literally as a string, or it
-can be obtained by the following method, where \lstinline!$n!
-refers to the position of the name (starting at
-\lstinline!0!):
+The name of an indicator is the name of the first output series. Therefore,
+\lstinline!{I:BOL 12 2}! and \lstinline!{I:BOL 12 3}! have the same name
+\lstinline!BOL[12, {I:Prices CLOSE]]!. These two series cannot be distinguished
+when they are both used at the same time. Care should be taken to name
+the output series wisely so that there are no conflicts between indicators.
+The name of an output series can be either used literally as a string, or it
+can be obtained by the \lstinline!get_name! method:
 \begin{lstlisting}[numbers=none]
+$self->get_name
 $self->get_name($n)
 \end{lstlisting}
+where \lstinline!$n! refers to the position of the output series (starting at \lstinline!0!).
 
-The output values are set and read via a calculator
+
+The values of the output series are set and read via a calculator
 \lstinline!$calc!, where \lstinline!$name! is the
-name of the output value and \lstinline!$i! is the period:
+name of the output series and \lstinline!$i! is the period:
 \begin{lstlisting}[numbers=none]
 $calc->indicators->get($name, $i)
 $calc->indicators->set($name, $i, $value)
@@ -195,6 +219,10 @@ the SMA above:
        $self->{'args'}->get_arg_names(1), 
        '{I:SMA '.$self->{'args'}->get_arg_names(1).' '
            .$self->{'args'}->get_arg_names(3).'}']);
+\end{lstlisting}
+An intermediate series can also conveniently be constructed using the \lstinline!GT::Eval::create_standard_! \lstinline!object! method:
+\begin{lstlisting}[numbers=none]
+$self->{'sma2'} = GT::Eval::create_standard_object("I:SMA", "12 {I:Prices CLOSE}");
 \end{lstlisting}
 
 
@@ -258,7 +286,7 @@ third form states that the indicator depends on \lstinline!$p!
 periods of data of the input series (this form of dependency is only
 needed when the indicator depends on more data periods than is
 established by the dependency mechanism).\footnote{While it can be
-found in a number of indicators, this indicator is rarely (if ever)
+found in a number of indicators, this dependency is rarely (if ever)
 needed.}
 
 For the Bollinger Bands, each value depends on the current value of the
@@ -330,7 +358,8 @@ names of the output values.
     my $bolinf_name = $self->get_name(2);
 
 \end{lstlisting}
-\paragraph{Return if the required values of the indicator are already available; these may have been computed earlier.}
+
+\paragraph{Return if the required values of the indicator are already available.} These may have been computed earlier.
 
 \begin{lstlisting}[name=example]
     return if ($calc->indicators->is_available($bol_name, $i) &&
@@ -430,6 +459,8 @@ sub calculate_interval {
     }
 }
 \end{lstlisting}
+If this method is not provided, it is inherited from the indicator object and
+falls back on \lstinline!calculate!. Typically, a provided \lstinline!calculate_interval! method would not invoke calculate.
 
 \section{End of file}
 As common practice in Perl modules, conclude the file with a successful
@@ -476,11 +507,13 @@ the Bollinger Band indicator (within the computation of the Bollinger Band indic
 $self->{'upper'} = GT::Indicators::SMA->new([$self->{'args'}->get_arg_names(1),
                            "{I:Generic:ByName " . $self->get_name(1) . "}" ]);
 \end{lstlisting}
-
-This constructs an intermediate SMA series of the second output value of
+This constructs an intermediate SMA from the second output series of
 the current indicator, with the period taken from the first parameter
 of the current indicator and assigns it to an attribute of the
-indicator object.
+indicator object. The indicator \lstinline!I:Generic:ByName! references
+another series by its name (i.e., the name of the first output series, 
+see Section~\ref{bkm:Ref192524690}). Care must be taken that the correct
+name is used.
 
 Similarly one can construct a series that depends on a temporary series
 or an intermediate series. For example, the simple moving average of the
@@ -628,10 +661,10 @@ Momentum Indicator I:SMI.
 Adequate documentation in pod format should be provided for each
 indicator.
 
-\section{Observations and difficulties}
-The following contains a collection of observations I made in writing 
-indicators and difficulties that I encountered. I do not have explanations
-for all of these, so please take them with a grain of salt.
+%\section{Observations and difficulties}
+%The following contains a collection of observations I made in writing 
+%indicators and difficulties that I encountered. I do not have explanations
+%for all of these, so please take them with a grain of salt.
 
 
 
