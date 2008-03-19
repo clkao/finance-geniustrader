@@ -1,8 +1,11 @@
 package GT::Registry;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
+# Copyright 2008 Thomas Weigert
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
+
+# $Id:$
 
 use strict;
 use vars qw(@EXPORT @ISA);
@@ -33,7 +36,7 @@ sub get_registered_object {
     my ($repository, $name) = @_;
 
     if (exists $repository->{$name}) {
-	return $repository->{$name};
+        return $repository->{$name};
     }
     return undef;
 }
@@ -84,13 +87,13 @@ sub get_or_register_object {
     my ($repository, $name, $object) = @_;
     
     if (exists $repository->{$name}) {
-	return $repository->{$name};
+        return $repository->{$name};
     }
 
     $repository->{$name} = $object;
 }
 
-=item C<< GT::Registry::manage_object($repository, \@NAMES, $obj, $args, $key, $class) >>
+=item C<< GT::Registry::manage_object($repository, \@NAMES, $obj, $class, $args, $key) >>
 
 Manage the creation of a new object. Build their names, stores and/or
 retrieve the object from the database. Calls initialize for a new object.
@@ -98,24 +101,33 @@ retrieve the object from the database. Calls initialize for a new object.
 =cut
 sub manage_object {
     my ($repo, $names, $obj, $class, $args, $key) = @_;
-	my $object_name = '';
     
     # Create the various names of the object
     $obj->{'key'} = $key;
     for (my $i = 0; $i < scalar(@{$names}); $i++)
     {
-	$obj->{'names'}[$i] = build_object_name($names->[$i], $args, $key);
-	$object_name .= $obj->{'names'}[$i];
+        $obj->{'names'}[$i] = build_object_name($names->[$i], $args, $key);
     }
-    # Lookup the database with the first name
+    # Create name to lookup in the data base
+    $class =~ /.*\:\:(.*)$/o;
+    my $object_name = "${1}[";
+    if (ref($args) =~ /ARRAY/) {
+        $object_name .= join(',',@{$args});
+    } elsif (ref($args) =~ /GT::ArgsTree/) {
+        $object_name .= join(',',$args->get_arg_names());
+    }
+    $object_name .= ']';
+    $object_name .= "($key)" if ($key);
+
+    # register or retrieve this object
     my $newobj = get_or_register_object($repo, $object_name, $obj);
 
     if ($newobj == $obj) {
-	# We're really creating an object
-	bless $obj, $class;
-	$obj->initialize();
+        # We're really creating an object
+        bless $obj, $class;
+        $obj->initialize();
     } else {
-	# We're just reusing an object
+        # We're just reusing an object
     }
     return $newobj;
 }
@@ -131,19 +143,20 @@ indicators like "Average" working on prices or any other value).
 =cut
 sub build_object_name {
     my ($name, $args, $key) = @_;
+    $name =~ s/,\s*/, /go;
     if (ref($args) =~ /ARRAY/) {
-	$name =~ s/#\*/join(",",@{$args})/ge;
-	for(my $i = 1; $i <= scalar(@{$args}); $i++)
-	{
-	    $name =~ s/#$i/$args->[$i-1]/;
-	}
+        $name =~ s/#\*/join(",",@{$args})/ge;
+        for(my $i = 1; $i <= scalar(@{$args}); $i++)
+        {
+            $name =~ s/#$i/$args->[$i-1]/;
+        }
     } elsif (ref($args) =~ /GT::ArgsTree/) {
-	$name =~ s/#\*/join(",",$args->get_arg_names())/ge;
-	my $nb = $args->get_nb_args();
-	for(my $i = 1; $i <= $nb; $i++)
-	{
-	    $name =~ s/#$i/$args->get_arg_names($i)/ge;
-	}
+        $name =~ s/#\*/join(",",$args->get_arg_names())/ge;
+        my $nb = $args->get_nb_args();
+        for(my $i = 1; $i <= $nb; $i++)
+        {
+            $name =~ s/#$i/$args->get_arg_names($i)/ge;
+        }
     }
     $name .= "($key)" if ($key);
     return $name;
@@ -153,8 +166,6 @@ sub build_object_name {
 
  get_name() or get_name($i)
  get_nb_values()
-
-Z<>
 
 =cut
 sub get_name {
