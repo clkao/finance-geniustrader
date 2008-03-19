@@ -36,9 +36,11 @@ our @EXPORT = qw($term);
 our $term;
 our $myself;
 
-=head1 GT::Analyzers::Process
+=head1 NAME
 
-=head2 DESCRIPTION
+  GT::Analyzers::Process
+
+=head1 DESCRIPTION
 
 This module offes all those functions that are needed by the analyzers
 shell to interactively analyze and test portfolios.
