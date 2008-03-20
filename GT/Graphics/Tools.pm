@@ -66,7 +66,7 @@ by its RGB code "[125,164,198]".
 
 =cut
 sub build_axis_for_timeframe {
-    my ($prices, $timeframe, $put_label, $period) = @_;
+    my ($prices, $timeframe, $put_label, $period, $space) = @_;
     $period    = 1 if (! defined($period));
     $put_label = 1 if (! defined($put_label));
 
@@ -98,6 +98,16 @@ sub build_axis_for_timeframe {
 
     # Remove the labels if we don't want labels
     if (! $put_label) { foreach (@axis) { $_->[1] = ""; } }
+    my $skip = 0;
+    if ( $space ) {
+      if ($space < 15) {
+	foreach (@axis) { $_->[1] = "" if ($skip%6); $skip++;  }
+      } elsif ($space < 20) {
+	foreach (@axis) { $_->[1] = "" if ($skip%3); $skip++;  }
+      } elsif ($space < 30) { 
+	foreach (@axis) { $_->[1] = "" if ($skip%2); $skip++;  }
+      }
+    }
 
     return \@axis;
 }
@@ -141,6 +151,7 @@ sub build_axis_for_interval {
     } else {
 	$interval = ($max - $min) / 4;
     }
+    # Due to rounding small interval may show up negative?
     my $log = ($interval != 0) ? log($interval) / log(10) : 0;
     my $power = int($log - (($log < 0) ? 1.5 : 0.5));
     my $inc = 10 ** $power;
