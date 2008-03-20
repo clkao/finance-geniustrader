@@ -43,7 +43,7 @@ sub detect {
     return if ($calc->signals->is_available($self->get_name, $i));
 
     my $defined = 0;
-    for (my $n = 1; $n < $self->{'args'}->get_nb_args; $n++)
+    for (my $n = 1; $n <= $self->{'args'}->get_nb_args; $n++)
     {
 	my $value = $self->{'args'}->get_arg_values($calc, $i, $n);
 	next if (! defined($value));
