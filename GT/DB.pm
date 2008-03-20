@@ -33,6 +33,20 @@ sub has_code {
     }
 }
 
+=over
+
+=item C<< get_name ($code) >>
+
+Returns the long name of the market (if defined). 
+
+See also ~/.gt/sharenames which contains lines of the form
+<code>\t<long name>
+mapping a market code to its long name.
+
+=back
+
+=cut
+
 sub get_name {
     my ($self, $code) = @_;
 
