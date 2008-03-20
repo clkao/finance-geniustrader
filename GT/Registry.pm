@@ -5,7 +5,7 @@ package GT::Registry;
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
-# $Id:$
+# $Id$
 
 use strict;
 use vars qw(@EXPORT @ISA);
@@ -145,18 +145,18 @@ sub build_object_name {
     my ($name, $args, $key) = @_;
     $name =~ s/,\s*/, /go;
     if (ref($args) =~ /ARRAY/) {
-        $name =~ s/#\*/join(",",@{$args})/ge;
-        for(my $i = 1; $i <= scalar(@{$args}); $i++)
-        {
-            $name =~ s/#$i/$args->[$i-1]/;
-        }
+	$name =~ s/#\*/join(", ",@{$args})/ge;
+	for(my $i = 1; $i <= scalar(@{$args}); $i++)
+	{
+	    $name =~ s/#$i/$args->[$i-1]/;
+	}
     } elsif (ref($args) =~ /GT::ArgsTree/) {
-        $name =~ s/#\*/join(",",$args->get_arg_names())/ge;
-        my $nb = $args->get_nb_args();
-        for(my $i = 1; $i <= $nb; $i++)
-        {
-            $name =~ s/#$i/$args->get_arg_names($i)/ge;
-        }
+	$name =~ s/#\*/join(", ",$args->get_arg_names())/ge;
+	my $nb = $args->get_nb_args();
+	for(my $i = 1; $i <= $nb; $i++)
+	{
+	    $name =~ s/#$i/$args->get_arg_names($i)/ge;
+	}
     }
     $name .= "($key)" if ($key);
     return $name;
