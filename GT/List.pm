@@ -4,7 +4,7 @@ package GT::List;
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
-# ras hack -- enhanced pod and load files with comments
+# Enhanced pod and load files with comments
 # $Id$
 
 use strict;
@@ -105,7 +105,6 @@ Load data from a list of symbol.
 =cut
 sub load {
     my ($self, $file) = @_;
-    # see pg 625 programming perl  open(FILE, "<", $file) || die "Can't open $file: $!\n";
     open(FILE, "<", $file) || die "$0: error: Can't open file $file: $!\n";
     $self->{'symbol'} = [];
     while (defined($_=<FILE>))
@@ -114,17 +113,15 @@ sub load {
         # ignore blank and sorta blank lines
 =pod
 
-=head2 this is a ras hack version of List.pm
-
-  it therefore supports comments in loaded files. comments start
+  Supports comments in loaded files. Comments start
   with a # and continue to end of line.
   
-  blank lines and lines with only white space are ignored
+  Blank lines and lines with only white space are ignored.
   
-  lines may also have data and a trailing comment. the comment is
+  Lines may also have data and a trailing comment. A comment is
   separated from the data by whitespace.
   
-  the data need can be indented too.
+  The data need can be indented too.
   
   examples:
 
@@ -153,7 +150,6 @@ Save list in a file.
 =cut
 sub save {
     my ($self, $file) = @_;
-    # see pg 625 programming perl  open(FILE, ">$file") || die "Can't write in $file: $!\n";
     open(FILE, ">", $file) || die "Can't write in $file: $!\n";
     foreach (@{$self->{'symbol'}})
     {
