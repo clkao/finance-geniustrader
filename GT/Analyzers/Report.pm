@@ -12,13 +12,17 @@ use Cwd;
 use File::Spec;
 use HTML::Mason;
 
-=head1 GT::Analyzers Report
+=head1 NAME
 
-  This module is mainly a wrapper to process a report file with
-  HTML::Mason.
+GT::Analyzers Report
 
-  This module needs HTML::Mason to display the reports and
-  Cwd and File::Spec to find out the actual path.
+=head2 DESCRIPTION
+
+This module is mainly a wrapper to process a report file with
+HTML::Mason.
+
+This module needs HTML::Mason to display the reports and
+Cwd and File::Spec to find out the actual path.
 
 =cut
 
