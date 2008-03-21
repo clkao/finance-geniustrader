@@ -16,7 +16,7 @@ use GT::Tools qw(:generic);
 
 @ISA = qw(GT::TradeFilters);
 @NAMES = ("Generic[#*]");
-@DEFAULT_ARGS = ("{S:Generic:False", "S:Generic:False");
+@DEFAULT_ARGS = ("{S:Generic:False}", "{S:Generic:False}");
 
 =head1 NAME
 
