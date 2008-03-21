@@ -19,22 +19,44 @@ use Pod::Usage;
 
 GT::Conf::load();
 
-=head1 ./display_indicator.pl [ --full ] [--nb-items=100] [ --timeframe=timeframe ] [ --last-record ] <indicatorname> <code> [args...]
+=head1 ./display_indicator.pl [ options ] <indicatorname> <code> [args...]
+
+=head2 Description
+
+Computes the indicator <indicatorname> on market <code> over the selected
+interval.
+
+=head2 Options
+
+=over 4
+
+=item --full 
+
+Runs the backtest on the full history (it runs on two years by default) 
+
+=item --nb-items=100
 
 nb-items controls how many database records are loaded.
 
-timeframe can be any of the available modules in GT/DateTime.  
-At the time of this writing that includes:
+=item --timeframe=1min|5min|10min|15min|30min|hour|3hour|Day|Week|Month|Year
 
-1min|5min|10min|15min|30min|hour|3hour|Day|Week|Month|Year
+The timeframe can be any of the available modules in GT/DateTime.  
 
-Examples:
+=item --last-record
+
+Run backtest on the last period only.
+
+=back
+
+=head2 Examples
 
 ./display_indicator.pl I:SMA IBM 100
 
 ./display_indicator.pl --full I:RSI 13000
 
-Args are passed to the new call that will create the indicator.
+args (if any) are passed to the new call that will create the indicator.
+
+./display_indicator.pl --nb 10 I:EMA IBM 120
 
 =cut
 

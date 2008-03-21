@@ -22,74 +22,69 @@ use Pod::Usage;
 
 GT::Conf::load();
 
-=head1 NAME
+=head1 ./display_signal.pl [ options ] <signalname> <code> [args...]
 
-display_signal.pl
+=head2 Description
 
-=head1 SYNOPSIS
+Computes the value of signal <signalname> for market <code> over
+the selected interval.
 
-./display_signal.pl [ --full ] [ --timeframe=timeframe ] <signalname> <code> [args...]
+=head2 Options
 
-=head1 DESCRIPTION
+=over 4
 
-Display the results of any given signal over a period of time. Mostly useful for development purposes.
-
-=head1 OPTIONS
-
-=head2 --full
+=item --full
 
 Display signal results using all available data. By default, the script will only display the last 200 periods.
 
-=head2 --timeframe
+=item --timeframe=tick|1min|5min|10min|15min|30min|hour|2hour|3hour|4hour|day|week|month|year
 
-The timeframe used to plot the graphic. Defaults to daily data.
-Valid values include:
-tick|1min|5min|10min|15min|30min|hour|2hour|3hour|4hour|day|week|month|year
+timeframe can be any of the available modules in GT/DateTime.
 
-=head2 --start YYYY-MM-DD --end  YYYY-MM-DD
+=item --start <date1> --end  <date2>
 
-the time span to run the evaluation on (no defaults, see --full)
+The time interval to run the evaluation on (no defaults, see --full)
 
-=head2 --change ( or -c )
+=item --change ( or -c )
 
 show on output only those dates that signal changed
 
-=head1 ARGUMENTS
+=back
 
-=head2 <signalname>
+=head2 Arguments
+
+=over 4
+
+=item <signalname>
 
 The name of the signal you want to display. This can be any module under GT/Signals.
 For instance, S::Generic::CrossOverUp.
 
-=head2 <code>
+=item <code>
 
 The symbol for which you wish to display the signal.
 Use whatever symbols are available in your database.
 
-=head2 [args...]
+=item [args...]
 
 Args are passed to the new call that will create the signal.
 args is a string that specifies the signal in gt terms, spaces and other
 chars that the shell interprets will need to be quoted in some way.
 
-=head1 EXAMPLES
+=back
 
-=head2 ./display_signal.pl S:Prices:GapUp IBM
+=head2 Examples
+
+./display_signal.pl S:Prices:GapUp IBM
 
 Test for the GapUp signal in symbol IBM.
 By default, use daily data, and display the last available 200 periods.
 
 
-=head2 ./display_signal.pl --full S:Generic:CrossOverUp EURUSD {I:EMA 50} {I:EMA 200}
+./display_signal.pl --full S:Generic:CrossOverUp EURUSD {I:EMA 50} {I:EMA 200}
 
 Test for the EMA50 crossing over up EMA200.
 Do the test over the full available history data.
-
-NB  NB  NB  NB  NB  NB  NB  NB
-
-the securities symbol is placed on command line BEFORE the signal description
-
-NB  NB  NB  NB  NB  NB  NB  NB
 
 =cut
 

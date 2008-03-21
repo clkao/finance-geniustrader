@@ -27,11 +27,9 @@ use Pod::Usage;
 
 GT::Conf::load();
 
-=head1 NAME
+=head1 ./graphic.pl [ options | additional graphical elements ] <code>
 
-graphic.pl - generate charts in png format.
-
-=head1 SYNOPSIS
+=head2 Synopsis
 
 ./graphic.pl [ --timeframe=timeframe ] [ --nb-item=100 ] \
 		    [ --start=2005-06-01 ] [ --end=2006-01-01 ] \
@@ -42,17 +40,19 @@ graphic.pl - generate charts in png format.
                     [ --file=conf ] [ --driver={GD|ImageMagick} ] \
 		    <code>
 
-=head2 Use "graphic.pl -man" to list all available options
+Use "graphic.pl -man" to list all available options
 
 
-=head1 DESCRIPTION
+=head2 Description
 
 graphic.pl can generate charts in png format, including indicators and system signals,
 either as overlays of the original price data, or in different regions of the chart.
 
 Various options are available to control color, size and other graphic properties.
 
-=head1 ADDITIONNAL GRAPHICAL ELEMENTS
+=head2 ADDITIONNAL GRAPHICAL ELEMENTS
+
+=over 4
 
 By default, only the price will be plotted, however, you can add other indicators,
 either as overlays or in different zones of the chart.
@@ -79,53 +79,57 @@ To plot indicators in a different zone, first create a new-zone, then add the in
 Full details about the available methods you can use with the --add option follow.
 
 
-=head2 New-Zone(height, [left, right, top, bottom])
+=item New-Zone(height, [left, right, top, bottom])
 
 This creates a new zone for displaying more indicators. It's created with
 the given height and the given border sizes.
 
-=head2 Switch-Zone(zoneid)
+=item Switch-Zone(zoneid)
 
 This changes the current display zone. 0 is the main zone, 1 is the volume
 zone if it exists. 2 is the first indicator zone and so on. Usually you just
 need to it switch to the "Volume" zone because you start on the main zone
 and you automatically switch to any newly created zone.
 
-=head2 Set-Scale(min,max,[logarithmic]) or Set-scale(auto,[logarithmic])
+=item Set-Scale(min,max,[logarithmic]) or Set-scale(auto,[logarithmic])
 
 This defines the scale for the currently selected zone (by default the last
 zone created or the main zone if no zone has been created).
 
-=head2 Set-Special-Scale(min,max,[log]) or Set-Special-Scale(auto,[log])
+=item Set-Special-Scale(min,max,[log]) or Set-Special-Scale(auto,[log])
 
 The last created object will be displayed with its own scale (and not the
 default one of the zone). The scale may be given or it may be calculated
 to fit the full zone.
 
-=head2 Set-Axis(tick1,tick2,tick3...)
+=item Set-Axis(tick1,tick2,tick3...)
 
 Define the ticks for the main axis of the current zone.
 
-=head2 set-title-{left,right,top,bottom}(title,font_size)
+=item Set-Title{-left|-right|-top|-bottom}(title,font_size)
 
 This adds a title to the currently selected zone. The title will be displayed
 in the given size (size can be tiny, small, medium, large and giant).
-If the title contains a %c, this is replaced by the code-number.
+If the title contains a %c, this is replaced by the <code>, if it contains
+%n, this is replaced by the long name of the <code>. See also 
+~/.gt/sharenames, which contains lines of the form
+<code>\t<long name>
+mapping a market to its long name.
 
-=head2 Histogram(<datasource>, [color])
+=item Histogram(<datasource>, [color])
 
-=head2 Curve(<datasource>, [color])
+=item Curve(<datasource>, [color])
 
-=head2 Marks(<datasource>, [color])
+=item Marks(<datasource>, [color])
 
-=head2 Mountain(<datasource>, [color])
+=item Mountain(<datasource>, [color])
 
-=head2 MountainBand(<datasource1>, <datasource2>, [color])
+=item MountainBand(<datasource1>, <datasource2>, [color])
 
 This adds a new graphical object in the current zone. The datasource explains
 what data has to be displayed.
 
-=head2 Text(text, x, y, [halign, valign, font_size, color, font_face])
+=item Text(text, x, y, [halign, valign, font_size, color, font_face])
 
 This adds a block of text at the given coordinate (expressed in percent
 of the width/height of the zone).
@@ -135,71 +139,85 @@ halign can be one of "left", "center" or "right". valign can be one of
 "medium", "large" or "giant". font_face can be one of "arial", "times" or
 "fixed".
 
-=head2 BuySellArrows(Systems::...)
+=item BuySellArrows(Systems::...)
 
 This adds buy and sell arrows in the main chart, based on systems signals.
 
-=head2 VotingLine(Systems::..., [y])
+=item VotingLine(Systems::..., [y])
 
 Show buy and sell arrows in a Voting Line à la OmniTrader, based on a System
 Manager. You can indicate the y at which the line should be displayed.
 
-=head1 DATASOURCES
+=back
+
+=head2 DATASOURCES
 
 Sometimes you need to pass datasources to the graphical objects. Here
 are the available ones.
 
-=head2 Indicators::<indicatorname>
+=over 4
+
+=item Indicators::<indicatorname>
 
 An indicator.
 
-=head2 PortfolioEvaluation(<portfolio>)
+=item PortfolioEvaluation(<portfolio>)
 
 This datasources returns the evaluation of any portfolio.
 
-=head1 OTHER OBJECTS
+=back
+
+=head2 OTHER OBJECTS
 
 Some datasources may be parameterized by objects. Here are the
 available objects.
 
-=head2 BackTestPortfolio(<systemname>, [directory])
+=over 4
+
+=item BackTestPortfolio(<systemname>, [directory])
 
 This returns a portfolio that has been saved for a backtest of the
 system "systemname". The given directory must be a spool
 of backtests.
 
-=head1 PARAMETERS
+=back
 
-=head2 --timeframe
+=head2 PARAMETERS
+
+=over 4
+
+=item --timeframe
 
 The timeframe used to plot the graphic. Defaults to daily data.
 Valid values include:
 tick|1min|5min|10min|15min|30min|hour|2hour|3hour|4hour|day|week|month|year
 
-=head2 --nb-item=n
+=item --nb-item=n
 
 Plot n periods in the given timeframe.
 
-=head2 --start=yyyy-mm-dd hh:nn:ss
+=item --start=yyyy-mm-dd hh:nn:ss
 
 The start date used to plot the graphic.
 
-=head2 --end=yyyy-mm-dd hh:nn:ss
+=item --end=yyyy-mm-dd hh:nn:ss
 
 The end date used to plot the graphic. This option overrides the --nb-item option.
 
-=head2 --type=candle|candlevol|candlevolplace|barchart|line|none
+=item --type=candle|candlevol|candlevolplace|barchart|line|none
 
 The type of graphic to plot. none causes the price not to be displayed, however, overlays
 can still be sketched in the graphic.
 
-=head2 Configuration-File ( --file=conf )
+=item Configuration-File ( --file=conf )
 
 With this option, additional parameters are read from the
 configurationfile conf. Each line in this file corresponds to a
 command line parameter. Lines starting with # are ignored.
 
-=head1 EXAMPLES
+=back
+
+=head1 Examples
 
    --title=Stock of %c
    --add=Switch-Zone(0)
