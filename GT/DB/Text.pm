@@ -78,7 +78,7 @@ Indexes are 0 based. The default volume index is 4.
 
 =head2 new()
 
-Create a new DB object used to retry quotes from a directory
+Create a new DB object used to retrieve quotes from a directory
 full of text files containing prices.
 
 =cut

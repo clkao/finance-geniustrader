@@ -12,9 +12,6 @@ use vars qw(@ISA @EXPORT_OK %EXPORT_TAGS $PI);
 
 require Exporter;
 @ISA = qw(Exporter);
-#
-# these are ordered and grouped to correspond with %EXPORT_TAGS
-#
 @EXPORT_OK = qw(min max PI sign
                 extract_object_number
                 resolve_alias resolve_object_alias long_name short_name

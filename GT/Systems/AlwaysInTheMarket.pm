@@ -21,10 +21,10 @@ This system will generate every time it is called a long and a short signal.
 =head2 Examples
 
 To set up a Buy And Hold strategy :
---system="AlwaysInTheMarket" --close-strategy="NeverClose" --trade-filter="LongOnly" --trade-filter="OneTrade"
+SY:AlwaysInTheMarket|CS:NeverClose|TF:LongOnly|TF:OneTrade
 
 To set up a Short And Hold strategy :
---system="AlwaysInTheMarket" --close-strategy="NeverClose" --trade-filter="ShortOnly" --trade-filter="OneTrade"
+SY:AlwaysInTheMarket|CS:NeverClose|TF:ShortOnly|TF:OneTrade
 
 =head2 Note
 

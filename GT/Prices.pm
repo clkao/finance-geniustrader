@@ -69,6 +69,10 @@ sub at_date {
 
 Return true if the object has prices for the corresponding date.
 
+NOTE: If we test for an item that is larger than the last entry in the
+prices array, then a new empty entry is created (and numerous error messages
+as well).
+
 =cut
 sub has_date {
     my ($self, $date) = @_;
