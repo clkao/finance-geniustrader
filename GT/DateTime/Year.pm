@@ -19,7 +19,8 @@ YYYY
 =cut
 sub map_date_to_time {
     my ($date) = @_;
-    return timelocal(0, 0, 0, 1, 0, $date - 1900);
+    my ($y) = split /-/, $date;
+    return timelocal(0, 0, 0, 1, 0, $y - 1900);
 }
 
 sub map_time_to_date {
