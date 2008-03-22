@@ -591,89 +591,6 @@ sub usage {
 }
 
 
-# 
-# rename this parse_date_str -- the one being used resides in GT/Tools "timeframe
-# 
-sub local_parse_date_str {
-  #
-  # inputs: date string reference var required
-  #         error string reference var (optional)
-  # returns 1 for good date
-  #         zero (null) for bad date
-  #
-  # notes: @ if called in void context with bad date value the internal
-  #          error handling will put error message text on stderr and die called
-  #        @ date ref var may be altered to conform to std date-time format
-  #        @ error string will contain details about bad date-time string
-  #
-  # usage examples
-  # typical usage in perl script
-  # my $err_msg;
-  # if ( ! parse_date_str( \$date, \$err_msg ) ) {
-  #   die "$prog_name: error: $err_msg\n";
-  # }
-  #
-  # usage using internal error handling
-  # my $date = "24oct07";
-  # parse_date_str( \$date  );
-  #
-  my ( $dtstref, $errref ) = @_;
-
-  if ( eval { require Date::Manip } ) {
-    use Date::Manip qw(ParseDate UnixDate);
-    if ( $$dtstref =~ m/[- :\w\d]/ ) {
-      if ( my $date = ParseDate($$dtstref) ) {
-        $$dtstref = UnixDate("$date", "%Y-%m-%d %T");
-      }
-    }
-  }
-  # dates only allow digits, date separator is '-', time separator is ':'
-  # date and time field separator is a single space not even a tab
-  #
-  # timeframe seps: '-' day and week
-  #                 '/' month
-  #                 '_' date and time part separator
-  if ( $$dtstref =~ m/[^- :\d]/ ) {
-    # bad chars in date string
-    $$errref = "invalid character in date \"$$dtstref\"" if ( $errref );
-    return if defined wantarray;
-    die "pds: invalid character in date \"$$dtstref\"\n";
-  }
-  my ( $year, $mon, $day, $time )
-    = $$dtstref =~ /^(\d{4})-?(\d{2})-?(\d{2})\s?([\d:]+)*$/;
-    # not capturing time field separator intentionally
-  if ( ! $year || ! $mon || ! $day ) {
-    $$errref = "bad date format \"$$dtstref\"" if ( $errref );
-    return if defined wantarray;
-    die "pds: bad date format \"$$dtstref\"\n";
-  }
-
-  # valididate date
-  if ( ! Date::Calc::check_date($year, $mon, $day) ) {
-    $$errref = "invalid date \"$$dtstref\"" if ( $errref );
-    return if defined wantarray;
-    die "pds: invalid date \"$$dtstref\"\n";
-  }
-
-  # valididate time
-  if ( $time ) {
-    my ( $hour, $min, $sec ) = split /:/, $time;
-    if ( ! Date::Calc::check_time($hour, $min, $sec) ) {
-      #print STDERR "pds: invalid time \"$hour:$min:$sec\"\n";
-      #return 0 if ( defined wantarray );
-      $$errref = "invalid time \"$time\"" if ( $errref );
-      return if defined wantarray;
-      die "pds: invalid time \"$time\"\n";
-    }
-  }
-
-  # good date
-  # clear err just in case
-  $$errref = "" if ( $errref );
-
-  return 1;
-
-  # ras hack -- describe parse_date_str features in pod
 =pod
 
 =head2 this is a ras hack version of scan.pl that includes date string checks
@@ -737,5 +654,4 @@ sub local_parse_date_str {
  and should get the same results respectively
 
 =cut
-} # sub parse_date_str
 
