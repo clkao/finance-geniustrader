@@ -299,7 +299,7 @@ my @desc_systems = <>;
 #         plus reading all the filenames on command line including stdin
 my @list_systems = ();
 my $systems = {};
-my $buf = "";
+my $buf = '';
 foreach my $line (@desc_systems) {
 
     chomp($line);
@@ -413,7 +413,15 @@ for (my $d = 0; $d < $list->count; $d++)
     my $code = $list->get($d);
 
     my $db = create_standard_object("DB::" . GT::Conf::get("DB::module"));
-	my ($q, $calc) = get_timeframe_data($code,$timeframe,$db);
+    my $q = $db->get_prices($code);
+    my $calc = GT::Calculator->new($q);
+    $calc->set_code($code);
+
+    if ($timeframe)
+    {
+	$calc->set_current_timeframe(
+	            GT::DateTime::name_to_timeframe($timeframe));
+    }
 
     my $c = $calc->prices->count;
     my $last = $c - 1;
@@ -470,7 +478,7 @@ for (my $d = 0; $d < $list->count; $d++)
     }
 
     $db->disconnect;
-    # Close the child 
+    # Close the child
     exit 0;
 }
 
@@ -554,7 +562,7 @@ sub display_item {
 	}
 	print "</li>\n";
     } else {
-	print " $code - $name\n";
+	print " $code\t $name\n";
     }
 }
 
@@ -583,7 +591,10 @@ sub usage {
 }
 
 
-sub parse_date_str {
+# 
+# rename this parse_date_str -- the one being used resides in GT/Tools "timeframe
+# 
+sub local_parse_date_str {
   #
   # inputs: date string reference var required
   #         error string reference var (optional)
