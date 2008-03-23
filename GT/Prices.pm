@@ -11,7 +11,6 @@ use Date::Calc qw(Decode_Date_US Decode_Date_EU Today);
 #ALL#  use Log::Log4perl qw(:easy);
 use GT::DateTime;
 use GT::Serializable;
-use Date::Manip;
 
 require Exporter;
 @ISA = qw(Exporter GT::Serializable);
@@ -357,6 +356,7 @@ sub loadtxt {
 		    ($year, $month, $day) = Decode_Date_EU($date);
 		}
 		if ($date_format eq 3) {
+		  use Date::Manip;
 		  #Date::Manip requires this to be defined
 		  #there probably is a better way of doing this
 		  #rather than defining it here, but it works
