@@ -179,16 +179,6 @@ sub get_prices {
     my $prices = GT::Prices->new;
     $prices->set_timeframe($timeframe);
 
-    if (!$self->{'mark'}) { $self->{'mark'} = "\t"; }
-    if (!$self->{'date_format'}) { $self->{'date_format'} = 3; }
-    if (!$self->{'header_lines'}) { $self->{'header_lines'} = 0; }
-    if (!$self->{'open'}) { $self->{'open'} = 0; }
-    if (!$self->{'high'}) { $self->{'high'} = 1; }
-    if (!$self->{'low'}) { $self->{'low'} = 2; }
-    if (!$self->{'close'}) { $self->{'close'} = 3; }
-    if (!$self->{'volume'}) { $self->{'volume'} = 4; }
-    if (!$self->{'datetime'}) { $self->{'datetime'} = 5; }
- 
     my %fields = ('open' => $self->{'open'}, 'high' => $self->{'high'},
                   'low' => $self->{'low'}, 'close' => $self->{'close'},
 		  'volume' => $self->{'volume'}, 'date' => $self->{'datetime'});
