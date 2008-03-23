@@ -14,7 +14,6 @@ use GT::DB;
 use GT::Prices;
 use GT::Conf;
 use GT::DateTime;
-use Date::Manip;
 
 =head1 DB::Text access module
 
@@ -29,21 +28,33 @@ Most configuration items have default values, to alter these defaults
 you must indicate the configuration item and its value in your
 $HOME/.gt/options file.
 
-DB::module	Text -- informs gt you are using the Text.pm module. This
+=over
+
+=item DB::module	Text
+
+Informs gt you are using the Text.pm module. This
 configuration item is always required in your $HOME/.gt/options file.
 
-DB::text::directory	path -- where files are stored. This
+=item DB::text::directory	path
+
+where files are stored. This
 configuration item is always required in your $HOME/.gt/options file.
 
-DB::text::marker	string -- which delimits fields in each row of the data file.
+=item DB::text::marker	string 
+
+Delimits fields in each row of the data file.
 The marker defaults to the tab character '\t'.
 
-DB::Text::header_lines	number -- The number of header lines in your data file
+=item DB::text::header_lines	number
+
+The number of header lines in your data file
 that are to be skipped during processing. Lines with the either the
 comment symbol '#' or the less than symbol '<' as the first character
 do not need to be included in this value.. The header_lines default value is 0.
 
-DB::text::file_extension	string -- to be appended to the code file name when 
+=item DB::text::file_extension	string
+
+To be appended to the code file name when 
 searching the data file.  For instance, if the data file is called EURUSD.csv
 this variable would have the value '.csv' (without the quotes).
 
@@ -52,27 +63,46 @@ The default file_extension is '.txt'.
 if you have data in different timeframes, for instance, EURUSD_hour.csv and
 EURUSD_day.csv, use the following value for this directive:
 
-DB::text::file_extension	_$timeframe.csv
+=item DB::text::file_extension	_$timeframe.csv
 
-DB::text::fields::datetime	number -- Column index where to find the period datetime
+=item DB::text::format                0|1|2|3 (default is 3)
+The format of the date/time string. Valid values are: 
+0 - yyyy-mm-dd hh:nn:ss (the time string is optional)
+1 - US Format (month before day, any format understood by Date::Calc)
+2 - European Format (day before month, any format understood by Date::Calc)
+3 - Any format understood by Date::Manip
+
+=item DB::text::fields::datetime	number
+
+Column index where to find the period datetime
 field. Indexes are 0 based.  For the particular case of datetime, can contain
 multiple indexes, useful when date and time are separate columns in the data
 file.  The date time format is anything that can be understood by Date::Manip.
 A typical example would be YYYY-MM-DD HH:NN:SS. The default datetime index is 5.
 
-DB::text::fields::open	number -- Column index where to find the period open field.
+=item DB::text::fields::open	number
+
+Column index where to find the period open field.
 Indexes are 0 based. The default open index is 0.
 
-DB::text::fields::low	number -- Column index where to find the period low field.
+=item DB::text::fields::low	number
+
+Column index where to find the period low field.
 Indexes are 0 based. The default low index is 2. 
 
-DB::text::fields::high	number -- Column index where to find the period high field.
+=item DB::text::fields::high	number
+
+Column index where to find the period high field.
 Indexes are 0 based. The default high index is 1.
 
-DB::text::fields::close	number -- Column index where to find the period close field.
+=item DB::text::fields::close	number
+
+Column index where to find the period close field.
 Indexes are 0 based. The default close index is 3.
 
-DB::text::fields::volume	number -- Column index where to find the period volume field.
+=item DB::text::fields::volume	number
+
+Column index where to find the period volume field.
 Indexes are 0 based. The default volume index is 4.
 
 
@@ -91,6 +121,7 @@ sub new {
     GT::Conf::default('DB::Text::header_lines', '0');
     GT::Conf::default('DB::Text::marker', "\t");
     GT::Conf::default('DB::Text::file_extension', '.txt');
+    GT::Conf::default('DB::Text::format', '3');
     GT::Conf::default('DB::Text::fields::datetime', '5');
     GT::Conf::default('DB::Text::fields::open', '0');
     GT::Conf::default('DB::Text::fields::low', '2');
@@ -100,6 +131,7 @@ sub new {
 
     $self->{'header_lines'} = GT::Conf::get('DB::Text::header_lines');
     $self->{'mark'} = GT::Conf::get('DB::Text::marker');
+    $self->{'date_format'} = GT::Conf::get('DB::Text::format');
     $self->{'extension'} = GT::Conf::get('DB::Text::file_extension');
     $self->{'datetime'} = GT::Conf::get('DB::Text::fields::datetime');
     $self->{'open'} = GT::Conf::get('DB::Text::fields::open');
@@ -144,11 +176,23 @@ sub get_prices {
 
     return GT::Prices->new() if ($timeframe > $DAY);
 
-    my @datetime_fields = split(',',$self->{'datetime'});
-    my $datetime_fields_count = scalar(@datetime_fields);
-
     my $prices = GT::Prices->new;
     $prices->set_timeframe($timeframe);
+
+    if (!$self->{'mark'}) { $self->{'mark'} = "\t"; }
+    if (!$self->{'date_format'}) { $self->{'date_format'} = 3; }
+    if (!$self->{'header_lines'}) { $self->{'header_lines'} = 0; }
+    if (!$self->{'open'}) { $self->{'open'} = 0; }
+    if (!$self->{'high'}) { $self->{'high'} = 1; }
+    if (!$self->{'low'}) { $self->{'low'} = 2; }
+    if (!$self->{'close'}) { $self->{'close'} = 3; }
+    if (!$self->{'volume'}) { $self->{'volume'} = 4; }
+    if (!$self->{'datetime'}) { $self->{'datetime'} = 5; }
+ 
+    my %fields = ('open' => $self->{'open'}, 'high' => $self->{'high'},
+                  'low' => $self->{'low'}, 'close' => $self->{'close'},
+		  'volume' => $self->{'volume'}, 'date' => $self->{'datetime'});
+    $self->{'fields'} = \%fields;
 
     my $extension = $self->{'extension'};
     my $tfname = GT::DateTime::name_of_timeframe($timeframe);
@@ -156,53 +200,10 @@ sub get_prices {
 
     my $file = $self->{'directory'} . "/$code" . $extension;
 
-    #open(FILE, "<$file") || (warn "Can't open $file: $!\n" and return GT::Prices->new());
-    open(FILE, "<", "$file") || (warn "Can't open $file: $!\n" and return GT::Prices->new());
-
-    my ($open, $high, $low, $close, $volume, $date);
-    my ($year, $month, $day);
-
-    my $lines_to_skip = $self->{'header_lines'};
-    
-    #TODO
-    #Date::Manip requires this to be defined
-    #there probably is a better way of doing this
-    #rather than defining it here, but it works
-    #for now
-    $ENV{'TZ'} = 'GMT' unless(defined($ENV{'TZ'})); 
-
-    # Process each line in $file...
-    while (defined($_=<FILE>))
-    {
-        # Skip user specified number of file header lines
-        if ( $lines_to_skip > 0 ) {
-            $lines_to_skip--;
-            next;
-        }
-        
-        next if (/^[#<]/); #Skip comments and METASTOCK ascii file header
-        # Get and split the line with $mark
-        chomp;
-        my @line = split($self->{'mark'});
-
-        # Get and swap all necessary fields according to the fields map
-        $open = $line[$self->{'open'}];
-        $high = $line[$self->{'high'}];
-        $low = $line[$self->{'low'}];
-        $close = $line[$self->{'close'}];
-        $volume = $line[$self->{'volume'}] or $volume = 0; #some datasets don't include volume
-        my $datetime=$line[$datetime_fields[0]];
-        for (my $i=1; $i<$datetime_fields_count;$i++) {
-             $datetime .= ' '.$line[$datetime_fields[$i]];
-        }
-        $date = &UnixDate($datetime, '%Y-%m-%d %H:%M:%S');
-
-        # Add all data within the GT::Prices object
-        $prices->add_prices([ $open, $high, $low, $close, $volume, $date ]);
-    }
-    close FILE;
-
+    $prices->loadtxt($file, $self->{'mark'}, $self->{'date_format'},
+		     $self->{'header_lines'}, %fields);
     return $prices;
+
 }
 
 =pod

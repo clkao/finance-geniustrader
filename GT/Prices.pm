@@ -11,6 +11,7 @@ use Date::Calc qw(Decode_Date_US Decode_Date_EU Today);
 #ALL#  use Log::Log4perl qw(:easy);
 use GT::DateTime;
 use GT::Serializable;
+use Date::Manip;
 
 require Exporter;
 @ISA = qw(Exporter GT::Serializable);
@@ -285,12 +286,14 @@ Load the prices from the text file.
 
 =cut
 sub loadtxt {
-    my ($self, $file, $mark, $date_format, %fields) = @_;
+    my ($self, $file, $mark, $date_format, $skip, %fields) = @_;
 
     open(FILE, '<', "$file") || die "Can't open $file: $!\n";
+#   unless(open(FILE, '<', "$file")} || (warn "Can't open $file: $!\n" and return;
+
     $self->{'prices'} = [];
     my ($open, $high, $low, $close, $volume, $date);
-    my ($year, $month, $day);
+    my ($year, $month, $day, $tm);
 
     # Initialize all options with the default settings
     # Set up $mark as a tabulation
@@ -307,8 +310,19 @@ sub loadtxt {
     # Process each line in $file...
     while (defined($_=<FILE>))
     {
+        # Skip user specified number of file header lines
+        if ( $skip > 0 ) {
+            $skip--;
+            next;
+        }
+        
 	# ... only if it's a line without strings (ie: everything but head line)
-	if (!/\G[A-Za-z]/gc) {
+        next if (/^[#<]/); #Skip comments and METASTOCK ascii file header
+        #next if (/\G[A-Za-z]/gc);  #Skip all lines containing text strings
+        #NOTE: The first does not skip typical headers; the second does
+        #      not allow textual dates.
+
+	if (!/date/ig) {
 
 	    # Get and split the line with $mark
 	    chomp;
@@ -319,14 +333,20 @@ sub loadtxt {
 	    $high = $line[$fields{'high'}];
 	    $low = $line[$fields{'low'}];
 	    $close = $line[$fields{'close'}];
-	    $volume = $line[$fields{'volume'}];
-	    $date = $line[$fields{'date'}];
+	    $volume = $line[$fields{'volume'}] || 0;
+	    my @datetime_fields = split(',',$fields{'date'});
+	    my $datetime_fields_count = scalar(@datetime_fields);
+	    my $date=$line[$datetime_fields[0]];
+	    for (my $i=1; $i<$datetime_fields_count;$i++) {
+	      $date .= ' '.$line[$datetime_fields[$i]];
+	    }
 
 	    # Decode the date from the text file to something useable
 		# The hh:nn:ss part is optional
 	    # $date_format eq 0 : GeniusTrader Date Format (yyyy-mm-dd hh:nn:ss)
-	    # $date_format eq 1 : US sort of Date Format   (mm/dd/yyyy)
-	    # $date_format eq 2 : EU sort of Date Format   (dd/mm/yyyy)
+	    # $date_format eq 1 : US sort of Date Format   (month before day)
+	    # $date_format eq 2 : EU sort of Date Format   (day before month)
+	    # $date_format eq 3 : Any format understood by Date::Manip
 	    
 	    if ($date_format != 0) {
 		
@@ -336,13 +356,35 @@ sub loadtxt {
 		if ($date_format eq 2) {
 		    ($year, $month, $day) = Decode_Date_EU($date);
 		}
+		if ($date_format eq 3) {
+		  #Date::Manip requires this to be defined
+		  #there probably is a better way of doing this
+		  #rather than defining it here, but it works
+		  #for now
+		  $ENV{'TZ'} = 'GMT' unless(defined($ENV{'TZ'})); 
+		  my $udate = &UnixDate($date, '%Y-%m-%d %H:%M:%S');
+		  unless (defined $udate) {
+		    warn "Incorrect date for format $date_format: $date.\n";
+		    next;
+		  }
+		  ( $year, $month, $day, $tm ) = split /[- ]/, $udate;
+		}
+		unless (defined $year) {
+		  warn "Incorrect date for format $date_format: $date.\n";
+		  next;
+		}
 		my ($today_year, $today_month, $today_day) = Today();
 		if ($year > $today_year) {
 		    $year -= 100;
 		}
-		$month = "0" . $month if $month < 10;
-		$day = "0" . $day if $day < 10;
-		$date = $year . "-" . $month . "-" .$day;
+		# Time::Local only works for dates within 50 years
+		next if $year <= $today_year - 50;
+		unless ($date_format eq 3) {
+		  $month = '0' . $month if $month < 10;
+		  $day = '0' . $day if $day < 10;
+		}
+		$date = $year . '-' . $month . '-' .$day;
+		$date .= " $tm" if $tm;
 	    }
 
 	    # Add all data within the GT::Prices object

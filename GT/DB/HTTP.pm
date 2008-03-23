@@ -26,9 +26,16 @@ using a CGI script (cf web/quotes.pl).
 
 =head2 Configuration
 
-You must set some configuration items in ~/.gt/options, especially for authentification purpose.
+Most configuration items have default values, to alter these defaults
+you must indicate the configuration item and its value in your
+$HOME/.gt/options file, especially for authentification purpose.
 
 =over
+
+=item DB::module	HTTP
+
+Informs gt you are using the HTTP.pm module. This
+configuration item is always required in your $HOME/.gt/options file.
 
 =item DB::HTTP::url : The URL that will be requested to download
 
@@ -39,6 +46,58 @@ You must set some configuration items in ~/.gt/options, especially for authentif
 =item DB::HTTP::username : The user name (ie : guest)
 
 =item DB::HTTP::password : The password (ie : anonymous)
+
+=item DB::HTTP::marker	string 
+
+Delimits fields in each row of the data file.
+The marker defaults to the tab character '\t'.
+
+=item DB::HTTP::header_lines	number
+
+The number of header lines in your data file
+that are to be skipped during processing. Lines with the either the
+comment symbol '#' or the less than symbol '<' as the first character
+do not need to be included in this value.. The header_lines default value is 0.
+
+=item DB::HTTP::format                0|1|2|3 (default is 3)
+The format of the date/time string. Valid values are: 
+0 - yyyy-mm-dd hh:nn:ss (the time string is optional)
+1 - US Format (month before day, any format understood by Date::Calc)
+2 - European Format (day before month, any format understood by Date::Calc)
+3 - Any format understood by Date::Manip
+
+=item DB::HTTP::fields::datetime	number
+
+Column index where to find the period datetime
+field. Indexes are 0 based.  For the particular case of datetime, can contain
+multiple indexes, useful when date and time are separate columns in the data
+file.  The date time format is anything that can be understood by Date::Manip.
+A typical example would be YYYY-MM-DD HH:NN:SS. The default datetime index is 5.
+
+=item DB::HTTP::fields::open	number
+
+Column index where to find the period open field.
+Indexes are 0 based. The default open index is 0.
+
+=item DB::HTTP::fields::low	number
+
+Column index where to find the period low field.
+Indexes are 0 based. The default low index is 2. 
+
+=item DB::HTTP::fields::high	number
+
+Column index where to find the period high field.
+Indexes are 0 based. The default high index is 1.
+
+=item DB::HTTP::fields::close	number
+
+Column index where to find the period close field.
+Indexes are 0 based. The default close index is 3.
+
+=item DB::HTTP::fields::volume	number
+
+Column index where to find the period volume field.
+Indexes are 0 based. The default volume index is 4.
 
 =back
 
@@ -61,8 +120,28 @@ sub new {
 
     GT::Conf::default("DB::HTTP::directory",
 		      GT::Conf::_get_home_path() . "/.gt/http-db-cache");
-    
+    GT::Conf::default('DB::HTTP::header_lines', '0');
+    GT::Conf::default('DB::HTTP::marker', "\t");
+    GT::Conf::default('DB::HTTP::file_extension', '.txt');
+    GT::Conf::default('DB::HTTP::format', '3');
+    GT::Conf::default('DB::HTTP::fields::datetime', '5');
+    GT::Conf::default('DB::HTTP::fields::open', '0');
+    GT::Conf::default('DB::HTTP::fields::low', '2');
+    GT::Conf::default('DB::HTTP::fields::high', '1');
+    GT::Conf::default('DB::HTTP::fields::close', '3');
+    GT::Conf::default('DB::HTTP::fields::volume', '4');
+
     my $self = { "directory" => GT::Conf::get("DB::HTTP::directory"),
+		 "header_lines" => GT::Conf::get('DB::HTTP::header_lines'),
+		 "mark" => GT::Conf::get('DB::HTTP::marker'),
+		 "date_format" => GT::Conf::get('DB::HTTP::format'),
+		 "extension" => GT::Conf::get('DB::HTTP::file_extension'),
+		 "datetime" => GT::Conf::get('DB::HTTP::fields::datetime'),
+		 "open" => GT::Conf::get('DB::HTTP::fields::open'),
+		 "low" => GT::Conf::get('DB::HTTP::fields::low'),
+		 "high" => GT::Conf::get('DB::HTTP::fields::high'),
+		 "close" => GT::Conf::get('DB::HTTP::fields::close'),
+		 "volume" => GT::Conf::get('DB::HTTP::fields::volume'),
                  "url" => GT::Conf::get("DB::HTTP::url"),
                  "location" => GT::Conf::get("DB::HTTP::location"),
                  "zone" => GT::Conf::get("DB::HTTP::zone"),
@@ -93,37 +172,6 @@ sub set_directory {
 }
 
 
-=item C<< $db->set_options($mark, $date_format, %fields) >>
-
-Set up all available options required to load text files.
-
-By default :
-
- - Mark is a tabulation ("\t")
- - Date Format
-    0 : GeniusTrader Date Format
-    1 : US sort of Date Format
-    2 : EU sort of Date Format
- - Fields Map
-     %fields = ('open' => 0, 'high' => 1, 'low' => 2, 'close' => 3,
-     %'volume' => 4, 'date' => 5);
-
-=cut
-sub set_options {
-    my ($self, $mark, $date_format, %fields) = @_;
-
-    if ($mark) { $self->{'mark'} = $mark; }
-    if ($date_format) {$self->{'date_format'} = $date_format; }
-    if (%fields) {
-	$self->{'open'} = $fields{'open'};
-	$self->{'high'} = $fields{'high'};
-	$self->{'low'} = $fields{'low'};
-	$self->{'close'} = $fields{'close'};
-	$self->{'volume'} = $fields{'volume'};
-	$self->{'date'} = $fields{'date'};
-    }
-}
-
 =item C<< $db->get_prices($code, $timeframe) >>
 
 Returns a GT::Prices object containing all known prices for the symbol $code.
@@ -131,7 +179,7 @@ Returns a GT::Prices object containing all known prices for the symbol $code.
 =cut
 sub get_prices {
     my ($self, $code, $timeframe) = @_;
-	$timeframe = $DAY unless ($timeframe);
+    $timeframe = $DAY unless ($timeframe);
     die "Intraday support not implemented in DB::HTTP" if ($timeframe < $DAY);
     return GT::Prices->new() if ($timeframe > $DAY);
 
@@ -139,23 +187,24 @@ sub get_prices {
     $prices->set_timeframe($timeframe);
 
     if (!$self->{'mark'}) { $self->{'mark'} = "\t"; }
-    if (!$self->{'date_format'}) { $self->{'date_format'} = 0; }
+    if (!$self->{'date_format'}) { $self->{'date_format'} = 3; }
+    if (!$self->{'header_lines'}) { $self->{'header_lines'} = 0; }
     if (!$self->{'open'}) { $self->{'open'} = 0; }
     if (!$self->{'high'}) { $self->{'high'} = 1; }
     if (!$self->{'low'}) { $self->{'low'} = 2; }
     if (!$self->{'close'}) { $self->{'close'} = 3; }
     if (!$self->{'volume'}) { $self->{'volume'} = 4; }
-    if (!$self->{'date'}) { $self->{'date'} = 5; }
+    if (!$self->{'date'}) { $self->{'datetime'} = 5; }
  
     my %fields = ('open' => $self->{'open'}, 'high' => $self->{'high'},
                   'low' => $self->{'low'}, 'close' => $self->{'close'},
-		  'volume' => $self->{'volume'}, 'date' => $self->{'date'});
+		  'volume' => $self->{'volume'}, 'date' => $self->{'datetime'});
     $self->{'fields'} = \%fields;
 
     my $file = $self->download_prices($code);
 		  
     $prices->loadtxt($file, $self->{'mark'}, $self->{'date_format'},
-		     %fields);
+		     $self->{'header_lines'}, %fields);
     return $prices;
 }
 
