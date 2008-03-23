@@ -400,11 +400,52 @@ Save the prices to the text file.
 
 =cut
 sub savetxt {
-    my ($self, $file) = @_;
+    my ($self, $file, $mark, $date_format, %fields) = @_;
     open(FILE, '>', "$file") || die "Can't write in $file: $!\n";
+    my ($open, $high, $low, $close, $volume, $date);
+    my ($year, $month, $day);
+
+    $mark = $mark || "\t";
+
+    # Set up %fields with the standard fields map : open high low close volume date
+    if (!%fields) {
+	%fields = ('open' => 0, 'high' => 1, 'low' => 2, 'close' => 3, 'volume' => 4, 'date' => 5);
+    }
+    
+    # Set up $date_format to the internal date format
+    if (!$date_format) { $date_format = 0; }
+    
     foreach (@{$self->{'prices'}})
     {
-	print FILE join("\t", @{$_}) . "\n";
+      my @line = @{$_};
+      $open = $line[$fields{'open'}];
+      $high = $line[$fields{'high'}];
+      $low = $line[$fields{'low'}];
+      $close = $line[$fields{'close'}];
+      $volume = $line[$fields{'volume'}];
+      $date = $line[$fields{'date'}];  # No obvious way how to divide date into mulitple fields
+
+      if ($date_format != 0) {
+		
+	if ($date_format eq 1) {
+	  ($year, $month, $day) = split(/-/, $date);
+	  $date = "$month/$day/$year"; 
+	}
+	if ($date_format eq 2) {
+	  ($year, $month, $day) = split(/-/, $date);
+	  $date = "$day/$month/$year"; 
+	}
+      }
+
+      my @newline = ();
+      $newline[$fields{'open'}] = $open;
+      $newline[$fields{'high'}] = $high;
+      $newline[$fields{'low'}] = $low;
+      $newline[$fields{'close'}] = $close;
+      $newline[$fields{'volume'}] = $volume;
+      $newline[$fields{'date'}] = $date;
+      
+      print FILE join($mark, @newline) . "\n";
     }
     close FILE;
 }
@@ -415,10 +456,11 @@ Print the prices on the standard output.
 
 =cut
 sub dump {
-    my ($self) = @_;
+    my ($self, $mark) = @_;
+    $mark = $mark || "\t";
     foreach (@{$self->{'prices'}})
     {
-	print join("\t", @{$_}) . "\n";
+	print join($mark, @{$_}) . "\n";
     }
 }
 
