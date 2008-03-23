@@ -38,14 +38,19 @@ GT::Tools - Various helper functions
 This modules provides several helper functions that can be used in all
 modules and scripts.
 
-=over 4
+There are 5 groupings
 
- there are 5 groupings
-   math      -- min, max, pi, sign
-   generic   -- extract_object_number
-   conf      -- resolve_alias resolve_object_alias long_name short_name
-   isin      -- isin_checksum isin_validate isin_create_from_local
-   timeframe -- get_timeframe_data parse_date_str
+=over 6
+
+=item *   math      -- min, max, pi, sign
+
+=item *   generic   -- extract_object_number
+
+=item *   conf      -- resolve_alias resolve_object_alias long_name short_name
+
+=item *   isin      -- isin_checksum isin_validate isin_create_from_local
+
+=item *   timeframe -- get_timeframe_data parse_date_str
 
 =back
 
@@ -281,25 +286,25 @@ Most module names can be shortened with some standard abreviations. Those
 functions let you switch between the long and the short version of the
 names. The recognized abreviations are :
 
-=over
+=over 6
 
-=item Analyzers:: = A:
+=item * Analyzers:: = A:
 
-=item CloseStrategy:: = CS:
+=item * CloseStrategy:: = CS:
 
-=item Generic:: = G:
+=item * Generic:: = G:
 
-=item Indicators:: = I:
+=item * Indicators:: = I:
 
-=item MoneyManagement:: = MM:
+=item * MoneyManagement:: = MM:
 
-=item OrderFactory:: = OF:
+=item * OrderFactory:: = OF:
 
-=item Signals:: = S:
+=item * Signals:: = S:
 
-=item Systems:: = SY:
+=item * Systems:: = SY:
 
-=item TradeFilters:: = TF:
+=item * TradeFilters:: = TF:
 
 =back
 
@@ -337,9 +342,14 @@ sub short_name {
     return $name;
 }
 
+=back
+
 =head2 isin
 
 use GT::Tools qw(:isin) :
+
+=over 4
+
 =item C<< isin_checksum($code) >>
 
 This computes the checksum of a given code. The whole ISIN is returned.
@@ -387,6 +397,8 @@ sub isin_checksum {
 
 Validate the ISIN and its checksum.
 
+=back
+
 =cut
 sub isin_validate {
     my $isin = shift;
@@ -409,6 +421,8 @@ sub isin_create_from_local {
 =head2 timeframe
 
 use GT::Tools qw(:timeframe) :
+
+=over 4
 
 =item C<< GetTimeFrameData ($code, $timeframe, $db, $max_loaded_items) >>
 
@@ -466,10 +480,6 @@ if ($q->timeframe != $timeframe) {
 
 return ($q, $calc);
 }
-
-=back
-
-=cut
 
 sub parse_date_str {
     #
@@ -550,62 +560,69 @@ sub parse_date_str {
 
     return 1;
 
-    # ras hack -- describe parse_date_str features in pod
 =pod
-
-=head2 this is a ras hack version of GT/Tools.pm
-
-=over
 
 =item C<< parse_date_str ( \$date_string, \$err_msg ) >>
 
- Returns 1 if \$date_string is valid parsable date, zero (or null) otherwise
- \$date_string will be altered to be a gt compliant date string on return
- \$err_msg is optional
+Returns 1 if \$date_string is valid parsable date, zero (or null) otherwise
+\$date_string will be altered to be a gt compliant date string on return
+\$err_msg is optional
 
- notes: @ input params must be references to the object
-        @ if called in void context with bad date value the internal
-          error handling will put error message text on stderr and die called
-        @ date ref var may be altered to conform to std date-time format
-        @ error string will contain details about bad date-time string
+=over 6
 
- if the user has Date::Manip installed it allows the use of date strings
- that can be parsed by Date::Manip in addition the to defacto standard
- date-time format accepted by GT (YYYY-MM-DD HH:MM:SS) time part is optional
+=item * input params must be references to the object
 
- Date::Manip is not required, without it users cannot use short-cuts to
- specify date strings. such short cuts include
+=item * if called in void context with bad date value the internal
+error handling will put error message text on stderr and die called
+
+=item * date ref var may be altered to conform to std date-time format
+
+=item * error string will contain details about bad date-time string
+
+=back
+
+If the user has Date::Manip installed it allows the use of date strings
+that can be parsed by Date::Manip in addition the to defacto standard
+date-time format accepted by GT (YYYY-MM-DD HH:MM:SS) time part is optional
+
+Date::Manip is not required, without it users cannot use short-cuts to
+specify date strings. such short cuts include
  --start '6 months ago'
  --end 'today'
 
- the date string checking includes verifying the date string format
- is valid and the date is a valid date (and time if provided)
+The date string checking includes verifying the date string format
+is valid and the date is a valid date (and time if provided)
 
- errors will be displayed and the script will terminate.
+Errors will be displayed and the script will terminate.
 
- the script also validates that the dates specified are consistent
- with respect to their purpose (--start is earlier than --end etc)
+The script also validates that the dates specified are consistent
+with respect to their purpose (--start is earlier than --end etc.)
 
- finally, appropriate timeframe conversion is performed so the user
- need not convert command line date strings from the day time to
- say week or month as it will be done automagically.
+Finally, appropriate timeframe conversion is performed so the user
+need not convert command line date strings from the day time to
+say week or month as it will be done automagically.
 
-=head1 application usage examples:
+=head3 Application usage examples:
 
- with Date::Manip installed
- %    scan.pl --timeframe day --start '6 months ago' --end 'today' market_file \
-  'today' system_file
+with Date::Manip installed
 
- without Date::Manip you will need to use:
- %    scan.pl --timeframe day --start 2007-04-24 --end 2007-10-24 market_file \
-  2007-10-24 system_file
+ %    scan.pl --timeframe day --start '6 months ago' \
+         --end 'today' market_file 'today' system_file
+
+without Date::Manip you will need to use:
+
+ %    scan.pl --timeframe day --start 2007-04-24 \
+         --end 2007-10-24 market_file 2007-10-24 system_file
+
  or
- %    scan.pl --timeframe week --start 2007-04-24 --end 2007-10-24 market_file \
-  2007-10-24 system_file
 
-=head1 parse_date_str usage in application script
+ %    scan.pl --timeframe week --start 2007-04-24 
+         --end 2007-10-24 market_file 2007-10-24 system_file
 
-  use GT::Tools qw( :timeframe );  # tag name to get &parse_date_str visibility
+=head3 Usage of parse_date_str in application script
+
+  use GT::Tools qw( :timeframe );  
+  # tag name to get &parse_date_str visibility
 
   my $err_msg;
   # get date string from command line
