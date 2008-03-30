@@ -644,10 +644,10 @@ Find a calculator: Returns $calc (the calculator), as well as
 $first and $last (indices used by the calculator).
 
 The interval examined (bound by $first and $last) is computed as follows (stop whenever $first and $last have been determined):
-1. if present, use --start (otherwise default $first is 2 years back) and --end (otherwise default $last is last price)
+1. if present, use --start (otherwise default $first to 2 years back) and --end (otherwise default $last to last price)
 2. use --nb-item (from first or last, whichever has been determined), if present
 3. use first or last price, whichever has not yet been determined, if --full is present
-4. otherwise, use twice the ratio of current timeframe to yearly timeframe
+4. otherwise, use two years worth of data.
 
 Note that the values given to --start and --end are relative to the selected time frame (i.e., if timeframe is "day", these indicate a date; if timeframe is "week", these indicate a week; etc.). Format is "YYYY-MM-DD" for dates, "YYYY-WW" for weeks, "YYYY-MM" for months, and "YYYY" for years.
 
@@ -659,7 +659,7 @@ sub find_calculator {
   $max_loaded_items ||= -1;
 
   if (!defined $timeframe) {
-    my $msg = "Unkown timeframe: GT::DateTime::name_of_timeframe($timeframe)\nAvailable timeframes are:\n";
+    my $msg = "Unkown timeframe. Available timeframes are:\n";
     foreach (GT::DateTime::list_of_timeframe()) {
       $msg .= "\t".GT::DateTime::name_of_timeframe($_) . "\n";
     }
