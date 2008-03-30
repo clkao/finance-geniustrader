@@ -19,7 +19,7 @@ use GT::Eval;
 use Getopt::Long;
 use GT::Conf;
 use GT::DateTime;
-use GT::Tools qw(:conf);
+use GT::Tools qw(:conf :timeframe);
 use GT::Graphics::DataSource::PortfolioEvaluation;
 use GT::Graphics::Driver;
 use GT::Graphics::Object;
@@ -120,7 +120,7 @@ use GT::CloseStrategy::<close_strategy_name> as a close strategy.
 
 =item
 
-./backtest.pl --close-strategy="Systems::TFS" --close-strategy="Stop::Fixed 6" --money-management="VAR" --money-management="SizeLimit" --system="TFS" --broker="SelfTrade Intégral" 13000
+./backtest.pl --close-strategy="Systems::TFS" --close-strategy="Stop::Fixed 6" --money-management="VAR" --money-management="OrderSizeLimit" --system="TFS" --broker="SelfTrade Intégral" 13000
 
 =back
 
@@ -128,7 +128,7 @@ use GT::CloseStrategy::<close_strategy_name> as a close strategy.
 
 # Manage options
 my ($full, $verbose, $html, $display_trades, $template, $graph_file, $ofname, $broker, $system, $timeframe, $start, $end, $store_file) = 
-   (0, 0, 0, 0, '', '', '', '', '', '', '', '', '');
+   (0, 0, 0, 0, '', '', '', '', '', 'day', '', '', '');
 my (@mmname, @tfname, @csname);
 GetOptions('full!' => \$full, 'verbose!' => \$verbose, 'html!' => \$html,
 	   'template=s' => \$template, 'display-trades!' => \$display_trades,
@@ -201,35 +201,10 @@ my $code = shift;
 if (! $code) {
     die "You must give a symbol for the simulation.\n";
 }
-my $q = $db->get_prices($code);
-#$db->disconnect;
 
-my $calc = GT::Calculator->new($q);
-$calc->set_code($code);
+$timeframe = GT::DateTime::name_to_timeframe($timeframe);
 
-if ($timeframe)
-{
-    if (! $calc->set_current_timeframe(
-	    GT::DateTime::name_to_timeframe($timeframe)))
-    {
-	die "Can't create « $timeframe » timeframe ...\n";
-    }
-}
-
-my $c = $calc->prices->count;
-my $last = $c - 1;
-my $first = $c - 2 * GT::DateTime::timeframe_ratio($YEAR, 
-						   $calc->current_timeframe);
-$first = 0 if ($full);
-$first = 0 if ($first < 0);
-if ($start) {
-    my $date = $calc->prices->find_nearest_following_date($start);
-    $first = $calc->prices->date($date);
-}
-if ($end) {
-    my $date = $calc->prices->find_nearest_preceding_date($end);
-    $last = $calc->prices->date($date);
-}
+my ($calc, $first, $last) = find_calculator($code, $timeframe, $full, $start, $end);
 
 # The real work happens here
 my $analysis = backtest_single($pf_manager, $sys_manager, $broker, $calc, $first, $last);
@@ -265,7 +240,7 @@ if ($graph_file) {
     my $axis_h = GT::Graphics::Axis->new($scale);
     my $axis_v = GT::Graphics::Axis->new($scale);
     $axis_h->set_custom_big_ticks(build_axis_for_interval(union_range($graph_ds->get_value_range, $graph_ds2->get_value_range), 0, 1));
-    $axis_v->set_custom_big_ticks(build_axis_for_timeframe($q, $YEAR, 1, 1), 1);
+    $axis_v->set_custom_big_ticks(build_axis_for_timeframe($calc->prices(), $YEAR, 1, 1), 1);
     $zone->set_axis_left($axis_h);
     $zone->set_axis_bottom($axis_v);
     my $graphic = GT::Graphics::Graphic->new($zone);

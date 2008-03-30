@@ -75,26 +75,10 @@ my $indicator = create_standard_object("$indicator_module",
 					@ARGV);
 
 # Il faut créer tout le framework
-my $db = create_standard_object("DB::" . GT::Conf::get("DB::module"));
 my $indicator_name = $indicator->get_name;
-my ($q, $calc) = get_timeframe_data($code, $timeframe, $db, $nb_item);
-
-my $last = $q->count() - 1;
-my $first = $last - 200;
-
-$first = 0 if ($full);
-$first = $last if ($last_record);
-$first = 0 if ($first < 0);
-
-if ($start) {
-    my $date = $calc->prices->find_nearest_following_date($start);
-    $first = $calc->prices->date($date);
-}
-if ($end) {
-    my $date = $calc->prices->find_nearest_preceding_date($end);
-    $last = $calc->prices->date($date);
-}
-
+my ($calc, $first, $last) = find_calculator($code, $timeframe, $full, $start, $end, 200, $nb_item);
+# NOTE: above does not handle $last_record
+# $first = $last if ($last_record);
 
 # Au boulot
 print "Calculating indicator $indicator_name ...\n";
@@ -109,14 +93,12 @@ for(my $i = $first; $i <= $last; $i++)
 	if ($calc->indicators->is_available($name, $i)) {
 	    my $value = $calc->indicators->get($name, $i);
 	    if ($value =~ /^\d+(?:\.\d+)?$/) {
-		printf "%-20s[%s] = %.4f\n", $name, $q->at($i)->[$DATE], $value;
+		printf "%-20s[%s] = %.4f\n", $name, $calc->prices->at($i)->[$DATE], $value;
 	    } else {
-		printf "%-20s[%s] = %s\n", $name, $q->at($i)->[$DATE], $value;
+		printf "%-20s[%s] = %s\n", $name, $calc->prices->at($i)->[$DATE], $value;
 	    }
 		    
 	}
     }
 }
-
-$db->disconnect;
 

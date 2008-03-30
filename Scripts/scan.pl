@@ -412,33 +412,7 @@ for (my $d = 0; $d < $list->count; $d++)
     }
     my $code = $list->get($d);
 
-    my $db = create_standard_object("DB::" . GT::Conf::get("DB::module"));
-    my $q = $db->get_prices($code);
-    my $calc = GT::Calculator->new($q);
-    $calc->set_code($code);
-
-    if ($timeframe)
-    {
-	$calc->set_current_timeframe(
-	            GT::DateTime::name_to_timeframe($timeframe));
-    }
-
-    my $c = $calc->prices->count;
-    my $last = $c - 1;
-    my $first = $c - 2 * GT::DateTime::timeframe_ratio($YEAR,
-					       $calc->current_timeframe);
-    $first = 0 if ($full);
-    $first = 0 if ($first < 0);
-
-    if ($start) {
-	my $ndate = $calc->prices->find_nearest_following_date($start);
-	$first = $calc->prices->date($ndate);
-    }
-
-    if ($end) {
-	my $ndate = $calc->prices->find_nearest_preceding_date($end);
-	$last = $calc->prices->date($ndate);
-    }
+    my ($calc, $first, $last) = find_calculator($code, $timeframe, 0, $start, $end);
 
     my $i;
     if ($calc->prices->has_date($date)) {
@@ -477,8 +451,7 @@ for (my $d = 0; $d < $list->count; $d++)
 
     }
 
-    $db->disconnect;
-    # Close the child
+    # Close the child 
     exit 0;
 }
 

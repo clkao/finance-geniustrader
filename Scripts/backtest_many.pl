@@ -152,32 +152,7 @@ for (my $d = 0; $d < $list->count; $d++)
 	next;
     }
     my $code = $list->get($d);
-
-    my $db = create_standard_object("DB::" . GT::Conf::get("DB::module"));
-    my $q = $db->get_prices($code);
-    my $calc = GT::Calculator->new($q);
-    $calc->set_code($code);
-
-    if ($timeframe)
-    {
-	$calc->set_current_timeframe(
-	            GT::DateTime::name_to_timeframe($timeframe));
-    }
-
-    my $c = $calc->prices->count;
-    my $last = $c - 1;
-    my $first = $c - 2 * GT::DateTime::timeframe_ratio($YEAR,
-					       $calc->current_timeframe);
-    $first = 0 if ($full);
-    $first = 0 if ($first < 0);
-    if ($start) {
-	my $date = $calc->prices->find_nearest_following_date($start);
-	$first = $calc->prices->date($date);
-    }
-    if ($end) {
-	my $date = $calc->prices->find_nearest_preceding_date($end);
-	$last = $calc->prices->date($date);
-    }
+    my ($calc, $first, $last) = find_calculator($code, $timeframe, $full, $start, $end);
 
     # Fork a process to avoid memory consumption
     foreach (@desc_systems)
@@ -211,7 +186,6 @@ for (my $d = 0; $d < $list->count; $d++)
 	$bkt_spool->sync();
     }
 
-    $db->disconnect;
     # Close the child 
     exit 0;
 }

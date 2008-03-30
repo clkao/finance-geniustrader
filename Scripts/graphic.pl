@@ -204,6 +204,11 @@ The start date used to plot the graphic.
 
 The end date used to plot the graphic. This option overrides the --nb-item option.
 
+=item --full
+
+Plot all available periods. This option overides the options --nb-item,
+--start, and --end.
+
 =item --type=candle|candlevol|candlevolplace|barchart|line|none
 
 The type of graphic to plot. none causes the price not to be displayed, however, overlays
@@ -227,7 +232,7 @@ command line parameter. Lines starting with # are ignored.
 =cut
 
 my $tf = 'day';
-my $nb_item = 120;
+my $nb_item;
 my ($start, $end) = ("", "");
 my ($width, $height) = ("", "200");
 my $type = "candle";
@@ -275,35 +280,8 @@ foreach (@options) {
 
 pod2usage( -verbose => 2) if ($man);
 my $code = shift || pod2usage(1);
-my $db = create_standard_object("DB::" . GT::Conf::get("DB::module"));
 my $timeframe = GT::DateTime::name_to_timeframe($tf);
-if (!defined($timeframe)) {
-	my $msg = "Unkown timeframe: $tf\nAvailable timeframes are:\n";
-	foreach (GT::DateTime::list_of_timeframe()) {
-		$msg .= "\t".GT::DateTime::name_of_timeframe($_) . "\n";
-	}
-	die($msg);
-}
-
-my ($q, $calc) = get_timeframe_data($code, $timeframe, $db, $max_loaded_items);
-
-my ($first, $last) = ($q->count() - $nb_item, $q->count() - 1);
-$first = 0 if ($first < 0);
-
-if ($start) {
-    $first = $q->date($q->find_nearest_following_date($start));
-    $first = 0 if (! defined($first));
-    $last = $first + $nb_item - 1;
-    $last = $q->count() - 1 if ($last >= $q->count());
-}
-if ($end) {
-    $last = $q->date($q->find_nearest_preceding_date($end));
-    $last = $q->count() - 1 if (! defined($last));
-    if (!$start) {
-        $first = $last - $nb_item + 1;
-        $first = 0 if $first < 0;
-    }
-}
+my ($calc, $first, $last) = find_calculator($code, $timeframe, 0, $start, $end, $nb_item, $max_loaded_items);
 $nb_item = $last - $first + 1;
 
 GT::Conf::default("Graphics::Driver", "GD");
@@ -327,7 +305,7 @@ my $z_m = GT::Graphics::Zone->new($width, $height);
 $zone->add_subzone(0, $y_zone++, $z_m);
 
 my $graphic = GT::Graphics::Graphic->new($zone);
-
+my $q = $calc->prices();
 
 if ($volume and ($type ne "none")) {
     my $z_v = GT::Graphics::Zone->new($width, $vheight);
@@ -357,12 +335,12 @@ $zone->update_size();
 
 $zone->set_border_width(1);
 if ($title) { 
-    my $longname = $db->get_name($code);
+    my $longname = get_long_name($code);
     $title =~ s/%c/$code/;
     $title =~ s/%n/$longname/;
     $zone->set_title_top($title);
 } else {
-    my $longname = $db->get_name($code);
+    my $longname = get_long_name($code);
     if ($longname) {
 	$zone->set_title_top("$longname - $code");
     } else {
@@ -406,13 +384,13 @@ if ($timeframe <= $PERIOD_5MIN) {
     my $space = $scale_m->convert_to_x_coordinate(
 	    int(GT::DateTime::timeframe_ratio($MONTH, $timeframe))
 	) - $scale_m->convert_to_x_coordinate(0);
-    if ($space <= 5) {
+    if ($space <= 10) {
 	$axis2->set_custom_big_ticks(
-		build_axis_for_timeframe($q, $YEAR, 1, 1), 1
+		build_axis_for_timeframe($q, $YEAR, 1, 1, $space * 12), 1
 	    );
     } else {
 	$axis2->set_custom_big_ticks(
-		build_axis_for_timeframe($q, $MONTH, 1, 1), 1
+		build_axis_for_timeframe($q, $MONTH, 1, 1, $space), 1
 	    );
 	$axis2->set_custom_ticks(build_axis_for_timeframe($q, $WEEK, 0), 1);
     }
@@ -422,11 +400,11 @@ if ($timeframe <= $PERIOD_5MIN) {
 	) - $scale_m->convert_to_x_coordinate(0);
     if ($space <= 5) {
 	$axis2->set_custom_big_ticks(
-		build_axis_for_timeframe($q, $YEAR, 1, 1), 1
+		build_axis_for_timeframe($q, $YEAR, 1, 1, $space * 20), 1
 	    );
     } else {
 	$axis2->set_custom_big_ticks(
-		build_axis_for_timeframe($q, $MONTH, 1, 1), 1
+		build_axis_for_timeframe($q, $MONTH, 1, 1, $space), 1
 	    );
     }
     #$axis2->set_custom_ticks(build_axis_for_timeframe($q, $WEEK, 0), 1);
@@ -720,8 +698,6 @@ $graphic->add_object($bottomtext);
 my $picture = $driver->create_picture($zone);
 $graphic->display($driver, $picture);
 $driver->dump($picture);
-
-$db->disconnect;
 
 # This functions get in input a string like "Object(arg1,arg2,Arg3)"
 # where each arg may itself be an Object with its own argument. It

@@ -101,13 +101,6 @@ GetOptions('full!' => \$full, 'timeframe=s' => \$tf,
            "change!" => \$change,
           );
 my $timeframe = GT::DateTime::name_to_timeframe($tf);
-if (!defined($timeframe)) {
-	my $msg = "Unkown timeframe: $tf\nAvailable timeframes are:\n";
-	foreach (GT::DateTime::list_of_timeframe()) {
-		$msg .= '\t'.GT::DateTime::name_of_timeframe($_) . '\n';
-	}
-	die($msg);
-}
 
 # Create the signal according to the arguments
 my $signal_module = shift || pod2usage(verbose => 1);
@@ -121,39 +114,9 @@ if ( $code =~ /{|}|:/ ) {
 }
 
 my $signal = create_standard_object($signal_module, @ARGV);
-
-# Create the complete framework
-my $db = create_standard_object('DB::' . GT::Conf::get('DB::module'));
 my $signal_name = $signal->get_name;
-my ($q, $calc) = get_timeframe_data($code, $timeframe, $db);
-my $last = $q->count() - 1;
-my $first = $last - 200;
+my ($calc, $first, $last) = find_calculator($code, $timeframe, $full, $start, $end, 200);
 
-$first = 0 if ($full);
-$first = 0 if ($first < 0);
-
-# very rudimentary date format check
-my $dash_count;
-
-if ($start) {
-    $_ = $start;
-    print STDERR "\nthe only date format that i like is YYYY-MM-DD,\n"
-               . "i don't think --start=$start is going to do what you expect\n"
-      if ( ( $dash_count = $_ =~ tr/-//d ) != 2 );
-    my $date = $calc->prices->find_nearest_following_date($start);
-    $first = $calc->prices->date($date);
-}
-if ($end) {
-    $_ = $end;
-    print STDERR "\nthe only date format that i like is YYYY-MM-DD,\n"
-               . "i don't think --end=$end is going to do what you expect\n"
-      if ( ( $dash_count = $_ =~ tr/-//d ) != 2 );
-    my $date = $calc->prices->find_nearest_preceding_date($end);
-    $last = $calc->prices->date($date);
-}
-
-#print STDERR "first $first, last $last\n";
-#exit;
 print "\t$signal_module\n";
 # Launching the signal
 print "Testing signal $signal_name ...\n";
@@ -168,18 +131,18 @@ for(my $i = $first; $i <= $last; $i++)
 
         if ($calc->signals->is_available($name, $i)) {
           if ( ! $change ) {
-            printf "%-20s[%s] = %s\n", $name, $q->at($i)->[$DATE],
+            printf "%-20s[%s] = %s\n", $name, $calc->prices->at($i)->[$DATE],
                     ($calc->signals->get($name, $i) ? 'yes' : 'no');
           }else{
             # show only changes from prior
             my $state = $calc->signals->get($name, $i);
 
             if ( ! defined ( $prior_state ) ) {
-              printf "%-20s[%s] = %s\n", $name, $q->at($i)->[$DATE],
+              printf "%-20s[%s] = %s\n", $name, $calc->prices->at($i)->[$DATE],
                ($state ? 'yes' : 'no');
             } else {
               if ( $prior_state != $state ) {
-                printf "%-20s[%s] = %s\n", $name, $q->at($i)->[$DATE],
+                printf "%-20s[%s] = %s\n", $name, $calc->prices->at($i)->[$DATE],
                  ($state ? 'yes' : 'no');
               }
             }
@@ -189,4 +152,3 @@ for(my $i = $first; $i <= $last; $i++)
     }
 }
 
-$db->disconnect;
