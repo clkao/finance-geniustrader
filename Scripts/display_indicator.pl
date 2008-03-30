@@ -76,9 +76,10 @@ my $indicator = create_standard_object("$indicator_module",
 
 # Il faut créer tout le framework
 my $indicator_name = $indicator->get_name;
-my ($calc, $first, $last) = find_calculator($code, $timeframe, $full, $start, $end, 200, $nb_item);
-# NOTE: above does not handle $last_record
-# $first = $last if ($last_record);
+my ($calc, $first, $last) = ($last_record) ?
+  find_calculator($code, $timeframe, 0, '', '', 1, $nb_item) :
+  find_calculator($code, $timeframe, $full, $start, $end, 200, $nb_item);
+
 
 # Au boulot
 print "Calculating indicator $indicator_name ...\n";
