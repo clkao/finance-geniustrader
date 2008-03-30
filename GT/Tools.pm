@@ -16,15 +16,16 @@ require Exporter;
                 extract_object_number
                 resolve_alias resolve_object_alias long_name short_name
                 isin_checksum isin_validate isin_create_from_local
-                get_timeframe_data parse_date_str
+                get_timeframe_data parse_date_str find_calculator
                 );
 %EXPORT_TAGS = ("math" => [qw(min max PI sign)], 
 		"generic" => [qw(extract_object_number)],
 		"conf" => [qw(resolve_alias resolve_object_alias long_name short_name)],
 		"isin" => [qw(isin_checksum isin_validate isin_create_from_local)],
-                "timeframe" => [qw(get_timeframe_data parse_date_str)]
+                "timeframe" => [qw(get_timeframe_data parse_date_str find_calculator)]
 		);
 
+use GT::DateTime;
 use GT::Prices;
 use GT::Eval;
 use GT::ArgsTree;
@@ -461,7 +462,6 @@ if (defined($available_timeframes)) {
 
 #ERR#  ERROR  "Invalid db argument in get_timeframe_data" unless ( ref($db) =~ /GT::DB/);
 #ERR#  ERROR  "Timeframe parameter not set in get_timeframe_data." unless(defined($timeframe));
-$max_loaded_items = -1 unless(defined($max_loaded_items));
 
 foreach(reverse(@tf)) {
   next if ($_ > $timeframe);
@@ -637,6 +637,69 @@ without Date::Manip you will need to use:
 
 =cut
 } # sub parse_date_str
+
+=item C<< find_calculator($code, $timeframe, $full, $start, $end, $nb_item, $max_loaded_item) >>
+
+Find a calculator: Returns $calc (the calculator), as well as
+$first and $last (indices used by the calculator).
+
+The interval examined (bound by $first and $last) is computed as follows (stop whenever $first and $last have been determined):
+1. if present, use --start (otherwise default $first is 2 years back) and --end (otherwise default $last is last price)
+2. use --nb-item (from first or last, whichever has been determined), if present
+3. use first or last price, whichever has not yet been determined, if --full is present
+4. otherwise, use twice the ratio of current timeframe to yearly timeframe
+
+Note that the values given to --start and --end are relative to the selected time frame (i.e., if timeframe is "day", these indicate a date; if timeframe is "week", these indicate a week; etc.). Format is "YYYY-MM-DD" for dates, "YYYY-WW" for weeks, "YYYY-MM" for months, and "YYYY" for years.
+
+=cut
+
+sub find_calculator {
+  my ($code, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items) = @_;
+  $nb_item ||= 0;
+  $max_loaded_items ||= -1;
+
+  if (!defined $timeframe) {
+    my $msg = "Unkown timeframe: GT::DateTime::name_of_timeframe($timeframe)\nAvailable timeframes are:\n";
+    foreach (GT::DateTime::list_of_timeframe()) {
+      $msg .= "\t".GT::DateTime::name_of_timeframe($_) . "\n";
+    }
+    die($msg);
+  }
+
+  my $db = GT::Eval::create_db_object();
+  my ($prices, $calc) = get_timeframe_data($code, $timeframe, $db, $max_loaded_items);
+  $db->disconnect;
+
+  my $c = $prices->count;
+  my $first;
+  my $last;
+  $last = $c - 1 unless ($end || $start);
+  if ($end) {
+    my $date = $prices->find_nearest_preceding_date($end);
+    $last = $prices->date($date);
+  }
+  if ($start) {
+    my $date = $prices->find_nearest_following_date($start);
+    $first = $prices->date($date);
+  }
+  unless ($start) {
+    $first = $last - 2 * GT::DateTime::timeframe_ratio($YEAR, 
+						     $calc->current_timeframe);
+    $first = 0 if ($full);
+    $first = $last - $nb_item + 1 if ($nb_item);
+    $first = 0 if ($first < 0);
+  }
+  unless ($last) {
+    $last = $first + 2 * GT::DateTime::timeframe_ratio($YEAR, 
+						     $calc->current_timeframe);
+    $last = $c - 1 if ($full);
+    $last = $first + $nb_item - 1 if ($nb_item);
+    $last = $c - 1 if ($last >= $c);
+  }
+
+  return ($calc, $first, $last);
+
+}
 
 =back
 

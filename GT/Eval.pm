@@ -15,7 +15,7 @@ use GT::Tools qw(:conf);
 require Exporter;
 
 @ISA = qw(Exporter);
-@EXPORT = qw(create_standard_object create_db_object get_standard_name);
+@EXPORT = qw(create_standard_object create_db_object get_standard_name get_long_name);
 
 =head1 NAME
 
@@ -113,6 +113,22 @@ sub get_standard_name {
 	$n .= " " . join(" ", @{$object->{'args'}});
     }
     return $n;
+}
+
+=item C<< get_long_name ($code) >>
+
+Returns the long name of the market (if defined). 
+
+See also ~/.gt/sharenames which contains lines of the form
+<code>\t<long name>
+mapping a market code to its long name.
+
+=cut
+sub get_long_name {
+    my $code = shift;
+    
+    $db = create_db_object() unless $db;
+    return $db->get_name($code);
 }
 
 =pod 
