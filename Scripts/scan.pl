@@ -441,6 +441,8 @@ sub process_msg {
     }
 }
 
+$timeframe = GT::DateTime::name_to_timeframe($timeframe);
+
 # Actually launch the backtests
 my $analysis;
 my $count_process = 0;
