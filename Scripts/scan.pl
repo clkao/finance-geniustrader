@@ -86,24 +86,67 @@ lines starting with # are ignored (with the ras hack(s))
 
 =over 4
 
-=item --full (default - false)
+=item --full, --start=<date>, --end=<date>, --nb-item=<nr>
 
-Runs the scan with the full history (it runs with two years by default)
+Determines the time interval over which the scan is run. In detail:
+
+=over
+
+=item --start=2001-1-10, --end=2002-11-17
+
+The start and end dates considered for the scan. The date needs to be in the
+format configured in ~/.gt/options and must match the timeframe selected. 
+
+=item --nb-items=100
+
+The number of periods to use in the scan.
+
+=item --full
+
+Runs the scan with the full history.
+
+=back
+
+The periods considered are relative to the selected time frame (i.e., if timeframe
+is "day", these indicate a date; if timeframe is "week", these indicate a week;
+etc.). In GT format, use "YYYY-MM-DD" or "YYYY-MM-DD hh:mm:ss" for days (the
+latter giving intraday data), "YYYY-WW" for weeks, "YYYY/MM" for months, and 
+"YYYY" for years.
+
+The interval of periods examined is determined as follows:
+
+=over
+
+=item 1 if present, use --start and --end (otherwise default to last price)
+
+=item 1 use --nb-item (from first or last, whichever has been determined), 
+if present
+
+=item 1 if --full is present, use first or last price, whichever has not yet been determined
+
+=item 1 otherwise, consider a two year interval.
+
+=back
+
+The first period determined following this procedure is chosen. If additional
+options are given, these are ignored (e.g., if --start, --end, --full are given,
+--full is ignored).
+
+=item --timeframe=1min|5min|10min|15min|30min|hour|3hour|day|week|month|year
+
+The timeframe can be any of the available modules in GT/DateTime.  
+
+=item --max-loaded-items
+
+Determines the number of periods (back from the last period) that are loaded
+for a given market from the data base. Care should be taken to ensure that
+these are consistent with the performed analysis. If not enough data is
+loaded to satisfy dependencies, for example, correct results cannot be obtained.
+This option is effective only for certain data base modules and ignored otherwise.
 
 =item --verbose
 
 Makes scan.pl and invoked methods talkative (default - false)
-
-=item --start=date, --end=date
-
-Sets the start and end dates for the scan (defaults - none)
-start and end dates should be specified consistent with timeframe
-but this conversion will be done internally provided the dates
-can be parsed (note -- with the ras hack timeframe conversion is automatic)
-
-=item --timeframe=1min|5min|10min|15min|30min|hour|2hour|3hour|4hour|day|week|month|year
-
-Runs the scan using the given timeframe. (default - day)
 
 =item --nbprocess=2
 
@@ -134,13 +177,15 @@ S:Generic:And {S:Generic:Below {I:Prices} {I:EMA 30}} {S:Generic:Below {I:Prices
 =cut
 
 # Manage options
-my ($full, $verbose, $timeframe, $start, $end, $nbprocess, $html, $url) = 
-   (0,     0,        '',         '',     '',   1,          0,     'http://finance.yahoo.com/l?s=%s');
-GetOptions( 'full!'		=> \$full,
+my ($full, $nb_item, $start, $end, $timeframe, $max_loaded_items) =
+   (0, 0, '', '', 'day', -1);
+my ($verbose, $nbprocess, $html, $url) = 
+   (0,        1,          0,     'http://finance.yahoo.com/l?s=%s');
+GetOptions('full!' => \$full, 'nb-item=i' => \$nb_item, 
+	   "start=s" => \$start, "end=s" => \$end, 
+	   "max-loaded-items" => \$max_loaded_items,
+	   "timeframe=s" => \$timeframe,
             'verbose+'		=> \$verbose,
-            'timeframe=s'	=> \$timeframe,
-            "start=s"		=> \$start,
-            "end=s"		=> \$end,
             'nbprocess=s'	=> \$nbprocess,
             "html!"		=> \$html,
             "url=s"		=> \$url,
@@ -412,7 +457,7 @@ for (my $d = 0; $d < $list->count; $d++)
     }
     my $code = $list->get($d);
 
-    my ($calc, $first, $last) = find_calculator($code, $timeframe, 0, $start, $end);
+    my ($calc, $first, $last) = find_calculator($code, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items);
 
     my $i;
     if ($calc->prices->has_date($date)) {

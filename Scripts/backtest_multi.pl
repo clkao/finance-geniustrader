@@ -11,7 +11,6 @@ use lib '../..';
 #use lib '/tmp';
 
 use strict;
-use vars qw($db);
 
 use XML::Simple;
 #use Data::Dumper;
@@ -26,18 +25,23 @@ use GT::Eval;
 use Getopt::Long;
 use GT::Conf;
 use GT::DateTime;
-use GT::Tools qw(:conf);
+use GT::Tools qw(:conf :timeframe);
 use GT::BackTest::SpoolNew;
 
 GT::Conf::load();
 
 
 # Gestion des options
-my ($full, $start, $end, $timeframe, $outputdir, $alias) = 
-   (0, '', '', '', '', '');
-GetOptions('full!' => \$full, "timeframe=s" => \$timeframe,
-	   'start=s' => \$start, 'end=s' => \$end,
+my ($full, $nb_item, $start, $end, $timeframe, $max_loaded_items) =
+   (0, 0, '', '', 'day', -1);
+my ($outputdir, $alias) = 
+   ('', '');
+GetOptions('full!' => \$full, 'nb-item=i' => \$nb_item, 
+	   "start=s" => \$start, "end=s" => \$end, 
+	   "max-loaded-items" => \$max_loaded_items,
+	   "timeframe=s" => \$timeframe,
 	  'output-directory=s' => \$outputdir, 'alias=s' => \$alias );
+$timeframe = GT::DateTime::name_to_timeframe($timeframe);
 my $init = 10000;
 
 # read the system-description
@@ -48,8 +52,7 @@ my $data = $xs->XMLin( $filename );
 #use Data::Dumper;
 #print Dumper($data);
 
-# Create the Portfoliomanager and the database
-my $db = create_standard_object("DB::" . GT::Conf::get("DB::module"));
+# Create the Portfoliomanager
 my $pf_manager = GT::PortfolioManager->new;
 
 # Set up the various system managers
@@ -116,22 +119,15 @@ $pf_manager->default_money_management_rule(
 	create_standard_object("MoneyManagement::Basic"));
 $pf_manager->finalize;
 
-# Set up the codes
-my @codes = keys %{$data->{'code'}};
+# Set up the calculators
 my @calc = ();
 $cnt = 0;
-foreach my $code ( @codes ) {
-  my $q = $db->get_prices($code);
-  $calc[$cnt] = GT::Calculator->new($q);
+foreach my $code ( keys %{$data->{'code'}} ) {
+  my ($calc, $first, $last) = find_calculator($code, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items);
+  $calc[$cnt] = $calc;
   $calc[$cnt]->set_code($code);
-  if ($timeframe) {
-    if (! $calc[$cnt]->set_current_timeframe(GT::DateTime::name_to_timeframe($timeframe))) {
-      die "Can't create « $timeframe » timeframe ...\n";
-    }
-  }
   $cnt++;
 }
-
 
 # Now the hard part...
 my $analysis = backtest_multi($pf_manager, \@sys_manager, \@brokers, \@calc, $start, $end, $full, $init);
@@ -164,7 +160,5 @@ if ($outputdir ne '') {
 			    $analysis->{'portfolio'}, $alias);
     $bkt_spool->sync();
 }
-
-$db->disconnect;
 
 

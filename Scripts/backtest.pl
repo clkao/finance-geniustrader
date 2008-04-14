@@ -7,7 +7,6 @@
 use lib '..';
 
 use strict;
-use vars qw($db);
 
 use GT::Prices;
 use GT::Portfolio;
@@ -30,17 +29,19 @@ GT::Conf::load();
 
 =head1 ./backtest.pl [ options ] <code>
 
-=head1 ./backtest.pl <system_alias> <code>
+=head1 ./backtest.pl [ options ] <system_alias> <code>
 
 =head2 Description
 
 Backtest will run a backtest of the system called systemname
 (available as GT::Systems::<systemname>) on share of indicated code.
 
-You can either describe the full system with all the options, or you can
-give an alias of a system. The alias is set your configuration file with
-entries like "Aliases::<alias_name> <full_system_name>". The full
-system name is like "SY:TFS|CS:SY:TFS|CS:Stop:Fixed 4|MM:VAR".
+You can either describe the system using options, give a full system
+name or you can give a system alias. An alias is set in the 
+configuration file with entries of the form 
+ Aliases::<alias_name> <full_system_name>. 
+An example of a full system name is 
+ SY:TFS|CS:SY:TFS|CS:Stop:Fixed 4|MM:VAR.
 
 =head2 Options
 
@@ -49,9 +50,64 @@ of MoneyManagement, TradeFilters, OrderFactory an CloseStrategy modules.
 
 =over 4
 
-=item --full 
+=item --full, --start=<date>, --end=<date>, --nb-item=<nr>
 
-Runs the backtest on the full history (it runs on two years by default) 
+Determines the time interval over which to perform the backtest. In detail:
+
+=over
+
+=item --start=2001-1-10, --end=2002-11-17
+
+The start and end dates over which to perform the backtest.
+The date needs to be in the
+format configured in ~/.gt/options and must match the timeframe selected. 
+
+=item --nb-items=100
+
+The number of periods to use in the analysis.
+
+=item --full
+
+Consider all available periods.
+
+=back
+
+The periods considered are relative to the selected time frame (i.e., if timeframe
+is "day", these indicate a date; if timeframe is "week", these indicate a week;
+etc.). In GT format, use "YYYY-MM-DD" or "YYYY-MM-DD hh:mm:ss" for days (the
+latter giving intraday data), "YYYY-WW" for weeks, "YYYY/MM" for months, and 
+"YYYY" for years.
+
+The interval of periods examined is determined as follows:
+
+=over
+
+=item 1 if present, use --start and --end (otherwise default to last price)
+
+=item 1 use --nb-item (from first or last, whichever has been determined), 
+if present
+
+=item 1 if --full is present, use first or last price, whichever has not yet been determined
+
+=item 1 otherwise, consider a two year interval.
+
+=back
+
+The first period determined following this procedure is chosen. If additional
+options are given, these are ignored (e.g., if --start, --end, --full are given,
+--full is ignored).
+
+=item --timeframe=1min|5min|10min|15min|30min|hour|3hour|day|week|month|year
+
+The timeframe can be any of the available modules in GT/DateTime.  
+
+=item --max-loaded-items
+
+Determines the number of periods (back from the last period) that are loaded
+for a given market from the data base. Care should be taken to ensure that
+these are consistent with the performed analysis. If not enough data is
+loaded to satisfy dependencies, for example, correct results cannot be obtained.
+This option is effective only for certain data base modules and ignored otherwise.
 
 =item --template="backtest.mpl"
 
@@ -80,13 +136,14 @@ unsignificant symbols.
 
 Store the resulting portfolio in the indicated file.
 
-=item --timeframe="day|week|month|year"
-
-Launch the system while using the indicated timeframe.
-
 =item --system="<system_name>"
 
 use the GT::Systems::<system_name> as the source of buy/sell orders.  
+
+=item --broker="NoCosts"
+
+Calculate commissions and annual account charge, if applicable, using
+GT::Brokers::<broker_name> as broker.
 
 =item --money-management="<money_management_name>" 
 
@@ -103,6 +160,8 @@ use GT::OrderFactory::<order_factory_name> as an order factory.
 =item --close-strategy="<close_strategy_name>" 
 
 use GT::CloseStrategy::<close_strategy_name> as a close strategy.
+
+=item --verbose
 
 =back
 
@@ -127,16 +186,21 @@ use GT::CloseStrategy::<close_strategy_name> as a close strategy.
 =cut
 
 # Manage options
-my ($full, $verbose, $html, $display_trades, $template, $graph_file, $ofname, $broker, $system, $timeframe, $start, $end, $store_file) = 
-   (0, 0, 0, 0, '', '', '', '', '', 'day', '', '', '');
+my ($full, $nb_item, $start, $end, $timeframe, $max_loaded_items) =
+   (0, 0, '', '', 'day', -1);
+my ($verbose, $html, $display_trades, $template, $graph_file, $ofname, $broker, $system, $store_file) = 
+   (0, 0, 0, '', '', '', '', '', '');
 my (@mmname, @tfname, @csname);
-GetOptions('full!' => \$full, 'verbose!' => \$verbose, 'html!' => \$html,
+GetOptions('full!' => \$full, 'nb-item=i' => \$nb_item, 
+	   "start=s" => \$start, "end=s" => \$end, 
+	   "max-loaded-items" => \$max_loaded_items,
+	   "timeframe=s" => \$timeframe,
+	   'verbose!' => \$verbose, 'html!' => \$html,
 	   'template=s' => \$template, 'display-trades!' => \$display_trades,
 	   'money-management=s' => \@mmname, 'graph=s' => \$graph_file,
 	   'trade-filter=s' => \@tfname, 'order-factory=s' => \$ofname,
 	   'close-strategy=s' => \@csname, 'broker=s' => \$broker,
-	   'system=s' => \$system, "timeframe=s" => \$timeframe,
-	   'start=s' => \$start, 'end=s' => \$end, "store=s" => \$store_file);
+	   'system=s' => \$system, "store=s" => \$store_file);
 
 if (! scalar(@mmname))
 {
@@ -147,7 +211,6 @@ if ($system && ! scalar(@csname)) {
 }
 
 # Create the entire framework
-my $db = create_db_object();
 my $pf_manager = GT::PortfolioManager->new;
 my $sys_manager = GT::SystemManager->new;
 
@@ -204,7 +267,7 @@ if (! $code) {
 
 $timeframe = GT::DateTime::name_to_timeframe($timeframe);
 
-my ($calc, $first, $last) = find_calculator($code, $timeframe, $full, $start, $end);
+my ($calc, $first, $last) = find_calculator($code, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items);
 
 # The real work happens here
 my $analysis = backtest_single($pf_manager, $sys_manager, $broker, $calc, $first, $last);
