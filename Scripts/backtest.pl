@@ -162,6 +162,14 @@ use GT::OrderFactory::<order_factory_name> as an order factory.
 
 use GT::CloseStrategy::<close_strategy_name> as a close strategy.
 
+=item --set=SETNAME
+
+Stores the backtest results in the "backtests" directory (refer to your options file for the location of this directory) using the set name SETNAME. Use the --set option of analyze_backtest.pl to differentiate between the different backtest results in your directory.
+
+=item --output-directory=DIRNAME
+
+Override the "backtests" directory in the options file.
+
 =item --verbose
 
 =back
@@ -193,15 +201,17 @@ use GT::CloseStrategy::<close_strategy_name> as a close strategy.
 # Manage options
 my ($full, $nb_item, $start, $end, $timeframe, $max_loaded_items) =
    (0, 0, '', '', 'day', -1);
-my ($verbose, $html, $display_trades, $template, $graph_file, $ofname, $broker, $system, $store_file) = 
-   (0, 0, 0, '', '', '', '', '', '');
+my ($verbose, $html, $display_trades, $template, $graph_file, $ofname, $broker, $system, $store_file, $outputdir, $set) = 
+   (0, 0, 0, '', '', '', '', '', '', '', '');
 my (@mmname, @tfname, @csname);
+$outputdir = GT::Conf::get("BackTest::Directory") || '';
 GetOptions('full!' => \$full, 'nb-item=i' => \$nb_item, 
 	   "start=s" => \$start, "end=s" => \$end, 
 	   "max-loaded-items" => \$max_loaded_items,
 	   "timeframe=s" => \$timeframe,
 	   'verbose!' => \$verbose, 'html!' => \$html,
 	   'template=s' => \$template, 'display-trades!' => \$display_trades,
+	   'output-directory=s' => \$outputdir, 'set=s' => \$set,
 	   'money-management=s' => \@mmname, 'graph=s' => \$graph_file,
 	   'trade-filter=s' => \@tfname, 'order-factory=s' => \$ofname,
 	   'close-strategy=s' => \@csname, 'broker=s' => \$broker,
@@ -213,6 +223,11 @@ if (! scalar(@mmname))
 }
 if ($system && ! scalar(@csname)) {
     die "You must give at least one --close-strategy argument !\n";
+}
+
+if (! -d $outputdir)
+{
+  die "The directory '$outputdir' doesn't exist !\n";
 }
 
 # Create the entire framework
@@ -384,4 +399,21 @@ else
     print "## Global analysis (full portfolio always invested)\n";
     GT::Report::PortfolioAnalysis($analysis->{'real'}, $verbose);
     print "\n";
+}
+
+if ( $set ) {
+  # Store intermediate result
+  my $bkt_spool = GT::BackTest::Spool->new($outputdir);
+  my $stats = [ $analysis->{'real'}{'std_performance'},
+		$analysis->{'real'}{'performance'},
+		$analysis->{'real'}{'max_draw_down'},
+		$analysis->{'real'}{'std_buyandhold'},
+		$analysis->{'real'}{'buyandhold'}
+	      ];
+
+  $bkt_spool->update_index();
+  $bkt_spool->add_alias_name($sys_manager->get_name, $sys_manager->alias_name);
+  $bkt_spool->add_results($sys_manager->get_name, $code, $stats,
+			  $analysis->{'portfolio'}, $set);
+  $bkt_spool->sync();
 }

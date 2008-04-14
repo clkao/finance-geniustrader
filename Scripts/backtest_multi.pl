@@ -34,15 +34,22 @@ GT::Conf::load();
 # Gestion des options
 my ($full, $nb_item, $start, $end, $timeframe, $max_loaded_items) =
    (0, 0, '', '', 'day', -1);
-my ($outputdir, $alias) = 
+my ($outputdir, $set) = 
    ('', '');
+$outputdir = GT::Conf::get("BackTest::Directory") || '';
 GetOptions('full!' => \$full, 'nb-item=i' => \$nb_item, 
 	   "start=s" => \$start, "end=s" => \$end, 
 	   "max-loaded-items" => \$max_loaded_items,
 	   "timeframe=s" => \$timeframe,
-	  'output-directory=s' => \$outputdir, 'alias=s' => \$alias );
+	  'output-directory=s' => \$outputdir, 'set=s' => \$set );
 $timeframe = GT::DateTime::name_to_timeframe($timeframe);
 my $init = 10000;
+
+# Checks
+if (! -d $outputdir)
+{
+    die "The directory '$outputdir' doesn't exist !\n";
+}
 
 # read the system-description
 my $filename = shift;
@@ -140,7 +147,7 @@ GT::Report::PortfolioAnalysis($analysis->{'real'}, 1);
 #GT::Report::PortfolioAnalysis($analysis->{'theoretical'}, $verbose);
 
 
-if ($outputdir ne '') {
+if ($set) {
     my $bkt_spool = GT::BackTest::SpoolNew->new($outputdir);
     my $stats = [ $analysis->{'real'}{'std_performance'},
 		  $analysis->{'real'}{'performance'},
@@ -149,15 +156,14 @@ if ($outputdir ne '') {
 		  $analysis->{'real'}{'buyandhold'}
 		];
 
-    $alias = "MULTI" if ( $alias eq '' );
-
     delete $analysis->{'portfolio'}->{objects};
 
-    print STDERR $alias . " --> " . $filename . "\n";
-    $bkt_spool->add_alias_name($alias."-".$filename, $alias);
+    print STDERR $set . " --> " . $filename . "\n";
 
-    $bkt_spool->add_results($alias."-".$filename, "GDAXI", $stats,
-			    $analysis->{'portfolio'}, $alias);
+    $bkt_spool->update_index();
+    $bkt_spool->add_alias_name($set."-".$filename, $set);
+    $bkt_spool->add_results($set."-".$filename, "MULTI", $stats,
+			    $analysis->{'portfolio'}, $set);
     $bkt_spool->sync();
 }
 
