@@ -60,11 +60,12 @@ my $outputdir = shift;
 $outputdir = GT::Conf::get("BackTest::Directory") if (! $outputdir);
 $outputdir = "." if (! $outputdir);
 
-$template = GT::Conf::get('Template::analyze_backtest') if ($template eq '');
+my $mason_template = GT::Conf::get('Template::analyze_backtest') if ($template eq '');
+$template = $mason_template if defined $mason_template;
 
 my $spool = GT::BackTest::Spool->new($outputdir);
 
-  if ($template ne '') {
+if ($template ne '') {
 
    my $use = 'use HTML::Mason;use File::Spec;use Cwd;';
    eval $use;
