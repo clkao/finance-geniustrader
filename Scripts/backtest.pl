@@ -31,15 +31,16 @@ GT::Conf::load();
 
 =head1 ./backtest.pl [ options ] <system_alias> <code>
 
+=head1 ./backtest.pl [ options ] "<full_system_name>" <code>
+
 =head2 Description
 
-Backtest will run a backtest of the system called systemname
-(available as GT::Systems::<systemname>) on share of indicated code.
+Backtest will run a backtest of a system on the indicated code.
 
 You can either describe the system using options, give a full system
-name or you can give a system alias. An alias is set in the 
+name, or you can give a system alias. An alias is set in the 
 configuration file with entries of the form 
- Aliases::<alias_name> <full_system_name>. 
+ Aliases::Global::<alias_name> <full_system_name>. 
 An example of a full system name is 
  SY:TFS|CS:SY:TFS|CS:Stop:Fixed 4|MM:VAR.
 
@@ -181,6 +182,10 @@ use GT::CloseStrategy::<close_strategy_name> as a close strategy.
 
 ./backtest.pl --close-strategy="Systems::TFS" --close-strategy="Stop::Fixed 6" --money-management="VAR" --money-management="OrderSizeLimit" --system="TFS" --broker="SelfTrade Intégral" 13000
 
+=item
+
+./backtest.pl --broker="SelfTrade Intégral" "SY:TFS|CS:SY:TFS|CS:Stop:Fixed 6|MM:VAR|MM:OrderSizeLimit" 13000
+
 =back
 
 =cut
@@ -219,11 +224,19 @@ if ($system) {
     $sys_manager->set_system(
 	    create_standard_object(split (/\s+/, "Systems::$system")));
 } else {
-    my $alias = shift;
-    if (! defined($alias)) {
+    my $sysname = shift;
+    # Check for alias
+    if (! defined($sysname)) {
 	die "You must give either a --system parameter or an alias name.";
     }
-    my $sysname = resolve_alias($alias);
+    if ($sysname !~ /\|/)
+    {
+	my $alias = resolve_alias($sysname);
+	die "Alias unknown '$alias'" if (! $alias);
+	$sys_manager->set_alias_name($sysname);
+	$sysname = $alias;
+    }
+
     if (defined($sysname) && $sysname)
     {
 	$sys_manager->setup_from_name($sysname);
