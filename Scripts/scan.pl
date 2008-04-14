@@ -76,9 +76,32 @@ format (YYYY-MM-DD HH:MM:SS) where time is optional
 
 =over 4
 
-one or more GT::Signals or GT::Systems descriptions each on a separate line
+One or more GT::Signals or GT::Systems descriptions each on a separate line.
+The descriptions have the form of a signal or system name, followed by its
+arguments.
 
-lines starting with # are ignored (with the ras hack(s))
+Example:
+     S:Generic:And {S:Generic:CrossOverUp {I:SMA 5} {I:SMA 20}} {S:Generic:Increase {I:ADX}}
+
+
+Description files can be formatted using the symbol '\' as the
+line continuation symbol. This symbol must appear as the last character
+on the line before the trailing line terminator (in unix that's
+a '\n' character). No whitespace must appear between the \ and the newline.
+
+Example:
+     S:Generic:And \
+       {S:Generic:CrossOverUp {I:SMA 5} {I:SMA 20}} \
+       {S:Generic:Increase {I:ADX}}
+
+Blank lines and lines that start with # are comments and ignored.
+Note if you comment out the first line of multi-line description,
+the entire is effectively commented out.
+
+Example:
+     # the following signal description is commented out
+     #S:Generic:And {S:Generic:Above {I:Prices} {I:EMA 30}} \
+      {S:Generic:Above {I:Prices} {I:EMA 150}}
 
 =back
 
@@ -350,35 +373,6 @@ foreach my $line (@desc_systems) {
     chomp($line);
 
     # ras hack -- allow multi-line values in desc_systems files
-=pod
-
-=head2 this is a ras hack version of scan.pl
-
-  it therefore supports multi-line system-signal description files
-
-  description files can be formatted using the symbol '\' as the
-  line continuation symbol. it must appear as the last character
-  on the line before the trailing 'line terminator'. in unix that's
-  a '\n' character but on windoze who the hell knows. it's critical
-  that no whitespace appears between the \ and the newline.
-
-  example
-
-     S:Generic:And \
-       {S:Generic:CrossOverUp {I:SMA 5} {I:SMA 20}} \
-       {S:Generic:Increase {I:ADX}}
-
-  blank lines and lines that start with # are comments and ignored.
-  note if you comment out the first line of multi-line sys-sig desc
-  the entire is effectively commented out.
-
-  example
-
-     # the following signal description is commented out
-     #S:Generic:And {S:Generic:Above {I:Prices} {I:EMA 30}} \
-      {S:Generic:Above {I:Prices} {I:EMA 150}}
-
-=cut
     if ( $line =~ /\\$/ ) {
       $line =~ s/\\$//;     # remove \
       $buf .= $line;        # save line
