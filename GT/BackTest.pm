@@ -18,6 +18,8 @@ use GT::Conf;
 use GT::DateTime;
 #ALL#  use Log::Log4perl qw(:easy);
 use GT::Indicators::MaxDrawDown;
+use GT::Tools qw(:timeframe);
+
 
 =head1 NAME
 
@@ -170,10 +172,10 @@ sub backtest_single {
 
 
 sub backtest_multi {
-    my ($pf_manager, $sys_manager_ref, $broker_ref, $calc_ref, $start, $end, $full, $init) = @_;
+    my ($pf_manager, $sys_manager_ref, $broker_ref, $code_ref, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items, $init) = @_;
     my @sysmanager = @{$sys_manager_ref};
     my @brokers = @{$broker_ref};
-    my @calc = @{$calc_ref};
+    my @codes = @{$code_ref};
     $init = 10000 unless ( defined($init) );
 
     # Create an empty portfolio object and make the manager use it
@@ -196,49 +198,37 @@ sub backtest_multi {
       $cnt++;
     }
 
-    # Insert the calc_ojects in the portfolio..
-    foreach my $calc ( @calc ) {
-      $p->{objects}->{calc}->{$calc->code()} = $calc;
-    }
-
     # Precalc the intervals
     my $long_first = 0;
     my $long_last = 0;
     my $long_code = 0;
-    foreach my $i ( 0..$#sysmanager ) {
+    my @calc;
+    foreach my $i ( 0..$#codes ) {
 
-      foreach my $j ( 0..$#calc ) {
+      my ($calc, $first, $last) = find_calculator($codes[$i], $timeframe, $full, $start, $end, $nb_item, $max_loaded_items);
 
-	my $c = $calc[$j]->prices->count;
-	my $last = $c - 1;
-	my $first = $c - 2 * GT::DateTime::timeframe_ratio($YEAR, 
-							   $calc[$j]->current_timeframe);
-	$first = 0 if ($full);
-	$first = 0 if ($first < 0);
-	if ($start) {
-	  my $date = $calc[$j]->prices->find_nearest_following_date($start);
-	  $first = $calc[$j]->prices->date($date);
-	}
-	if ($end) {
-	  my $date = $calc[$j]->prices->find_nearest_preceding_date($end);
-	  $last = $calc[$j]->prices->date($date);
-	}
+      $calc[$i] = $calc;
 
-	# Set this code as reference if possible
-	if ( ($last - $first) > ($long_last - $long_first) ) {
-	  $long_last = $last;
-	  $long_first = $first;
-	  $long_code = $j;
-	}
+      # Set this code as reference if possible
+      if ( ($last - $first) > ($long_last - $long_first) ) {
+	$long_last = $last;
+	$long_first = $first;
+	$long_code = $i;
+      }
 	
-	$sysmanager[$i]->precalculate_interval($calc[$j], $first, $last);
+#     print STDERR $calc->code() . " --> " . $first . " / " . $last . "\n";
 
-#	print STDERR $calc[$j]->code() . " --> " . $first . " / " . $last . "\n";
+      # Insert the calc_ojects in the portfolio..
+      $p->{objects}->{calc}->{$calc->code()} = $calc;
+
+      foreach my $j ( 0..$#sysmanager ) {
+
+	$sysmanager[$j]->precalculate_interval($calc, $first, $last);
 
       }
     }
 
-    print STDERR "LONG-CODE:  " . $long_code . "\n";
+    print STDERR "LONG-CODE:  " . $calc[$long_code]->code() . "\n";
     print STDERR "LONG-FIRST: " . $long_first . "\n";
     print STDERR "LONG-LAST:  " . $long_last . "\n";
 
@@ -365,6 +355,9 @@ sub backtest_multi {
     $re->{'last_date'} = $calc[$long_code]->prices->at($long_last)->[$DATE];
     $th->{'last_date'} = $calc[$long_code]->prices->at($long_last)->[$DATE];
 
+    $re->{'duration'} = (GT::DateTime::map_date_to_time($timeframe, $re->{'last_date'}) - GT::DateTime::map_date_to_time($timeframe, $re->{'first_date'})) / 31557600;
+    $th->{'duration'} = (GT::DateTime::map_date_to_time($timeframe, $re->{'last_date'}) - GT::DateTime::map_date_to_time($timeframe, $re->{'first_date'})) / 31557600;
+
     # Calculate Buy & Hold Max Draw Down with our MaxDrawDown Indicator
 #    my $indicator_maxdd = GT::Indicators::MaxDrawDown->new();
 #    $indicator_maxdd->calculate($calc, $last);
@@ -373,6 +366,10 @@ sub backtest_multi {
 #	$re->{'buyandhold_max_draw_down'} = $buyandhold_maxdd;
 #	$th->{'buyandhold_max_draw_down'} = $buyandhold_maxdd;
 #    }
+    ### NOTE: Need to assign something to these to avoid undef value in output
+    $re->{'buyandhold_max_draw_down'} = 0;
+    $th->{'buyandhold_max_draw_down'} = 0;
+
 
     # Hack to remove code reference in portfolio
     delete $p->{'date2int'};
