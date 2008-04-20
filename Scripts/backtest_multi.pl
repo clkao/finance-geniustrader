@@ -21,12 +21,12 @@ use GT::PortfolioManager;
 use GT::Calculator;
 use GT::Report;
 use GT::BackTest;
+use GT::BackTest::Spool;
 use GT::Eval;
 use Getopt::Long;
 use GT::Conf;
 use GT::DateTime;
 use GT::Tools qw(:conf :timeframe);
-use GT::BackTest::SpoolNew;
 use Pod::Usage;
 
 GT::Conf::load();
@@ -137,18 +137,10 @@ $pf_manager->default_money_management_rule(
 	create_standard_object("MoneyManagement::Basic"));
 $pf_manager->finalize;
 
-# Set up the calculators
-my @calc = ();
-$cnt = 0;
-foreach my $code ( keys %{$data->{'code'}} ) {
-  my ($calc, $first, $last) = find_calculator($code, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items);
-  $calc[$cnt] = $calc;
-  $calc[$cnt]->set_code($code);
-  $cnt++;
-}
+my @codes = keys %{$data->{'code'}};
 
 # Now the hard part...
-my $analysis = backtest_multi($pf_manager, \@sys_manager, \@brokers, \@calc, $start, $end, $full, $init);
+my $analysis = backtest_multi($pf_manager, \@sys_manager, \@brokers, \@codes, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items, $init);
 
 # Print the analysis
 GT::Report::Portfolio($analysis->{'portfolio'}, 1);
@@ -159,7 +151,7 @@ GT::Report::PortfolioAnalysis($analysis->{'real'}, 1);
 
 
 if ($set) {
-    my $bkt_spool = GT::BackTest::SpoolNew->new($outputdir);
+    my $bkt_spool = GT::BackTest::Spool->new($outputdir);
     my $stats = [ $analysis->{'real'}{'std_performance'},
 		  $analysis->{'real'}{'performance'},
 		  $analysis->{'real'}{'max_draw_down'},
