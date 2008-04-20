@@ -134,6 +134,13 @@ last modification date and time.
 Those two options are used to restrict the result of a "report" command to
 a certain timeframe.
 
+=item --options=<key>=<value>
+
+A configuration option (typically given in the options file) in the
+form of a key=value pair. For example,
+ --option=DB::Text::format=0
+sets the format used to parse markets via the DB::Text module to 0.
+
 =head1 COMMANDS
 
 =item create
@@ -243,13 +250,22 @@ my ($backup) # make makeup of existing portfolio if changes made and applied
  = (1);
 my ($verbose) # app gets noisy
  = (0);
+my $man = 0;
+my @options;
 GetOptions("marged!" => \$marged, "source=s" => \$source,
 	   "since=s" => \$since, "until=s" => \$until,
 	   "confirm!" => \$confirm, "timeframe" => \$timeframe,
 	   'template=s' => \$template, "detailed!" => \$detailed,
 	   "backup!" => \$backup,
 	   "verbose+" => \$verbose,
-           );
+	   "option=s" => \@options, "help!" => \$man);
+
+foreach (@options) {
+    my ($key, $value) = split (/=/, $_);
+    GT::Conf::set($key, $value);
+}
+
+pod2usage( -verbose => 2) if ($man);
 
 # Check the portfolio directory
 #GT::Conf::default("GT::Portfolio::Directory", $ENV{'HOME'} . "/.gt/portfolio");

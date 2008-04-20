@@ -183,6 +183,13 @@ Output is generated in html (default - false)
 
 If html output enabled then embed this url as href (default - http://finance.yahoo.com/l?s=<code>)
 
+=item --options=<key>=<value>
+
+A configuration option (typically given in the options file) in the
+form of a key=value pair. For example,
+ --option=DB::Text::format=0
+sets the format used to parse markets via the DB::Text module to 0.
+
 =back
 
 =head1 EXAMPLES (culled from devel archive)
@@ -204,6 +211,8 @@ my ($full, $nb_item, $start, $end, $timeframe, $max_loaded_items) =
    (0, 0, '', '', 'day', -1);
 my ($verbose, $nbprocess, $html, $url) = 
    (0,        1,          0,     'http://finance.yahoo.com/l?s=%s');
+my $man = 0;
+my @options;
 GetOptions('full!' => \$full, 'nb-item=i' => \$nb_item, 
 	   "start=s" => \$start, "end=s" => \$end, 
 	   "max-loaded-items" => \$max_loaded_items,
@@ -212,7 +221,14 @@ GetOptions('full!' => \$full, 'nb-item=i' => \$nb_item,
             'nbprocess=s'	=> \$nbprocess,
             "html!"		=> \$html,
             "url=s"		=> \$url,
-           );
+	   "option=s" => \@options, "help!" => \$man);
+
+foreach (@options) {
+    my ($key, $value) = split (/=/, $_);
+    GT::Conf::set($key, $value);
+}
+
+pod2usage( -verbose => 2) if ($man);
 
 # Create all the framework
 my $list = GT::List->new;

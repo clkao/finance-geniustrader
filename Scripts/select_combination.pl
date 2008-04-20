@@ -12,6 +12,7 @@ use GT::BackTest::Spool;
 use GT::Report;
 use GT::Conf;
 use Getopt::Long;
+use Pod::Usage;
 
 GT::Conf::load();
 
@@ -28,8 +29,18 @@ if they have a performance less than a minimum given by  --limit-performance.
 =cut
 my $set = '';
 my ($limit_ratio, $limit_perf) = (0, 0);
+my $man = 0;
+my @options;
 GetOptions("set=s" => \$set, "limit-ratio=s" => \$limit_ratio,
-	   "limit-performance=s" => \$limit_perf);
+	   "limit-performance=s" => \$limit_perf,
+	   "option=s" => \@options, "help!" => \$man);
+
+foreach (@options) {
+    my ($key, $value) = split (/=/, $_);
+    GT::Conf::set($key, $value);
+}
+
+pod2usage( -verbose => 2) if ($man);
 
 my $outputdir = shift;
 $outputdir = GT::Conf::get("BackTest::Directory") if (! $outputdir);

@@ -93,6 +93,13 @@ these are consistent with the performed analysis. If not enough data is
 loaded to satisfy dependencies, for example, correct results cannot be obtained.
 This option is effective only for certain data base modules and ignored otherwise.
 
+=item --options=<key>=<value>
+
+A configuration option (typically given in the options file) in the
+form of a key=value pair. For example,
+ --option=DB::Text::format=0
+sets the format used to parse markets via the DB::Text module to 0.
+
 =back
 
 =head2 Examples
@@ -110,14 +117,25 @@ args (if any) are passed to the new call that will create the indicator.
 # Get all options
 my ($full, $nb_item, $start, $end, $timeframe, $max_loaded_items) =
    (0, 0, '', '', 'day', -1);
+my $man = 0;
+my @options;
 my $last_record = 0;
 Getopt::Long::Configure("require_order");
 GetOptions('full!' => \$full, 'nb-item=i' => \$nb_item, 
 	   "start=s" => \$start, "end=s" => \$end, 
 	   "max-loaded-items" => \$max_loaded_items,
 	   "timeframe=s" => \$timeframe,
-	   "last-record" => \$last_record);
+	   "last-record" => \$last_record,
+	   "option=s" => \@options, "help!" => \$man);
 $timeframe = GT::DateTime::name_to_timeframe($timeframe);
+
+foreach (@options) {
+    my ($key, $value) = split (/=/, $_);
+    GT::Conf::set($key, $value);
+}
+
+pod2usage( -verbose => 2) if ($man);
+
 if ($last_record) {
   $full = 0;
   $start = '';

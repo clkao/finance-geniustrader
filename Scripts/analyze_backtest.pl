@@ -13,6 +13,7 @@ use GT::Conf;
 use GT::BackTest::Spool;
 use GT::Eval;
 use Getopt::Long;
+use Pod::Usage;
 
 GT::Conf::load();
 
@@ -41,6 +42,13 @@ The template directory is defined as Template::directory in the options file.
 Each template can be predefined by including it into the options file
 For example, Template::analyze_backtest analyze_backtest.mpl
 
+=item --options=<key>=<value>
+
+A configuration option (typically given in the options file) in the
+form of a key=value pair. For example,
+ --option=DB::Text::format=0
+sets the format used to parse markets via the DB::Text module to 0.
+
 =back
 
 =head1 DESCRIPTION
@@ -53,9 +61,17 @@ The location of the spool files is defined as BackTest::Directory in the options
 
 
 my ($set, $template) = ('', '');
-GetOptions("set=s" => \$set,
-           'template=s' => \$template);
+my $man = 0;
+my @options;
+GetOptions("set=s" => \$set, 'template=s' => \$template,
+	   "option=s" => \@options, "help!" => \$man);
 
+foreach (@options) {
+    my ($key, $value) = split (/=/, $_);
+    GT::Conf::set($key, $value);
+}
+
+pod2usage( -verbose => 2) if ($man);
 my $outputdir = shift;
 $outputdir = GT::Conf::get("BackTest::Directory") if (! $outputdir);
 $outputdir = "." if (! $outputdir);

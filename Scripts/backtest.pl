@@ -24,6 +24,7 @@ use GT::Graphics::Driver;
 use GT::Graphics::Object;
 use GT::Graphics::Graphic;
 use GT::Graphics::Tools qw(:axis :color);
+use Pod::Usage;
 
 GT::Conf::load();
 
@@ -172,6 +173,13 @@ Override the "backtests" directory in the options file.
 
 =item --verbose
 
+=item --options=<key>=<value>
+
+A configuration option (typically given in the options file) in the
+form of a key=value pair. For example,
+ --option=DB::Text::format=0
+sets the format used to parse markets via the DB::Text module to 0.
+
 =back
 
 =head2 Examples
@@ -201,6 +209,8 @@ Override the "backtests" directory in the options file.
 # Manage options
 my ($full, $nb_item, $start, $end, $timeframe, $max_loaded_items) =
    (0, 0, '', '', 'day', -1);
+my $man = 0;
+my @options;
 my ($verbose, $html, $display_trades, $template, $graph_file, $ofname, $broker, $system, $store_file, $outputdir, $set) = 
    (0, 0, 0, '', '', '', '', '', '', '', '');
 my (@mmname, @tfname, @csname);
@@ -215,7 +225,15 @@ GetOptions('full!' => \$full, 'nb-item=i' => \$nb_item,
 	   'money-management=s' => \@mmname, 'graph=s' => \$graph_file,
 	   'trade-filter=s' => \@tfname, 'order-factory=s' => \$ofname,
 	   'close-strategy=s' => \@csname, 'broker=s' => \$broker,
-	   'system=s' => \$system, "store=s" => \$store_file);
+	   'system=s' => \$system, "store=s" => \$store_file,
+	   "option=s" => \@options, "help!" => \$man);
+
+foreach (@options) {
+    my ($key, $value) = split (/=/, $_);
+    GT::Conf::set($key, $value);
+}
+
+pod2usage( -verbose => 2) if ($man);
 
 if (! scalar(@mmname))
 {

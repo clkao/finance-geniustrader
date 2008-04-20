@@ -21,6 +21,7 @@ use GT::Conf;
 use GT::DateTime;
 use GT::Tools qw(:conf :timeframe);
 use Getopt::Long;
+use Pod::Usage;
 
 GT::Conf::load();
 
@@ -115,6 +116,13 @@ If you want to start two  (or more) backtests in parallel (useful for machines w
 
 Stores the backtest results in the "backtests" directory (refer to your options file for the location of this directory) using the set name SETNAME. Use the --set option of analyze_backtest.pl to differentiate between the different backtest results in your directory.
 
+=item --options=<key>=<value>
+
+A configuration option (typically given in the options file) in the
+form of a key=value pair. For example,
+ --option=DB::Text::format=0
+sets the format used to parse markets via the DB::Text module to 0.
+
 =back
 
 =head2 Examples
@@ -135,6 +143,8 @@ SY:TFS 50 7|CS:SY:TFS 50|CS:Stop:Fixed 6|MM:VAR 10 2|MM:PositionSizeLimit 100
 # Manage options
 my ($full, $nb_item, $start, $end, $timeframe, $max_loaded_items) =
    (0, 0, '', '', 'day', -1);
+my $man = 0;
+my @options;
 my ($verbose, $broker, $outputdir, $set, $nbprocess) = 
    (0, '', '', '', 1);
 $outputdir = GT::Conf::get("BackTest::Directory") || '';
@@ -144,8 +154,16 @@ GetOptions('full!' => \$full, 'nb-item=i' => \$nb_item,
 	   "timeframe=s" => \$timeframe,
 	   'verbose' => \$verbose, 'output-directory=s' => \$outputdir, 
 	   'broker=s' => \$broker, 'set=s' => \$set,
-	   'nbprocess=s' => \$nbprocess);
+	   'nbprocess=s' => \$nbprocess,
+	   "option=s" => \@options, "help!" => \$man);
 $timeframe = GT::DateTime::name_to_timeframe($timeframe);
+
+foreach (@options) {
+    my ($key, $value) = split (/=/, $_);
+    GT::Conf::set($key, $value);
+}
+
+pod2usage( -verbose => 2) if ($man);
 
 # Checks
 if (! -d $outputdir)

@@ -27,6 +27,7 @@ use GT::Conf;
 use GT::DateTime;
 use GT::Tools qw(:conf :timeframe);
 use GT::BackTest::SpoolNew;
+use Pod::Usage;
 
 GT::Conf::load();
 
@@ -34,6 +35,8 @@ GT::Conf::load();
 # Gestion des options
 my ($full, $nb_item, $start, $end, $timeframe, $max_loaded_items) =
    (0, 0, '', '', 'day', -1);
+my $man = 0;
+my @options;
 my ($outputdir, $set) = 
    ('', '');
 $outputdir = GT::Conf::get("BackTest::Directory") || '';
@@ -41,9 +44,17 @@ GetOptions('full!' => \$full, 'nb-item=i' => \$nb_item,
 	   "start=s" => \$start, "end=s" => \$end, 
 	   "max-loaded-items" => \$max_loaded_items,
 	   "timeframe=s" => \$timeframe,
-	  'output-directory=s' => \$outputdir, 'set=s' => \$set );
+	  'output-directory=s' => \$outputdir, 'set=s' => \$set,
+	   "option=s" => \@options, "help!" => \$man);
 $timeframe = GT::DateTime::name_to_timeframe($timeframe);
 my $init = 10000;
+
+foreach (@options) {
+    my ($key, $value) = split (/=/, $_);
+    GT::Conf::set($key, $value);
+}
+
+pod2usage( -verbose => 2) if ($man);
 
 # Checks
 if (! -d $outputdir)
