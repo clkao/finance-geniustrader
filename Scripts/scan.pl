@@ -222,6 +222,7 @@ GetOptions('full!' => \$full, 'nb-item=i' => \$nb_item,
             "html!"		=> \$html,
             "url=s"		=> \$url,
 	   "option=s" => \@options, "help!" => \$man);
+$timeframe = GT::DateTime::name_to_timeframe($timeframe);
 
 foreach (@options) {
     my ($key, $value) = split (/=/, $_);
@@ -240,10 +241,8 @@ $list->load($file);    # checking done in sub $list->load
 # get date string from command line
 my $date = shift;
 
-# date check introduced by ras
 # comment out if not desired
-($date, $start, $end) = check_date($timeframe, $date, $start, $end);
-
+check_dates($timeframe, $start, $end, $date);
 
 # Build the list of systems to test
 # <> is last command line parameter -- filename of systems or signals
@@ -324,8 +323,6 @@ sub process_msg {
 	}
     }
 }
-
-$timeframe = GT::DateTime::name_to_timeframe($timeframe);
 
 # Actually launch the backtests
 my $analysis;
@@ -470,158 +467,11 @@ sub display_item {
     }
 }
 
-sub check_date {
-  my ($timeframe, $date, $start, $end) = @_;
-
-  # assumptions: date is the day of interest
-  #              start and end dates define time span under analysis
-  #              date is expected to be within that time span
-  #              timeframe is the time period chunk size
-  #              start and end dates must match the selected timeframe
-  #
-  #
-  # datetime formats permitted
-  # yyyy-mm-dd with or without leading zeros
-  # yyyymmdd with required leading zeros
-  # <date> hh:mm:ss with required separator and leading zeros
-  if ( ! $date ) {
-    print STDERR "$prog_name: error: require date parameter\n\n";
-    print STDERR "date formats are YYYY-MM-DD with or without leading zeros\n";
-    print STDERR "                 YYYYMMDD leading zeros required\n\n";
-    print STDERR "time formats for sub day timeframes is:\n";
-    print STDERR "                 <date> HH:MM:SS\n\n";
-    print STDERR "explicit timeframe required if time included in date\n\n";
-    usage();
-    exit 1;
-  }
-
-  my $tf;
-  my $time;
-  my $err_msg;
-
-  my $in_date = $date;
-  my $in_start = $start if ( $start );
-  my $in_end = $end if ( $end );
-
-  if ( $timeframe ) {
-    $tf = GT::DateTime::name_to_timeframe($timeframe);
-  } else {
-    # assume default is $DAY timeframe
-    $tf = $DAY;
-  }
-
-  my ( $d_yr, $d_mn, $d_dy, $d_tm );
-  if ( ! parse_date_str( \$date, \$err_msg ) ) {
-    die "$prog_name: error: $err_msg\n";
-  } else {
-    ( $d_yr, $d_mn, $d_dy, $d_tm ) = split /[- ]/, $date;
-  }
-
-  my ( $s_yr, $s_mn, $s_dy, $s_tm );
-  if ( $start ) {
-    if ( ! parse_date_str( \$start, \$err_msg ) ) {
-      die "$prog_name: error: \$err_msg\n";
-    } else {
-      ( $s_yr, $s_mn, $s_dy, $s_tm ) = split /[- ]/, $start;
-    }
-  }
-
-  my ( $e_yr, $e_mn, $e_dy, $e_tm );
-  if ( $end ) {
-    if ( ! parse_date_str( \$end, \$err_msg ) ) {
-      die "$prog_name: error: \$err_msg\n";
-    } else {
-      ( $e_yr, $e_mn, $e_dy, $e_tm ) = split /[- ]/, $end;
-    }
-  }
-
-  if ( $start && $end ) {
-    # $start must be prior to $end
-    if (Date_to_Days($s_yr, $s_mn, $s_dy) >=
-	Date_to_Days($e_yr, $e_mn, $e_dy)) {
-      warn "$prog_name: --start date must be prior to --end date ($start before $end)\n";
-    }
-  }
-  
-  if ( $date && $end ) {
-    # $date must be $end or before
-    if (Date_to_Days($d_yr, $d_mn, $d_dy) >
-	Date_to_Days($e_yr, $e_mn, $e_dy)) {
-      warn "$prog_name: date must be prior to or equal --end date ($date before $end)\n";
-    }
-  }
-  
-  if ( $date && $start ) {
-    # $start must be prior to $date
-    if (Date_to_Days($s_yr, $s_mn, $s_dy) >=
-	Date_to_Days($d_yr, $d_mn, $d_dy)) {
-      warn "$prog_name: --start must be prior to date ($start before $date)\n";
-    }
-  }
-
-  # this is really debug code
-  if ( $verbose ) {
-    print STDERR "\npre timeframe adjust:\n";
-    print STDERR "date:\t$date\n";
-    print STDERR "start:\t$start\n";
-    print STDERR "end:\t$end\n";
-  }
-
-  # timeframe relative date conversions
-  if ( $start && $tf != $DAY ) {
-    $start = GT::DateTime::convert_date($start, $DAY, $tf);
-  }
-
-  if ( $end && $tf != $DAY ) {
-    $end = GT::DateTime::convert_date($end, $DAY, $tf);
-  }
-
-  if ( $tf != $DAY && $tf > $DAY ) {
-    $date = GT::DateTime::convert_date($date, $DAY, $tf);
-  }
-
-  # this is really debug code
-  if ( $verbose ) {
-    print STDERR "\npost timeframe adjust:\n";
-    print STDERR "date:\t$date\n";
-    print STDERR "start:\t$start\n";
-    print STDERR "end:\t$end\n\n";
-  }
-
-  return ($date, $start, $end);
-
-}
-
-
-sub usage {
-  print STDERR "$prog_name [ options ] symbols_file date spec_file [ spec_file ... ]\n";
-  print STDERR "\n";
-  print STDERR "where symbols_file is a file containing one symbol code per line\n";
-  print STDERR "      standard date format is YYYY-MM-DD\n";
-  print STDERR "      spec_file is a file containing one or more\n";
-  print STDERR "      system or signal specifications\n";
-  print STDERR "\n";
-  print STDERR "      multiple specification files will be read or stdin if not supplied\n";
-  print STDERR "\n";
-  print STDERR "      date can include optional time: <date>' HH:MM:SS'\n";
-  if ( eval { require Date::Manip } ) {
-    print STDERR "\n  ah! since you have Date::Manip available date strings can also be specified\n";
-    print STDERR "  in any format that Date::Manip can parse. common useful strings include:\n";
-    print STDERR "  'today', 'yesterday', 'last friday', '6 months ago', '1st of last month'\n";
-    print STDERR "  are all simple examples that make date entry much more human-date relative\n";
-    print STDERR "  \"perldoc -t Date::Manip\" for the gory details on date string parsing\n";
-  }  
-  print STDERR "\n";
-  print STDERR "for the full story on $prog_name try \"perldoc -t $prog_name\" for more details\n";
-  print STDERR "\n";
-}
-
-
 =pod
 
-=head2 this is a ras hack version of scan.pl that includes date string checks
+=head2 Dates
 
- if the user has Date::Manip installed it allows the use of date strings
+ If the user has Date::Manip installed it allows the use of date strings
  that can be parsed by Date::Manip in addition the to defacto standard
  date-time format accepted by GT (YYYY-MM-DD HH:MM:SS) time part is optional
 
@@ -630,19 +480,19 @@ sub usage {
  --start '6 months ago'
  --end 'today'
 
- the date string checking includes verifying the date string format
+ Date string checking includes verifying the date string format
  is valid and the date is a valid date (and time if provided)
 
- errors will be displayed and the script will terminate.
+ Errors will be displayed and the script will terminate.
 
- the script also validates that the dates specified are consistent
+ The script also validates that the dates specified are consistent
  with respect to their purpose (--start is earlier than --end etc)
 
- finally, appropriate timeframe conversion is performed so the user
+ Finally, appropriate timeframe conversion is performed so the user
  need not convert command line date strings from the day time to
  say week or month as it will be done automagically.
 
- usage examples:
+ Usage examples:
 
  with market_file (a file) containing the next 2 lines:
  JAVA
