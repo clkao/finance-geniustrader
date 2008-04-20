@@ -77,6 +77,9 @@ To plot indicators in a different zone, first create a new-zone, then add the in
 
 Full details about the available methods you can use with the --add option follow.
 
+Note that all objects that might affect the scale (such as, e.g., an
+indicator) must be added to a zone before the scale is changed.
+
 
 =item New-Zone(height, [left, right, top, bottom])
 
@@ -280,7 +283,7 @@ command line parameter. Lines starting with # are ignored.
 
 =back
 
-=head1 Examples
+=head2 Examples
 
 ./graphic.pl --add="Switch-Zone(0)" \
              --add="Curve(Indicators::SMA  38, [0,0,255])" \
@@ -505,7 +508,7 @@ if ($type eq "candle") {
 my @datasource;
 my $k = 0;
 my $curr_zone = $z_m;
-my $curr_range = $type eq "none" ? undef : [ $ds->get_value_range() ];
+my @curr_range = $type eq "none" ? undef : $ds->get_value_range();
 my $last_zone_y = 2;
 
 # Update the scale of the zone to match the given range
@@ -576,10 +579,10 @@ sub update_scale {
 
 sub update_curr_range {
     my ($s, $e) = @_;
-    if (defined($curr_range)) {
-	$curr_range = [ union_range(@{$curr_range}, $s, $e) ];
+    if ( defined($curr_range[0]) ) { # for some unknown reason, defined($curr_range) is true
+	@curr_range = union_range(@curr_range, $s, $e);
     } else {
-	$curr_range = [ $s, $e ];
+	@curr_range = ( $s, $e );
     }
 }
     
@@ -591,38 +594,38 @@ foreach (@add) {
     if ($func =~ /New-?Zone/i) {
 	# Update the scale of the old zone if needed
 	if (! defined($curr_zone->get_default_scale())) {
-	    update_scale($curr_zone, @{$curr_range});
+	    update_scale($curr_zone, @curr_range);
 	}
 	# Create the new zone
 	my $new_zone = GT::Graphics::Zone->new($z_m->width, @args);
 	$zone->add_subzone(0, $last_zone_y++, $new_zone);
 	$curr_zone = $new_zone;
-	$curr_range = undef;
+	@curr_range = undef;
 	$zone->update_size();
     } elsif ($func =~ /Switch-?Zone/i) {
 	# Update the scale of the old zone if needed
 	if (! defined($curr_zone->get_default_scale())) {
-	    update_scale($curr_zone, @{$curr_range});
+	    update_scale($curr_zone, @curr_range);
 	}
 	# Switch to the new zone
 	$curr_zone = $zone->get_subzone(0, $args[0]);
 	my $scale = $curr_zone->get_default_scale();
 	my ($min, $max) = (($scale->get_value_from_coordinate(0, 0))[1],
 	    ($scale->get_value_from_coordinate(0, $curr_zone->height - 1))[1]);
-	$curr_range = [ $min, $max ];
+	@curr_range = ( $min, $max );
     } elsif ($func =~ /Set-?Scale/i) {
 	if ($args[0] =~ /auto/i) {
 	    if (defined($args[1]) && $args[1]) {
-		update_scale($curr_zone, @{$curr_range}, 1);
+		update_scale($curr_zone, @curr_range, 1);
 	    } else {
-		update_scale($curr_zone, @{$curr_range}, 0);
+		update_scale($curr_zone, @curr_range, 0);
 	    }
 	} else {
-	    $curr_range = [ $args[0], $args[1] ];
+	    @curr_range = ( $args[0], $args[1] );
 	    if (defined($args[2]) && $args[2]) {
-		update_scale($curr_zone, @{$curr_range}, 1);
+		update_scale($curr_zone, @curr_range, 1);
 	    } else {
-		update_scale($curr_zone, @{$curr_range}, 0);
+		update_scale($curr_zone, @curr_range, 0);
 	    }
 	}   
     } elsif ($func =~ /Set-?Special-?Scale/i) {
@@ -747,7 +750,7 @@ foreach (@add) {
 
 # Mise à jour de l'échelle de la dernière zone si nécessaire
 if (! defined($curr_zone->get_default_scale())) {
-    update_scale($curr_zone, @{$curr_range});
+    update_scale($curr_zone, @curr_range);
 }
 
 
