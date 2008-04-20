@@ -16,19 +16,20 @@ require Exporter;
                 extract_object_number
                 resolve_alias resolve_object_alias long_name short_name
                 isin_checksum isin_validate isin_create_from_local
-                get_timeframe_data parse_date_str find_calculator
+                get_timeframe_data parse_date_str find_calculator check_dates
                 );
 %EXPORT_TAGS = ("math" => [qw(min max PI sign)], 
 		"generic" => [qw(extract_object_number)],
 		"conf" => [qw(resolve_alias resolve_object_alias long_name short_name)],
 		"isin" => [qw(isin_checksum isin_validate isin_create_from_local)],
-                "timeframe" => [qw(get_timeframe_data parse_date_str find_calculator)]
+                "timeframe" => [qw(get_timeframe_data parse_date_str find_calculator check_dates)]
 		);
 
 use GT::DateTime;
 use GT::Prices;
 use GT::Eval;
 use GT::ArgsTree;
+use Date::Calc qw( Date_to_Days );
 
 =head1 NAME
 
@@ -51,7 +52,7 @@ There are 5 groupings
 
 =item *   isin      -- isin_checksum isin_validate isin_create_from_local
 
-=item *   timeframe -- get_timeframe_data parse_date_str
+=item *   timeframe -- get_timeframe_data parse_date_str find_calculator check_dates
 
 =back
 
@@ -497,7 +498,7 @@ sub parse_date_str {
     # typical usage in perl script
     # my $err_msg;
     # if ( ! parse_date_str( \$date, \$err_msg ) ) {
-    #   die "$prog_name: error: $err_msg\n";
+    #   die "Error: $err_msg\n";
     # }
     #
     # usage using internal error handling
@@ -595,13 +596,6 @@ is valid and the date is a valid date (and time if provided)
 
 Errors will be displayed and the script will terminate.
 
-The script also validates that the dates specified are consistent
-with respect to their purpose (--start is earlier than --end etc.)
-
-Finally, appropriate timeframe conversion is performed so the user
-need not convert command line date strings from the day time to
-say week or month as it will be done automagically.
-
 =head3 Application usage examples:
 
 with Date::Manip installed
@@ -630,7 +624,7 @@ without Date::Manip you will need to use:
 
   my ( $d_yr, $d_mn, $d_dy, $d_tm );
   if ( ! parse_date_str( \$date, \$err_msg ) ) {
-    die "$prog_name: error: $err_msg\n";
+    die "Error: $err_msg\n";
   } else {
     ( $d_yr, $d_mn, $d_dy, $d_tm ) = split /[- ]/, $date;
   }
@@ -698,6 +692,102 @@ sub find_calculator {
   }
 
   return ($calc, $first, $last);
+
+}
+
+=item C<< check_dates($timeframe, $start, $end, $date) >>
+
+Converts the given dates into the proper dates relative to the 
+chosen time frame, if necessary. For example, if a date 2000-02-01
+is given with --timeframe=week, this date is converted to 2000-05.
+
+Verifies that the start date is before the end.
+
+If a third date is given, verifies that this date is between the
+start and end dates.
+
+=cut
+
+sub check_dates {
+
+  my $timeframe = $_[0];
+  my $start = $_[1];
+  my $end = $_[2];
+  my $date = $_[3] || 0;
+
+  my $err_msg;
+
+  $timeframe = $DAY unless ( $timeframe );
+
+  my ( $s_yr, $s_mn, $s_dy, $s_tm );
+  if ( $start ) {
+    if ( ! parse_date_str( \$start, \$err_msg ) ) {
+      die "Error: \$err_msg\n";
+    } else {
+      ( $s_yr, $s_mn, $s_dy, $s_tm ) = split /[- ]/, $start;
+    }
+  }
+
+  my ( $e_yr, $e_mn, $e_dy, $e_tm );
+  if ( $end ) {
+    if ( ! parse_date_str( \$end, \$err_msg ) ) {
+      die "Error: \$err_msg\n";
+    } else {
+      ( $e_yr, $e_mn, $e_dy, $e_tm ) = split /[- ]/, $end;
+    }
+  }
+
+  if ( $start && $end ) {
+    # $start must be prior to $end
+    if (Date_to_Days($s_yr, $s_mn, $s_dy) >=
+	Date_to_Days($e_yr, $e_mn, $e_dy)) {
+      die "Error: --start date $start must be prior to --end date $end\n";
+    }
+  }
+  
+  # timeframe relative date conversions
+  if ( $start && $timeframe != $DAY ) {
+    $start = GT::DateTime::convert_date($start, $DAY, $timeframe);
+  }
+
+  if ( $end && $timeframe != $DAY ) {
+    $end = GT::DateTime::convert_date($end, $DAY, $timeframe);
+  }
+
+  my ( $d_yr, $d_mn, $d_dy, $d_tm );
+  if ( $date ) {
+    if ( ! parse_date_str( \$date, \$err_msg ) ) {
+      die "Error: $err_msg\n";
+    } else {
+      ( $d_yr, $d_mn, $d_dy, $d_tm ) = split /[- ]/, $date;
+    }
+
+    if ( $end ) {
+      # $date must be $end or before
+      if (Date_to_Days($d_yr, $d_mn, $d_dy) >
+	  Date_to_Days($e_yr, $e_mn, $e_dy)) {
+	die "Error: date $date must be prior to or equal to --end date $end\n";
+      }
+    }
+  
+    if ( $start ) {
+      # $start must be prior to $date
+      if (Date_to_Days($s_yr, $s_mn, $s_dy) >=
+	  Date_to_Days($d_yr, $d_mn, $d_dy)) {
+	die "Error: --start $start must be prior to date $date\n";
+      }
+    }
+
+    if ( $timeframe != $DAY && $timeframe > $DAY ) {
+      $date = GT::DateTime::convert_date($date, $DAY, $timeframe);
+    }
+    
+    $_[3] = $date;
+
+  }
+
+  $_[1] = $start;
+  $_[2] = $end;
 
 }
 
