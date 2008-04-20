@@ -35,11 +35,11 @@ GT::Conf::load();
 		    [ --type=candle|candlevol|candlevolplace|barchart|line|none ] [ --volume ]
 		    [ --volume-height=150 ] [ --title="Daily Chart" ] \
 		    [ --width=200 ] [ --height=230 ] [ --logarithmic ] \
-		    [ additionnal graphical elements ] \
+		    [ additional graphical elements ] \
                     [ --file=conf ] [ --driver={GD|ImageMagick} ] \
 		    <code>
 
-Use "graphic.pl -man" to list all available options
+Use "graphic.pl --man" to list all available options
 
 
 =head2 Description
@@ -49,7 +49,7 @@ either as overlays of the original price data, or in different regions of the ch
 
 Various options are available to control color, size and other graphic properties.
 
-=head2 ADDITIONNAL GRAPHICAL ELEMENTS
+=head2 Additional Graphical Elements
 
 =over 4
 
@@ -93,13 +93,16 @@ and you automatically switch to any newly created zone.
 =item Set-Scale(min,max,[logarithmic]) or Set-scale(auto,[logarithmic])
 
 This defines the scale for the currently selected zone (by default the last
-zone created or the main zone if no zone has been created).
+zone created or the main zone if no zone has been created). If auto scale
+is used, the scale must be set after all objects that can affect the min or
+max values have been added.
 
 =item Set-Special-Scale(min,max,[log]) or Set-Special-Scale(auto,[log])
 
 The last created object will be displayed with its own scale (and not the
 default one of the zone). The scale may be given or it may be calculated
-to fit the full zone.
+to fit the full zone. If auto scale is used, the scale must be set after 
+all objects that can affect the min or max values have been added.
 
 =item Set-Axis(tick1,tick2,tick3...)
 
@@ -149,10 +152,10 @@ Manager. You can indicate the y at which the line should be displayed.
 
 =back
 
-=head2 DATASOURCES
+=head2 Datasources
 
-Sometimes you need to pass datasources to the graphical objects. Here
-are the available ones.
+Sometimes you need to pass datasources to the graphical objects. The
+following are currently available.
 
 =over 4
 
@@ -166,10 +169,10 @@ This datasources returns the evaluation of any portfolio.
 
 =back
 
-=head2 OTHER OBJECTS
+=head2 Other Objects
 
-Some datasources may be parameterized by objects. Here are the
-available objects.
+Some datasources may be parameterized by objects. The following are
+currently available.
 
 =over 4
 
@@ -181,7 +184,7 @@ of backtests.
 
 =back
 
-=head2 PARAMETERS
+=head2 Options
 
 =over 4
 
@@ -245,8 +248,29 @@ This option is effective only for certain data base modules and ignored otherwis
 
 =item --type=candle|candlevol|candlevolplace|barchart|line|none
 
-The type of graphic to plot. none causes the price not to be displayed, however, overlays
-can still be sketched in the graphic.
+The type of graphic to plot. none causes the price not to be displayed,
+however, overlays can still be sketched in the graphic.
+
+=item --volume
+
+=item --volume-height=150
+
+=item --title="Daily Chart"
+
+=item --width=200
+
+=item --height=230
+
+=item --logarithmic
+
+=item --driver=GD|ImageMagick
+
+=item --options=<key>=<value>
+
+A configuration option (typically given in the options file) in the
+form of a key=value pair. For example,
+ --option=DB::Text::format=0
+sets the format used to parse markets via the DB::Text module to 0.
 
 =item Configuration-File ( --file=conf )
 
@@ -258,10 +282,17 @@ command line parameter. Lines starting with # are ignored.
 
 =head1 Examples
 
-   --title=Stock of %c
-   --add=Switch-Zone(0)
-   --add=Curve(Indicators::SMA 200, [255,0,0])
-   --add=Curve(Indicators::SMA 38, [0,0,255])
+./graphic.pl --add="Switch-Zone(0)" \
+             --add="Curve(Indicators::SMA  38, [0,0,255])" \
+             --add="Curve(Indicators::SMA 100, [0,255,0])" \
+             --add="Curve(Indicators::SMA 200, [255,0,0])" \
+             --title=Daily history of %c
+             13000 > test.png
+
+./graphic.pl --add="Curve(Indicators::EMA 5,[255,0,0])" \
+             --add="Curve(Indicators::EMA 20,[0,0,255])" \
+             --add="BuySellArrows(SY::Generic {S::Generic::CrossOverUp {I:EMA 5} {I:EMA 20}} {S::Generic::CrossOverDown {I:EMA 5} {I:EMA 20}} )" \
+             13000 > test.png
 
 =cut
 
@@ -782,6 +813,17 @@ sub build_datasource {
     my ($desc, $calc, $first, $last) = @_;
     
     my $ds;
+
+    # Try aliases
+    if ($desc !~ /^(I|Indicators|SY|Systems|PortfolioEvaluation)/i) {
+	my $alias = resolve_alias($desc);
+	if (! $alias) {
+	  warn "Unknown datasource: $desc\n";
+	  return $ds;
+	}
+	$desc = $alias;
+    }
+
     if ($desc =~ /^(I|Indicators)::?/i) {
 	$ds = GT::Graphics::DataSource::SingleIndicator->new($calc, $desc);
 	$ds->set_selected_range($first, $last);
