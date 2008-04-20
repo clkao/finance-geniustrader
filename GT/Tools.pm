@@ -165,7 +165,7 @@ sub resolve_alias {
     my ($alias) = @_;
     my $name = $alias;
     my @param;
-    if ($alias =~ m/^(.*)\[(.*)\]$/) {
+    if ($alias =~ m/^\s*(.*)\s*\[(.*)\]\s*$/) {
 	$name = $1;
 	@param = split(",", $2);
     }
@@ -181,7 +181,7 @@ sub resolve_alias {
          .  "\nkey looked for was \"Aliases::Global::$name\"\n";
     }
     # The alias content may list another alias ...
-    while ($sysname !~ /\|/) {
+    while ($sysname !~ /^(I|Indicators|SY|Systems|S|Signals|CS|CloseStrategy|MM|MoneyManagement|TF|TradeFilters|OF|OrderFactory|A|Analyzers|PortfolioEvaluation)/i) {
 	$sysname = resolve_alias($sysname);
     }
     my $n = 1;
