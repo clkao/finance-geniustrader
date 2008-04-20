@@ -39,11 +39,31 @@ GT::Conf::load();
 Backtest will run a backtest of a system on the indicated code.
 
 You can either describe the system using options, give a full system
-name, or you can give a system alias. An alias is set in the 
+name, or you can give a system alias. An alias is defined in the 
 configuration file with entries of the form 
  Aliases::Global::<alias_name> <full_system_name>. 
-An example of a full system name is 
- SY:TFS|CS:SY:TFS|CS:Stop:Fixed 4|MM:VAR.
+
+The full system name consists of a set of properties, such as trade 
+filters, close strategy, etc., together with their parameters, 
+separated by vertical bars ("|"). Multiple properties of the same 
+type can be defined, e.g., there could be a set of close strategies.
+For example,
+  System:ADX 30 | TradeFilters:Trend 2 5 | MoneyManagement:Normal 
+defines a system based on the "ADX" system, using a trend following trade
+filter "Trend", and the "Normal" money management.
+
+The following abbreviations are supported:
+Systems = SY
+CloseStrategy = CS
+TradeFilters = TF
+MoneyManagement = MM
+OrderFactory = OF
+Signals = S
+Indicators = I
+Generic = G
+
+Another example of a full system name is 
+  SY:TFS|CS:SY:TFS|CS:Stop:Fixed 4|MM:VAR.
 
 =head2 Options
 
@@ -138,14 +158,14 @@ unsignificant symbols.
 
 Store the resulting portfolio in the indicated file.
 
-=item --system="<system_name>"
-
-use the GT::Systems::<system_name> as the source of buy/sell orders.  
-
 =item --broker="NoCosts"
 
 Calculate commissions and annual account charge, if applicable, using
 GT::Brokers::<broker_name> as broker.
+
+=item --system="<system_name>"
+
+use the GT::Systems::<system_name> as the source of buy/sell orders.  
 
 =item --money-management="<money_management_name>" 
 

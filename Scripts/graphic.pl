@@ -256,6 +256,9 @@ however, overlays can still be sketched in the graphic.
 
 =item --volume
 
+Should the volume be plotted (it is by default)? Use --no-volume if you
+want to omit it.
+
 =item --volume-height=150
 
 =item --title="Daily Chart"

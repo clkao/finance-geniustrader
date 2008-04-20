@@ -32,19 +32,32 @@ GT::Conf::load();
 Backtest_many will test all system listed in a system
 file on all the values listed in the market file.
 
-The <system file> has a special format.
+The <system file> contains one line per defined system, where each
+system is defined by its full system name or by an alias. An alias is 
+defined in the configuration file with entries of the form 
+ Aliases::Global::<alias_name> <full_system_name>.
 
-System definitions:
+The full system name consists of a set of properties, such as trade 
+filters, close strategy, etc., together with their parameters, 
+separated by vertical bars ("|"). Multiple properties of the same 
+type can be defined, e.g., there could be a set of close strategies.
+For example,
+  System:ADX 30 | TradeFilters:Trend 2 5 | MoneyManagement:Normal 
+defines a system based on the "ADX" system, using a trend following trade
+filter "Trend", and the "Normal" money management.
 
-System::ADX 30 | TradeFilters::Trend 2 5 | MoneyManagement::Normal 
-
-Abbreviations:
-
-Systems = S
+The following abbreviations are supported:
+Systems = SY
 CloseStrategy = CS
 TradeFilters = TF
 MoneyManagement = MM
 OrderFactory = OF
+Signals = S
+Indicators = I
+Generic = G
+
+Another example of a full system name is 
+  SY:TFS|CS:SY:TFS|CS:Stop:Fixed 4|MM:VAR.
 
 =head2 Options
 
@@ -107,6 +120,11 @@ for a given market from the data base. Care should be taken to ensure that
 these are consistent with the performed analysis. If not enough data is
 loaded to satisfy dependencies, for example, correct results cannot be obtained.
 This option is effective only for certain data base modules and ignored otherwise.
+
+=item --broker="NoCosts"
+
+Calculate commissions and annual account charge, if applicable, using
+GT::Brokers::<broker_name> as broker.
 
 =item --nbprocess=2
 
