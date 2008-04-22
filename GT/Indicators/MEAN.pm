@@ -19,7 +19,7 @@ use GT::Prices;
 @NAMES = ("MEAN[#1,#2]");
 @DEFAULT_ARGS=("{I:Prices HIGH}", "{I:Prices LOW}");
 
-=head1 GT::Indicators::WTCL
+=head1 GT::Indicators::MEAN
 
 =head2 Overview
 
@@ -39,9 +39,6 @@ sub initialize {
     $self->add_arg_dependency(2, 1);
 }
 
-=head2 GT::Indicators::WTCL::calculate($calc, $day)
-
-=cut
 sub calculate {
     my ($self, $calc, $i) = @_;
     my $name = $self->get_name;
