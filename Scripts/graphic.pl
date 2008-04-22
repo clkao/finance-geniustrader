@@ -342,15 +342,18 @@ GetOptions('full!' => \$full, 'nb-item=i' => \$nb_item,
 	   "option=s" => \@options, "title=s" => \$title,
 	   "file=s" => \$filename, "driver=s" => \$opt_driver,
 	   "man!" => \$man);
+$timeframe = GT::DateTime::name_to_timeframe($timeframe);
 
 foreach (@options) {
     my ($key, $value) = split (/=/, $_);
     GT::Conf::set($key, $value);
 }
 
+# Verify dates and adjust to timeframe, comment out if not desired
+check_dates($timeframe, $start, $end);
+
 pod2usage( -verbose => 2) if ($man);
 my $code = shift || pod2usage(1);
-$timeframe = GT::DateTime::name_to_timeframe($timeframe);
 my ($calc, $first, $last) = find_calculator($code, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items);
 $nb_item = $last - $first + 1;
 

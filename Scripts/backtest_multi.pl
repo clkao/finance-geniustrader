@@ -185,6 +185,9 @@ if (! -d $outputdir)
   die "The directory $outputdir does not exist!\n";
 }
 
+# Verify dates and adjust to timeframe, comment out if not desired
+check_dates($timeframe, $start, $end);
+
 # Create all the framework
 my $list = GT::List->new;
 my $file = shift;

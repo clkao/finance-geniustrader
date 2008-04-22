@@ -24,9 +24,6 @@ use IPC::Msg;
 use Getopt::Long;
 use Pod::Usage;
 
-use Date::Calc qw( Date_to_Days );
-#use Date::Manip;
-
 GT::Conf::load();
 
 ( my $prog_name = $0 ) =~ s@^.*/@@;    # lets identify ourself
@@ -241,7 +238,7 @@ $list->load($file);    # checking done in sub $list->load
 # get date string from command line
 my $date = shift;
 
-# comment out if not desired
+# Verify dates and adjust to timeframe, comment out if not desired
 check_dates($timeframe, $start, $end, $date);
 
 # Build the list of systems to test

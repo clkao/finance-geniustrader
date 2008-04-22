@@ -142,6 +142,10 @@ if ($last_record) {
   $end = '';
   $nb_item = 1;
 }
+
+# Verify dates and adjust to timeframe, comment out if not desired
+check_dates($timeframe, $start, $end);
+
 # Create the indicator according to the arguments
 my $indicator_module = shift || pod2usage(verbose => 2);
 my $code = shift || pod2usage(verbose => 2);

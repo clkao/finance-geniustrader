@@ -175,6 +175,9 @@ if ($last_record) {
   $nb_item = 1;
 }
 
+# Verify dates and adjust to timeframe, comment out if not desired
+check_dates($timeframe, $start, $end);
+
 # Create the signal according to the arguments
 my $signal_module = shift || pod2usage(verbose => 1);
 my $code = shift || pod2usage(verbose => 1);
