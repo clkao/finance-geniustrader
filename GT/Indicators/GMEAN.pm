@@ -1,8 +1,11 @@
 package GT::Indicators::GMEAN;
 
 # Copyright 2008 Andreas Hartmann
+# Based on and for GeniusTrader (C) 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
+
+# $Id: GMEAN.pm,v 1.1 2008/04/22 $
 
 # Standards-Version: 1.0
 
