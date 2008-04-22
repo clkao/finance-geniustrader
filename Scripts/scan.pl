@@ -526,5 +526,22 @@ sub display_item {
   2007-10-24 system_file
  and should get the same results respectively
 
+=head2 "Bad system call" failure on cygwin
+
+If you are using cygwin on Windows to run GT, and you encounter
+a "Bad system call" error when running scan.pl, you need to enable
+cygserver. cygserver is a utility that provides cygwin applications
+with persistent services. See 
+  http://www.cygwin.com/cygwin-ug-net/using-cygserver.html
+for more detail. The first time you use cygserver, execute
+  /usr/bin/cygserver-config
+to configure the service (there are many options but the above should
+suffice, see the manual for more). You can then invoke the service
+automatically through windows, or use
+  net start cygserver
+to do so. You must also set the CYGWIN environment variable to 'server':
+  CYGWIN=server
+  export CYGWIN
+
 =cut
 
