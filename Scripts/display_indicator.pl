@@ -93,6 +93,11 @@ these are consistent with the performed analysis. If not enough data is
 loaded to satisfy dependencies, for example, correct results cannot be obtained.
 This option is effective only for certain data base modules and ignored otherwise.
 
+=item
+--tight
+
+Displays indicator values in concise tabular format.
+
 =item --options=<key>=<value>
 
 A configuration option (typically given in the options file) in the
@@ -119,13 +124,13 @@ my ($full, $nb_item, $start, $end, $timeframe, $max_loaded_items) =
    (0, 0, '', '', 'day', -1);
 my $man = 0;
 my @options;
-my $last_record = 0;
+my ($last_record, $tight) = (0, 0);
 Getopt::Long::Configure("require_order");
 GetOptions('full!' => \$full, 'nb-item=i' => \$nb_item, 
 	   "start=s" => \$start, "end=s" => \$end, 
 	   "max-loaded-items" => \$max_loaded_items,
 	   "timeframe=s" => \$timeframe,
-	   "last-record" => \$last_record,
+	   "last-record" => \$last_record, "tight!" => \$tight,
 	   "option=s" => \@options, "help!" => \$man);
 $timeframe = GT::DateTime::name_to_timeframe($timeframe);
 
@@ -162,8 +167,20 @@ my ($calc, $first, $last) = find_calculator($code, $timeframe, $full, $start, $e
 print "Calculating indicator $indicator_name ...\n";
 $indicator->calculate_interval($calc, $first, $last);
 
+
+if ( $tight ) {
+    printf "[%s] =", "Date";
+    for(my $n = 0; $n < $indicator->get_nb_values; $n++)
+    {
+	my $name = $indicator->get_name($n);
+	printf "\t%s", $name;
+    }
+    printf "\n";
+}
+
 for(my $i = $first; $i <= $last; $i++)
 {
+  unless ( $tight ) {
     for(my $n = 0; $n < $indicator->get_nb_values; $n++)
     {
 	my $name = $indicator->get_name($n);
@@ -178,5 +195,23 @@ for(my $i = $first; $i <= $last; $i++)
 		    
 	}
     }
+  } else {
+    printf "[%s] =", $calc->prices->at($i)->[$DATE];
+    for(my $n = 0; $n < $indicator->get_nb_values; $n++)
+    {
+	my $name = $indicator->get_name($n);
+	
+	if ($calc->indicators->is_available($name, $i)) {
+	    my $value = $calc->indicators->get($name, $i);
+	    if ($value =~ /^-?\d+(?:\.\d+)?$/) {
+		printf "\t%.4f", $value;
+	    } else {
+		printf "\t%s", $value;
+	    }
+		    
+	}
+    }
+    printf "\n";
+  }
 }
 
