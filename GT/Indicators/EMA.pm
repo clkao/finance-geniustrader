@@ -15,6 +15,8 @@ use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
 use GT::Indicators;
 use GT::Indicators::SMA;
+use GT::Eval;
+
 
 @ISA = qw(GT::Indicators);
 @NAMES = ("EMA[#*]");
@@ -43,6 +45,18 @@ The second argument is optional. It can be used to specify an other
 stream of input data for the average instead of the close prices.
 This is usually an indicator (detailed via {I:MyIndic <param>}).
 
+=item Start data input
+
+The third argument is optional. It can be used to specify the
+stream of input data to compute the starting point of the moving
+average. The default is computed by the SMA of the given period.
+
+If a very long period is required, it may be advisable to set this
+to {I:PRICES CLOSE} (or whatever data stream is used as the input
+for the EMA) to avoid excessive history data being required just to
+compute the starting value. Using the first value of the input series
+does not result in a large error and requires no dependencies.
+
 =back
 
 =head2 Calculation
@@ -63,7 +77,7 @@ start computation from the loaded data on.
  GT::Indicators::EMA->new([20])
 
 If you need a 30 days EMA of the opening prices you can write
-one of these lines:
+one of those lines :
 
  GT::Indicators::EMA->new([30, "{I:Prices OPEN}"])
 
@@ -77,9 +91,20 @@ Z<>
 sub initialize {
     my ($self) = @_;
 
-    $self->{'sma'} = GT::Indicators::SMA->new([ $self->{'args'}->get_arg_names() ]);
-    $self->add_indicator_dependency($self->{'sma'}, 1);
-
+    my $start = $self->{'args'}->get_arg_names(3);
+    if ($start) {
+      if ($start =~ /^\s*{(.*)}\s*$/) {
+	$start = $1;
+      }
+      if ($start =~ /^\s*(\S+)\s*(.*)\s*$/) {
+	$self->{'start'} = create_standard_object("$1", $2);
+      } else {
+	die "Inappropriate argument $start given to ".$self->get_name." .\n";
+      }
+   } else {
+      $self->{'start'} = GT::Indicators::SMA->new([ $self->{'args'}->get_arg_names() ]);
+    }
+    $self->add_indicator_dependency($self->{'start'}, 1);
 }
 
 sub calculate {
@@ -101,7 +126,7 @@ sub calculate {
     if (defined $oldema) {
       $ema = $alpha * ($self->{'args'}->get_arg_values($calc, $i, 2) - $oldema) + $oldema;
     } else {
-      $ema = $indic->get($self->{'sma'}->get_name, $i);
+      $ema = $indic->get($self->{'start'}->get_name, $i);
       $before = 0;
     }
     $indic->set($name, $i, $ema);
@@ -118,13 +143,13 @@ sub calculate_interval {
 
     return if ($indic->is_available_interval($name, $first, $last));
     # Don't need to calculate all SMA values, just the first data point.
-    $self->{'sma'}->calculate($calc, $first);
+    $self->{'start'}->calculate($calc, $first);
 
     return unless $self->dependencies_are_available($calc, $first);
 
     my $alpha = 2 / ($nb + 1);
 
-    $indic->set($name, $first, $indic->get($self->{'sma'}->get_name, $first));
+    $indic->set($name, $first, $indic->get($self->{'start'}->get_name, $first));
 
     for (my $i=$first+1;$i<=$last;$i++) {
       my $oldema = $indic->get($name, $i - 1);

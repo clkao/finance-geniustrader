@@ -13,7 +13,7 @@ use GT::Indicators;
 
 @ISA = qw(GT::Indicators);
 @NAMES = ("KAMA[#*]");
-@DEFAULT_ARGS = (21, "{I:Prices CLOSE}");
+@DEFAULT_ARGS = (21, 2, 30, "{I:Prices CLOSE}");
 
 =head1 NAME
 
@@ -33,6 +33,14 @@ The interpretation is similar to the classic SMA.
 
 The first argument is the period used to calculed the average.
 
+=item Fastest period (default 30)
+
+The fastest period to be considered.
+
+=item Slowest period (default 2)
+
+The slowest period to be considered.
+
 =back
 
 =head2 Creation
@@ -45,20 +53,22 @@ The first argument is the period used to calculed the average.
 sub initialize {
     my ($self) = @_;
     if ($self->{'args'}->is_constant(1) && ($self->{'args'}->get_nb_args() > 1)) {
-	$self->add_arg_dependency(2, $self->{'args'}->get_arg_constant(1));
+	$self->add_arg_dependency(4, $self->{'args'}->get_arg_constant(1));
     }
 }
 
 sub calculate {
     my ($self, $calc, $i) = @_;
     my $nb = $self->{'args'}->get_arg_values($calc, $i, 1);
+    my $fast = $self->{'args'}->get_arg_constant(2);
+    my $slow = $self->{'args'}->get_arg_constant(3);
     my $name = $self->get_name;
     my $kama = 0;
 
     return if (! defined($nb));
 
     $self->remove_volatile_dependencies();
-    $self->add_volatile_arg_dependency(2, $nb);
+    $self->add_volatile_arg_dependency(4, $nb);
 
     return if ($calc->indicators->is_available($name, $i));
     return if (! $self->check_dependencies($calc, $i));
@@ -67,18 +77,18 @@ sub calculate {
     my $noise = 0;
     for(my $n = $i - $nb + 1; $n <= $i; $n++) 
     {
-	$noise += abs( $self->{'args'}->get_arg_values($calc, $n-1, 2) -
-		       $self->{'args'}->get_arg_values($calc, $n, 2));
+	$noise += abs( $self->{'args'}->get_arg_values($calc, $n-1, 4) -
+		       $self->{'args'}->get_arg_values($calc, $n, 4));
     }
-    my $signal = abs( $self->{'args'}->get_arg_values($calc, $i-$nb+1, 2) -
-		      $self->{'args'}->get_arg_values($calc, $i, 2) );
+    my $signal = abs( $self->{'args'}->get_arg_values($calc, $i-$nb+1, 4) -
+		      $self->{'args'}->get_arg_values($calc, $i, 4));
 
     if ($noise != 0)
     {
 	$efratio = $signal / $noise;
     }
-    my $fastsc = 2/(2+1);
-    my $slowsc = 2/(30+1);
+    my $fastsc = 2/($fast+1);
+    my $slowsc = 2/($slow+1);
     my $ssc = $efratio * ($fastsc-$slowsc) + $slowsc;
     my $smooth = $ssc * $ssc;
 
@@ -86,10 +96,10 @@ sub calculate {
     if ($calc->indicators->is_available($name, $i-1))
     {
 	$ama = $calc->indicators->get($name, $i-1);
-	$kama = $ama + $smooth * ($self->{'args'}->get_arg_values($calc, $i, 2)-$ama);
+	$kama = $ama + $smooth * ($self->{'args'}->get_arg_values($calc, $i, 4)-$ama);
     }
     else {
-	$kama = $self->{'args'}->get_arg_values($calc, $i-1, 2); 
+	$kama = $self->{'args'}->get_arg_values($calc, $i-1, 4); 
     }
 
     $calc->indicators->set($name, $i, $kama);

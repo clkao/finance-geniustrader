@@ -38,7 +38,12 @@ This Indicator is calculation an division of several parameters.
 
 sub initialize {
     my ($self) = @_;
-
+    for (my $j = 1; $j <= $self->{'args'}->get_nb_args; $j++) {
+      unless ($self->{'args'}->is_constant($j)) {
+	$self->add_arg_dependency($j, 1);
+      }
+    }
+    
 }
 
 sub calculate {
@@ -46,6 +51,7 @@ sub calculate {
     my $indic = $calc->indicators;
 
     return if ($calc->indicators->is_available($self->get_name, $i));
+
     return if (! $self->check_dependencies($calc, $i));
 
     my $value = $self->{'args'}->get_arg_values($calc, $i, 1);

@@ -59,10 +59,4 @@ sub calculate {
     $calc->indicators()->set($name, $i, $max_draw_down);
 }
 
-sub calculate_interval {
-    my ($self, $calc, $first, $last) = @_;
-
-    $self->calculate($calc, $last);
-}
-
 1;

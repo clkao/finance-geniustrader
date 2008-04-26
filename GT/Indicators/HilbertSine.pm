@@ -30,15 +30,6 @@ use POSIX;
 TASC May 2000 - page 27
 
 =cut
-sub new {
-    my $type = shift;
-    my $class = ref($type) || $type;
-    my ($args) = @_;
-    my $self = { 'args' => defined($args) ? $args : [] };
-
-    return manage_object(\@NAMES, $self, $class, $self->{'args'}, "");
-}
-
 sub initialize {
     my $self = shift;
     

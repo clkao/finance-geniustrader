@@ -76,10 +76,6 @@ rather than a SMA. Metastock displays %K Slow and %D Slow.
 GT::Indicators::STO->new()
 GT::Indicators::STO->new([14, 3, 3, 3])
 
- --add=Curve(Indicators::STO/3, black)  # %K Slow oscillator
- --add=Curve(Indicators::STO/4, red)    # %D Slow signal line
- 
-
 =head2 Links
 
 http://www.stockcharts.com/education/What/IndicatorAnalysis/indic_stochasticOscillator.html

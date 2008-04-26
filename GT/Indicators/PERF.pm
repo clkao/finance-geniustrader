@@ -5,48 +5,32 @@ package GT::Indicators::PERF;
 # version 2 or (at your option) any later version.
 
 use strict;
-use vars qw(@ISA @NAMES);
+use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
 use GT::Indicators;
 use GT::Prices;
 
 @ISA = qw(GT::Indicators);
-@NAMES = ("PERF[#1]");
+@NAMES = ("PERF[#1,#2]");
+@DEFAULT_ARGS = (0, "{I:Prices CLOSE}");
 
 =head1 GT::Indicators::PERF
 
-The performance indicator display a security's price performance from a reference day as a percentage. GT::Indicators::PERF->new($reference_day);
+The performance indicator display a security's price performance from a reference day as a percentage.
+
+If first parameter is omitted, uses the first price as a reference day.
+(Note: In this case, uses "0" in name of indicator.)
 
 Example :
 GT::Indicators::PERF->new(["2001-09-22"]);
-GT::Indicators::PERF->new(["2001-09-22"], "VOLUME", $GET_VOLUME);
-
-=cut
-
-sub new {
-    my $type = shift;
-    my $class = ref($type) || $type;
-    my ($args, $key, $func) = @_;
-    my $self = { 'args' => defined($args) ? $args : [] };
-    
-    # User defined function to get data or default with $GET_LAST
-    if (defined($func)) {
-        $self->{'_func'} = $func;
-    } else {
-        $self->{'_func'} = $GET_LAST;
-	$key = 'LAST';
-    }
-    
-    return manage_object(\@NAMES, $self, $class, $self->{'args'}, $key);
-}
+GT::Indicators::PERF->new(["2001-09-22", "{I:Prices VOLUME}"]);
 
 =head2 GT::Indicators::PERF::calculate($calc, $day)
 
 =cut
 sub calculate {
     my ($self, $calc, $i) = @_;
-    my $reference = $self->{'args'}[0];
-    my $getvalue = $self->{'_func'};
+    my $reference = $self->{'args'}->get_arg_constant(1);
     my $indic = $calc->indicators;
     my $prices = $calc->prices;
     my $performance_name = $self->get_name(0);
@@ -58,7 +42,7 @@ sub calculate {
     my $item = $prices->date($reference);
     
     # Calculate the performance of a security from a reference day in percentage
-    my $performance = (((&$getvalue($calc, $i) - &$getvalue($calc, $item)) / &$getvalue($calc, $item)) * 100);
+    my $performance = ((($self->{'args'}->get_arg_values($calc, $i, 2) - $self->{'args'}->get_arg_values($calc, $item, 2)) / $self->{'args'}->get_arg_values($calc, $item, 2)) * 100);
     
     $indic->set($performance_name, $i, $performance);
 }

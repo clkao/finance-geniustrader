@@ -13,11 +13,11 @@ use GT::Indicators;
 
 @ISA = qw(GT::Indicators);
 @NAMES = ("IQ[#*]");
-@DEFAULT_ARGS = (50, 80, "{I:Prices CLOSE}");
+@DEFAULT_ARGS = (80, 50, "{I:Prices CLOSE}");
 
 =head1 NAME
 
-GT::Indicators::Interqurtil - Interquartil-Distance
+GT::Indicators::Interquartil - Interquartil-Distance
 
 =head1 DESCRIPTION 
 
@@ -58,7 +58,6 @@ sub initialize {
 sub calculate {
     my ($self, $calc, $i) = @_;
     my $nb = $self->{'args'}->get_arg_values($calc, $i, 2);
-    my $getvalue = $self->{'func'};
     my $name = $self->get_name;
 
     return if (! defined($nb));
@@ -71,7 +70,7 @@ sub calculate {
     my @values = ();
     for(my $n = $i - $nb + 1; $n <= $i; $n++) 
     {
-	my $val = &$getvalue($calc, $n);
+	my $val = $self->{'args'}->get_arg_values($calc, $n, 3);
 	return if (! defined($val));
 	push @values, $val;
     }

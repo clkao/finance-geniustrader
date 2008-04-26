@@ -5,7 +5,7 @@ package GT::Indicators::AT3;
 # version 2 or (at your option) any later version.
 
 use strict;
-use vars qw(@ISA @NAMES);
+use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
 use GT::Indicators;
 use GT::Indicators::EMA;
@@ -14,6 +14,7 @@ use GT::Prices;
 
 @ISA = qw(GT::Indicators);
 @NAMES = ("AT3[#1,#2]");
+@DEFAULT_ARGS = (5, 4.1);
 
 =pod
 
@@ -47,54 +48,33 @@ c4 = 1 + 3 * a + a^3 + 3 * a^2
 
 T3 = c1 * e6 + c2 * e5 + c3 * e4 + c4 * e3
 
-=head2 Parameters
-
-The default values are :
-N = 5
-
 =cut
-
-sub new {
-    my $type = shift;
-    my $class = ref($type) || $type;
-    my ($args) = @_;
-    my $self = { 'args' => defined($args) ? $args : [ 5, 4.1 ] };
-
-    $args->[0] = 5 if (! defined($args->[0]));
-    $args->[0] = 4.1 if (! defined($args->[0]));
-    
-    return manage_object(\@NAMES, $self, $class, $self->{'args'}, "");
-}
 
 sub initialize {
     my $self = shift;
     
     # Initialization of RSquare
-    $self->{'rsquare'} = GT::Indicators::RSquare->new([ $self->{'args'}[1] ]);
+    $self->{'rsquare'} = GT::Indicators::RSquare->new([ $self->{'args'}->get_arg_names(2) ]);
     
     # Initialize e1, e2, e3, e4, e5 and e6
-    $self->{'e1'} = GT::Indicators::EMA->new([ $self->{'args'}[0] ]);
+    my $period = $self->{'args'}->get_arg_names(1);
+    $self->{'e1'} = GT::Indicators::EMA->new([ $period ]);
     
-    $self->{'e2'} = GT::Indicators::EMA->new([ $self->{'args'}[0],
-        "{I:EMA @{[$self->{'e1'}->{'args'}->get_arg_names()]}}" ]);
+    $self->{'e2'} = GT::Indicators::EMA->new([ $period, "{I:Generic:ByName " . $self->{'e1'}->get_name . "}" ]);
+    
+    $self->{'e3'} = GT::Indicators::EMA->new([ $period, "{I:Generic:ByName " . $self->{'e2'}->get_name . "}" ]);
+    
+    $self->{'e4'} = GT::Indicators::EMA->new([ $period, "{I:Generic:ByName " . $self->{'e3'}->get_name . "}" ]);
+    
+    $self->{'e5'} = GT::Indicators::EMA->new([ $period, "{I:Generic:ByName " . $self->{'e4'}->get_name . "}" ]);
+    
+    $self->{'e6'} = GT::Indicators::EMA->new([ $period, "{I:Generic:ByName " . $self->{'e5'}->get_name . "}" ]);
 
-    $self->{'e3'} = GT::Indicators::EMA->new([ $self->{'args'}[0],
-        "{I:EMA @{[$self->{'e2'}->{'args'}->get_arg_names()]}}" ]);
-
-    $self->{'e4'} = GT::Indicators::EMA->new([ $self->{'args'}[0],
-        "{I:EMA @{[$self->{'e3'}->{'args'}->get_arg_names()]}}" ]);
-
-    $self->{'e5'} = GT::Indicators::EMA->new([ $self->{'args'}[0],
-        "{I:EMA @{[$self->{'e4'}->{'args'}->get_arg_names()]}}" ]);
-
-    $self->{'e6'} = GT::Indicators::EMA->new([ $self->{'args'}[0],
-        "{I:EMA @{[$self->{'e5'}->{'args'}->get_arg_names()]}}" ]);
-
-    $self->add_indicator_dependency($self->{'e1'}, $self->{'args'}[0] * 5 - 4);
-    $self->add_indicator_dependency($self->{'e2'}, $self->{'args'}[0] * 4 - 3);
-    $self->add_indicator_dependency($self->{'e3'}, $self->{'args'}[0] * 3 - 2);
-    $self->add_indicator_dependency($self->{'e4'}, $self->{'args'}[0] * 2 - 1);
-    $self->add_indicator_dependency($self->{'e5'}, $self->{'args'}[0]);
+    $self->add_indicator_dependency($self->{'e1'}, $period * 5 - 4);
+    $self->add_indicator_dependency($self->{'e2'}, $period * 4 - 3);
+    $self->add_indicator_dependency($self->{'e3'}, $period * 3 - 2);
+    $self->add_indicator_dependency($self->{'e4'}, $period * 2 - 1);
+    $self->add_indicator_dependency($self->{'e5'}, $period);
     $self->add_indicator_dependency($self->{'e6'}, 1);
     $self->add_indicator_dependency($self->{'rsquare'}, 1);
 }
@@ -116,7 +96,7 @@ sub calculate {
     my $e5_name = $self->{'e5'}->get_name;
     my $e6_name = $self->{'e6'}->get_name;
     my $t3_name = $self->get_name(0);
-    my $period = $self->{'args'}[0];
+    my $period = $self->{'args'}->get_arg_constant(1);
     
     return if ($indic->is_available($t3_name, $i));
     return if (! $self->check_dependencies($calc, $i));

@@ -5,7 +5,7 @@ package GT::Indicators::ElderRay;
 # version 2 or (at your option) any later version.
 
 use strict;
-use vars qw(@ISA @NAMES);
+use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
 use GT::Indicators;
 use GT::Indicators::EMA;
@@ -13,6 +13,8 @@ use GT::Prices;
 
 @ISA = qw(GT::Indicators);
 @NAMES = ("BullPower[#1]", "BearPower[#1]");
+@DEFAULT_ARGS = (13);
+
 
 =head1 GT::Indicators::ElderRay
 
@@ -24,19 +26,10 @@ It has been invented by Alexander Elder, and it is explained in his book
 "Trading for a living" ("Vivre du trading" in french).
 
 =cut
-sub new {
-    my $type = shift;
-    my $class = ref($type) || $type;
-    my ($args) = @_;
-    my $self = { 'args' => defined($args) ? $args : [13] };
-
-    return manage_object(\@NAMES, $self, $class, $self->{'args'}, "");
-}
-
 sub initialize {
     my $self = shift;
 
-    $self->{'mme'} = GT::Indicators::EMA->new([$self->{'args'}[0]]);
+    $self->{'mme'} = GT::Indicators::EMA->new([$self->{'args'}->get_arg_names(1)]);
     $self->add_indicator_dependency($self->{'mme'}, 1);
     $self->add_prices_dependency(1);
 }

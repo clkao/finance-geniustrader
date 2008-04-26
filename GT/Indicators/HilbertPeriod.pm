@@ -12,6 +12,7 @@ use GT::Indicators::WMA;
 use GT::Indicators::WTCL;
 use GT::Indicators::Generic::ByName;
 use GT::Prices;
+use POSIX;
 
 @ISA = qw(GT::Indicators);
 @NAMES = ("HilbertPeriod", "HP:Detrender", "HP:Q1", "HP:I1", "HP:jI", 
@@ -30,15 +31,6 @@ use GT::Prices;
 TASC November 2000 - page 108
 
 =cut
-sub new {
-    my $type = shift;
-    my $class = ref($type) || $type;
-    my ($args) = @_;
-    my $self = { 'args' => defined($args) ? $args : [] };
-
-    return manage_object(\@NAMES, $self, $class, $self->{'args'}, "");
-}
-
 sub initialize {
     my $self = shift;
     

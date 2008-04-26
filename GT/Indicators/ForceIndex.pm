@@ -26,15 +26,6 @@ It has been invented by Alexander Elder, and it is explained in his book
 "Trading for a living" ("Vivre du trading" in french).
 
 =cut
-sub new {
-    my $type = shift;
-    my $class = ref($type) || $type;
-    my ($args) = @_;
-    my $self = { 'args' => [] };
-
-    return manage_object(\@NAMES, $self, $class, $self->{'args'}, "");
-}
-
 sub initialize {
     my $self = shift;
 

@@ -70,10 +70,10 @@ sub calculate {
     my $a = $high - $low;
 
     # B = Yesterday's Close - Today's High
-    my $b = abs($yesterday_close - $high);
+    my $b = abs($high - $yesterday_close);
 
     # C = Yesterday's Close - Today's Low
-    my $c = abs($yesterday_close - $low);
+    my $c = abs($low - $yesterday_close);
 
     # TR = max (A, B, C)
     $tr = max($a, $b, $c);

@@ -51,16 +51,9 @@ sub initialize {
     my $self = shift;
 
     # Linear regression of the CLOSE against the sequence number
-    $self->{'linear_regression_line'} = GT::Indicators::LinearRegression->new([
-     $self->{'args'}->get_arg_names(1), $self->{'args'}->get_arg_names(2) ]);
-#   # What are the arguments to the linear regression?
-#   $self->{'linear_regression_line'} = GT::Indicators::LinearRegression->new([
-#    $self->{'args'}->get_arg_names(1),
-#    $self->{'args'}->get_arg_names(2),
-#    $self->{'args'}->get_arg_names(2)]);
+    $self->{'linear_regression_line'} = GT::Indicators::LinearRegression->new([ $self->{'args'}->get_arg_names(1), $self->{'args'}->get_arg_names(2) ]);
 
-    $self->add_indicator_dependency($self->{'linear_regression_line'},
-     $self->{'args'}->get_arg_constant(1));
+    $self->add_indicator_dependency($self->{'linear_regression_line'}, $self->{'args'}->get_arg_constant(1));
     $self->add_prices_dependency($self->{'args'}->get_arg_constant(1));
 }
 
@@ -87,9 +80,7 @@ sub calculate {
 	my $linear_regression_line_value = $a * $n + $b;
 	
 	# Calculate the distance from the linear regression line
-        my $d = $self->{'args'}->get_arg_values($calc, $n, 2)
-              - $linear_regression_line_value;
-#       my $d = $get_arg_values($calc, $n, 2) - $linear_regression_line_value;
+	my $d = $self->{'args'}->get_arg_values($calc, $n, 2) - $linear_regression_line_value;
 
 	# Calculate the sum of the squared errors
 	$sum_of_the_squared_errors += ($d ** 2);
