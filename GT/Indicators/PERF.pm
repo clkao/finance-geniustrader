@@ -8,6 +8,7 @@ use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
 use GT::Indicators;
+use GT::Tools;
 use GT::Prices;
 
 @ISA = qw(GT::Indicators);
@@ -16,10 +17,11 @@ use GT::Prices;
 
 =head1 GT::Indicators::PERF
 
-The performance indicator display a security's price performance from a reference day as a percentage.
+The performance indicator display a security's price performance from
+a reference day as a percentage. If the market is not available for
+the reference day, use nearest preceding day.
 
-If first parameter is omitted, uses the first price as a reference day.
-(Note: In this case, uses "0" in name of indicator.)
+Note: The day must be given in GT internal format and must match the timeframe.
 
 Example :
 GT::Indicators::PERF->new(["2001-09-22"]);
@@ -28,21 +30,37 @@ GT::Indicators::PERF->new(["2001-09-22", "{I:Prices VOLUME}"]);
 =head2 GT::Indicators::PERF::calculate($calc, $day)
 
 =cut
+
 sub calculate {
     my ($self, $calc, $i) = @_;
-    my $reference = $self->{'args'}->get_arg_constant(1);
     my $indic = $calc->indicators;
     my $prices = $calc->prices;
+
+    my $reference = $self->{'reference'};
+    unless ( defined $reference ) {
+
+      my $date = $self->{'args'}->get_arg_constant(1);
+      if ( $date ) {
+	$date = $prices->find_nearest_preceding_date($date);
+	$reference = $prices->date($date);
+      } else {
+	$reference = $i;
+	$date = $prices->at($i)->[$DATE];
+	my $name = $self->{'names'}->[0];
+	$name =~ s/PERF\[0,/PERF[$date,/o;
+        $self->{'names'}->[0] = $name;
+      }
+
+      $self->{'reference'} = $reference;
+
+    }
+
     my $performance_name = $self->get_name(0);
     
     return if ($indic->is_available($performance_name, $i));
     
-    # Make sure we already have a reference date
-    $reference = $prices->at(0)->[$DATE] if (!$reference);
-    my $item = $prices->date($reference);
-    
     # Calculate the performance of a security from a reference day in percentage
-    my $performance = ((($self->{'args'}->get_arg_values($calc, $i, 2) - $self->{'args'}->get_arg_values($calc, $item, 2)) / $self->{'args'}->get_arg_values($calc, $item, 2)) * 100);
+    my $performance = ((($self->{'args'}->get_arg_values($calc, $i, 2) - $self->{'args'}->get_arg_values($calc, $reference, 2)) / $self->{'args'}->get_arg_values($calc, $reference, 2)) * 100);
     
     $indic->set($performance_name, $i, $performance);
 }
