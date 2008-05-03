@@ -98,6 +98,28 @@ sub load {
 	$conf{lc($key)} = $val;
     }
     close FILE;
+
+    # Load the various definition of aliases
+    
+    foreach my $kind ("Signals", "Indicators", "Systems", "CloseStrategy", 
+                      "MoneyManagement", "TradeFilters", "OrderFactory",
+                      "Analyzers")
+    {
+        foreach my $file (GT::Conf::_get_home_path()."/.gt/aliases/".lc($kind),
+         GT::Conf::get("Path::Aliases::$kind"))
+	{
+	    next unless defined $file;
+	    next if not -e $file;
+            open(ALIAS, "<", "$file") || die "Can't open $file : $!\n";
+	    while (defined($_=<ALIAS>)) {
+		if (/^\s*(\S+)\s+(.*)$/) {
+		    GT::Conf::default("Aliases::$kind\::$1", $2);
+		}
+	    }
+	    close ALIAS;
+	}
+    }
+
 }
 
 =item C<< GT::Conf::clear() >>

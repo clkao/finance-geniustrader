@@ -182,7 +182,7 @@ sub resolve_alias {
          .  "\nkey looked for was \"Aliases::Global::$name\"\n";
     }
     # The alias content may list another alias ...
-    while ($sysname !~ /^(I|Indicators|SY|Systems|S|Signals|CS|CloseStrategy|MM|MoneyManagement|TF|TradeFilters|OF|OrderFactory|A|Analyzers|PortfolioEvaluation)/i) {
+    while ($sysname !~ /:/) {
 	$sysname = resolve_alias($sysname);
     }
     my $n = 1;
@@ -212,10 +212,20 @@ sub resolve_alias {
 Return the complete description of the object designed by "alias". @param
 is the array of parameters as returned by GT::ArgsTree::parse_args().
 
-Object aliases can be defined in global files
-(/usr/share/geniustrader/aliases/indicators for example) or in custom
-files (~/.gt/aliases/indicators) or in the standard configuration file
-with entries like this one :
+Object aliases can be defined in global files (as defined in the option
+Path::Aliases::<object_kind>), for each kind of object (e.g., Signals, 
+Indicators, etc.), or in user-specific files (~/.gt/aliases/<object_kind>).
+
+Such aliases are defined via the syntax
+  <alias_name>   <definition>
+
+For example
+  MyMean  { I:Generic:Eval ( #1 + #2 ) / 2 }
+
+An object alias can also be defined in the option file with the syntax
+  Aliases::<object_kind>::<alias_name>    <definition>
+
+For example:
 
  Aliases::Indicators::MyMean  { I:Generic:Eval ( #1 + #2 ) / 2 }
 
@@ -231,34 +241,6 @@ If you don't need any parameters then you can just say "@I:MyMean".
 sub resolve_object_alias {
     my ($alias, @param) = (@_);
 
-    # Load the various definition of aliases
-    GT::Conf::default('Path::Aliases::Signals', '/usr/share/geniustrader/aliases/signals');
-    GT::Conf::default('Path::Aliases::Indicators', '/usr/share/geniustrader/aliases/indicators');
-    GT::Conf::default('Path::Aliases::Systems', '/usr/share/geniustrader/aliases/systems');
-    GT::Conf::default('Path::Aliases::CloseStrategy', '/usr/share/geniustrader/aliases/closestrategy');
-    GT::Conf::default('Path::Aliases::MoneyManagement', '/usr/share/geniustrader/aliases/moneymanagement');
-    GT::Conf::default('Path::Aliases::TradeFilters', '/usr/share/geniustrader/aliases/tradefilters');
-    GT::Conf::default('Path::Aliases::OrderFactory', '/usr/share/geniustrader/aliases/orderfactory');
-    GT::Conf::default('Path::Aliases::Analyzers', '/usr/share/geniustrader/aliases/analyzers');
-    
-    foreach my $kind ("Signals", "Indicators", "Systems", "CloseStrategy", 
-                      "MoneyManagement", "TradeFilters", "OrderFactory",
-                      "Analyzers")
-    {
-        foreach my $file (GT::Conf::_get_home_path()."/.gt/aliases/".lc($kind),
-         GT::Conf::get("Path::Aliases::$kind"))
-	{
-	    next if not -e $file;
-            open(ALIAS, "<", "$file") || die "Can't open $file : $!\n";
-	    while (defined($_=<ALIAS>)) {
-		if (/^\s*(\S+)\s+(.*)$/) {
-		    GT::Conf::default("Aliases::$kind\::$1", $2);
-		}
-	    }
-	    close ALIAS;
-	}
-    }
-    
     # Lookup the alias
     my $def = GT::Conf::get("Aliases\::$alias");
     
