@@ -174,9 +174,12 @@ sub get_prices {
     my ($self, $code, $timeframe) = @_;
     $timeframe = $DAY unless ($timeframe);
 
-    return GT::Prices->new() if ($timeframe > $DAY);
-
     my $prices = GT::Prices->new;
+
+    # WARNING: Can only load data that is in daily format or smaller
+    # Trying to load weekly or monthly data will fail.
+    return $prices if ($timeframe > $DAY);
+
     $prices->set_timeframe($timeframe);
 
     my %fields = ('open' => $self->{'open'}, 'high' => $self->{'high'},
@@ -207,8 +210,8 @@ the symbol $code.
 sub get_last_prices {
     my ($self, $code, $limit, $timeframe) = @_;
 
-    warn "$limit parameter ignored in DB::Text::get_last_prices. loading entire dataset." if ($limit > -1);
-    return get_prices($self, $code, $timeframe,-1);
+    ### warn "$limit parameter ignored in DB::Text::get_last_prices. loading entire dataset." if ($limit > -1);
+    return get_prices($self, $code, $timeframe, -1);
 }
 
 sub has_code {
@@ -216,7 +219,7 @@ sub has_code {
     my $extension = $self->{'extension'};
     $extension =~ s/\$timeframe/\.\*/g;
     my $file_exists = 0;
-    my $file_pattern = "$code$extension";
+    my $file_pattern = $self->{'directory'} . "/$code$extension";
 
     if ($extension =~ /\*/) {
         eval "use File::Find;";
