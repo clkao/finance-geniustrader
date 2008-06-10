@@ -26,7 +26,10 @@ need to calculate the SMA of an expression, you can store the result of that
 expression in that indicator.
 
 All arguments passed serves only one purpose : differentiate the
-various series of data stored.
+various series of data stored. Care should be taken to ensure the
+uniqueness of the indicator name, if there is a chance that several
+instances of this indicator are active at the same time (e.g., when
+used as the long and short signals of a system).
 
 
 =cut
