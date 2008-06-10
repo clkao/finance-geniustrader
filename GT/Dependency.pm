@@ -411,7 +411,7 @@ sub compute_dependencies_interval {
     # Compute signals
     foreach ($self->get_signal_dependencies())
     {
-	#DEB#  DEBUG  "Compute dependencies for $self : $_->{'indicator'}\n";
+	#DEB#  DEBUG  "Compute dependencies for $self : $_->{'signal'}\n";
 	$_->{'signal'}->detect_interval($calc, 
 				    $first - $_->{'nbdays'} + 1, $last);
     }
