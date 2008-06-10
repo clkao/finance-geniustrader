@@ -31,7 +31,7 @@ firstnumber=auto
 \pagestyle{Standard}
 \author{Thomas Weigert, {\tt weigert@mst.edu}}
 \title{Writing an Indicator Cookbook}
-\date{March 2008}
+\date{Last updated: May 2008}
 % footnotes configuration
 \makeatletter
 \renewcommand\thefootnote{\arabic{footnote}}
@@ -43,12 +43,16 @@ firstnumber=auto
 
 \section{Introduction}
 This note attempts to summarize lessons learned writing GT indicators,
-in the hope that this will be useful to other GT developers. I shall
-use the Bollinger Band indicator as a starting point and annotate its
-implementation. Subsequent sections will illustrate more advanced
-aspects of writing indicators.
+in the hope that this will be useful to other GT developers.\footnote{The
+general techniques discussed here apply equally to the writing of signals,
+albeit the name of some of the key functions changes. For example, the main
+function to be written for a signal is \lstinline!detect!, which takes the
+place of \lstinline!calculate!.}
+I shall use the Bollinger Band indicator as a starting point and
+annotate its implementation. Subsequent sections will illustrate more
+advanced aspects of writing indicators.
 
-In terms of terminology, an indicator defines a time series. In general,
+With respect to terminology, an indicator defines a time series. In general,
 a time series is a sequence of data values, ordered linearly by time. The
 prices of a market are also a time series (and also an indicator, see \lstinline!I:Prices!). An indicator is constructed by some or all of the following:
 \begin{itemize}
@@ -482,11 +486,12 @@ visible outside of the indicator. To create a temporary series, assign
 a I:Generic:Container indicator to an attribute of the indicator
 object:
 \begin{lstlisting}[numbers=none]
-$self->{'temp'} = GT::Indicators::Generic::Container->new(['temp']);
+my $name = $self->get_name;
+$self->{'temp'} = GT::Indicators::Generic::Container->new(["temp($name)"]);
 \end{lstlisting}
 
 Above creates a new temporary series with the name
-\lstinline!temp!. This series is an indicator and thus values
+\lstinline!temp($name)!, where \lstinline!$name! is the name of the current indicator. The reason for inserting \lstinline!$name! into the name of the indicator is to ensure its uniqueness. Often this will not matter, but if several instances of this indicator are used at the same time, collisions may occur (for example, when this indicator is used in the long and short signals of a system). This series is an indicator and thus values
 can be read and written to this series as to any indicator:
 \begin{lstlisting}[numbers=none]
 $calc->indicators->get($self->{'temp'}->get_name, $i)
