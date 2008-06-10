@@ -259,6 +259,7 @@ GetOptions("marged!" => \$marged, "source=s" => \$source,
 	   "backup!" => \$backup,
 	   "verbose+" => \$verbose,
 	   "option=s" => \@options, "help!" => \$man);
+$timeframe = GT::DateTime::name_to_timeframe($timeframe);
 
 foreach (@options) {
     my ($key, $value) = split (/=/, $_);
@@ -430,7 +431,7 @@ print STDERR "batch line\n"
             }
 
             $pos = $pf->new_position($code, $source, $date);
-            $pos->set_timeframe(GT::DateTime::name_to_timeframe($timeframe));
+            $pos->set_timeframe($timeframe);
             # here is the only place one can make a distinction between
             # long and short orders/positions
             # but the only distinction(s) being considered is(are) $marged

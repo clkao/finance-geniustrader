@@ -337,7 +337,9 @@ for (my $d = 0; $d < $list->count; $d++)
     }
     my $code = $list->get($d);
 
-    my ($calc, $first, $last) = find_calculator($code, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items);
+    my $db = create_db_object();
+
+    my ($calc, $first, $last) = find_calculator($db, $code, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items);
 
     my $i;
     if ($calc->prices->has_date($date)) {
@@ -376,6 +378,8 @@ for (my $d = 0; $d < $list->count; $d++)
 
     }
 
+    $db->disconnect;
+
     # Close the child 
     exit 0;
 }
@@ -388,9 +392,9 @@ while ($count_process > 0) {
 }
 $msg->remove;
 
-
 # Display results
 my $db = create_db_object();
+
 foreach my $name (@list_systems) {
     my $object = $systems->{$name}{'object'};
     if (ref($object) =~ /GT::Systems/) {
@@ -435,6 +439,7 @@ foreach my $name (@list_systems) {
 	print "</ul>" if ($html);
     }
 }
+
 $db->disconnect;
 
 

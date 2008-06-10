@@ -158,9 +158,11 @@ my $code = shift || pod2usage(verbose => 2);
 my $indicator = create_standard_object("$indicator_module",
 					@ARGV);
 
+my $db = create_db_object();
+
 # Il faut créer tout le framework
 my $indicator_name = $indicator->get_name;
-my ($calc, $first, $last) = find_calculator($code, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items);
+my ($calc, $first, $last) = find_calculator($db, $code, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items);
 
 
 # Au boulot
@@ -214,4 +216,6 @@ for(my $i = $first; $i <= $last; $i++)
     printf "\n";
   }
 }
+
+$db->disconnect;
 

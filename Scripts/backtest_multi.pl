@@ -7,6 +7,7 @@
 use lib '..';
 
 use strict;
+use vars qw($db);
 
 use GT::Prices;
 use GT::Portfolio;
@@ -241,8 +242,10 @@ for (my $d = 0; $d < $list->count; $d++)
   push @codes, $list->get($d);
 }
 
+my $db = create_db_object();
+
 # Now the hard part...
-my $analysis = backtest_multi($pf_manager, \@sys_manager, \@brokers, \@codes, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items, $init);
+my $analysis = backtest_multi($db, $pf_manager, \@sys_manager, \@brokers, \@codes, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items, $init);
 
 # Print the analysis
 GT::Report::Portfolio($analysis->{'portfolio'}, 1);
@@ -251,6 +254,7 @@ GT::Report::PortfolioAnalysis($analysis->{'real'}, 1);
 #print "\n## Theoretical analysis (10keuros, full portfolio reinvested)\n";
 #GT::Report::PortfolioAnalysis($analysis->{'theoretical'}, $verbose);
 
+$db->disconnect;
 
 if ($set) {
     my $bkt_spool = GT::BackTest::Spool->new($outputdir);

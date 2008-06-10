@@ -7,6 +7,7 @@
 use lib '..';
 
 use strict;
+use vars qw($db);
 
 use GT::Prices;
 use GT::Portfolio;
@@ -249,7 +250,10 @@ for (my $d = 0; $d < $list->count; $d++)
 	next;
     }
     my $code = $list->get($d);
-    my ($calc, $first, $last) = find_calculator($code, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items);
+
+    my $db = create_db_object();
+
+    my ($calc, $first, $last) = find_calculator($db, $code, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items);
 
     # Fork a process to avoid memory consumption
     foreach (@desc_systems)
@@ -282,6 +286,8 @@ for (my $d = 0; $d < $list->count; $d++)
 				$analysis->{'portfolio'}, $set);
 	$bkt_spool->sync();
     }
+
+    $db->disconnect;
 
     # Close the child 
     exit 0;

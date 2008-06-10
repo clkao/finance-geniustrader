@@ -7,6 +7,7 @@
 use lib '..';
 
 use strict;
+use vars qw($db);
 
 use GT::Prices;
 use GT::Calculator;
@@ -292,7 +293,7 @@ command line parameter. Lines starting with # are ignored.
              --add="Curve(Indicators::SMA  38, [0,0,255])" \
              --add="Curve(Indicators::SMA 100, [0,255,0])" \
              --add="Curve(Indicators::SMA 200, [255,0,0])" \
-             --title=Daily history of %c
+             --title="Daily history of %c" \
              13000 > test.png
 
 ./graphic.pl --add="Curve(Indicators::EMA 5,[255,0,0])" \
@@ -354,7 +355,10 @@ check_dates($timeframe, $start, $end);
 
 pod2usage( -verbose => 2) if ($man);
 my $code = shift || pod2usage(1);
-my ($calc, $first, $last) = find_calculator($code, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items);
+
+my $db = create_db_object();
+
+my ($calc, $first, $last) = find_calculator($db, $code, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items);
 $nb_item = $last - $first + 1;
 
 GT::Conf::default("Graphics::Driver", "GD");
@@ -771,6 +775,9 @@ $graphic->add_object($bottomtext);
 my $picture = $driver->create_picture($zone);
 $graphic->display($driver, $picture);
 $driver->dump($picture);
+
+$db->disconnect;
+
 
 # This functions get in input a string like "Object(arg1,arg2,Arg3)"
 # where each arg may itself be an Object with its own argument. It

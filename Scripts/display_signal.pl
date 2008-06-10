@@ -10,6 +10,7 @@
 use lib '..';
 
 use strict;
+use vars qw($db);
 
 use GT::Prices;
 use GT::Calculator;
@@ -191,7 +192,10 @@ if ( $code =~ /{|}|:/ ) {
 
 my $signal = create_standard_object($signal_module, @ARGV);
 my $signal_name = $signal->get_name;
-my ($calc, $first, $last) = find_calculator($code, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items);
+
+my $db = create_db_object();
+
+my ($calc, $first, $last) = find_calculator($db, $code, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items);
 
 # Launching the signal
 print "Testing signal $signal_name ...\n";
@@ -226,4 +230,6 @@ for(my $i = $first; $i <= $last; $i++)
         }
     }
 }
+
+$db->disconnect;
 

@@ -7,6 +7,7 @@
 use lib '..';
 
 use strict;
+use vars qw($db);
 
 use GT::Prices;
 use GT::Portfolio;
@@ -336,7 +337,9 @@ $timeframe = GT::DateTime::name_to_timeframe($timeframe);
 # Verify dates and adjust to timeframe, comment out if not desired
 check_dates($timeframe, $start, $end);
 
-my ($calc, $first, $last) = find_calculator($code, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items);
+my $db = create_db_object();
+
+my ($calc, $first, $last) = find_calculator($db, $code, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items);
 
 # The real work happens here
 my $analysis = backtest_single($pf_manager, $sys_manager, $broker, $calc, $first, $last);
@@ -441,6 +444,8 @@ else
     GT::Report::PortfolioAnalysis($analysis->{'real'}, $verbose);
     print "\n";
 }
+
+$db->disconnect;
 
 if ( $set ) {
   # Store intermediate result

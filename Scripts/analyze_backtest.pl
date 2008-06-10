@@ -109,6 +109,7 @@ if ($template ne '') {
    $template='/' . $template unless ($template =~ /\\|\//);
    $interp->exec($template, s => $s, l => $l, codes => \%codes, db => $db);
    print $output;
+   $db->disconnect;
 } else { 
    GT::Report::AnalysisList($spool, $set);
 }
