@@ -62,7 +62,7 @@ sub initialize {
     # Second parameter: code of the share
     if ($self->{'args'}->get_nb_args() > 1) {
 	$self->{'use_std_prices'} = 0;
-	my $db = create_standard_object("DB::" . GT::Conf::get("DB::module"));
+	my $db = create_db_object();
 	my $q = $db->get_prices($self->{'args'}->get_arg_constant(2));
 	$self->{'special_prices'} = $q;
     } else {
