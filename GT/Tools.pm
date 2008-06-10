@@ -630,7 +630,7 @@ Note that the values given to --start and --end are relative to the selected tim
 =cut
 
 sub find_calculator {
-  my ($code, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items) = @_;
+  my ($db, $code, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items) = @_;
   $nb_item ||= 0;
   $max_loaded_items ||= -1;
 
@@ -642,9 +642,7 @@ sub find_calculator {
     die($msg);
   }
 
-  my $db = GT::Eval::create_db_object();
   my ($prices, $calc) = get_timeframe_data($code, $timeframe, $db, $max_loaded_items);
-  $db->disconnect;
 
   my $c = $prices->count;
   my $first;

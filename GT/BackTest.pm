@@ -172,7 +172,7 @@ sub backtest_single {
 
 
 sub backtest_multi {
-    my ($pf_manager, $sys_manager_ref, $broker_ref, $code_ref, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items, $init) = @_;
+    my ($db, $pf_manager, $sys_manager_ref, $broker_ref, $code_ref, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items, $init) = @_;
     my @sysmanager = @{$sys_manager_ref};
     my @brokers = @{$broker_ref};
     my @codes = @{$code_ref};
@@ -205,7 +205,7 @@ sub backtest_multi {
     my @calc;
     foreach my $i ( 0..$#codes ) {
 
-      my ($calc, $first, $last) = find_calculator($codes[$i], $timeframe, $full, $start, $end, $nb_item, $max_loaded_items);
+      my ($calc, $first, $last) = find_calculator($db, $codes[$i], $timeframe, $full, $start, $end, $nb_item, $max_loaded_items);
 
       $calc[$i] = $calc;
 
