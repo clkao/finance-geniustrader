@@ -185,9 +185,9 @@ sub display {
             }
             if ( $tooshort > 0 ) {
                 @points = (
-                [$zone->absolute_coordinate($x + int($space / 2) - 1, $y) ],
-                [$zone->absolute_coordinate($x, $y - $space) ],
-                [$zone->absolute_coordinate($x + $space - 2, $y - $space) ]
+                    [$zone->absolute_coordinate($x + int($space / 2) - 1, $y)],
+                    [$zone->absolute_coordinate($x, $y - $space)],
+                    [$zone->absolute_coordinate($x + $space - 2, $y - $space)]
             );
             } else {
                 @points = (
@@ -200,5 +200,19 @@ sub display {
         }
     }
 }
+
+
+sub set_foreground_color {
+    my ($self, $color) = @_;
+    if ( $self->{'calc'} ne "" && $color =~ /^\s*(Indicators|I:)/ ) {
+      $self->{'fg_color'} = $color;
+      $self->{'color_ds'} =
+       GT::Graphics::DataSource::GenericIndicatorResults->new($self->{'calc'}, $color );
+    }
+    else {
+      $self->{'fg_color'} = get_color($color);
+    }
+}
+
 
 1;
