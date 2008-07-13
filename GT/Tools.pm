@@ -435,8 +435,13 @@ die("Parameter \$timeframe not set in get_timeframe_data") if (!defined($timefra
 die("Parameter \$db not set in get_timeframe_data") if (!defined($db));
 
 if (defined($available_timeframes)) {
-	foreach (split(',', $available_timeframes)) {
-		push @tf, GT::DateTime::name_to_timeframe($_);
+	foreach my $tf_name (split(',', $available_timeframes)) {
+	        my $tf_code = GT::DateTime::name_to_timeframe($tf_name);
+		push @tf, $tf_code;
+		if (!defined($tf_code)) {
+		    my $tfs = join("\n\t", map(GT::DateTime::name_of_timeframe($_), GT::DateTime::list_of_timeframe));
+		    die("Invalid timeframe name in available_timeframes configuration item: $tf_name\n\nValid timeframes are: \n\t" . $tfs . "\n\n");
+		}
 	}
 	@tf = sort(@tf);
 } else {
@@ -450,6 +455,12 @@ foreach(reverse(@tf)) {
   next if ($_ > $timeframe);
   $q = $db->get_last_prices($code, $max_loaded_items, $_);
   last if ($q->count > 0);
+}
+
+if (!defined($q) || $q->count == 0) {
+my $msg="No data available to generate ".GT::DateTime::name_of_timeframe($timeframe)." data.";
+$msg.="\nAvailable timeframes are: ($available_timeframes)" if (defined($available_timeframes));
+die($msg);
 }
 
 warn ("No data is available to complete the request for $code") if ($q && $q->count == 0);
