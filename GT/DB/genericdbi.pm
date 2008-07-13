@@ -85,8 +85,8 @@ sub new {
 	my $dbdriver= GT::Conf::get("DB::genericdbi::db");
 	my $dbname	= GT::Conf::get("DB::genericdbi::dbname");
 
-	die("Invalid configuration. Please specify a valid dbi driver in your options file") unless ($dbdriver);
-	die("Invalid configuration. Please specify a valid database name in your options file") unless ($dbname);
+	die("Invalid configuration. Please specify a valid dbi driver in your options file (DB::genericdbi::db)") unless ($dbdriver);
+	die("Invalid configuration. Please specify a valid database name in your options file (DB::genericdbi::dbname)") unless ($dbname);
 
 	eval "use DBD::" . $dbdriver . ";";
 
@@ -123,7 +123,7 @@ Returns a GT::Prices object containing all known prices for the symbol $code.
 
 =cut
 sub get_prices {
-	my ($self, $code, $timeframe) = @_;
+    my ($self, $code, $timeframe) = @_;
     return get_last_prices($self, $code, -1, $timeframe);
 }
 
@@ -136,23 +136,24 @@ the symbol $code in the given $timeframe.
 sub get_last_prices {
     my ($self, $code, $limit, $timeframe) = @_;
     $timeframe = $DAY unless ($timeframe);
-	$limit = 99999999 if ($limit==-1);
+    $limit = 99999999 if ($limit==-1);
 
     my $q = GT::Prices->new($limit);
     $q->set_timeframe($timeframe);
 
-	my $sql = GT::Conf::get("DB::genericdbi::prices_sql::$timeframe");
-	if (!defined($sql)) { $sql = GT::Conf::get("DB::genericdbi::prices_sql") || die("Invalid configuration. You must specify a valid prices sql statment for your database in the options file")};
-	$sql =~ s/\$code/$code/;
-	$sql =~ s/\$timeframe/$timeframe/;
-	$sql =~ s/\$limit/$limit/;
+    my $sql = GT::Conf::get("DB::genericdbi::prices_sql::$timeframe", GT::Conf::get('DB::genericdbi::prices_sql'));
+    die("Invalid configuration. You must specify a valid prices sql statment for your database in the options file") if (!defined($sql));
+    $sql =~ s/\$code/$code/;
+    my $tf_map_value = GT::Conf::get("DB::genericdbi::tf_map::$timeframe",$timeframe);
+    $sql =~ s/\$timeframe/$tf_map_value/;
+    $sql =~ s/\$limit/$limit/;
 
     my $sth = $self->{'_dbh'}->prepare($sql)
-    	|| die $self->{'_dbh'}->errstr;
+        || die $self->{'_dbh'}->errstr;
     if ($sth->execute()) {# || die $self->{'_dbh'}->errstr;
         my $array_ref = $sth->fetchall_arrayref();
         $q->add_prices_array(reverse(@$array_ref));
-	}
+    }
     return $q;
 }
 

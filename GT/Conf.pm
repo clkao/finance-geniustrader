@@ -148,13 +148,20 @@ sub store {
     close FILE;
 }
 
-=item C<< GT::Conf::get($key) >>
+=item C<< GT::Conf::get($key,$defaultValue) >>
 
-Return the configuration value for the given key. Returns undef if the
-key doesn't exist.
+Return the configuration value for the given key. If the
+key doesn't exist, it returns the optional defaultValue.
+
+If neither the key nor defaultValue exist, it returns undef.
 
 =cut
-sub get { return $conf{lc($_[0])}; }
+sub get { 
+    my $value = $conf{lc($_[0])};
+    return $value if (defined($value));
+    return $_[1] if(defined($_[1]));
+    return undef;
+}
 
 =item C<< GT::Conf::set($key, $value) >>
 
