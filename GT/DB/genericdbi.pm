@@ -167,7 +167,7 @@ Returns the name of the stock designated by $code.
 sub get_db_name {
     my ($self, $code) = @_;
 
-    my $sql = GT::Conf::get("DB::genericdbi::name_sql") || die("Invalid configuration. You must specify a valid data_available sql statment for your database in the options file");
+    my $sql = GT::Conf::get("DB::genericdbi::name_sql") || die("Invalid configuration. You must specify a valid name_sql sql statment for your database in the options file");
 	$sql =~ s/\$code/$code/;
 
     my $sth = $self->{'_dbh'}->prepare($sql) || die $self->{'_dbh'}->errstr;
