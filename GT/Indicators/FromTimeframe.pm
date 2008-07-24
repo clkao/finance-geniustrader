@@ -17,7 +17,7 @@ use GT::Calculator;
 use GT::Tools qw(extract_object_number);
 
 @ISA = qw(GT::Indicators);
-@NAMES = ("Prices[#*]");
+@NAMES = ("FromTimeframe[#*]");
 @DEFAULT_ARGS = ("{I:Prices CLOSE}", "week", 0);
 
 =head1 NAME
@@ -54,32 +54,34 @@ sub initialize {
 
 sub calculate {
     my ($self, $calc, $i) = @_;
+    my $code = $calc->{'code'};
     my $indic = $calc->indicators;
     my $nb = $self->{'args'}->get_arg_values($calc, $i, 3);
 
     # Initialize
-    if (!defined($self->{'special_calc'})) {
-        $self->{'special_tf'} = GT::DateTime::name_to_timeframe($self->{'args'}->get_arg_constant(2));
-        $self->{'special_prices'} = $calc->prices->convert_to_timeframe($self->{'special_tf'});
-        $self->{'special_calc'} = GT::Calculator->new($self->{'special_prices'});
-	$self->{'special_calc'}->set_code($calc->code());
+    if (!defined($self->{$code}->{'special_calc'})) {
+        $self->{$code}->{'special_tf'} = GT::DateTime::name_to_timeframe($self->{'args'}->get_arg_constant(2));
+        $self->{$code}->{'special_prices'} = $calc->prices->convert_to_timeframe($self->{$code}->{'special_tf'});
+        $self->{$code}->{'special_calc'} = GT::Calculator->new($self->{$code}->{'special_prices'});
+	$self->{$code}->{'special_calc'}->set_code($calc->code());
+    } else {
     }
 
 
     my $date = $calc->prices->at($i)->[$DATE];
     my $time = GT::DateTime::map_date_to_time($calc->prices->timeframe(), $date);
-    $date = GT::DateTime::map_time_to_date($self->{'special_tf'}, $time);
+    $date = GT::DateTime::map_time_to_date($self->{$code}->{'special_tf'}, $time);
 
-    if ($self->{'special_prices'}->has_date($date)) {
-        my $j = $self->{'special_prices'}->date($date);
+    if ($self->{$code}->{'special_prices'}->has_date($date)) {
+        my $j = $self->{$code}->{'special_prices'}->date($date);
         my $tmp = $self->{'args'}->get_arg_names(1);
         $tmp =~ s/^{|}$//g;
 
         my $args = GT::ArgsTree->new( $tmp );
         my $name_index = extract_object_number($args->get_arg_names(1));
 	    my $ob = $self->{'args'}->get_arg_object(1);
-	    $ob->calculate($self->{'special_calc'}, $j - $nb);
-	    my $res = $self->{'special_calc'}->indicators->get($ob->get_name($name_index), $j - $nb);
+	    $ob->calculate($self->{$code}->{'special_calc'}, $j - $nb);
+	    my $res = $self->{$code}->{'special_calc'}->indicators->get($ob->get_name($name_index), $j - $nb);
         $indic->set($self->get_name, $i, $res);
     }
 
