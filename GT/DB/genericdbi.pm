@@ -8,9 +8,7 @@ use strict;
 use vars qw(@ISA);
 
 use GT::DB;
-use GT::Prices;
 use GT::Conf;
-use GT::DateTime;
 use DBI;
 
 @ISA = qw(GT::DB);
@@ -135,7 +133,7 @@ the symbol $code in the given $timeframe.
 =cut
 sub get_last_prices {
     my ($self, $code, $limit, $timeframe) = @_;
-    $timeframe = $DAY unless ($timeframe);
+    $timeframe = $GT::DateTime::DAY unless ($timeframe);
     $limit = 99999999 if ($limit==-1);
 
     my $q = GT::Prices->new($limit);
