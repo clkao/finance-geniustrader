@@ -46,7 +46,7 @@ format configured in ~/.gt/options and must match the timeframe selected.
 
 =item --nb-items=100
 
-The number of periods to use in the analysis.
+The number of periods to use in the analysis. Default is 200.
 
 =item --full
 
@@ -149,8 +149,10 @@ Do the test over the full available history data.
 # Get all options
 my ($change, $last_record)
  = (0, 0);
-my ($full, $nb_item, $start, $end, $timeframe, $max_loaded_items) =
-   (0, 0, '', '', 'day', -1);
+my $nb_item = GT::Conf::get('Option::nb-item');
+$nb_item = (defined($nb_item))?$nb_item:200;
+my ($full, $start, $end, $timeframe, $max_loaded_items) =
+   (0, '', '', 'day', -1);
 my $man = 0;
 my @options;
 Getopt::Long::Configure('require_order');

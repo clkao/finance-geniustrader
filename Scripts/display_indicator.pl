@@ -43,7 +43,7 @@ format configured in ~/.gt/options and must match the timeframe selected.
 
 =item --nb-items=100
 
-The number of periods to use in the analysis.
+The number of periods to use in the analysis. Default is 200.
 
 =item --full
 
@@ -120,8 +120,10 @@ args (if any) are passed to the new call that will create the indicator.
 =cut
 
 # Get all options
-my ($full, $nb_item, $start, $end, $timeframe, $max_loaded_items) =
-   (0, 0, '', '', 'day', -1);
+my $nb_item = GT::Conf::get('Option::nb-item');
+$nb_item = (defined($nb_item))?$nb_item:200;
+my ($full, $start, $end, $timeframe, $max_loaded_items) =
+   (0, '', '', 'day', -1);
 my $man = 0;
 my @options;
 my ($last_record, $tight) = (0, 0);
