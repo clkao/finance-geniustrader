@@ -10,6 +10,7 @@ use warnings;
 use vars qw(@ISA);
 
 use GT::Tools qw(:conf);
+use GT::Serializable;
 #ALL# use Log::Log4perl qw(:easy);
 
 @ISA = qw(GT::Serializable);

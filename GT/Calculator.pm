@@ -5,7 +5,6 @@ package GT::Calculator;
 # version 2 or (at your option) any later version.
 
 use GT::CacheValues;
-use GT::MetaInfo;
 
 =head1 NAME
 
@@ -14,7 +13,7 @@ GT::Calculator - All data (of a single share) used for calculations
 =head1 DESCRIPTION
 
 This is a facility object to ease the collaboration between GT::Prices
-and GT::CacheValues and GT::MetaInfo. It contains the prices (GT::Prices),
+and GT::CacheValues. It contains the prices (GT::Prices),
 and the result of various indicators and signals within two GT::CacheValues
 object. This object is manipulated by all the indicators, signals and
 systems.
@@ -46,10 +45,6 @@ Return the corresponding object of the current timeframe.
 Return the corresponding object of the indicated timeframe. Learn
 more about the timeframes in GT::DateTime.
 
-=item C<< $c->metainfo() >>
-
-Returns the metainfo object associated to the share.
-
 =item C<< $c->set_code($code) >>
 
 Sets the code of the share which datas are stored in this object.
@@ -71,8 +66,6 @@ sub new {
     $self->{'tf'}{$prices->timeframe}{'indics'} = GT::CacheValues->new;
     $self->{'tf'}{$prices->timeframe}{'signals'} = GT::CacheValues->new;
     
-    $self->{'_metainfo'} = GT::MetaInfo->new();
-    
     bless $self, $class;
     
     $self->set_current_timeframe($prices->timeframe);
@@ -90,8 +83,6 @@ sub code { $_[0]->{'code'} }
 sub prices     { $_[0]->{'_prices'}  }
 sub indicators { $_[0]->{'_indics'}  }
 sub signals    { $_[0]->{'_signals'} }
-
-sub metainfo   { $_[0]->{'_metainfo'} }
 
 sub prices_on_timeframe     { $_[0]->{'tf'}{$_[1]}{'prices'} }
 sub indicators_on_timeframe { $_[0]->{'tf'}{$_[1]}{'indics'} }

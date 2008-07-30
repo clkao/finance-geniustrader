@@ -10,10 +10,9 @@ use vars qw(@ISA @EXPORT $FIRST $OPEN $HIGH $LOW $CLOSE $LAST $VOLUME $DATE);
 use Date::Calc qw(Decode_Date_US Decode_Date_EU Today);
 #ALL#  use Log::Log4perl qw(:easy);
 use GT::DateTime;
-use GT::Serializable;
 
 require Exporter;
-@ISA = qw(Exporter GT::Serializable);
+@ISA = qw(Exporter);
 @EXPORT = qw($FIRST $OPEN $HIGH $LOW $LAST $CLOSE $VOLUME $DATE);
 
 $FIRST = $OPEN = 0;
@@ -105,6 +104,9 @@ sub date {
 sub add_prices_array {
     my ($self, @prices) = @_;
     push @{$self->{'prices'}}, @prices;
+    use Data::Dumper;
+    print Dumper(\$self);
+    exit;
 }
 
 =item C<< $p->add_prices([$open, $high, $low, $close, $volume, $date]) >>

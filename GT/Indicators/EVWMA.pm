@@ -16,6 +16,7 @@ use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
 use GT::Indicators;
 use GT::Prices;
+use GT::MetaInfo;
 
 @ISA = qw(GT::Indicators);
 @NAMES = ("EVWMA");
@@ -69,6 +70,12 @@ http://www.linnsoft.com/tour/techind/evwma.htm
 =head2 GT::Indicators::EVWMA::calculate($calc, $day)
 
 =cut
+sub initialize {
+    my ($self) = @_;
+
+    $self->{'metainfo'} = GT::MetaInfo->new();
+}
+
 sub calculate {
     my ($self, $calc, $i) = @_;
     my $getvalue = $self->{'_func'};
@@ -84,8 +91,8 @@ sub calculate {
     return if not (-e "/bourse/metainfo/" . $calc->code . ".xml");
        
     # Find the number of floating shares
-    $calc->metainfo->load("/bourse/metainfo/" . $calc->code . ".xml");
-    my $floating_shares = $calc->metainfo->get("floating_shares");
+    $self->{'metainfo'}->load("/bourse/metainfo/" . $calc->code . ".xml");
+    my $floating_shares = $self->{'metainfo'}->get("floating_shares");
     
     for (my $n = 0; $n <= $i; $n++) {
     
