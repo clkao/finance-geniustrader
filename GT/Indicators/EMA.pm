@@ -145,7 +145,10 @@ sub calculate_interval {
     # Don't need to calculate all SMA values, just the first data point.
     $self->{'start'}->calculate($calc, $first);
 
-    return unless $self->dependencies_are_available($calc, $first);
+    while (! $self->check_dependencies_interval($calc, $first, $last)) {
+      return if $first == $last;
+      $first++;
+    }
 
     my $alpha = 2 / ($nb + 1);
 

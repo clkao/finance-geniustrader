@@ -76,7 +76,10 @@ sub calculate_interval {
 
 	return if ($indic->is_available_interval($mama_name, $first, $last));
 	# Don't need to calculate all SMA values, just the first data point.
-        return if (! $self->check_dependencies_interval($calc, $first, $last));
+        while (! $self->check_dependencies_interval($calc, $first, $last)) {
+            return if $first == $last;
+            $first++;
+        }
 	$indic->set($mama_name, $first-18, $indic->get($self->{'sma'}->get_name, $first-18));
 	$indic->set($fama_name, $first-18, $indic->get($self->{'sma'}->get_name, $first-18));
 

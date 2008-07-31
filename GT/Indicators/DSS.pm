@@ -124,7 +124,10 @@ sub calculate_interval {
     my $name = $self->get_name();
 
     return if ($calc->indicators->is_available_interval($name, $first, $last));
-    return if (! $self->check_dependencies_interval($calc, $first, $last));
+    while (! $self->check_dependencies_interval($calc, $first, $last)) {
+      return if $first == $last;
+      $first++;
+    }
 
     for(my $i = $first; $i <= $last; $i++) {
       my $den = $indic->get($self->{'den'}->get_name, $i) || 0.0000001;

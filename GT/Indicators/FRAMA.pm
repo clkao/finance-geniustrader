@@ -167,7 +167,10 @@ sub calculate_interval {
     return if ($indic->is_available_interval($name, $first, $last));
     # Don't need to calculate all SMA values, just the first data point.
         $self->{'sma'}->calculate($calc, $first);
-    return if (! $self->check_dependencies_interval($calc, $first, $last));
+    while (! $self->check_dependencies_interval($calc, $first, $last)) {
+      return if $first == $last;
+      $first++;
+    }
     my $period=$nb/2;
     my $alpha = 0.5;
 

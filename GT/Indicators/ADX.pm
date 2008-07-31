@@ -151,7 +151,10 @@ sub calculate_interval {
     $self->add_volatile_indicator_dependency($self->{'dm+'}, $period+1);
     $self->add_volatile_indicator_dependency($self->{'dm-'}, $period+1);
 
-    return if (! $self->check_dependencies_interval($calc, $first, $last));
+    while (! $self->check_dependencies_interval($calc, $first, $last)) {
+      return if $first == $last;
+      $first++;
+    }
 
   for (my $i=$first-$period;$i<=$last;$i++) {
     my $positive_di_value = 0;

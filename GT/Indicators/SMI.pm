@@ -203,7 +203,10 @@ sub calculate_interval {
     # Smoothing functions are args 2 and 3
     my $nb_days = $self->{'args'}->get_arg_constant(2) + $self->{'args'}->get_arg_constant(3) + $self->{'args'}->get_arg_names(4);
 
-    return if (! $self->check_dependencies_interval($calc, $first, $last));
+    while (! $self->check_dependencies_interval($calc, $first, $last)) {
+      return if $first == $last;
+      $first++;
+    }
 
 
     for (my $i=$first-$nb_days+1;$i<=$last;$i++) {

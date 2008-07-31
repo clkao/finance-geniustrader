@@ -197,7 +197,10 @@ sub calculate_interval {
     my $nb_days = ($self->{'args'}->get_arg_constant(2) > $self->{'args'}->get_arg_constant(3)+$self->{'args'}->get_arg_constant(4)) ? 
       $self->{'args'}->get_arg_constant(2) : $self->{'args'}->get_arg_constant(3)+$self->{'args'}->get_arg_constant(4);
 
-    return if (! $self->check_dependencies_interval($calc, $first, $last));
+    while (! $self->check_dependencies_interval($calc, $first, $last)) {
+      return if $first == $last;
+      $first++;
+    }
 
 
     for (my $i=$first;$i<=$last;$i++) {

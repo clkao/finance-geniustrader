@@ -105,7 +105,10 @@ sub calculate_interval {
     $self->add_volatile_indicator_dependency( $self->{'second_ema'}, $nb);
     $self->add_volatile_indicator_dependency( $self->{'third_ema'}, 1);
 
-    return if (! $self->check_dependencies_interval($calc, $first, $last));
+    while (! $self->check_dependencies_interval($calc, $first, $last)) {
+      return if $first == $last;
+      $first++;
+    }
     return if ( !defined($nb) );
 
   for (my $i=$first;$i<=$last;$i++) {
