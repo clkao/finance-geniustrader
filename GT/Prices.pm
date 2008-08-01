@@ -104,9 +104,6 @@ sub date {
 sub add_prices_array {
     my ($self, @prices) = @_;
     push @{$self->{'prices'}}, @prices;
-    use Data::Dumper;
-    print Dumper(\$self);
-    exit;
 }
 
 =item C<< $p->add_prices([$open, $high, $low, $close, $volume, $date]) >>
