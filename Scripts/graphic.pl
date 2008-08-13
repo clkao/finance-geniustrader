@@ -337,7 +337,7 @@ if ( open(CONF, "<$filename") ) {
 Getopt::Long::Configure("no_pass_through");
 GetOptions('full!' => \$full, 'nb-item=i' => \$nb_item, 
 	   "start=s" => \$start, "end=s" => \$end, 
-	   "max-loaded-items" => \$max_loaded_items,
+	   "max-loaded-items=s" => \$max_loaded_items,
 	   "timeframe=s" => \$timeframe,
 	   "width=i" => \$width, "height=i" => \$height,
 	   "type=s" => \$type, "volume!" => \$volume,

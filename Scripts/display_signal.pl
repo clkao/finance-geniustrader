@@ -158,7 +158,7 @@ my @options;
 Getopt::Long::Configure('require_order');
 GetOptions('full!' => \$full, 'nb-item=i' => \$nb_item, 
 	   "start=s" => \$start, "end=s" => \$end, 
-	   "max-loaded-items" => \$max_loaded_items,
+	   "max-loaded-items=s" => \$max_loaded_items,
 	   "timeframe=s" => \$timeframe,
            "change!" => \$change, "last-record" => \$last_record,
 	   "option=s" => \@options, "help!" => \$man);

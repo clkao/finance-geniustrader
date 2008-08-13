@@ -166,7 +166,7 @@ my ($outputdir, $broker, $set, $init) =
 $outputdir = GT::Conf::get("BackTest::Directory") || '';
 GetOptions('full!' => \$full, 'nb-item=i' => \$nb_item, 
 	   "start=s" => \$start, "end=s" => \$end, 
-	   "max-loaded-items" => \$max_loaded_items,
+	   "max-loaded-items=s" => \$max_loaded_items,
 	   "timeframe=s" => \$timeframe,
 	   'output-directory=s' => \$outputdir, 'init=s' => \$init,
 	   'broker=s' => \$broker, 'set=s' => \$set,
