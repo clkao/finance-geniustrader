@@ -9,6 +9,7 @@ use vars qw(@ISA);
 
 use GT::DB;
 use GT::Conf;
+use GT::DateTime qw();
 use DBI;
 
 @ISA = qw(GT::DB);
