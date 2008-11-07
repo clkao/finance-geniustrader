@@ -1,0 +1,83 @@
+# Copyright 2008 ras
+# Based on and for GeniusTrader (C) 2000-2002 Raphaël Hertzog, Fabien Fulhaber
+
+# $Id: gt_sig-sys-desc.pod,v 1.1 2008/10/31 01:10:35 ras Exp ras $
+
+=head1	gt system description specifications (sig-sys-desc)
+
+used for defining indicators, signals, and system components. these
+sig-sys-desc are found throughout gt configuration and control files,
+and on command lines.
+
+
+=head1 positional value substitution -- 
+
+
+=head1 indicator description (ind-desc) -- define an indicator
+
+
+=head1 signal description (sig-desc) -- define a signal
+
+
+
+=head1 sys description -- define a set of system components
+
+sig-sys-desc are used to specify a set of properties and parameters to
+be used by gt to perform the technical analysis desired. it may
+encompass one or more components of an analysis system. they are composed
+of the items described below. see sig-sys-desc examples above.
+
+
+supported abbreviations (not listed elsewhere):
+Generic    = G:
+Signals    = S:
+Indicators = I:
+
+=head1 systems description (sys-desc) -- define parts of a system
+
+  GT/<directory>          abbreviation
+     Systems                  SY:
+     OrderFactory             OF:
+     MoneyManagement +        MM:
+     tradeFilters  +          TF:
+     CloseStrategy  +         CS:
+     Brokers                <none>
+
+see directories for details on the elements of that component
+
+components of a systems description are separated by vertical bars ("|").
+components marked + above allow multiple elements of that component.
+
+
+=head2	yet more sys-desc examples:
+
+  System:ADX 30 | TradeFilters:LongOnly | MoneyManagement:FixedSum
+  same as above using abbreviations
+  SY:ADX 30 | TF:LongOnly | MM:FixedSum
+
+
+=head2	sig-sys-desc examples:
+
+ SY:SMA 2 3 4 | TF:AcceptAll
+
+ S:Generic:And \
+  { S:Generic:Below { I:Prices CLOSE } { I:G:PeriodAgo } } \
+  { S:Generic:Below { I:Prices CLOSE } { I:SMA 50 {I:Prices CLOSE} } } \
+  NAME below 50 day sell \
+
+the following logical line group is effectively commented out
+
+ #SY:SMA 10 20 200 \
+ | TF:AcceptAll
+
+
+=head1	DESCRIPTION
+
+
+=head1	BUGS
+
+
+=head1	SEE ALSO
+  scan.pl, backtest.pl, gt_file.pod, Tools.pm, 
+
+

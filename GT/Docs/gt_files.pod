@@ -1,0 +1,272 @@
+# Copyright 2008 ras
+# Based on and for GeniusTrader (C) 2000-2002 Raphaël Hertzog, Fabien Fulhaber
+
+# $Id: gt_files.pod,v 1.3 2008/11/07 18:33:48 ras Exp ras $
+
+=head1	miscellaneous file format information
+
+files used by genius trader (gt)
+
+  $HOME/.gt/options -- this is your primary gt configuration file
+
+
+
+  scan.pl and backtest_many.pl
+    market_file -- list of security codes
+    system_file -- system-signals to scan
+
+
+
+  aliases files
+    global_alias -- from dir $HOME/.gt/
+    object_alias -- from Path::Aliases keys for each specific type
+
+
+  
+  colors -- x11 rgb file from SearchPath::X11_rgb search path
+    used if a colour name is used but not found in the hardcoded list
+    no harm if file not found (named colour will fail to "black".
+
+
+  
+  xml files (GT/MetaInfo.pm)
+    your gt portfolio
+      -- named on command line manage_portfolio.pl and other
+         Script apps (backtest*.pl etc)
+      -- named in graphic config PortfolioPositions directives
+
+
+
+  security (price data) databases (flat files)
+    GT/Prices.pm -- prices files
+    GT/DB.pm -- $HOME/.gt/sharenames (used when the prices database
+                scheme doesn't inclyde company name)
+    GT/DB/MetaStockReader.pm
+    GT/DB/MetaStock.pm (depreciated in favor of MetaStockReader.pm)
+    GT/DB/HTTP.pm
+  fixme
+
+
+
+  chart image files -- most likely written to stdout by default
+    GT/Graphics/Driver/GD.pm
+    GT/Graphics/Driver/SVG.pm
+    GT/Graphics/Driver/ImageMagick.pm
+    GT/Graphics/Driver/Postscript.pm
+  fixme
+
+
+
+  analysis report templates --
+    fix me
+
+
+
+  prior analyses (GT/Analyzers/Process.pm)
+    fixme
+
+
+
+
+
+=head1 market_file -- this is just a general text file
+
+a list of market codes or security symbols one code per line.
+the code can appear anywhere on the line. a `#' indicates the
+beginning of a comment; characters up to the end of the line
+are ignored. a comment may also appear on a line containing
+a code.
+
+blank lines, and lines containing only whitespace are ignored.
+
+codes are character strings from the this set of chars
+[a-zA-X0-9_^.]
+
+scan.pl runs its analysis on each code in turn
+
+=head1 system_file | signal_file -- this is just a general text file
+
+a list of one or more gt signal or system descriptions or specifications
+(sig-sys-desc), one per logical line. long sig-sys-desc can be broken
+into shorter more readable lines by placing the line continuation character
+'\' just prior to the line terminator character (watch out for trailing whitespace
+and be sure there is a blank line or normally terminated line as the last
+line of a logical line.
+
+a `#' indicates the beginning of a comment; characters up to
+the end of the line are ignored. comments can appear on sig-sys-desc
+that are on one line, but comments cannot be embedded into
+logical line groupings. you can effectively comment out an entire logical line
+by putting a comment on first line of the logical line group.
+
+blank lines, and lines containing only whitespace are ignored.
+
+scan.pl runs an analysis based on each sig-sys-desc found in the file.
+
+=head2	sig-sys-desc examples:
+
+ SY:SMA 2 3 4 | TF:AcceptAll
+
+ S:Generic:And \
+  { S:Generic:Below { I:Prices CLOSE } { I:G:PeriodAgo } } \
+  { S:Generic:Below { I:Prices CLOSE } { I:SMA 50 {I:Prices CLOSE} } } \
+  NAME below 50 day sell \
+
+the following logical line group is effectively commented out
+
+ #SY:SMA 10 20 200 \
+ | TF:AcceptAll
+
+  System:ADX 30 | TradeFilters:LongOnly | MoneyManagement:FixedSum
+  same as above using abbreviations
+  SY:ADX 30 | TF:LongOnly | MM:FixedSum
+
+
+=head1 global_alias -- $HOME/.gt/options file
+
+a <system_alias> is a short hand for one or more system components.
+system components is another reference for sig-sys-desc. a <system_alias>
+name should be restricted to the characters in this character set
+[a-zA-Z0-9_] (alphanumeric and underscore). using any of these characters
+is bound to be troublesome: ':@#[]'.
+
+the format of a system_alias entry:
+
+  "Aliases::Global::<system_alias>" <whitespace> <sig-sys-desc>
+
+where "Aliases::Global::<system_alias>" is case insensitive, and will
+always be processed in lower case. <sig-sys-desc> on the other hand
+is case sensative. see sig-sys-desc for details on how to craft these
+elements.
+
+
+=head1 object_alias -- system component (objects) aliases
+
+object aliases are aliases of individual system components
+but not complete or partial systems (e.g. they cannot contain
+a "|" symbol.
+
+these aliases are stored in top level dire /usr/share/geniustrader/aliases
+by default, but are also searched for in $HOME/.gt/aliases/.
+
+object aliases are grouped by the kind of system component
+("signals", "indicators", "systems", "closestrategy",
+"moneymanagement", "tradefilters", "orderfactory", "analyzers")
+<kind> they represent and are searched for in directories
+bearing that name. this allows a common name to be used in a system context.
+
+the format of a object_alias entry:
+
+  "Path::Aliases::<kind>::<object_alias>" <whitespace> <sig-sys-desc>
+
+or in your $HOME/.gt/options file:
+
+  "Aliases::<kind>::<object_alias>" <whitespace> <sig-sys-desc>
+
+where "(Path::)*Aliases::<kind>::<object_alias>" is case insensitive -- is it?
+
+can <kind> be abbreviated using the standards?
+
+
+
+=head2 object_alias examples:
+
+   Aliases::Indicators::MyMean  { I:Generic:Eval ( #1 + #2 ) / 2 }
+
+other than that they are very much like a system alias, but in use
+they are referenced in <sig-sys-desc> by prefixing the '@' symbol
+to the <object_alias> identifier. for example { @I:MyMean 50 {I:RSI} }
+denotes that the indicator I:MyMean is an object alias.
+
+=head1 $HOME/.gt/options
+
+file containing perl hash key-values that set the value of the given key.
+for the most part every key will (should) have a hardcoded default value,
+use this file to override the default should you want a different value.
+
+gt isn't (but probably should be) shipped with a default options file.
+there are a couple required items that must be set there as they do not
+have hardcoded values:
+
+  securities prices sources
+  truetype font paths
+
+securities prices sources setup:
+
+to use the sample_data files add these lines -- watch for trailing whitespace
+
+    DB::module Text
+    DB::text::directory /path/to/sample_data/directory
+    # no trailing / on directory
+
+  to use a database engine
+    refer to your db engine type interface in GT/DB/
+    fix me 
+
+paths to your computers truetype fonts -- be sure to edit the path
+as well as the actual file name for your computer
+absolute mininum is Path::Font::Arial key and a value
+
+    Path::Font::Arial /path/to/truetype/font/arial.ttf
+    Path::Font::Courier /path/to/truetype/font/couri.ttf
+    Path::Font::Times /path/to/truetype/font/times.ttf
+    Path::Font::Fixed /path/to/truetype/font/VeraMono.ttf
+
+a broker module (not required, but recommended)
+    Brokers::module SelfTrade
+
+background color override (default is harsh white)
+    Graphic::BackgroundColor "LINEN"
+
+
+there isn't but maybe should be a key for the graphics driver
+(GD (recommended), SVG, PostScript, ImageMagick). this is set
+in the gt Script app (Scripts/backtest.pl, Scripts/graphic.pl)
+
+
+=head1 xml files (GT/MetaInfo.pm)
+
+    fix me 
+
+=head1 security (price data) databases
+
+    GT/Indicators/EVWMA.pm	/bourse/metainfo/	# EVWMA.pm appears broken
+    GT/List.pm			/bourse/listes/
+
+    fix me 
+
+=head1 analysis report templates
+
+    Scripts/manage_portfolio.pl	Scripts/Templates/
+    Scripts/backtest.pl		Scripts/Templates/
+    Scripts/backtest_multi.pl	/bourse/perl
+
+
+    fix me 
+
+=head1 prior analyses (GT/Analyzers/Process.pm)
+
+    fix me 
+
+=head1 chart image files
+
+    fix me 
+
+
+
+
+
+=head1	DESCRIPTION
+
+fixme
+
+=head1	BUGS
+
+fixme
+
+
+=head1	SEE ALSO
+  scan.pl, backtest.pl,  backtes_many.pl, gt_sig-sys-desc.pod, Tools.pm,
+  $HOME/.gt/options, $HOME/.gt/aliases/, $HOME/.gt/portfolio/,
+
+

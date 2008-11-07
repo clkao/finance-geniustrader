@@ -1,0 +1,258 @@
+# Copyright 2008 ras
+# Based on and for GeniusTrader (C) 2000-2002 Raphaël Hertzog, Fabien Fulhaber
+
+# $Id: object_aliases.pod,v 1.1 2008/10/31 01:10:48 ras Exp ras $
+
+=pod
+
+=head1 object aliases
+
+object aliases are user defined aliases, shorter names for commonly
+used gt object specifications. object aliases can be used for any
+of the gt analysis component specifications like Signals, Indicators,
+as well as gt system component specifications like Systems, CloseStrategy,
+TradeFilters and the like. it isn't clear whether an object alias may
+be used to define multiple components of a system (e.g. contain a connecting
+'|' symbol). the code commentary, and pod implies that is not their
+intended purpose, for that it's probably just wiser to use a system alias.
+
+the intention is to not permit object aliases to define multiple system
+components (e.g. contain a '|' symbol). however, suffucient code may not
+be in place to guarante attempts to do that will always be detected and
+flagged with a useful error message.
+
+so don't do it. use a system alias for that purpose.
+
+to mark an object aliases in a gt component specification prefix the
+@ symbol to the specification. if you have an object alias named
+my_mean and it is an indicator type it would appear as @I:my_mean
+in a gt specification.
+
+examples of object aliases are presented in paragraphs below.
+
+
+=head1 object alias formats
+
+there are two different formats that object aliases come in. which
+form depends on which type of file the object aliases is defined in.
+the two file types that can define an object aliases are
+
+    $HOME/.gt/options
+
+and
+
+    the $kind files that can appear at
+    $HOME/.gt/aliases/$kind
+
+and also in the directory(ies) defined by %conf keys "Path::Aliases::$kind"
+(case insensitive) which by default is the path(s) /usr/share/geniustrader/aliases/$kind
+
+the variable $kind assumes each of these filenames during alias loading:
+
+  signals
+  indicators
+  systems
+  closestrategy
+  moneymanagement
+  tradefilters
+  orderfactory
+  analyzers
+
+these file names are not capitalized.
+
+starting with object aliases defined in the users $HOME/.gt/options file
+the format is:
+
+   "Aliases::Indicators::"<my_object_alias> <whitespace> <object_alias specification>
+
+where the string "Aliases::Indicators::" must be prepended without the quotes
+to the object_alias name. this string is separated by whitespace from
+the <object_alias specification> string. note that when entries are added to
+the gt %conf hash the keys are lower cased, but the values are stored unaltered.
+
+here are working examples -- for use only in your $HOME/.gt/options file
+
+  # example use: display_indicator.pl @I:MyMean GOOG '50 {I:RSI}'
+  Aliases::Indicators::MyMean_opt	{ I:Generic:Eval ( #1 + #2 ) / 2 }
+  Aliases::Indicators::PVOL_opt		{I:Prices VOLUME}
+
+
+the second form of an object alias format differs in that the string
+"Aliases::$kind::" must not be part of the key, as it is derived from
+the file name ($kind) as the file is loaded. the "Aliases::$kind::"
+string will be automatically added to the object alias name when
+the object alias is added to the gt %conf hash. this format applies
+to object aliases found in any of the files named using $kind.
+
+the second form of an object alias format is:
+
+    <my_object_alias> <whitespace> <object_alias specification>
+
+
+examples of the second form of an object alias format:
+
+  MyMean_gbl	{ I:Generic:Eval ( #1 + #2 ) / 2 }
+  PHI_gbl	{I:Prices VOLUME}
+
+and
+
+  PO	{I:Prices OPEN}
+  PH	{I:Prices HIGH}
+  Pl	{I:Prices LOW}
+  PC	{I:Prices CLOSE}
+  PV	{I:Prices VOLUME}
+  vol	{I:Prices VOLUME}
+
+
+=head1 object alias file locations and file names
+
+the gt system will look in two places for object alias files.
+if the paths (directories) do not exist or there are no appropriate
+files found in the directories gt will not load any object alias files.
+neither condition will cause a warning or an error condition.
+
+the two places in the file system where object alias files are
+looked for by default, in search order are:
+
+ 1) $HOME/.gt/options/aliases/$kind    # fixed locations, cannot be altered
+    note: alias files in this directory tree must be name after $kind
+    (e.g. $kind takes on each of these strings 'signals', 'indicators', 
+    'systems', 'closestrategy', 'moneymanagement', 'tradefilters', 
+    'orderfactory', 'analyzers') and must be lower case 
+    (if your os/fs is case sensitive).
+
+    filename examples:
+        $HOME/.gt/options/aliases/signals
+        $HOME/.gt/options/aliases/indicators
+        $HOME/.gt/options/aliases/systems
+        $HOME/.gt/options/aliases/closestrategy
+
+ 2) default object aliases files directory
+
+    by default the directory for object aliases is /usr/share/geniustrader/aliases.
+    the files therein bear the name of each $kind (see above).
+    note: the default filenames are lower case, but if you
+    elect to change the default pathname whatever you specify will be used.
+
+    default examples:
+        /usr/share/geniustrader/aliases/indicators
+        /usr/share/geniustrader/aliases/systems
+
+ 3) override default object aliases directory with user specified path
+
+    if the default location /usr/share/geniustrader/aliases/$kind
+    is unacceptable for some reason, do not despair or attempt to
+    change the code. you can easily override the default location
+    by simply defining alternate paths for the global alias files.
+
+    this might be done to facilitate two or more users sharing object
+    aliases files.
+
+    alternate paths are under full user control using the gt %conf option
+    keys "Path::Aliases::$kind" to establish new paths to $kind files.
+
+        Path::Aliases::$kind	'/this/users/preferred/path/alias_file'
+
+    will cause gt to search /this/users/preferred/path/ for the file
+    named alias_file hopefully containing $kind object aliases.
+    if the file or path does not exist it will be silently ignored, both
+    a blessing and a curse, depending.
+
+    it is required that any key specified be in the set of $kind name
+    strings (see above) but the value for the key (e.g. the value
+    of these keys is the entire pathname of the file containing $kind
+    object aliases) is entirely up to the user. the value will be case
+    sensitive depending on your os/fs. it is expected that the object
+    aliases found at the path associated with the $kind key be of
+    type $kind. in other words, the file named by the value of key
+    Path::Aliases::Indicators should contain indicator aliases,
+    and key Path::Aliases::systems should contain system aliases.
+
+    by way of example. while the following is correct it is not the
+    recommended practice.
+        Path::Aliases::signals    /home/shared/some_aliases
+        Path::Aliases::indicators /home/shared/objects
+
+    i haven't evaluated the effect of putting signal object aliases in
+    files expected to be indicators.
+
+my suggestion, if you must have a shared place for object aliases
+and cannot use the default root (e.g. /usr/share/geniustrader/aliases/),
+for the sanity of your maintainers and developers at least use $kind
+filenames whereever else you set the path.
+
+     in other words:
+        Path::Aliases::signals    /home/shared/GT/signals
+        Path::Aliases::indicators /home/shared/GT/indicators
+
+=head2 pathname upper/lower case observations
+
+the $kind filenames in dir tree $HOME/.gt/aliases will be lower case.
+
+the default $kind filenames in the dir tree /usr/share/geniustrader/aliases
+will be lower case.
+
+if you change the default $kind pathname using the Path::Aliases::$kind
+config options whatever pathnames you specify will be used without change.
+
+gt config option keys are always case insensitive and are stored lower case.
+
+completely valid object alias files stored in an appropriate directory tree
+but having a case conflict will be silently ignored. my suggestion would
+be to avoid using upper case pathnames.
+
+
+
+changes by thomas weigert has enhanced object aliases to allow recursion.
+this makes the combination of system and object aliases a powerful and
+useful feature:
+
+
+For example, define these signal aliases on a single line (remove the \)
+in your $HOME/.gt/aliases/signals file
+
+ # 3Xover... is a generic crossover signal involving three lines
+ 3Xoverlong { S:G:Or \
+  { S:G:And {S:G:Above #1 #3} {S:G:CrossOverUp #2 #3} } \
+  { S:G:And {S:G:Above #2 #3} {S:G:CrossOverUp #1 #3} } }
+
+ 3Xovershort { S:G:Or \
+  { S:G:And {S:G:Below #1 #3} {S:G:CrossOverDown #2 #3} } \
+  { S:G:And {S:G:Below #2 #3} {S:G:CrossOverDown #1 #3} } }
+
+ # 3EMA... passes its arguments to and invokes 3Xover... 
+ 3EMAlong  { @S:3Xoverlong {I:EMA #1} {I:EMA #2} {I:EMA #3} }
+
+ 3EMAshort { @S:3Xovershort {I:EMA #1} {I:EMA #2} {I:EMA #3} }
+
+
+with a system alias called 3EMA defined in your $HOME/.gt/options file:
+
+ Aliases::Global::3EMA SY:Generic \
+  { @S:3EMAlong 60 90 120 } { @S:3EMAshort 60 90 120 }
+
+you can evaluate initial positions using the aliased signals define
+
+with a system alias called 3EMA[] defined in your $HOME/.gt/options file:
+
+ Aliases::Global::3EMA[]  SY:Generic \
+  { @S:3EMAlong #1 #2 #3 } { @S:3EMAshort #1 #2 #3 }
+
+you can pass different arguments to the aliased signals
+
+and if you don't want the symetry (e.g. using same args for the long and
+short position triggers you can redefine everything with parameters numbered
+#1 to #6
+
+=head2 some important notes:
+
+  1) it's critical that the leading { appear in each object alias otherwise
+     the arguments don't get fully substituted
+  2) unless there is an enhancement to sub resolve_object_aliases that
+     implements continuation lines all object files must have the alias
+     on a single line.
+  3) it's not clear if thise files currently support comment and blank
+     lines, but there's a ras hack that does, if it's not on the devel archive
+     list post a request to the list and it will be.
+
+
