@@ -403,9 +403,9 @@ sub apply_pending_orders {
 	    }
 	}
 	
-	if ($apply_stop && $order->is_executed($calc, $i))
+	if ($apply_stop && (my $stop_price = $order->is_executed($calc, $i)))
 	{
-	    $self->apply_order($order, $self->stop, $calc->prices->at($i)->[$DATE]);
+	    $self->apply_order($order, $stop_price, $calc->prices->at($i)->[$DATE]);
 	    return;
 	}
     }
