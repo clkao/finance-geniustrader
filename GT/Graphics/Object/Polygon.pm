@@ -57,7 +57,9 @@ sub display {
 								    $scale->convert_to_y_coordinate($points[$i][1]));
     }
 
-    $driver->polygon($picture, $self->{'fg_color'}, @points);
+    $self->{filled} ? 
+        $driver->filled_polygon($picture, $self->{'fg_color'}, @points)
+      : $driver->polygon($picture, $self->{'fg_color'}, @points);
 }
 
 1;

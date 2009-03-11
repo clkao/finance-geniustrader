@@ -16,6 +16,7 @@ use GT::Eval;
 use GT::Graphics::Driver;
 use GT::Graphics::DataSource;
 use GT::Graphics::Object;
+use GT::Graphics::Object::MultiPoly;
 use GT::Graphics::Graphic;
 use GT::Graphics::Tools qw(:axis :color);
 use GT::BackTest::Spool;
@@ -751,6 +752,21 @@ foreach (@add) {
         update_curr_range($ds_i2->get_value_range());
         $object = GT::Graphics::Object::MountainBand->new($ds_i, $curr_zone, $ds_i2);
         $object->set_foreground_color($args[2]) if (defined($args[2]));
+    } elsif ($func =~ /MultiPoly/i) {
+        my $color = $args[-1] =~ m/^\[/ ? pop @args : undef;
+        my @ds;
+        for (0..$#args) {
+            if ($args[$_] =~ m/^\%I/) {
+                push @ds, $args[$_];
+            }
+            else {
+                push @ds, build_datasource($args[$_], $calc, $first, $last);
+                update_curr_range($ds[-1]->get_value_range());
+            }
+        }
+        my $s = shift @ds;
+	$object = GT::Graphics::Object::MultiPoly->new($s, $curr_zone, @ds);
+	$object->set_foreground_color($color) if $color;
     } elsif ($func =~ /Mountain/i) {
         my $ds_i = build_datasource($args[0], $calc, $first, $last);
         update_curr_range($ds_i->get_value_range());
