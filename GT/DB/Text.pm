@@ -5,7 +5,7 @@ package GT::DB::Text;
 # version 2 or (at your option) any later version.
 
 # new version joao costa circa nov 07
-# $Id$
+# $Id: /mirror/geniustrader/trunk/GT/DB/Text.pm 11727 2008-06-10T04:43:34.636531Z thomas  $
 
 use strict;
 our @ISA = qw(GT::DB);
@@ -129,6 +129,8 @@ sub new {
     GT::Conf::default('DB::Text::fields::close', '3');
     GT::Conf::default('DB::Text::fields::volume', '4');
 
+    GT::Conf::default('DB::Text::cache', '0');
+
     $self->{'header_lines'} = GT::Conf::get('DB::Text::header_lines');
     $self->{'mark'} = GT::Conf::get('DB::Text::marker');
     $self->{'date_format'} = GT::Conf::get('DB::Text::format');
@@ -139,6 +141,7 @@ sub new {
     $self->{'high'} = GT::Conf::get('DB::Text::fields::high');
     $self->{'close'} = GT::Conf::get('DB::Text::fields::close');
     $self->{'volume'} = GT::Conf::get('DB::Text::fields::volume');
+    $self->{'use_cache'} = GT::Conf::get('DB::Text::cache');
 
     return bless $self, $class;
 }
@@ -192,9 +195,19 @@ sub get_prices {
     $extension =~ s/\$timeframe/$tfname/g;
 
     my $file = $self->{'directory'} . "/$code" . $extension;
-
+    if ($self->{'use_cache'}) {
+        require Storable;
+        if (-f $file.".cache" && (stat($file.".cache"))[9] > (stat($file))[9]) {
+            return Storable::retrieve($file.".cache");
+        }
+    }
     $prices->loadtxt($file, $self->{'mark'}, $self->{'date_format'},
 		     $self->{'header_lines'}, %fields);
+
+    if ($self->{'use_cache'}) {
+        $prices->timestamp($_) for 0..$prices->count-1;
+        Storable::nstore($prices, $file.".cache");
+    }
     return $prices;
 
 }
