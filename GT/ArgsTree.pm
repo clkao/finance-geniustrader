@@ -134,6 +134,7 @@ sub get_arg_values {
     #ERR#  ERROR  "Bad calculator argument for get_arg_values" if ( ref($calc) =~ /GT::Calculator/);
     #ERR#  ERROR  "Bad day argument for get_arg_values" if ( $day =~ /^\d+$/);
     if (defined($n)) {
+        my $indic = $calc->indicators;
 	#ERR#  ERROR  "Bad argument index in get_arg_values" if ( $n >= 1 && $n < scalar(@{$self}));
 	my $res = undef;
 	if (ref($self->[$n]) =~ /ARRAY/) {
@@ -142,9 +143,9 @@ sub get_arg_values {
 	    my $name = $object->get_name($number);
 	    if (ref($object) =~ /GT::Indicators/) {
 		$object->calculate($calc, $day) 
-		  unless ($calc->indicators->is_available($name, $day));
-		if ($calc->indicators->is_available($name, $day)) {
-		    $res = $calc->indicators->get($name, $day);
+		  unless ($indic->is_available($name, $day));
+		if ($indic->is_available($name, $day)) {
+		    $res = $indic->get($name, $day);
 		    return $res;
 		}
 	    } elsif (ref($object) =~ /GT::Signals/) {
@@ -156,9 +157,9 @@ sub get_arg_values {
 		}
 	    } elsif (ref($object) =~ /GT::Analyzers/) {
 		$object->calculate($calc, $day) 
-		  unless ($calc->indicators->is_available($name, $day));
-		if ($calc->indicators->is_available($name, $day)) {
-		    $res = $calc->indicators->get($name, $day);
+		  unless ($indic->is_available($name, $day));
+		if ($indic->is_available($name, $day)) {
+		    $res = $indic->get($name, $day);
 		    return $res;
 		}
 	    }

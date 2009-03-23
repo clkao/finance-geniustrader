@@ -180,11 +180,12 @@ sub load_from_cache {
 
     my @names = map { $self->get_name($_) } 0..$self->get_nb_values-1;
     my $i = 0;
+    my $indic = $calc->indicators;
     while (<$fh>) {
         chomp;
         my @vals = split(',');
         for (0..$#names) {
-            $calc->indicators->set($names[$_], $i, $vals[$_] eq 'NA' ? undef : $vals[$_])
+            $indic->set($names[$_], $i, $vals[$_] eq 'NA' ? undef : $vals[$_])
         }
         ++$i;
     }
