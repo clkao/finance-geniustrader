@@ -13,7 +13,6 @@ sub init {
     GT::Conf::load();
 
     my $nb_item = GT::Conf::get('Option::nb-item');
-    $nb_item = (defined($nb_item))?$nb_item:200;
     my ($full, $start, $end, $timeframe, $max_loaded_items) =
         (0, '', '', 'day', -1);
     my $man = 0;
@@ -25,12 +24,12 @@ sub init {
                "timeframe=s" => \$timeframe,
                "option=s" => \@options, "help!" => \$man);
 
+    $nb_item = ( defined($nb_item) || $full ) ? $nb_item : 200;
     $timeframe = GT::DateTime::name_to_timeframe($timeframe);
 
     check_dates($timeframe, $start, $end);
 
     my $db = create_db_object();
-
     return sub {
         my $code = shift;
         find_calculator($db, $code, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items);
