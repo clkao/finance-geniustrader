@@ -341,6 +341,13 @@ my $db = create_db_object();
 
 my ($calc, $first, $last) = find_calculator($db, $code, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items);
 
+use Data::Walk 'walk';
+walk sub {
+    return unless UNIVERSAL::isa($_, 'GT::Indicators');
+    $_->load_from_cache($calc);
+}, $sys_manager;
+
+
 # The real work happens here
 my $analysis = backtest_single($pf_manager, $sys_manager, $broker, $calc, $first, $last);
 

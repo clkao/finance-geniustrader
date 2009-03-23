@@ -159,6 +159,39 @@ sub calculate_interval {
     return;
 }
 
+sub load_from_cache {
+    use Digest::SHA1  qw(sha1_hex);
+    my ($self, $calc) = @_;
+
+    my $dir = GT::Conf::get("DB::text::directory");
+    my $code = $calc->code;
+
+    my $timeframe_name = GT::DateTime::name_of_timeframe($calc->current_timeframe);
+    return if $self->{cache_tried};
+
+    my $pdir = "$dir/$code/$timeframe_name";
+
+    my $standard_name = GT::Eval::get_standard_name($self) ;
+    my ($short) = $standard_name =~ m/[\S:](\w+)\s/;
+    my $file = "$pdir/$short.".sha1_hex($standard_name).".i";
+
+    return unless -e $file;
+    open my $fh, '<', $file or die $!;
+
+    my @names = map { $self->get_name($_) } 0..$self->get_nb_values-1;
+    my $i = 0;
+    while (<$fh>) {
+        chomp;
+        my @vals = split(',');
+        for (0..$#names) {
+            $calc->indicators->set($names[$_], $i, $vals[$_] eq 'NA' ? undef : $vals[$_])
+        }
+        ++$i;
+    }
+    ++$self->{cache_tried};
+
+}
+
 =item C<< $indic->initialize() >>
 
 Default method that does nothing.
