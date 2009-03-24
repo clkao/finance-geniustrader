@@ -76,8 +76,8 @@ sub initialize {
 sub calculate {
     my ($self, $calc, $i) = @_;
 
-    return if ($calc->indicators->is_available($self->get_name, $i));
-
+    return if ($calc->indicators->is_available($self->{names}[0], $i));
+    return if $i<0;
     my $indic = $calc->indicators;
     my $DATA = $self->{'data_ind'};
     

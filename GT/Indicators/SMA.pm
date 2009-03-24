@@ -69,11 +69,11 @@ sub initialize {
 
 sub calculate {
     my ($self, $calc, $i) = @_;
-    my $nb = $self->{'args'}->get_arg_values($calc, $i, 1);
     my $name = $self->get_name;
-    my $sum = 0;
-
     return if $calc->indicators->is_available($name, $i);
+
+    my $nb = $self->{'args'}->get_arg_values($calc, $i, 1);
+    my $sum = 0;
 
     return if (! defined($nb) || $nb==0);
 
