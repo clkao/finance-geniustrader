@@ -73,17 +73,26 @@ sub calculate {
     return if (! $self->check_dependencies($calc, $i));
 
     my $res = undef;
-    my $arg = $self->{'args'}->get_arg_values($calc, $i, 1);
+    my $arg = $self->{'args'}->get_arg_values($calc, $i, 1); # value of period
 
     if ($arg =~ /^[\d.]+$/) {
+        my $prev_arg = $i > 0 ? $self->{'args'}->get_arg_values($calc, $i-1, 1) : undef;
+        my $prev_val = $i > 0 ? $calc->indicators->get($name, $i-1) : undef;
 	$res = $self->{'args'}->get_arg_values($calc, $i, 2);
-	for (my $n = 1; $n < $arg; $n++) {
-            return if $i - $n < 0;
-	    my $val = $self->{'args'}->get_arg_values($calc, $i - $n, 2);
-	    if (defined($val) && defined($res)) {
-		$res = min($res, $val);
-	    }
-	}
+        if (defined $prev_arg && defined $res && defined $prev_val &&
+                $arg <= $prev_arg &&
+                $res <= $calc->indicators->get($name, $i-1) ) {
+            # leave res as current val
+        }
+        else {
+            for ( my $n = 1; $n < $arg; $n++ ) {
+                return if $i - $n < 0;
+                my $val = $self->{'args'}->get_arg_values( $calc, $i - $n, 2 );
+                if ( defined($val) && defined($res) ) {
+                    $res = min( $res, $val );
+                }
+            }
+        }
     } elsif ($arg =~/^\d{4}-\d\d(-\d\d)?( \d\d:\d\d:\d\d)?$/) {
 	my $n = undef;
 	if ($calc->prices->has_date($arg)) {
