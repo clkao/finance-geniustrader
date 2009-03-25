@@ -152,9 +152,13 @@ sub calculate_interval {
     if (ref($self->{'args'}) =~ /GT::ArgsTree/) {
 	$self->{'args'}->prepare_interval($calc, $first, $last);
     }
+    my $nb_items = $self->get_nb_values;
+    my $name = $self->{names}[0];
+    my $indic = $calc->indicators;
     for (my $i = $first; $i <= $last; $i++)
     {
-	$self->calculate($calc, $i);
+	$self->calculate($calc, $i)
+            if $nb_items == 1 && !$indic->is_available($name, $i);
     }
     return;
 }
