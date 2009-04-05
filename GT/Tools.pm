@@ -188,7 +188,7 @@ sub resolve_alias {
     my $n = 1;
     foreach (@param)
     {
-	$sysname =~ s/#$n/$_/g;
+	$sysname =~ s/#$n(\D)/$_$1/g;
 	$n++;
     }
 
