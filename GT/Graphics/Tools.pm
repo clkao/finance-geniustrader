@@ -9,10 +9,12 @@ use vars qw(@ISA @EXPORT_OK %EXPORT_TAGS $PI);
 
 require Exporter;
 @ISA = qw(Exporter);
-@EXPORT_OK = qw(build_axis_for_timeframe build_axis_for_interval get_color
+@EXPORT_OK = qw(build_axis_for_timeframe build_axis_for_timeframe2
+                build_axis_for_interval get_color
 		union_range
 	       );
 %EXPORT_TAGS = ( "axis"  => [qw(build_axis_for_timeframe
+                                build_axis_for_timeframe2
                                 build_axis_for_interval
 				union_range)],
 		 "color" => [qw(get_color)]
@@ -108,6 +110,46 @@ sub build_axis_for_timeframe {
 	foreach (@axis) { $_->[1] = "" if ($skip%2); $skip++;  }
       }
     }
+
+    return \@axis;
+}
+
+sub build_axis_for_timeframe2 {
+    my ($prices, $timeframe, $timeframe2) = @_;
+    my @axis;
+    
+    my $date = $prices->at(0)->[$DATE];
+    my ($prevdate, $newdate);
+    my ($prevdate2, $newdate2);
+    $prevdate = GT::DateTime::convert_date($date, $prices->timeframe,
+					   $timeframe);
+    $prevdate2 = GT::DateTime::convert_date($date, $prices->timeframe,
+					   $timeframe2);
+    push @axis, [ 0, $prevdate ];
+    for(my $i = 0; $i < $prices->count; $i++) {
+	# Build the date in the new timeframe corresponding to the prices
+        # being treated
+        $newdate = GT::DateTime::convert_date($prices->at($i)->[$DATE], 
+					      $prices->timeframe, $timeframe);
+
+        $newdate2 = GT::DateTime::convert_date($prices->at($i)->[$DATE], 
+                                               $prices->timeframe, $timeframe2);
+	
+        # If the date differs from the previous one then we have completed
+        # a new item
+        if ($newdate ne $prevdate) {
+            # Store the new item
+            my $display = $newdate;
+            $display =~ s/^\Q$prevdate2\E//;
+            $display =~ s/(\d\d):00(:00)?/$1/;
+	    push @axis, [ $i, $display ]
+        }
+
+        # Update the previous date
+        $prevdate = $newdate;
+        $prevdate2 = $newdate2;
+    }
+
 
     return \@axis;
 }
