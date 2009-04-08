@@ -22,7 +22,7 @@ sub init {
                "start=s" => \$start, "end=s" => \$end, 
                "max-loaded-items=s" => \$max_loaded_items,
                "timeframe=s" => \$timeframe,
-               "option=s" => \@options, "help!" => \$man);
+               "option=s" => \@options, "help!" => \$man, @getopt_extra);
 
     $nb_item = ( defined($nb_item) || $full ) ? $nb_item : 200;
     $timeframe = GT::DateTime::name_to_timeframe($timeframe);
