@@ -26,6 +26,9 @@ This indicator returns the number of consecutive periods where the signal
 in parameter has been detected.
 
 =cut
+
+my $noise_threshold = 0;
+
 sub initialize {
 #    Carp::cluck "==> hate ".join(',',@_);
     my ($self) = @_;
@@ -52,11 +55,21 @@ sub calculate {
 
         my $last_val = $calc->indicators->get($name, $i - 1);
         my $sig = $self->{'args'}->get_arg_values($calc, $i, 1);
-        $calc->indicators->set($name, $i,
-                               $sig          ?
-                                              $last_val > 0 ? $last_val + 1 : 1
-                             : $last_val > 0 ? 0
-                             :                 $last_val-1);
+        if ($sig) {
+            if ($last_val <= 0 && $last_val > - $noise_threshold) {
+                $last_val = $calc->indicators->get($name, $i + $last_val - 2) - $last_val + 2;
+            }
+            if ($last_val > 0) {
+                $calc->indicators->set($name, $i, $last_val + 1);
+            }
+            else {
+                $calc->indicators->set($name, $i, 1);
+            }
+        }
+        else {
+            $calc->indicators->set($name, $i,
+                                   $last_val > 0 ? 0 : $last_val-1);
+        }
         return;
     }
     else {
