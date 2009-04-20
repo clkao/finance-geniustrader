@@ -6,6 +6,8 @@ package GT::Indicators::ADXR;
 
 # Standards-Version: 1.0
 
+# $Id$
+
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
@@ -62,6 +64,7 @@ sub calculate {
     $self->add_volatile_indicator_dependency($self->{'adx'}, $period);
 
     return if (! $self->check_dependencies($calc, $i));
+    return if (! $self->check_dependencies($calc, $i - $period));
 
     # Calculate ADXR value
     $adxr_value = ($indic->get($adx_name, $i) + $indic->get($adx_name, $i - $period)) / 2;
