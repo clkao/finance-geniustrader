@@ -6,6 +6,8 @@ package GT::Indicators::ADX;
 
 # Standards-Version: 1.0
 
+# $Id$
+
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
@@ -26,7 +28,9 @@ use GT::Tools qw(:math);
 
 GT::Indicators::ADX - ADX
 
-=head1 DESCRIPTION 
+=head1 DESCRIPTION
+
+volatility index
 
 =head2 Overview
 
@@ -42,14 +46,15 @@ GT::Indicators::ADX->new([20])
 This indicators is validated by the values from comdirect.de.
 The stock used was the DAX (data from yahoo) at the 04.06.2003:
 
-ADX[14]             [2003-06-04] = 19.9961 (comdirect=20.00)
-+DMI[14]            [2003-06-04] = 28.9251 (comdirect=28.93)
--DMI[14]            [2003-06-04] = 21.1723 (comdirect=21.17)
-DMI[14]             [2003-06-04] = 15.4754 (comdirect=15.48)
+  ADX[14]             [2003-06-04] = 19.9961 (comdirect=20.00)
+  +DMI[14]            [2003-06-04] = 28.9251 (comdirect=28.93)
+  -DMI[14]            [2003-06-04] = 21.1723 (comdirect=21.17)
+  DMI[14]             [2003-06-04] = 15.4754 (comdirect=15.48)
 
 =head2 Links
 
 =cut
+
 sub initialize {
     my $self = shift;
 
@@ -99,7 +104,7 @@ sub calculate {
 
     return if (! $self->check_dependencies($calc, $i));
 
-    if ( !$indic->is_available($dmi_name, $i-$period) ) {
+    if ( ! $indic->is_available($dmi_name, $i-$period) ) {
       $self->calculate_interval($calc, $i-$period, $i);
     }
 
@@ -112,7 +117,7 @@ sub calculate {
       unless ($indic->get($self->{'sumtr'}->get_name, $i) == 0);
 
     if ($positive_di_value + $negative_di_value != 0) {
-    $dmi_value = 100 * abs( $positive_di_value - $negative_di_value ) /
+      $dmi_value = 100 * abs( $positive_di_value - $negative_di_value ) /
 	( $positive_di_value + $negative_di_value ) ;
     } else {
       $dmi_value = 100 * abs( $positive_di_value - $negative_di_value ) /
@@ -169,8 +174,13 @@ sub calculate_interval {
 					$indic->get($self->{'sumtr'}->get_name, $i)) 
       unless ($indic->get($self->{'sumtr'}->get_name, $i) == 0);
 
-    $dmi_value = 100 * abs( $positive_di_value - $negative_di_value ) /
-      ( $positive_di_value + $negative_di_value );
+    if ($positive_di_value + $negative_di_value != 0) {
+      $dmi_value = 100 * abs( $positive_di_value - $negative_di_value ) /
+	( $positive_di_value + $negative_di_value ) ;
+    } else {
+      $dmi_value = 100 * abs( $positive_di_value - $negative_di_value ) /
+	( 0.000001 + $positive_di_value + $negative_di_value ) ;
+    }
 
     $indic->set($positive_di_name, $i, $positive_di_value);
     $indic->set($negative_di_name, $i, $negative_di_value);
