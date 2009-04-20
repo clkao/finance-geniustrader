@@ -6,6 +6,8 @@ package GT::Indicators::SMA;
 
 # Standards-Version: 1.0
 
+# $Id$
+
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
@@ -71,6 +73,8 @@ sub calculate {
     my $name = $self->get_name;
     my $sum = 0;
 
+    return if $calc->indicators->is_available($name, $i);
+
     return if (! defined($nb) || $nb==0);
 
     $self->remove_volatile_dependencies();
@@ -118,3 +122,5 @@ sub calculate_interval {
 	GT::Indicators::calculate_interval(@_);
     }
 }
+
+1;
