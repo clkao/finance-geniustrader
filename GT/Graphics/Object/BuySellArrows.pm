@@ -17,6 +17,7 @@ use GT::Graphics::Object;
 use GT::Graphics::Driver;
 use GT::Graphics::Tools qw(:color);
 use GT::Conf;
+use List::Util qw(min max);
 
 GT::Conf::default("Graphic::BuySellArrows::BuyColor", "green");
 GT::Conf::default("Graphic::BuySellArrows::SellColor", "red");
@@ -93,7 +94,7 @@ plot better. in addition i prefer to darken the colors and make the partly trans
 =cut
 
 sub init {
-    my ($self, $prices_ds) = @_;
+    my ($self, $high_ds, $low_ds, $min_high, $max_low) = @_;
     
     # Default values ...
     $self->{'buy_color'} = get_color(GT::Conf::get("Graphic::BuySellArrows::BuyColor"));
@@ -101,7 +102,10 @@ sub init {
     $self->{'distance'} = GT::Conf::get("Graphic::BuySellArrows::Distance");
     $self->{'height'} = GT::Conf::get("Graphic::Candle::Height");
     $self->{'sizefactor'} = GT::Conf::get("Graphic::BuySellArrows::SizeFactor");
-    $self->{'prices_ds'} = $prices_ds;
+    $self->{'high_ds'} = $high_ds;
+    $self->{'low_ds'} = $low_ds;
+    $self->{'min_high'} = $min_high;
+    $self->{'max_low'} = $max_low;
 }
 
 sub display {
@@ -117,9 +121,10 @@ sub display {
 
     for(my $i = $start; $i <= $end; $i++)
     {
-	my $prices = $self->{'prices_ds'}->get($i);
-	my $low = $scale->convert_to_y_coordinate($prices->[$LOW]);
-	my $high = $scale->convert_to_y_coordinate($prices->[$HIGH]);
+	my ($low, $high) = map { $self->{$_}->get($i) } qw(low_ds high_ds);
+	$low = min($low, $self->{max_low}) if defined $self->{max_low};
+	$high = max($high, $self->{min_high}) if defined $self->{min_high};
+	($low, $high) = map { $scale->convert_to_y_coordinate($_) } ($low, $high);
 	my $x = $scale->convert_to_x_coordinate($i);
 
 	# Get the datasource value :
