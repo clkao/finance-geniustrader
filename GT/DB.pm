@@ -52,25 +52,26 @@ sub get_name {
 
     my $name = $self->get_db_name($code);
     return $name if (defined($name) && $name);
+
     if (! $loaded_sharenames) {
-	my $file = GT::Conf::_get_home_path()."/.gt/sharenames";
-	if (-e $file) {
-	    open(NAMES, "<$file") || die "Can't open $file : $!\n";
-	    foreach my $line (<NAMES>) {
-		next if (! $line);
-		my ($c, $d) = split /\t/, $line;
-		if ($c) {
-		    $sharenames{$c} = $d;
-		}
-	    }
-	}
-	close NAMES;
-	$loaded_sharenames=1;
+        my $file = GT::Conf::_get_home_path()."/.gt/sharenames";
+        if (-e $file) {
+            open(NAMES, "<", "$file") || die "Can't open $file : $!\n";
+            foreach (<NAMES>) {
+                chomp;
+                next unless $_;
+                my ($c, $d) = split /\t/;
+                if ($c) {
+                    $sharenames{$c} = $d;
+                }
+            }
+            close NAMES;
+        }
+        $loaded_sharenames = 1;
     }
-    if (exists $sharenames{$code}) {
-	return $sharenames{$code};
-    }
-    return "";
+    ( exists $sharenames{$code} )
+     ? return $sharenames{$code}
+     : return "";
 }
 
 sub get_db_name {
