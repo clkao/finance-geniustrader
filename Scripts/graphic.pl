@@ -820,7 +820,7 @@ sub split_object_desc {
 	    # Accumulate the string
 	    $string .= $_;
 	}
-	push @args, $string if ($string);
+	push @args, $string if length($string);
     } else {
 	warn "$desc is not a valid object description";
     }
