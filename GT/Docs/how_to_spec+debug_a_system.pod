@@ -1,0 +1,915 @@
+#
+# this file is targeted to both budding as well as seasoned
+# GT users. the intent is to gather sage wisdom and experience
+# in the use of gt primarily for system description development
+# evaluation, troubleshooting, proofing and use.
+#
+# Copyright 2009 ras
+# Based on and for GeniusTrader (C) 2000-2002 Raphaël Hertzog, Fabien Fulhaber
+#
+# $Id: how_to_spec+debug_a_system.pod,v 1.7 2009/06/28 05:24:00 ras Exp ras $
+#
+
+##############
+#
+# front matter
+#
+##############
+
+=pod
+
+=head1 how to create and debug a gt system
+
+most of this material is available in various places in the
+gt code and documentation base. pulling it together here is
+an attempt to aid first time and more experienced users in the
+finer points of gt use.
+
+=head2 objective -- help GT users with trading systems
+
+this file is targeted to both budding as well as seasoned
+(e.g. graybeards) GT users. the intent is to gather sage
+wisdom and experience in the use of gt primarily in the area
+of system description development, evaluation, troubleshooting,
+proofing and ultimately use.
+
+contributions, corrections, enhancements welcome
+
+=head2 scope -- how to create and debug a gt system
+
+you are fooling yourself trying to get something out of gt if you
+don't spend some time with your favorite pod reading tool going
+hand-over-hand with the gt application scripts as well as
+some of the informational documentation. then you will need to
+review the components that can be included as part of a gt
+trading system.
+
+here is a reading list to start with
+
+    gt_sig-sys-desc.pod
+    gt_files.pod
+    backtest.pl
+    GT/SystemManager.pm
+    GT/CloseStrategy.pm
+    GT/PortfolioManager.pm
+    GT/TradeFilters.pm
+    GT/OrderFactory.pm
+    GT/MoneyManagement.pm
+
+if you are intending to write new perl code (or modify existing
+code) you will need to study Writing_an_Indicator_Cookbook.pdf
+in GT/Docs, along with some of the existing modules to see how
+things are done.
+
+=head2 document abbreviations
+
+       fixme         looking for user input
+       gt            genius trader
+       -tbs-         to be supplied
+       (verify)      statement needs to be verified
+
+
+=cut
+
+###################
+#
+# table of contents
+#
+###################
+
+=pod
+
+=head1 table of contents
+
+ front matter
+     objective
+     scope
+     document abbreviations
+ 1.0 gt trading systems
+     1.1 gt trading system examples
+     1.2 trading system components
+         1.2.1 Systems
+         1.2.2 OrderFactory
+         1.2.3 TradeFilter
+         1.2.4 MoneyManager
+         1.2.5 CloseStrategy
+         1.2.6 Broker
+ 2.0 gt sig-indic descriptions
+     2.1 Indicators
+     2.2 Signals
+ 3.0 aliases
+     3.1 global
+     3.2 object
+ 4.0 gt application scripts
+     4.1 gt securities analysis tools
+         4.1.1 graphic.pl
+         4.1.2 scan.pl ( fixme )
+         4.1.3 backtest.pl, backtest_many.pl, backtest_multi.pl
+               4.1.3.1 backtest.pl
+               4.1.3.2 backtest_many.pl
+               4.1.3.3 backtest_multi.pl
+         4.1.4 manage_portfolio.pl
+         4.1.5 analyze_backtest.pl ( fixme )
+         4.1.6 anashell.pl  ( fixme ) 
+         4.1.7 select_combination.pl ( fixme )
+ 4.2 gt development and test tools
+     4.2.1 display_indicator.pl
+     4.2.2 display_signal.pl
+     4.2.3 display_system.pl ( just mine? )
+ 5.0 developing gt systems
+     5.1 indicators
+     5.2 signals
+     5.3 systems
+     5.4 backtest.pl
+     5.4.1 backtest.pl examples
+     5.4.2 you've got the code, use it
+     5.4.3 self hacking guidance
+ 6.0 new code development
+
+=cut
+
+###########################
+#
+# section 1 trading systems
+#
+###########################
+
+=pod
+
+=head1 1.0 gt trading systems
+
+gt trading systems are described in terms of trading system
+components, signals and indicators.
+
+gt trading systems are formed using orders and positions. orders
+may not result in a position being entered into. once a position
+is opened (entered into) the portfolio manager takes control of it.
+
+the portfolio manager includes trading system components
+tradefilter (verify), orderfactory (verify), closestrategy, moneymanager,
+
+trading systems are formed by combining gt trading system component
+descriptions together separating each with the vertical bar (pipe) (|) 
+symbol
+
+=head2 1.1 gt trading system examples
+
+-tbs-
+
+=cut
+
+###########################
+#
+# section 1.2 system components
+#
+###########################
+
+=pod
+
+=head2 1.2 trading system components
+
+gt defines these trading system components
+
+=over 4
+
+=item 1.2.1 Systems: -- abbreviation SY
+
+each gt trading system requires a systems (yes it is plural)
+that defines two signals that, when triggered, yield an order to
+open a position. gt defines two types of positions, long and
+short, and manages each type separately, hence the need for two
+separate signals. the first signal is for opening a new long
+position, the second signal is for opening a new short position.
+
+whether or not an order results in a position being opened
+depends on a number of other trade system components defined
+below.
+
+=item 1.2.2 OrderFactory: -- abbreviation OF:
+
+-tbs-
+
+multiple orderfactory are supported per trading system (verify)
+
+=item 1.2.3 TradeFilter: -- abbreviation TF:
+
+restricts the types of trades allowed.
+
+multiple tradefilters are supported per trading system
+
+=item 1.2.4 MoneyManager: -- abbreviation MM:
+
+defines how gt manages investments. affects share quantities
+allocated to a given order
+
+multiple moneymanagers are supported trading system, each will
+be evaluated in the sequence defined. the resulting order share
+quantity will be the quantity that remains after all moneymanagers
+have been polled.
+
+=item 1.2.5 CloseStrategy: -- abbreviation CS:
+
+because each type of position (long or short) is managed separately
+a closestrategy must also specify two signals that trigger
+management activity of each position type.
+
+the first signal will generate orders that relate to an
+existing long position, the second signal will generate orders 
+for an existing short position.
+
+closestrategy, really a misnomer for position management,
+includes complete and partial position closing as well as
+reinvesting (adding to) existing positions.
+
+multiple closestrategies are supported per trading system. each
+is evaluated in the sequence defined, the resulting order, if
+any will be applied to the appropriate existing position.
+
+ verify this verify this verify this
+
+orders that issue from closestrategies are
+not subject to any of the trading filters (e.g. orderfactory,
+tradefilter or moneymanager) defined in the trading system
+but are applied immediately. (i'm thinking that orderfactories
+and moneymanagers do in fact affect position manager orders)
+
+ verify this verify this verify this
+
+=item 1.2.6 Broker: -- abbreviation none
+
+a broker is used to apply trading costs to each trade
+
+a broker isn't a full fledged gt trading system component
+since it cannot be defined as a component in a system
+description. 
+
+specify a broker using the command line option
+
+ --broker broker_name argument(s)
+
+or by setting the gt configuration key "Brokers::module"
+to the desired broker_name and any arguments.
+
+=back
+
+=cut
+
+###########################
+#
+# section 2 sig-indic descriptions
+#
+###########################
+
+=pod
+
+=head1 2.0 gt sig-indic descriptions
+
+-tbs-
+
+=head2 2.1 Indicators: -- abbreviation I:
+
+refer to pod file GT/Docs/gt_sig-sys-desc.pod
+
+=head2 2.2 Signals: -- abbreviation S:
+
+refer to pod file GT/Docs/gt_sig-sys-desc.pod
+
+here is something i just (re)discovered, it might (or might not)
+be in the referenced pod, but it is very very significant;
+if it is ignored you will probably get hard to interpret
+results and troubleshooting will be painful at best.
+
+signals, just like indicators can have more than a signal
+output. it's uncommon, but there are a couple. the significance
+is when you use one of these multi-name signals as an element
+in a larger sys-sig-indic description to be sure to specify
+the signal value selector (e.g. the /#) that you want. by
+default gt will use the first one unless otherwise specified (verify).
+except, possibly, when the signal is being used as a generic
+systems? (verify)
+
+as of this writing these are the multi-value gt signals and the
+value names in order. numbered parameter arguments are not shown:
+
+ Signals:Swing:Trend			TrendUp, TrendDown
+ Signals:Swing:TrendEnding		TrendUpEnding, TrendDownEnding
+ Signals:Systems:MacdDiff		MacdDiffHigh, MacdDiffLow
+ Signals:Trend:HilbertChannelBreakout	HCBkUp, HCBkDown
+ Signals:Trend:TTT			TTTUp, TTTDown
+
+=cut
+
+###########################
+#
+# section 3 aliases
+#
+###########################
+
+=pod
+
+=head1 3.0 aliases
+
+two forms of aliases are supported by gt. both are implemented
+in package GT::Tools. refer to that packages' pod for the most
+current implementation details.
+
+=head2 3.2 global
+
+refer to pod file GT/Docs/object_aliases.pod
+
+=head2 3.2 object
+
+refer to pod file GT/Docs/object_aliases.pod
+
+=cut
+
+###########################
+#
+# section 4 application scripts
+#
+###########################
+
+=pod
+
+=head1 4.0 gt application scripts
+
+gt provides perl application scripts in the Scripts directory.
+these scripts combine the methods and functions found in the
+gt packages (files in the GT directory hierarchy) in ways to
+solve, implement or ??? a particular aspect of marketable
+securities technical analysis, manage a portfolio of stock
+holdings, and to evaluate gt signals, indicators and systems.
+
+in general terms there are two categories of tools (the scripts):
+1) those specifically intended for technical analysis of a security
+and 2) those that are most useful in terms of gt system development
+and validation tools. this distinction isn't hard and fast, but
+more of a general observation, guidance about what to use the
+scripts for.
+
+=cut
+
+###########################
+#
+# section 4.1 analysis tools
+#
+###########################
+
+=pod
+
+=head2 4.1 gt securities analysis tools
+
+-tbs-
+
+=over 4
+
+=item 4.1.1 graphic.pl
+
+see the script pod for all the gory details.
+
+used primarily as a traditional technical analysis charting tool.
+the application takes directives consisting of signals,
+including a system component signal set, as well as indicators
+and creates a traditional technical analysis chart for the
+security specified.
+
+can be used to visually depict operation of signals, indicators
+and even the system component that can aid in their troubleshooting.
+
+in order to use graphic.pl you will need to rtfm;
+
+perldoc -t graphic.pl
+
+=item 4.1.2 scan.pl
+
+tool to scan a number of securities with (or against) a number of
+system component signal sets (can be complete trading systems,
+but only the system component signal set is evaluated) to see which
+securities trigger which signals
+
+perldoc -t scan.pl
+
+also review perldoc -t GT/Docs/gt_files.pod for an all in one
+place description of the file formats used by scan.pl
+
+=cut
+
+###########################
+#
+# section 4.1.3 backtest.pl, backtest_many.pl, backtest_multi.pl
+#
+###########################
+
+=pod
+
+=item 4.1.3 backtest.pl, backtest_many.pl, backtest_multi.pl
+
+three different variations on a traditional technical analysis tool
+that evaluates the performance of a specified trading system over the
+prior history of a specified securities trading data.
+
+( i thought one of these provided for user specified programmatic
+trading system parametric variation in an effort to optimize the
+system for the given security and its trading characteristics. but
+is don't see its use documented in my fast look-see )
+
+=item 4.1.3.1 backtest.pl
+
+a traditional technical analysis backtesting tool that uses a
+specified trading system over the prior history of a specified
+securities trading data and analyzes the trading systems financial
+performance against a simple buy-and-hold strategy over the
+same time period.
+
+output includes optional html formatted text or simple ascii text
+plus optionally a very simple graphic depiction of the trading
+system compared to the buy-and-hold strategy.
+
+the html output option includes provision to embed the graphic image
+within the html page.
+
+=item 4.1.3.2 backtest_many.pl
+
+somebody fixme
+
+=item 4.1.3.3 backtest_multi.pl
+
+somebody fixme
+
+=item 4.1.4 manage_portfolio.pl
+
+creates, maintains and analyzes your real (or imaginary) securities
+investment portfolio.
+a portfolio is a history of all transactions (orders and positions)
+that have taken place in the portfolio.
+
+takes input in the various forms including
+command line options,
+simple text files,
+beancounter database portfolio table
+
+stored as a gzipped xml file.
+
+=item real portfolio management with manage_portfolio.pl
+
+by creating and maintaining a gt portfolio your positions can
+be marked on the graphic.pl charts using this graphic directive:
+
+    --add=PortfolioPositions(./bc_pf,show)
+
+to update your bc_pf portfolio (i use bc_pf to indicate it is
+my beancounter porfolio, you can use any filename)
+
+  %  manage_portfolio.pl bc_pf file ./trades_`dex`.scott2gt
+
+where the input file ./trades_`dex`.scott2gt has the appropriate
+format (refer to manage_portfolio.pl pod for details)
+
+the command dex is simply /usr/bin/date '+%d%b%y' | tr '[A-Z]' '[a-z]'
+
+trades are pasted into ./trades_`dex` by manually scraping them
+off the brokers web page. that file is post-processed with a
+fairly trivial, but customized perl script that extracts the
+salient facts and arranges them to suit manage_portfolio.pl.
+
+to get a report on your portfolios' positions:
+
+  %  manage_portfolio.pl bc_pf report positions
+
+to get a report on your portfolios' history:
+
+  %  manage_portfolio.pl bc_pf report history
+
+the report options performance and analysis need work
+if you can help please let the gt devel list know.
+
+=item 4.1.5 analyze_backtest.pl
+
+somebody fixme
+
+=item 4.1.6 anashell.pl
+
+somebody fixme
+
+=item 4.1.7 select_combination.pl
+
+somebody fixme
+
+=back
+
+=cut
+
+###########################
+#
+# section 4.2 development and test tools
+#
+###########################
+
+=pod
+
+=head2 4.2 gt development and test tools
+
+-tbs-
+
+=over 4
+
+=item 4.2.1 display_indicator.pl
+
+used primarily to develop and debug complex indicator
+descriptions.
+
+also useful to validate new or modified indicator packages
+
+perldoc -t display_indicator.pl
+
+=item 4.2.2 display_signal.pl
+
+used primarily to develop and debug complex signal
+descriptions.
+
+also useful to validate new or modified signal packages
+
+perldoc -t display_signal.pl
+
+=item 4.2.3 display_system.pl (just mine?)
+
+used primarily to develop and debug complex the two signals
+generated by the system component description.
+
+perldoc -t display_system.pl
+
+=back
+
+=cut
+
+##############################
+#
+# section 5 developing systems
+#
+##############################
+
+=pod
+
+=head1 5.0 developing gt systems
+
+evaluating. proving, troubleshooting gt systems
+and other complex gt sig-indic descriptions
+
+=cut
+
+########################
+#
+# section 5.1 indicators
+#
+########################
+
+=pod
+
+=head2 5.1 indicators
+
+manually evaluate indicator results with display_indicator.pl.
+
+this application will often show conditions like uninitialized values
+that can be masked when encountered in graphic.pl or backtest.pl.
+
+compare a modified version of an indicator with an unmodified version
+
+ gdiff -u `! display_indicator.pl --sta 1jan09 --end 1may09 I:SnR   t` \
+          `! display_indicator.pl --sta 1jan09 --end 1may09 I:SnR_h t`
+
+the command ! is from 'unix power tools'. it turns it's input into a file
+and puts that filename in on the command line in its place.
+
+and visually with graphic.pl
+
+notice the same curve is plotted using the modified (I:SnR_h) indicator
+and the unmodified version with different colors to highlight any
+anomalous behavior.
+
+ graphic.pl --start 2008-10-01 --end 1may09 -timeframe day \
+  --add=curve'( I:SnR/2, orange)' --add=curve'( I:SnR/1, darkgreen )' \
+  --add=curve'( I:SnR_h/2, blue)' --add=curve'( I:SnR_h/1, red)' \
+  T >/tmp/T8mon.png
+
+it is also important to evaluate the result of passing different
+arguments to a newly developed indicator. in this instance we are
+checking that the indicator can handle the four arguments 
+(e.g. 10 7 {I:Prices LOW} {I:Prices HIGH})
+
+ graphic.pl --start 2008-10-01 --end 1may09 -timeframe day \
+  --add=curve'( I:SnR_h/2, blue)' \
+  --add=curve'( I:SnR_h/2 10 7 {I:Prices LOW} {I:Prices HIGH}, green )' \
+  --add=curve'( I:SnR_h/1, red)' \
+  --add=curve'( I:SnR_h/1 10 7 {I:Prices LOW} {I:Prices HIGH}, black)' \
+  T >/tmp/T8mon.png
+
+when developing a new indicator one typically has an expected
+result in mind, furthermore, the default arguments are normally
+set to standard technical analysis values. this can often lead
+to 'code fixes' that yield the expectations when there are more
+fundamental aspects of the problem being overlooked. to avoid
+getting trapped in this condition it's important, and often very
+helpful to expose subtle coding errors and omissions by running
+test cases with a range of each arguments values. at the very
+least this will help ensure the code correctly handles arguments
+other than the hardcoded defaults and has reasonable protection
+against out-of-range argument values.
+
+=cut
+
+#####################
+#
+# section 5.2 signals
+#
+#####################
+
+=pod
+
+=head2 5.2 signals
+
+-tbs-
+
+manually evaluate signal generation with display_signal.pl
+and visually with graphic.pl
+
+-tbs-
+
+=cut
+
+#####################
+#
+# section 5.3 systems
+#
+#####################
+
+=pod
+
+=head2 5.3 systems
+
+mark system long/short triggers with graphic.pl
+
+-tbs-
+
+=cut
+
+#########################
+#
+# section 5.4 backtest.pl
+#
+#########################
+
+=pod
+
+=head2 5.4 backtest.pl
+
+when debugging or trying to evaluate a system try limiting
+and isolating individual trading system components using the
+techniques and the trading component specs listed below.
+the results can be useful to illuminate problems with the
+system being evaluated and to identify the trading component(s)
+that need to be adjusted.
+
+=over 4
+
+=item a)
+ isolate trades
+
+ -tra LongOnly
+ -tra ShortOnly
+
+=item b)
+ limit trades
+
+ -tra OneTrade
+
+=item c)
+ limit position entry/exit signals
+
+ define only one well understood position close signal
+   --closestrategy='NeverClose'
+   --closestrategy='LimitPeriodInTheMarket 10'
+
+=item d)
+ graph the results
+
+   -display-trades -graph graphs/bt_code.png
+   set the file name (argument to -graph) to whatever
+   makes sense to you
+
+=back
+
+=cut
+
+#########################
+#
+# section 5.4.1 backtest.pl examples
+#
+#########################
+
+=pod
+
+=head2 5.4.1 backtest.pl examples
+
+instead of
+
+ ./backtest.pl -tim day -init 100000 -disp -gr graphs/a_bt_jpm.png \
+  --start 2002-07-01 --end 2004-01-01 \
+  -sy 'Generic
+         {S:G:And
+           { S:G:Below {I:Prices LOW} {I:G:Eval { I:SnR_h/1 } + 0.06 } }
+           { S:G:Above {I:Prices LOW} { I:SnR_h/1 } }
+         }
+         { S:G:False }' \
+  -clo 'LimitPeriodInTheMarket 5' \
+  JPM
+
+use
+
+ ./backtest.pl -tim day -init 100000 -disp -gr graphs/a_bt_jpm.png \
+  --start 2002-07-01 --end 2004-01-01 \
+  -sy 'Generic
+         {S:G:And
+           { S:G:Below {I:Prices LOW} {I:G:Eval { I:SnR_h/1 } + 0.06 } }
+           { S:G:Above {I:Prices LOW} { I:SnR_h/1 } }
+         }
+         { S:G:False }' \
+  -mo 'Basic' \
+  -tra 'LongOnly' \
+  -tra 'OneTrade' \
+  --closestrategy='NeverClose' \
+  JPM
+
+=head2 examples of other backtests.pl commands
+
+ ./backtest.pl --full \
+ --system="Generic {S:G:CrossOverUp {I:SMA 20} {I:SMA 60}} \
+  {S:G::CrossOverDown {I:SMA 20} {I:SMA 60}}" \
+ --closestrategy="Stop::KeepRunUp" \
+ --moneymanagement="FixedShares" \
+ --tradefilter="LongOnly" \
+ --orderfactory="ClosedToClose" \
+ --broker="InteractiveBrokers" \
+ CCRT
+
+ ./backtest.pl --start 2008-01-02 --end 2009-04-30 \
+ --system="Generic {S:G:CrossOverUp {I:SMA 20} {I:SMA 60}} \
+  {S:G:CrossOverDown {I:SMA 20} {I:SMA 60}}" \
+ --closestrategy="Stop::KeepRunUp" \
+ --moneymanagement="FixedShares" \
+ --tradefilter="LongOnly" \
+ --orderfactory="ClosedToClose" \
+ --broker="InteractiveBrokers" \
+ CCRT
+
+ backtest.pl --timeframe week --start 1apr08 --end 1may09 \
+ "'`cat buysell-signal | perl -ne 'print $_ unless  m/^\s*#.*$|^\s*$/'`'" \
+ MIDD
+
+ backtest.pl --timeframe week --start 1apr08 --end 1may09 \
+ "`cat buysell-signal`" \
+ MIDD
+
+ backtest.pl -tim day -init 100000 -disp -gr graphs/bt_aapl.png \
+ -sy 'TFS 15 7' -mo 'Basic' \
+ -mo 'ShareMultiples 100 2' \
+ -clo 'Reinvest:InWinners 2' \
+ -clo 'ChannelBreakout { I:SMA 80 } { I:SMA 80 }' \
+ -tra LongOnly \
+ -tra OneTrade \
+ AAPL
+
+=cut
+
+#########################
+#
+# section 5.4.2 code hacking
+#
+#########################
+
+=pod
+
+=head2 5.4.2 you've got the code, use it
+
+make a copy of the package file 'before' you start hacking
+on it. then hack away on the copy.
+
+ hack in
+   'use Data::Dumper;'
+ and then sprinkle
+  'print STDERR Dumper data_object;'
+ statements around and see what comes out.
+ you might want to send this output to a file since it can get
+ copious quickly.
+
+Data::Dumper is recommended because you don't have to be concerned
+with the data type being printed. it handles scalars (simple variables),
+arrays, and complex gt data objects with ease.
+
+=head2 5.4.3 self hacking guidance
+
+with package file GT/Indicator/SnR_h.pm under active development
+add these perl statements towards the top of the file:
+
+ our $debug = 0;
+     $debug = 1; # enable debug outputs
+
+now you can add print statements like these to monitor internal
+variable without using a debugging perl
+
+ if ( $debug > 1 ) {
+   my $ioff = $self->{'args'}->get_arg_names(2) + 1;
+   print STDERR "\n";
+   print STDERR "min1[ $i - $ioff ] $min1\n";
+   print STDERR "min2[ $i ] $min2\n";
+   print STDERR "\n";
+   print STDERR "max1[ $i - $ioff ] max1\n";
+   print STDERR "max2[ $i ] $max2\n";
+   print STDERR "\n";
+ }
+
+in addition, you can easily disable the debugging output by
+commenting out the $debug = 1; # enable debug outputs line
+but leave in most of your debug bits to share/discuss or
+retain for later.
+
+also note that you can easily arrange for various levels of
+debug output using various the comparison conditional values
+
+ if ( $debug ) { ...
+
+ if ( $debug >= 2 ) { ...
+
+the more adventurous might do things more like this,
+but probably a lot smarter and better than this
+
+ my $BIT1 = 0x01; my $B1MSK = ~0x01;
+ my $BIT2 = 0x02; my $B2MSK = ~0x02;
+ my $BIT3 = 0x04; my $B3MSK = ~0x04;
+ my $BIT4 = 0x08; my $B4MSK = ~0x08;
+
+ my $debug = $BIT2 + $BIT4;
+
+ if ( $debug & $B4MSK ) { ...
+
+
+finally use a bash command like
+
+ $ display_indicator.pl -short 35 --start 1jan09 --end 1may09 \
+ I:SnR_h T > /tmp/snr.out 2>&1
+
+or for csh
+
+ % display_indicator.pl -short 35 --start 1jan09 --end 1may09 \
+ I:SnR_h T >& /tmp/snr.out
+
+with instrumented code you need to keep separate stdout and stderr
+for scripts that write image files to stdout like graphic.pl.
+
+for this use a bash command like
+
+ $ graphic.pl -file example.gconf ENS 1> ENS.png 2> example.out
+
+or for csh
+
+ % ( graphic.pl -file example.gconf ENS > ENS.png ) >& example.out
+
+=cut
+
+#########################
+#
+# section 6.0 new code development
+#
+#########################
+
+=pod
+
+=head2 6.0 new indicator and signal code development
+
+refer to Writing_an_Indicator_Cookbook.pdf
+(GT/Docs/Writing_an_Indicator_Cookbook.pdf), the seminal
+work on how to develop new gt indicators and by extension signals.
+
+while it may still seem unnecessary when initially developing
+a brand new indicator or signal, the statement
+
+    return if (! $self->check_dependencies($calc, $i));
+
+or the preferred form
+
+   return unless $self->check_dependencies($calc, $i);
+
+is how an indicator or signal gets 'set up'.
+(if anyone can improve on the terminology here that would be great)
+without this statement you can expect the indicator or signal will
+return nothing.
+what 'set up' means is everything is solved if it isn't already.
+if the necessary dependencies cannot be solved the
+indicator or signal will probably fail
+(without raising an exception, either methinks, and that is unfortunate).
+if you're interested in how this all works read the code,
+it's in GT/Dependency.pm, and if you can figure a way to
+raise an exception in appropriate circumstances
+please do so and contribute the code.
+
+
+
