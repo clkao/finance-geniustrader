@@ -431,12 +431,11 @@ sub apply_pending_orders {
 	    return;
 	}
     }
-    
     # Apply the other orders
     foreach ($self->list_pending_orders) 
     {
 	next if (! defined($_));
-	
+	last if !$self->quantity;
 	my $price;
 	if ($price = $_->is_executed($calc, $i)) 
 	{
