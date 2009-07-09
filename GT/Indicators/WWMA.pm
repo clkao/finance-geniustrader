@@ -29,15 +29,18 @@ GT::Indicators::WWMA->new()
 GT::Indicators::WWMA->new([15])
 GT::Indicators::WWMA->new([30], "OPEN", $GET_OPEN)
 
-=head2 Links
 
-TODO
+=head1 NOTICES
+
+this version of Welles Wilder Moving Average (WWMA) is depreciated
+in favor of Wilders (GT::Indicators::Wilders).
+
 
 =cut
 
-sub initialize {
-    my ($self) = @_;
-}
+#sub initialize {
+#    my ($self) = @_;
+#}
 
 =head2 GT::Indicators::WWMA::calculate($calc, $day)
 
