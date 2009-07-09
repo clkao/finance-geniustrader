@@ -33,7 +33,7 @@ To test GeniusTrader, open a console window, and try the following:
 <pre style="background-color: #eaeaea;">
 display_indicator.pl I:RSI 13000
 backtest.pl TFS 13000
-backtest.pl TFS[30,7,7] 13000
+backtest.pl 'TFS[30,7,7]' 13000
 </pre>
 <p>You should now read the <a href="doc/Scripts/">documentation of
 those
@@ -57,18 +57,30 @@ depends on other
 modules...
 </p>
 <ul>
-  <li><a href="http://search.cpan.org/author/STBEY/Date-Calc-5.3/">Date::Calc</a>
+  <li><a href="http://search.cpan.org/author/STBEY/Date-Calc/">Date::Calc</a>
 (debian package: <a href="http://packages.debian.org/libdate-calc-perl">libdate-calc-perl</a>)</li>
-  <li><a href="http://search.cpan.org/author/RAM/Getargs-Long-0.1.3/">Getargs::Long</a>
+  <li><a href="http://search.cpan.org/author/RAM/Getargs-Long/">Getargs::Long</a>
 (debian package: <a
  href="http://packages.debian.org/libgetargs-long-perl">libgetargs-long-perl</a>)</li>
-  <li><a href="http://search.cpan.org/author/PHISH/XML-LibXML-1.53/">XML::LibXML</a>
+<p>NB: Getargs::Long is probabably wrong. it certainly is NOT a required package
+for GeniusTrader, however it might be a dependency for debian linux, but not being even remotely
+knowledgeable about debian i have no way to confirm this. the required perl package for
+GeniusTrader is Johan Vromans' Getopt::Long.
+a compatible debian package might be libgetopt-long-descriptive-perl, but again i
+have no way to confirm this.
+<ul>
+  <li><a href="http://search.cpan.org/~jv/Getopt-Long/">Getopt::Long</a>
+(debian package: <a href="http://packages.debian.org/libgetopt-long-descriptive-perl">libgetopt-long-descriptive-perl</a>)
+</li>
+</ul>
+</p>
+  <li><a href="http://search.cpan.org/author/PHISH/XML-LibXML/">XML::LibXML</a>
 (debian package: <a
  href="http://packages.debian.org/libxml-libxml-perl">libxml-libxml-perl</a>)</li>
-  <li><a href="http://search.cpan.org/%7Epmqs/Compress-Zlib-1.33/">Compress::Zlib</a>
+  <li><a href="http://search.cpan.org/%7Epmqs/Compress-Zlib/">Compress::Zlib</a>
 (debian package: <a
  href="http://packages.debian.org/libcompress-zlib-perl">libcompress-zlib-perl</a>)</li>
-  <li><a href="http://search.cpan.org/author/AMS/Storable-2.06/">Storable</a>
+  <li><a href="http://search.cpan.org/author/AMS/Storable/">Storable</a>
 (standard in perl 5.8, debian package for woody/perl 5.6: <a
  href="http://packages.debian.org/libstorable-perl">libstorable-perl</a>)</li>
 </ul>
@@ -76,7 +88,7 @@ the new GT::DB::Text.pm requires Date::Manip ...
 it will enhance usability elsewhere
 and is recommended even if you don't use DB::Text.<br>
 <ul>
-  <li><a href="http://search.cpan.org/~sbeck/Date-Manip-5.48/">Date::Manip</a>
+  <li><a href="http://search.cpan.org/~sbeck/Date-Manip/">Date::Manip</a>
 (debian package: <a href="http://packages.debian.org/libdate-manip-perl">libdate-manip-perl</a>)</li>
 </ul>
 
@@ -111,7 +123,7 @@ $ ./display_indicator.pl I:RSI 13000 | less
 [...]
 $ ./backtest.pl TFS 13000 | less
 [...]
-$ ./backtest.pl TFS[30,7,7] 13000 | less
+$ ./backtest.pl 'TFS[30,7,7]' 13000 | less
 [...]
 </pre>
 <p>You should now read the <a href="doc/Scripts/">documentation of
@@ -122,6 +134,10 @@ scripts</a> to understand what they can do.</p>
 If you have questions, please join the mailing list (cf <a
  href="index.html">homepage</a>), we'll try to help you.
 
-<hr>Copyright 2000-2008 RaphaÃ«l Hertzog &amp; Fabien Fulhaber
+<hr>Copyright 2000-2009 Raphaël Hertzog &amp; Fabien Fulhaber
 </body>
 </html>
+
+<!--
+$Id: first_use.html,v 1.4 2009/07/09 17:54:05 ras Exp ras $
+-->
