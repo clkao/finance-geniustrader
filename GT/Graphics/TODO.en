@@ -1,0 +1,45 @@
+translation by http://www.freetranslation.com/
+(with possible minor edits by ras -- ed)
+
+TODO for the graphic party:
+---------------------------  
+
+* To Inform the options existing (for the colors and the sizes)
+
+* To Add many graphic objects:
+  - bends doubles
+  - upright
+  - signals of purchase/sale
+  - signals of detection of configuration (eample: to make obvious special
+    configurations of Japanese candlesticks)
+  - Candlevolume
+  - Equivolume
+  - Point & Figure
+  - Kagi
+  - Renko
+  - 3 Line Break
+  - Pie Chart
+
+* To Add new sources of data:
+  - historic of the trades of a system or of a portfolio
+
+* To Add new graphic drivers:
+  - Scalable Vector Graphics (SVG)
+  - Flash
+
+* To Adjust the candlestick width in a dynamic way
+  (cf.  Candlevolume & Equivolume).  It is necessary therefore
+  to be able to define in a dynamic way (example: in comparison with the
+  volumes) the space corresponding to every period.
+
+* To Generate graphic 3D
+
+Long term:
+
+* To Allow using different sizes, different polices,
+  different colors for the titles according to their location.
+
+
+#
+# $Id: TODO.en,v 1.1 2009/06/28 19:08:15 ras Exp ras $
+#

@@ -1,0 +1,47 @@
+translation by http://www.freetranslation.com/
+(with possible minor edits by ras -- ed)
+
+Usage of a Builder:  
+
+=> definition of a graphic INDEPENDAMMENT of the future exit
+
+- Definition of a Layout in different zones identifiables by their
+  position (x,y)
+    (0,0) the zone in top to the left
+    (1,0) the just zone to right of the preceding
+  Every zone has a size known (at least in height).
+
+- definition of a ladder (Scale) by default for a zone,
+  possibility to personalize the ladder for a data series in particular
+    => ladder modifiable to the flight afterwards
+
+- addition of series of data, a series is associated with a zone
+    - every series of data has a "z" defining the apparition order
+      (small z => in under and drawn in first)
+      the z is implicit to the order of addition of the Of data,
+      it can be modified later
+    - every series of data has a function of associated bill posting
+      (indeed a series of function in the preferential order)
+      (implemented with a FlyWeight receiving as parameter the zone,
+      the series (and l'échelle) ), the billposting function is
+      previously "recorded".
+
+- Object addition (upright, commentaries, signals, arrows,...)
+
+- Every zone can have 4 axes (every side), an axis is associated with a
+  ladder and precise the intervals of trait (big, fine) and the labels
+  to post...
+
+- A zone can equally have a title on one of the sides, but a zone
+  cannot have title and axis of a same side (although...)
+
+- a gate is an axis product, there will be of the "ticks" special
+  "grid (or axis?)" to know when the trait must be extended
+
+Transparent access to the data?
+  * How a function of billposting needing only of a series of
+    figures will post a vector series?  
+
+#
+# $Id: DESIGN.en,v 1.1 2009/06/28 19:19:21 ras Exp ras $
+#
