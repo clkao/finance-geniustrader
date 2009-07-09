@@ -1,0 +1,16 @@
+translation by http://www.freetranslation.com/
+(with possible minor edits by ras -- ed)
+
+Tests to realize:  
+
+- To verify that the informers/signals send back the same results
+  that one uses calculate or calculate_interval in particular
+  in the matter of the boundaries of the available data...
+
+- to verify that the informers send back the same results
+  in the length (in stockant a file result of reference)
+
+
+#
+# $Id: TODO.en,v 1.1 2009/06/28 19:34:01 ras Exp ras $
+#
