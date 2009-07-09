@@ -1,0 +1,26 @@
+translation by http://www.freetranslation.com/
+(with possible minor edits by ras -- ed)
+
+
+- The system accepts the orders themselves they are in the day row
+  (min and max include), if the order was all just one on a limit
+  there are luck for that it was not éxécuté or that partially.  
+
+- The day of entry has not necessarily stop. And/or GT cannot evaluate
+  if the stop was touched or not.  
+
+- The dependances "infinite" for example for an informer necessitating
+  the calculation since the origin does not exist... in this case it is
+  necessary to put dependances that guarantee that one can calculate
+  something for everyday wished.  
+
+- There is not average to have information of dependances on the "flow"
+  of past data to SMA, MIN, MAX and other informers defined by an entry flow.  
+
+- The system of management of what already is calculated and of verification
+  is not optimum, although functional.  
+
+
+#
+# $Id: LIMITATIONS.en,v 1.1 2009/06/28 19:27:07 ras Exp ras $
+#

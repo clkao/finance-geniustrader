@@ -1,0 +1,89 @@
+translation by http://www.freetranslation.com/
+(with possible minor edits by ras -- ed)
+
+--------------
+Nomenclature :
+--------------
+
+---------
+Signals :
+---------
+
+. Signals/Indicators/
+
+  Contains the generated signals ordinarily by the informers.  The
+  signal can use a generic signal and informers. To the need there can
+  be several files by informers (<indic>-<methode>).
+
+. Signals/Generic/
+
+  Contains the generic signals as CrossUp, CrossDown, CrossAny,
+  InRange, InAbsRange, LocalTop, LocalBottom, BreakOut (as Cross) ...
+
+. Signals/Combi/
+
+  Complex signals constituted of combinations of signals.  Eventually can
+  be subdivided in a similar way to the others (Graphical, Indicators,..).
+
+  (there are no predefined combination signals provided. however, these
+  can be defined within the context of Signals/Generic/ using multiple
+  simple signal descriptions combined using provided the logical operators
+  provided in Signals/Generic/ -- ed)
+
+. Signals/Graphical/CandleSticks/
+. Signals/Graphical/PointsAndFigures/
+. Signals/Graphical/Patterns/
+
+  Ordinary graphic signals.  
+
+. Signals/Basic
+
+  Basic signals using the prices.  New {High, Low}, Gap{Up,Down},...  
+
+. Signals/Systems
+
+  Used signals such which by the system of same name.  Allows seeing
+  the signals detected by the systems without being obliged of
+  "to launch" the system.  
+
+---------
+Systems :
+---------
+
+(the pathnames defined here don't seem to reflect the current structure
+of the GT/Systems hierarchy -- ed)
+
+. Systems/Trend
+. Systems/Trend/Combi
+
+  Systems that should walk with values in tendency (e.g. trend).  
+
+. Systems/Flat
+
+  Systems that should walk with values without tendency. (none provided -- ed)
+
+. Systems/Volatility
+
+  Systems exploiting the volatility.
+
+. Systems/Cyclical
+
+  Systems exploiting the cycles on the values. (none provided -- ed)
+
+. Systems/NeuralNetwork
+. Systems/FuzzyLogic
+
+  Magic systems. (none defined or provided -- ed)
+
+. Systems/Reversal
+
+  Systems playing reversals. (none defined or provided -- ed)
+
+. Systems/Generic
+
+  Systems that try to walk in any case.
+
+
+#
+# $Id: Nomenclature.en,v 1.1 2009/06/28 18:30:07 ras Exp ras $
+#
