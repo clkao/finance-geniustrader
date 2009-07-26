@@ -20,8 +20,6 @@
 
 use strict;
 
-use lib '..';
-
 =head1 Analyzer - Shell
 
 The command help shows you a comprehensive summary of the available
@@ -159,19 +157,19 @@ Save settings? [Y/n]: Y
 #use OptimizeGT;
 #use lib $OptimizeGT::newpath;
 
-use GT::Analyzers::Process;
-use GT::Conf;
+use Finance::GeniusTrader::Analyzers::Process;
+use Finance::GeniusTrader::Conf;
 
 use Term::ReadLine;
 
-GT::Conf::load();
+Finance::GeniusTrader::Conf::load();
 
-# $term is imported from GT::Analyzers::Process
+# $term is imported from Finance::GeniusTrader::Analyzers::Process
 $term = Term::ReadLine->new("Olf's Analyzer");
 my $OUT = $term->OUT() || *STDOUT;
 my $cmd;
 
-my $proc = GT::Analyzers::Process->new();
+my $proc = Finance::GeniusTrader::Analyzers::Process->new();
 
 #$SIG{__DIE__} = sub {
 #  print("Error:\n",@_);

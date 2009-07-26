@@ -5,7 +5,7 @@ $db
 </%args>
 <%init>
 
-use GT::Prices;
+use Finance::GeniusTrader::Prices;
 
 # variables to hold HTML data
 my @loop;
@@ -68,7 +68,7 @@ foreach my $position ($p->list_open_positions) {
       print "Error while retrieving prices. No calculations done.\n\n";
       next;
    }
-   my $order = GT::Portfolio::Order->new();
+   my $order = Finance::GeniusTrader::Portfolio::Order->new();
    $order->set_quantity($position->quantity);
    $order->set_type_limited();
    $order->set_price($prices->at($prices->count() - 1)->[$CLOSE]);

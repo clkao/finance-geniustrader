@@ -7,24 +7,22 @@
 # base version 22 May 2005 bytes 6478
 # $Id$
 
-use lib '..';
-
 use strict;
 use vars qw($db);
 
-use GT::Prices;
-use GT::Calculator;
-use GT::List;
-use GT::Eval;
-use GT::Conf;
-use GT::Tools qw(:conf :generic :timeframe);
-use GT::DateTime;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Calculator;
+use Finance::GeniusTrader::List;
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::Conf;
+use Finance::GeniusTrader::Tools qw(:conf :generic :timeframe);
+use Finance::GeniusTrader::DateTime;
 use IPC::SysV qw(IPC_PRIVATE S_IRWXU IPC_NOWAIT);
 use IPC::Msg;
 use Getopt::Long;
 use Pod::Usage;
 
-GT::Conf::load();
+Finance::GeniusTrader::Conf::load();
 
 ( my $prog_name = $0 ) =~ s@^.*/@@;    # lets identify ourself
 
@@ -43,7 +41,7 @@ scan.pl - scan the market looking for signals
 scan.pl will scan all stocks listed in <market file> looking
 for the signals indicated in each <system file> performing the analysis
 on the specified <date>. A system file must contain one or more description
-of GT::Signals or description of GT::Systems. You may list multiple system
+of Finance::GeniusTrader::Signals or description of Finance::GeniusTrader::Systems. You may list multiple system
 files on the command line. In the absence of a file standard input will
 be read instead.
 
@@ -73,7 +71,7 @@ format (YYYY-MM-DD HH:MM:SS) where time is optional
 
 =over 4
 
-One or more GT::Signals or GT::Systems descriptions each on a separate line.
+One or more Finance::GeniusTrader::Signals or Finance::GeniusTrader::Systems descriptions each on a separate line.
 The descriptions have the form of a signal or system name, followed by its
 arguments.
 
@@ -192,12 +190,12 @@ sets the format used to parse markets via the DB::Text module to 0.
 =head1 EXAMPLES (culled from devel archive)
 
 To scan for all stocks that are trading above both their 30 day and 150 day EMAs
-create a system file containing this GT::Signals description (as a single line)
+create a system file containing this Finance::GeniusTrader::Signals description (as a single line)
 
 S:Generic:And {S:Generic:Above {I:Prices} {I:EMA 30}} {S:Generic:Above {I:Prices} {I:EMA 150}}
 
 To scan for all stocks that are trading below both their 30 day and 150 day EMAs
-create a system file containing this GT::Signals description (as a single line)
+create a system file containing this Finance::GeniusTrader::Signals description (as a single line)
 
 S:Generic:And {S:Generic:Below {I:Prices} {I:EMA 30}} {S:Generic:Below {I:Prices} {I:EMA 150}}
 
@@ -219,17 +217,17 @@ GetOptions('full!' => \$full, 'nb-item=i' => \$nb_item,
             "html!"		=> \$html,
             "url=s"		=> \$url,
 	   "option=s" => \@options, "help!" => \$man);
-$timeframe = GT::DateTime::name_to_timeframe($timeframe);
+$timeframe = Finance::GeniusTrader::DateTime::name_to_timeframe($timeframe);
 
 foreach (@options) {
     my ($key, $value) = split (/=/, $_);
-    GT::Conf::set($key, $value);
+    Finance::GeniusTrader::Conf::set($key, $value);
 }
 
 pod2usage( -verbose => 2) if ($man);
 
 # Create all the framework
-my $list = GT::List->new;
+my $list = Finance::GeniusTrader::List->new;
 
 # get symbols filename from command line
 my $file = shift || pod2usage(verbose => 2);
@@ -287,9 +285,9 @@ foreach my $line (@desc_systems) {
 
         warn "$prog_name doesn't deal with indicators, just systems and signals\n"
          . "\"$object\" is an indicator, and will be ignored $!\n"
-         if ( ref($object) =~ /GT::Indicators::/ );
+         if ( ref($object) =~ /Finance::GeniusTrader::Indicators::/ );
 
-	if (ref($object) =~ /GT::Systems/) {
+	if (ref($object) =~ /Finance::GeniusTrader::Systems/) {
 	    $systems->{$name}{"buy_signals"} = [];
 	    $systems->{$name}{"sell_signals"} = [];
 	} else {
@@ -358,14 +356,14 @@ for (my $d = 0; $d < $list->count; $d++)
     
 	my $object = $systems->{$_}{'object'};
 	my $number = $systems->{$_}{'number'};
-	if (ref($object) =~ /GT::Systems/) {
+	if (ref($object) =~ /Finance::GeniusTrader::Systems/) {
 	    if ($object->long_signal($calc, $i)) {
 		$msg->snd(1, "$code $n B");
 	    }
 	    if ($object->short_signal($calc, $i)) {
 		$msg->snd(1, "$code $n S");
 	    }
-	} elsif (ref($object) =~ /GT::Signals/) {
+	} elsif (ref($object) =~ /Finance::GeniusTrader::Signals/) {
 	    $object->detect($calc, $i);
 	    if ($calc->signals->is_available($object->get_name($number), $i)
 		&& $calc->signals->get($object->get_name($number), $i)) {
@@ -397,7 +395,7 @@ my $db = create_db_object();
 
 foreach my $name (@list_systems) {
     my $object = $systems->{$name}{'object'};
-    if (ref($object) =~ /GT::Systems/) {
+    if (ref($object) =~ /Finance::GeniusTrader::Systems/) {
 	print "<p>" if ($html);
 	print "\nBuy signal: $name\n";
 	print "</p>" if ($html);
@@ -422,7 +420,7 @@ foreach my $name (@list_systems) {
 	}
 #      }
 	print "</ul>" if ($html);
-    } elsif (ref($object) =~ /GT::Signals/) {
+    } elsif (ref($object) =~ /Finance::GeniusTrader::Signals/) {
 	print "<p>" if ($html);
 	print "\nSignal: $name\n";
 	print "</p>" if ($html);

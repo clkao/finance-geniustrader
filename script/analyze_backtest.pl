@@ -4,18 +4,16 @@
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
-use lib '..';
-
 use strict;
 
-use GT::Report;
-use GT::Conf;
-use GT::BackTest::Spool;
-use GT::Eval;
+use Finance::GeniusTrader::Report;
+use Finance::GeniusTrader::Conf;
+use Finance::GeniusTrader::BackTest::Spool;
+use Finance::GeniusTrader::Eval;
 use Getopt::Long;
 use Pod::Usage;
 
-GT::Conf::load();
+Finance::GeniusTrader::Conf::load();
 
 
 =head1 NAME
@@ -68,18 +66,18 @@ GetOptions("set=s" => \$set, 'template=s' => \$template,
 
 foreach (@options) {
     my ($key, $value) = split (/=/, $_);
-    GT::Conf::set($key, $value);
+    Finance::GeniusTrader::Conf::set($key, $value);
 }
 
 pod2usage( -verbose => 2) if ($man);
 my $outputdir = shift;
-$outputdir = GT::Conf::get("BackTest::Directory") if (! $outputdir);
+$outputdir = Finance::GeniusTrader::Conf::get("BackTest::Directory") if (! $outputdir);
 $outputdir = "." if (! $outputdir);
 
-my $mason_template = GT::Conf::get('Template::analyze_backtest') if ($template eq '');
+my $mason_template = Finance::GeniusTrader::Conf::get('Template::analyze_backtest') if ($template eq '');
 $template = $mason_template if defined $mason_template;
 
-my $spool = GT::BackTest::Spool->new($outputdir);
+my $spool = Finance::GeniusTrader::BackTest::Spool->new($outputdir);
 
 if ($template ne '') {
 
@@ -101,7 +99,7 @@ if ($template ne '') {
       }
    }
    
-   my $root = GT::Conf::get('Template::directory');
+   my $root = Finance::GeniusTrader::Conf::get('Template::directory');
    $root = File::Spec->rel2abs( cwd() ) if (!defined($root));
    my $interp = HTML::Mason::Interp->new( comp_root => $root,
  					 out_method => \$output
@@ -111,6 +109,6 @@ if ($template ne '') {
    print $output;
    $db->disconnect;
 } else { 
-   GT::Report::AnalysisList($spool, $set);
+   Finance::GeniusTrader::Report::AnalysisList($spool, $set);
 }
 

@@ -7,20 +7,18 @@
 # baseline Mar 17 2006 2293 bytes
 # $Id$
 
-use lib '..';
-
 use strict;
 use vars qw($db);
 
-use GT::Prices;
-use GT::Calculator;
-use GT::Conf;
-use GT::Eval;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Calculator;
+use Finance::GeniusTrader::Conf;
+use Finance::GeniusTrader::Eval;
 use Getopt::Long;
-use GT::Tools qw(:timeframe);
+use Finance::GeniusTrader::Tools qw(:timeframe);
 use Pod::Usage;
 
-GT::Conf::load();
+Finance::GeniusTrader::Conf::load();
 
 =head1 ./display_signal.pl [ options ] <signalname> <code> [args...]
 
@@ -149,7 +147,7 @@ Do the test over the full available history data.
 # Get all options
 my ($change, $last_record)
  = (0, 0);
-my $nb_item = GT::Conf::get('Option::nb-item');
+my $nb_item = Finance::GeniusTrader::Conf::get('Option::nb-item');
 $nb_item = (defined($nb_item))?$nb_item:200;
 my ($full, $start, $end, $timeframe, $max_loaded_items) =
    (0, '', '', 'day', -1);
@@ -162,11 +160,11 @@ GetOptions('full!' => \$full, 'nb-item=i' => \$nb_item,
 	   "timeframe=s" => \$timeframe,
            "change!" => \$change, "last-record" => \$last_record,
 	   "option=s" => \@options, "help!" => \$man);
-$timeframe = GT::DateTime::name_to_timeframe($timeframe);
+$timeframe = Finance::GeniusTrader::DateTime::name_to_timeframe($timeframe);
 
 foreach (@options) {
     my ($key, $value) = split (/=/, $_);
-    GT::Conf::set($key, $value);
+    Finance::GeniusTrader::Conf::set($key, $value);
 }
 
 pod2usage( -verbose => 2) if ($man);

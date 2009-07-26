@@ -2,9 +2,7 @@
  $proc
 </%args>
 <%init>
- use lib '..';
- use lib '../..';
- use GT::Analyzers::Process;
+ use Finance::GeniusTrader::Analyzers::Process;
 
 # my $proc = shift;
 

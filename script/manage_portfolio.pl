@@ -11,17 +11,15 @@
 # $Id$
 #
 
-use lib '..';
-
 use strict;
 use vars qw($db);
 
-use GT::Prices;
-use GT::Calculator;
-use GT::Report;
-use GT::Conf;
-use GT::Eval;
-use GT::DateTime;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Calculator;
+use Finance::GeniusTrader::Report;
+use Finance::GeniusTrader::Conf;
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::DateTime;
 use Getopt::Long;
 use Time::localtime;
 use File::Spec;
@@ -31,7 +29,7 @@ use Cwd;
 
 chop (my $prog_name = $0);
 
-GT::Conf::load();
+Finance::GeniusTrader::Conf::load();
 
 =head1 NAME
 
@@ -208,7 +206,7 @@ make some analysis on it.
 The first parameter is a filename of a portfolio. The name is supposed to
 be relative to the portfolio directory which is $HOME/.gt/portfolio in
 Unix but can be overriden with the configuration item
-GT::Portfolio::Directory. If it doesn't exist, it will try in the local
+Finance::GeniusTrader::Portfolio::Directory. If it doesn't exist, it will try in the local
 directory.
 
 =head1 BUGS (or maybe just rough edges (in my opinion))
@@ -259,20 +257,20 @@ GetOptions("marged!" => \$marged, "source=s" => \$source,
 	   "backup!" => \$backup,
 	   "verbose+" => \$verbose,
 	   "option=s" => \@options, "help!" => \$man);
-$timeframe = GT::DateTime::name_to_timeframe($timeframe);
+$timeframe = Finance::GeniusTrader::DateTime::name_to_timeframe($timeframe);
 
 foreach (@options) {
     my ($key, $value) = split (/=/, $_);
-    GT::Conf::set($key, $value);
+    Finance::GeniusTrader::Conf::set($key, $value);
 }
 
 pod2usage( -verbose => 2) if ($man);
 
 # Check the portfolio directory
-#GT::Conf::default("GT::Portfolio::Directory", $ENV{'HOME'} . "/.gt/portfolio");
-GT::Conf::default("GT::Portfolio::Directory", GT::Conf::_get_home_path()
+#Finance::GeniusTrader::Conf::default("Finance::GeniusTrader::Portfolio::Directory", $ENV{'HOME'} . "/.gt/portfolio");
+Finance::GeniusTrader::Conf::default("Finance::GeniusTrader::Portfolio::Directory", Finance::GeniusTrader::Conf::_get_home_path()
  . "/.gt/portfolio");
-my $pf_dir = GT::Conf::get("GT::Portfolio::Directory");
+my $pf_dir = Finance::GeniusTrader::Conf::get("Finance::GeniusTrader::Portfolio::Directory");
 mkdir $pf_dir if (! -d $pf_dir);
 
 # Load the portfolio
@@ -288,9 +286,9 @@ if ($pfname !~ m@^(./|/)@) {
     }
 }
 if (-e $pfname) {
-    $pf = GT::Portfolio->create_from_file($pfname);
+    $pf = Finance::GeniusTrader::Portfolio->create_from_file($pfname);
 } else {
-    $pf = GT::Portfolio->new();
+    $pf = Finance::GeniusTrader::Portfolio->new();
 }
 
 my $changes = 0;
@@ -306,7 +304,7 @@ if ($cmd eq "create") {
     if (-e $pfname) {
 	warn "A portfolio with this name already exists."
          . " The current portfolio will be replaced!\n";
-	my $pf = GT::Portfolio->new();
+	my $pf = Finance::GeniusTrader::Portfolio->new();
     } else {
 	print "Creation of a new portfolio in $pfname...\n";
     }
@@ -405,7 +403,7 @@ print STDERR "batch line\n"
           .   "i'm not going accept \"$date\", nor will i convert it, sorry (not).\n";
         }
 
-        my $order = GT::Portfolio::Order->new;
+        my $order = Finance::GeniusTrader::Portfolio::Order->new;
 #        if ($cmd eq "bought") {
         if ( $cmd =~ m/bought|buy/i ) {
             $order->set_buy_order;
@@ -553,7 +551,7 @@ print STDERR "batch line\n"
     }
 
     # code for templating setup
-    my $root = GT::Conf::get('Template::directory');
+    my $root = Finance::GeniusTrader::Conf::get('Template::directory');
     $root = File::Spec->rel2abs(cwd()) if (!defined($root));
 
     # try and get the template from the config file if it has not been
@@ -563,7 +561,7 @@ print STDERR "batch line\n"
     # with $what designating the type of report being selected
 
     unless ( ! $template gt '' ) {
-      $template = GT::Conf::get("Template::manage_portfolio_$what")
+      $template = Finance::GeniusTrader::Conf::get("Template::manage_portfolio_$what")
        if ($template eq '');
     } else {
       $template = '';
@@ -580,18 +578,18 @@ print STDERR "not using template\n";
             print "\n$0: sorry performance not yet implemented\n";
 
         } elsif ( $what eq "positions" || $what =~ m/po.*/i ) {
-	    GT::Report::OpenPositions($pf, $detailed);
+	    Finance::GeniusTrader::Report::OpenPositions($pf, $detailed);
 
         } elsif ( $what eq "historic" || $what =~ m/hi.*/i ) {
-            GT::Report::Portfolio($pf, $detailed)
+            Finance::GeniusTrader::Report::Portfolio($pf, $detailed)
              || print "\ndidn't find any history in the portfolio\n";
 
         } elsif ( $what eq "analysis" || $what =~ m/an.*/i ) {
 	    print "\n$0: sorry analysis not yet implemented\n";
 	    print "\nhumm, well, not so fast there grasshopper\n"
              . "-- here we have hacked in a call to\n"
-	     . "GT::Report::SimplePortfolioAnalysis(...)\n\n";
-            GT::Report::SimplePortfolioAnalysis($pf->real_global_analysis);
+	     . "Finance::GeniusTrader::Report::SimplePortfolioAnalysis(...)\n\n";
+            Finance::GeniusTrader::Report::SimplePortfolioAnalysis($pf->real_global_analysis);
             print "\n\nbut as you can see it don't do very much\n";
 
             print "\ntrial and error poking on this stuff suggests that\n";
@@ -602,9 +600,9 @@ print STDERR "not using template\n";
             my ($sec, $min, $hour, $d, $m, $y, $wd, $yd) = localtime();
             my $today = sprintf("%04d-%02d-%02d", $y+1900, $m+1, $d);
             if ( $pf->has_historic_evaluation("$today") ) {
-              GT::Report::SimplePortfolioAnalysis($pf->real_global_analysis);
+              Finance::GeniusTrader::Report::SimplePortfolioAnalysis($pf->real_global_analysis);
               # following one divides by zero, without a history in portfolio
-              GT::Report::PortfolioAnalysis($pf->real_global_analysis, $detailed);
+              Finance::GeniusTrader::Report::PortfolioAnalysis($pf->real_global_analysis, $detailed);
             } else {
               print "\ndon't see no stinkin' history in your portfolio man!\n";
               print "you got not stinkin' history, you get no stinkin' analysis!\n";
@@ -619,15 +617,15 @@ print STDERR "not using template\n";
               print "\n\n";
             }
 
-#             # lets try GT::Report::PortfolioAnalysis($pf, $detailed)
+#             # lets try Finance::GeniusTrader::Report::PortfolioAnalysis($pf, $detailed)
 # 	      print "\nwell, ok -- here we have hacked in a call to\n"
-# 	       . "GT::Report::PortfolioAnalysis($pf->real_global_analysis, $detailed)\n\n";
-#             GT::Report::PortfolioAnalysis($pf->real_global_analysis, $detailed);
+# 	       . "Finance::GeniusTrader::Report::PortfolioAnalysis($pf->real_global_analysis, $detailed)\n\n";
+#             Finance::GeniusTrader::Report::PortfolioAnalysis($pf->real_global_analysis, $detailed);
 #             print "\n\nbut as you can see it don't work so good!\n";
 #             print "\n\n---\n\n";
 # 
 #             print "\n\n real_analysis_by_code T \n\n";
-#             GT::Report::PortfolioAnalysis($pf->real_analysis_by_code, "T");
+#             Finance::GeniusTrader::Report::PortfolioAnalysis($pf->real_analysis_by_code, "T");
 #             print "\n\n---\n\n";
             
         } else {
@@ -793,12 +791,12 @@ exit;
 # to replace the equivalent sized shares
 #
 # 1) applies only to current orders and positions -- closed positions don't count
-# 2) GT::Portfolio::Position
+# 2) Finance::GeniusTrader::Portfolio::Position
 #    position initial_quantity
 #    position open_price
 #    position quantity
 #    
-# 3) GT::Portfolio::Order
+# 3) Finance::GeniusTrader::Portfolio::Order
 #    order price
 #    order quantity
 #    

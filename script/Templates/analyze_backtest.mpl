@@ -6,8 +6,8 @@ $db
 </%args>
 <%init>
 
-use GT::Prices;
-use GT::BackTest::Spool;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::BackTest::Spool;
 
 # variables to hold HTML data
 my @loop_by_code;
@@ -56,7 +56,7 @@ foreach my $code (sort keys %codes) {
       if ($ana->[0] > 0) { $nb_gain++ } else { $nb_loss++ };
       $mean *= (1 + $ana->[0]);
       
-      my $systemname = GT::Report::_get_name($s, $_);
+      my $systemname = Finance::GeniusTrader::Report::_get_name($s, $_);
       
       my %text = (
          returnper      => sprintf("%.1f%%", $ana->[0] * 100),
@@ -106,7 +106,7 @@ foreach my $sys (sort keys %{$l}) {
    
    next if (! scalar @codes);
 
-   $htmldata_systemname = GT::Report::_get_name($s, $sys);
+   $htmldata_systemname = Finance::GeniusTrader::Report::_get_name($s, $sys);
 
    my @htmldata_returninfo1;
    foreach (@codes) {

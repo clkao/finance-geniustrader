@@ -4,30 +4,28 @@
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
-use lib '..';
-
 use strict;
 use vars qw($db);
 
-use GT::Prices;
-use GT::Portfolio;
-use GT::PortfolioManager;
-use GT::Calculator;
-use GT::Report;
-use GT::BackTest;
-use GT::Eval;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Portfolio;
+use Finance::GeniusTrader::PortfolioManager;
+use Finance::GeniusTrader::Calculator;
+use Finance::GeniusTrader::Report;
+use Finance::GeniusTrader::BackTest;
+use Finance::GeniusTrader::Eval;
 use Getopt::Long;
-use GT::Conf;
-use GT::DateTime;
-use GT::Tools qw(:conf :timeframe);
-use GT::Graphics::DataSource::PortfolioEvaluation;
-use GT::Graphics::Driver;
-use GT::Graphics::Object;
-use GT::Graphics::Graphic;
-use GT::Graphics::Tools qw(:axis :color);
+use Finance::GeniusTrader::Conf;
+use Finance::GeniusTrader::DateTime;
+use Finance::GeniusTrader::Tools qw(:conf :timeframe);
+use Finance::GeniusTrader::Graphics::DataSource::PortfolioEvaluation;
+use Finance::GeniusTrader::Graphics::Driver;
+use Finance::GeniusTrader::Graphics::Object;
+use Finance::GeniusTrader::Graphics::Graphic;
+use Finance::GeniusTrader::Graphics::Tools qw(:axis :color);
 use Pod::Usage;
 
-GT::Conf::load();
+Finance::GeniusTrader::Conf::load();
 
 =head1 ./backtest.pl [ options ] <code>
 
@@ -162,27 +160,27 @@ Store the resulting portfolio in the indicated file.
 =item --broker="NoCosts"
 
 Calculate commissions and annual account charge, if applicable, using
-GT::Brokers::<broker_name> as broker.
+Finance::GeniusTrader::Brokers::<broker_name> as broker.
 
 =item --system="<system_name>"
 
-use the GT::Systems::<system_name> as the source of buy/sell orders.  
+use the Finance::GeniusTrader::Systems::<system_name> as the source of buy/sell orders.  
 
 =item --money-management="<money_management_name>" 
 
-use the GT::MoneyManagement::<money_management_name> as money management system.
+use the Finance::GeniusTrader::MoneyManagement::<money_management_name> as money management system.
 
 =item --trade-filter="<filter_name>"
 
-use the GT::TradeFilters::<filter_name> as a trade filter.  
+use the Finance::GeniusTrader::TradeFilters::<filter_name> as a trade filter.  
 
 =item --order-factory="<order_factory_name>" 
 
-use GT::OrderFactory::<order_factory_name> as an order factory.  
+use Finance::GeniusTrader::OrderFactory::<order_factory_name> as an order factory.  
 
 =item --close-strategy="<close_strategy_name>" 
 
-use GT::CloseStrategy::<close_strategy_name> as a close strategy.
+use Finance::GeniusTrader::CloseStrategy::<close_strategy_name> as a close strategy.
 
 =item --set=SETNAME
 
@@ -221,7 +219,7 @@ sets the format used to parse markets via the DB::Text module to 0.
 
 =item
 
-./backtest.pl --broker="SelfTrade Intégral" "SY:TFS|CS:SY:TFS|CS:Stop:Fixed 6|MM:VAR|MM:OrderSizeLimit" 13000
+./backtest.pl --broker="SelfTrade Intégral" "SY:TFS|CS:SY:TFS|CS:Stop:Fixed 6|MM:VAR|MM:OrderSizeLimit" 13000
 
 =back
 
@@ -235,7 +233,7 @@ my @options;
 my ($verbose, $html, $display_trades, $template, $graph_file, $ofname, $broker, $system, $store_file, $outputdir, $set) = 
    (0, 0, 0, '', '', '', '', '', '', '', '');
 my (@mmname, @tfname, @csname);
-$outputdir = GT::Conf::get("BackTest::Directory") || './';
+$outputdir = Finance::GeniusTrader::Conf::get("BackTest::Directory") || './';
 GetOptions('full!' => \$full, 'nb-item=i' => \$nb_item, 
 	   "start=s" => \$start, "end=s" => \$end, 
 	   "max-loaded-items=s" => \$max_loaded_items,
@@ -251,7 +249,7 @@ GetOptions('full!' => \$full, 'nb-item=i' => \$nb_item,
 
 foreach (@options) {
     my ($key, $value) = split (/=/, $_);
-    GT::Conf::set($key, $value);
+    Finance::GeniusTrader::Conf::set($key, $value);
 }
 
 pod2usage( -verbose => 2) if ($man);
@@ -270,8 +268,8 @@ if (! -d $outputdir)
 }
 
 # Create the entire framework
-my $pf_manager = GT::PortfolioManager->new;
-my $sys_manager = GT::SystemManager->new;
+my $pf_manager = Finance::GeniusTrader::PortfolioManager->new;
+my $sys_manager = Finance::GeniusTrader::SystemManager->new;
 
 
 if ($system) {
@@ -332,7 +330,7 @@ if (! $code) {
     die "You must give a symbol for the simulation.\n";
 }
 
-$timeframe = GT::DateTime::name_to_timeframe($timeframe);
+$timeframe = Finance::GeniusTrader::DateTime::name_to_timeframe($timeframe);
 
 # Verify dates and adjust to timeframe, comment out if not desired
 check_dates($timeframe, $start, $end);
@@ -350,12 +348,12 @@ if ($store_file) {
 
 if ($graph_file) {
     # create graph for backtested portfolio
-    my $graph_ds = GT::Graphics::DataSource::PortfolioEvaluation->new($calc, $analysis->{'portfolio'});
+    my $graph_ds = Finance::GeniusTrader::Graphics::DataSource::PortfolioEvaluation->new($calc, $analysis->{'portfolio'});
     $graph_ds->set_selected_range($first, $last);
 
     # create graph for buy and hold portfolio
-    my $pf_manager2 = GT::PortfolioManager->new;
-    my $sys_manager2 = GT::SystemManager->new;
+    my $pf_manager2 = Finance::GeniusTrader::PortfolioManager->new;
+    my $sys_manager2 = Finance::GeniusTrader::SystemManager->new;
     $pf_manager2->setup_from_name("SY:AlwaysInTheMarket | TF:LongOnly | TF:OneTrade | CS:NeverClose");
     $sys_manager2->setup_from_name("SY:AlwaysInTheMarket | TF:LongOnly | TF:OneTrade | CS:NeverClose");
     my $def_rule = create_standard_object("MoneyManagement::Basic");
@@ -363,32 +361,32 @@ if ($graph_file) {
     $pf_manager2->finalize;
     $sys_manager2->finalize;
     my $analysis2 = backtest_single($pf_manager2, $sys_manager2, $broker, $calc, $first, $last);
-    my $graph_ds2 = GT::Graphics::DataSource::PortfolioEvaluation->new($calc, $analysis2->{'portfolio'});
+    my $graph_ds2 = Finance::GeniusTrader::Graphics::DataSource::PortfolioEvaluation->new($calc, $analysis2->{'portfolio'});
     $graph_ds2->set_selected_range($first, $last);
 
     # set up graphic objects
-    my $zone = GT::Graphics::Zone->new(700, 300, 80, 40, 0, 40);
-    my $scale = GT::Graphics::Scale->new();
+    my $zone = Finance::GeniusTrader::Graphics::Zone->new(700, 300, 80, 40, 0, 40);
+    my $scale = Finance::GeniusTrader::Graphics::Scale->new();
     $scale->set_horizontal_linear_mapping($first, $last + 1, 0, $zone->width);
     $scale->set_vertical_linear_mapping(union_range($graph_ds->get_value_range, $graph_ds2->get_value_range), 0, $zone->height);
     $zone->set_default_scale($scale);
-    my $axis_h = GT::Graphics::Axis->new($scale);
-    my $axis_v = GT::Graphics::Axis->new($scale);
+    my $axis_h = Finance::GeniusTrader::Graphics::Axis->new($scale);
+    my $axis_v = Finance::GeniusTrader::Graphics::Axis->new($scale);
     $axis_h->set_custom_big_ticks(build_axis_for_interval(union_range($graph_ds->get_value_range, $graph_ds2->get_value_range), 0, 1));
     $axis_v->set_custom_big_ticks(build_axis_for_timeframe($calc->prices(), $YEAR, 1, 1), 1);
     $zone->set_axis_left($axis_h);
     $zone->set_axis_bottom($axis_v);
-    my $graphic = GT::Graphics::Graphic->new($zone);
-    my $graph = GT::Graphics::Object::Curve->new($graph_ds, $zone);
+    my $graphic = Finance::GeniusTrader::Graphics::Graphic->new($zone);
+    my $graph = Finance::GeniusTrader::Graphics::Object::Curve->new($graph_ds, $zone);
     $graph->set_foreground_color([0, 190, 0]);
     $graph->set_antialiased(0);
-    my $graph2 = GT::Graphics::Object::Curve->new($graph_ds2, $zone);
+    my $graph2 = Finance::GeniusTrader::Graphics::Object::Curve->new($graph_ds2, $zone);
     $graph2->set_foreground_color([190, 0, 0]);
     $graph2->set_antialiased(0);
     $graphic->add_object($graph2);
     $graphic->add_object($graph);
     if ($display_trades) {
-	my $trades = GT::Graphics::Object::Trades->new($calc, $zone,
+	my $trades = Finance::GeniusTrader::Graphics::Object::Trades->new($calc, $zone,
 							$analysis->{'portfolio'},
 							$first, $last);
 	$graphic->add_object($trades);
@@ -401,7 +399,7 @@ if ($graph_file) {
 }
 
 # Display the results
-$template = GT::Conf::get('Template::backtest') if ($template eq '');
+$template = Finance::GeniusTrader::Conf::get('Template::backtest') if ($template eq '');
 if (defined($template) && $template ne '') {
   my $output;
 
@@ -409,7 +407,7 @@ if (defined($template) && $template ne '') {
   eval $use;
   die(@!) if(@!);
 
-  my $root = GT::Conf::get('Template::directory');
+  my $root = Finance::GeniusTrader::Conf::get('Template::directory');
   $root = File::Spec->rel2abs( cwd() ) if (!defined($root));
   my $interp = HTML::Mason::Interp->new( comp_root => $root,
 					 out_method => \$output
@@ -431,17 +429,17 @@ elsif ($html)
     print "<table border='1' bgcolor='#EEEEEE'><tr><td>";
     print "<pre>";
     print "## Global analysis (full portfolio always invested)\n";
-    GT::Report::PortfolioAnalysis($analysis->{'real'}, $verbose);
+    Finance::GeniusTrader::Report::PortfolioAnalysis($analysis->{'real'}, $verbose);
     print "</pre></td></tr></table>";
-    GT::Report::PortfolioHTML($analysis->{'portfolio'}, $verbose);
+    Finance::GeniusTrader::Report::PortfolioHTML($analysis->{'portfolio'}, $verbose);
 }
 else
 {
     print "## Analysis of " . $sys_manager->get_name . "|" .
 	$pf_manager->get_name . "\n";
-    GT::Report::Portfolio($analysis->{'portfolio'}, $verbose);
+    Finance::GeniusTrader::Report::Portfolio($analysis->{'portfolio'}, $verbose);
     print "## Global analysis (full portfolio always invested)\n";
-    GT::Report::PortfolioAnalysis($analysis->{'real'}, $verbose);
+    Finance::GeniusTrader::Report::PortfolioAnalysis($analysis->{'real'}, $verbose);
     print "\n";
 }
 
@@ -449,7 +447,7 @@ $db->disconnect;
 
 if ( $set ) {
   # Store intermediate result
-  my $bkt_spool = GT::BackTest::Spool->new($outputdir);
+  my $bkt_spool = Finance::GeniusTrader::BackTest::Spool->new($outputdir);
   my $stats = [ $analysis->{'real'}{'std_performance'},
 		$analysis->{'real'}{'performance'},
 		$analysis->{'real'}{'max_draw_down'},

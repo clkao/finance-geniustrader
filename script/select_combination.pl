@@ -4,17 +4,15 @@
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
-use lib '..';
-
 use strict;
 
-use GT::BackTest::Spool;
-use GT::Report;
-use GT::Conf;
+use Finance::GeniusTrader::BackTest::Spool;
+use Finance::GeniusTrader::Report;
+use Finance::GeniusTrader::Conf;
 use Getopt::Long;
 use Pod::Usage;
 
-GT::Conf::load();
+Finance::GeniusTrader::Conf::load();
 
 =head2 select_combination.pl [ --limit-ratio <min_ratio_perf/draw_down> ] 
 			     [ --limit-performance <min_perf> ] 
@@ -37,16 +35,16 @@ GetOptions("set=s" => \$set, "limit-ratio=s" => \$limit_ratio,
 
 foreach (@options) {
     my ($key, $value) = split (/=/, $_);
-    GT::Conf::set($key, $value);
+    Finance::GeniusTrader::Conf::set($key, $value);
 }
 
 pod2usage( -verbose => 2) if ($man);
 
 my $outputdir = shift;
-$outputdir = GT::Conf::get("BackTest::Directory") if (! $outputdir);
+$outputdir = Finance::GeniusTrader::Conf::get("BackTest::Directory") if (! $outputdir);
 $outputdir = "." if (! $outputdir);
 
-my $spool = GT::BackTest::Spool->new($outputdir);
+my $spool = Finance::GeniusTrader::BackTest::Spool->new($outputdir);
 
 my $l = $spool->list_available_data($set);
 

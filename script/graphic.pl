@@ -4,28 +4,26 @@
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
-use lib '..';
-
 use strict;
 use vars qw($db);
 
-use GT::Prices;
-use GT::Calculator;
-use GT::Conf;
-use GT::Eval;
-use GT::Graphics::Driver;
-use GT::Graphics::DataSource;
-use GT::Graphics::Object;
-use GT::Graphics::Graphic;
-use GT::Graphics::Tools qw(:axis :color);
-use GT::BackTest::Spool;
-use GT::Portfolio;
-use GT::DateTime;
-use GT::Tools qw(:conf :timeframe);
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Calculator;
+use Finance::GeniusTrader::Conf;
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::Graphics::Driver;
+use Finance::GeniusTrader::Graphics::DataSource;
+use Finance::GeniusTrader::Graphics::Object;
+use Finance::GeniusTrader::Graphics::Graphic;
+use Finance::GeniusTrader::Graphics::Tools qw(:axis :color);
+use Finance::GeniusTrader::BackTest::Spool;
+use Finance::GeniusTrader::Portfolio;
+use Finance::GeniusTrader::DateTime;
+use Finance::GeniusTrader::Tools qw(:conf :timeframe);
 use Getopt::Long 2.33;
 use Pod::Usage;
 
-GT::Conf::load();
+Finance::GeniusTrader::Conf::load();
 
 =head1 ./graphic.pl [ options | additional graphical elements ] <code>
 
@@ -304,7 +302,7 @@ command line parameter. Lines starting with # are ignored.
 =cut
 
 # Get all options
-my $nb_item = GT::Conf::get('Option::nb-item');
+my $nb_item = Finance::GeniusTrader::Conf::get('Option::nb-item');
 $nb_item = (defined($nb_item))?$nb_item:120;
 my ($full, $start, $end, $timeframe, $max_loaded_items) =
    (0, '', '', 'day', -1);
@@ -346,11 +344,11 @@ GetOptions('full!' => \$full, 'nb-item=i' => \$nb_item,
 	   "option=s" => \@options, "title=s" => \$title,
 	   "file=s" => \$filename, "driver=s" => \$opt_driver,
 	   "man!" => \$man);
-$timeframe = GT::DateTime::name_to_timeframe($timeframe);
+$timeframe = Finance::GeniusTrader::DateTime::name_to_timeframe($timeframe);
 
 foreach (@options) {
     my ($key, $value) = split (/=/, $_);
-    GT::Conf::set($key, $value);
+    Finance::GeniusTrader::Conf::set($key, $value);
 }
 
 # Verify dates and adjust to timeframe, comment out if not desired
@@ -364,48 +362,48 @@ my $db = create_db_object();
 my ($calc, $first, $last) = find_calculator($db, $code, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items);
 $nb_item = $last - $first + 1;
 
-GT::Conf::default("Graphics::Driver", "GD");
+Finance::GeniusTrader::Conf::default("Graphics::Driver", "GD");
 if ($opt_driver) {
-    GT::Conf::set("Graphics::Driver", $opt_driver);
+    Finance::GeniusTrader::Conf::set("Graphics::Driver", $opt_driver);
 }
     
-my $driver = create_standard_object("Graphics::Driver::" . GT::Conf::get("Graphics::Driver"));
+my $driver = create_standard_object("Graphics::Driver::" . Finance::GeniusTrader::Conf::get("Graphics::Driver"));
 
-#my $driver = GT::Graphics::Driver::GD->new();
-#my $driver = GT::Graphics::Driver::ImageMagick->new();
+#my $driver = Finance::GeniusTrader::Graphics::Driver::GD->new();
+#my $driver = Finance::GeniusTrader::Graphics::Driver::ImageMagick->new();
 
 # Création des zones
 if (! $width) {
-    $width = $nb_item * GT::Conf::get("Graphic::Candle::Width");
+    $width = $nb_item * Finance::GeniusTrader::Conf::get("Graphic::Candle::Width");
 }
 
 my $y_zone = 0;
-my $zone = GT::Graphics::Zone->new($width, 200, 40, 40, 40, 40);
-my $z_m = GT::Graphics::Zone->new($width, $height);
+my $zone = Finance::GeniusTrader::Graphics::Zone->new($width, 200, 40, 40, 40, 40);
+my $z_m = Finance::GeniusTrader::Graphics::Zone->new($width, $height);
 $zone->add_subzone(0, $y_zone++, $z_m);
 
-my $graphic = GT::Graphics::Graphic->new($zone);
+my $graphic = Finance::GeniusTrader::Graphics::Graphic->new($zone);
 my $q = $calc->prices();
 
 if ($volume and ($type ne "none")) {
-    my $z_v = GT::Graphics::Zone->new($width, $vheight);
+    my $z_v = Finance::GeniusTrader::Graphics::Zone->new($width, $vheight);
     $zone->add_subzone(0, $y_zone++, $z_v);
-    my $ds_v = GT::Graphics::DataSource::Volume->new($q);
+    my $ds_v = Finance::GeniusTrader::Graphics::DataSource::Volume->new($q);
     $ds_v->set_selected_range($first, $last);
-    my $scale_v = GT::Graphics::Scale->new();
+    my $scale_v = Finance::GeniusTrader::Graphics::Scale->new();
     $scale_v->set_horizontal_linear_mapping($first, $last + 1, 
 					    0, $z_v->width());
     $scale_v->set_vertical_linear_mapping(0, ($ds_v->get_value_range())[1],
 					  0, $z_v->height());
     $z_v->set_default_scale($scale_v);
-    my $axis_v = GT::Graphics::Axis->new($scale_v);
+    my $axis_v = Finance::GeniusTrader::Graphics::Axis->new($scale_v);
     $axis_v->set_custom_big_ticks(
 	    build_axis_for_interval(0, ($ds_v->get_value_range())[1], 0, 1)
 	);
     $axis_v->set_custom_ticks([]);
     $z_v->set_axis_left($axis_v);
-    my $vol = GT::Graphics::Object::Histogram->new($ds_v, $z_v, $calc);
-    my $vol_color = GT::Conf::get('Graphic::Volume::Color');
+    my $vol = Finance::GeniusTrader::Graphics::Object::Histogram->new($ds_v, $z_v, $calc);
+    my $vol_color = Finance::GeniusTrader::Conf::get('Graphic::Volume::Color');
     $vol->set_foreground_color($vol_color) if (defined($vol_color));
 
     $graphic->add_object($vol);
@@ -430,13 +428,13 @@ if ($title) {
 $zone->set_title_font_size($FONT_SIZE_LARGE);
 
 # Création des sources de données
-my $ds = GT::Graphics::DataSource::Prices->new($q);
+my $ds = Finance::GeniusTrader::Graphics::DataSource::Prices->new($q);
 $ds->set_selected_range($first, $last);
-my $ds_c = GT::Graphics::DataSource::Close->new($q);
+my $ds_c = Finance::GeniusTrader::Graphics::DataSource::Close->new($q);
 $ds_c->set_selected_range($first, $last);
 
 # Création des échelles et des axes
-my $scale_m = GT::Graphics::Scale->new();
+my $scale_m = Finance::GeniusTrader::Graphics::Scale->new();
 $scale_m->set_horizontal_linear_mapping($first, $last + 1, 0, $z_m->width());
 if ($logarithmic) {
     $scale_m->set_vertical_logarithmic_mapping($ds->get_value_range(), 
@@ -447,8 +445,8 @@ if ($logarithmic) {
 }
 $z_m->set_default_scale($scale_m) if ($type ne "none");
 
-my $axis = GT::Graphics::Axis->new($scale_m);
-my $axis2 = GT::Graphics::Axis->new($scale_m);
+my $axis = Finance::GeniusTrader::Graphics::Axis->new($scale_m);
+my $axis2 = Finance::GeniusTrader::Graphics::Axis->new($scale_m);
 $axis->set_custom_big_ticks(
 	build_axis_for_interval($ds->get_value_range(), 0, 1)
     );
@@ -462,7 +460,7 @@ if ($timeframe <= $PERIOD_5MIN) {
 	$axis2->set_custom_ticks(build_axis_for_timeframe($q, $DAY, 1), 0);
 } elsif ($timeframe == $DAY) {
     my $space = $scale_m->convert_to_x_coordinate(
-	    int(GT::DateTime::timeframe_ratio($MONTH, $timeframe))
+	    int(Finance::GeniusTrader::DateTime::timeframe_ratio($MONTH, $timeframe))
 	) - $scale_m->convert_to_x_coordinate(0);
     if ($space <= 10) {
 	$axis2->set_custom_big_ticks(
@@ -476,7 +474,7 @@ if ($timeframe <= $PERIOD_5MIN) {
     }
 } elsif ($timeframe == $WEEK) {
     my $space = $scale_m->convert_to_x_coordinate(
-	    int(GT::DateTime::timeframe_ratio($MONTH, $timeframe))
+	    int(Finance::GeniusTrader::DateTime::timeframe_ratio($MONTH, $timeframe))
 	) - $scale_m->convert_to_x_coordinate(0);
     if ($space <= 5) {
 	$axis2->set_custom_big_ticks(
@@ -498,19 +496,19 @@ $zone->set_axis_bottom($axis2);
 
 # Création des objets graphiques principaux
 if ($type eq "candle") {
-    my $candle = GT::Graphics::Object::Candle->new($ds, $z_m);
+    my $candle = Finance::GeniusTrader::Graphics::Object::Candle->new($ds, $z_m);
     $graphic->add_object($candle);
 } elsif ($type eq "candlevol") {
-    my $bc = GT::Graphics::Object::CandleVolume->new($ds, $z_m);
+    my $bc = Finance::GeniusTrader::Graphics::Object::CandleVolume->new($ds, $z_m);
     $graphic->add_object($bc);
 } elsif ($type eq "candlevolplace") {
-    my $bc = GT::Graphics::Object::CandleVolumePlace->new($ds, $z_m);
+    my $bc = Finance::GeniusTrader::Graphics::Object::CandleVolumePlace->new($ds, $z_m);
     $graphic->add_object($bc);
 } elsif ($type eq "barchart") {
-    my $bc = GT::Graphics::Object::BarChart->new($ds, $z_m);
+    my $bc = Finance::GeniusTrader::Graphics::Object::BarChart->new($ds, $z_m);
     $graphic->add_object($bc);
 } elsif ($type eq "line") {
-    my $line = GT::Graphics::Object::Curve->new($ds_c, $z_m);
+    my $line = Finance::GeniusTrader::Graphics::Object::Curve->new($ds_c, $z_m);
     $graphic->add_object($line);
 } elsif ($type eq "none") {
     # Nothing
@@ -533,11 +531,11 @@ sub update_scale {
     $special = 0 if (! defined($special));
 
     if (defined($min) and defined($max)) {
-    my $args = GT::ArgsTree->new( $min );
+    my $args = Finance::GeniusTrader::ArgsTree->new( $min );
     unless ($args->is_constant(1)) {
       my $ob = $args->get_arg_object(1);
       $ob->calculate($calc, $last)
-	if ( $ob->isa("GT::Indicators") );
+	if ( $ob->isa("Finance::GeniusTrader::Indicators") );
       my $val = $args->get_arg_values($calc, $last, 1);
       if (defined($val)) {
 	$min = $val;
@@ -546,11 +544,11 @@ sub update_scale {
       }
     }
 
-    $args = GT::ArgsTree->new( $max );
+    $args = Finance::GeniusTrader::ArgsTree->new( $max );
     unless ($args->is_constant(1)) {
       my $ob = $args->get_arg_object(1);
       $ob->calculate($calc, $last)
-	if ( $ob->isa("GT::Indicators") );
+	if ( $ob->isa("Finance::GeniusTrader::Indicators") );
       my $val = $args->get_arg_values($calc, $last, 1);
       if (defined($val)) {
 	$max = $val;
@@ -560,7 +558,7 @@ sub update_scale {
     }
     }
 
-    my $sc = GT::Graphics::Scale->new;
+    my $sc = Finance::GeniusTrader::Graphics::Scale->new;
     $sc->copy_horizontal_scale($scale_m);
     if (defined($min) and defined($max)) {
 	if ($log) {
@@ -575,7 +573,7 @@ sub update_scale {
     } else {
 	$zone->set_default_scale($sc);
     }
-    my $axis = GT::Graphics::Axis->new($sc);
+    my $axis = Finance::GeniusTrader::Graphics::Axis->new($sc);
     if (defined($min) and defined($max)) {
 	$axis->set_custom_big_ticks(build_axis_for_interval($min, $max));
     } else {
@@ -610,7 +608,7 @@ foreach (@add) {
 	    update_scale($curr_zone, @curr_range);
 	}
 	# Create the new zone
-	my $new_zone = GT::Graphics::Zone->new($z_m->width, @args);
+	my $new_zone = Finance::GeniusTrader::Graphics::Zone->new($z_m->width, @args);
 	$zone->add_subzone(0, $last_zone_y++, $new_zone);
 	$curr_zone = $new_zone;
 	@curr_range = undef;
@@ -658,7 +656,7 @@ foreach (@add) {
 	    }
 	}
     } elsif ($func =~ /Set-?Axis/i) {
-	my $axis = GT::Graphics::Axis->new($curr_zone->get_default_scale());
+	my $axis = Finance::GeniusTrader::Graphics::Axis->new($curr_zone->get_default_scale());
 	my @ticks;
 	foreach (@args) { push @ticks, [ $_, $_ ]; }
 	$axis->set_custom_big_ticks(\@ticks);
@@ -697,38 +695,38 @@ foreach (@add) {
     } elsif ($func =~ /Histogram/i) {
 	my $ds_i = build_datasource($args[0], $calc, $first, $last);
 	update_curr_range($ds_i->get_value_range());
-	$object = GT::Graphics::Object::Histogram->new($ds_i, $curr_zone, $calc);
+	$object = Finance::GeniusTrader::Graphics::Object::Histogram->new($ds_i, $curr_zone, $calc);
 	$object->set_foreground_color($args[1]) if (defined($args[1]));
     } elsif ($func =~ /Curve/i) {
 	my $ds_i = build_datasource($args[0], $calc, $first, $last);
 	update_curr_range($ds_i->get_value_range());
-	$object = GT::Graphics::Object::Curve->new($ds_i, $curr_zone);
+	$object = Finance::GeniusTrader::Graphics::Object::Curve->new($ds_i, $curr_zone);
 	if ($func !~ /EquityCurve/i) {
 	    $object->set_foreground_color($args[1]) if (defined($args[1]));
 	} else {
-	    $object = GT::Graphics::Object::Mountain->new($ds_i, $curr_zone);
+	    $object = Finance::GeniusTrader::Graphics::Object::Mountain->new($ds_i, $curr_zone);
 	    $object->set_foreground_color($args[2]) if (defined($args[2]));
 	}
     } elsif ($func =~ /Marks/i) {
 	my $ds_i = build_datasource($args[0], $calc, $first, $last);
 	update_curr_range($ds_i->get_value_range());
-	$object = GT::Graphics::Object::Marks->new($ds_i, $curr_zone);
+	$object = Finance::GeniusTrader::Graphics::Object::Marks->new($ds_i, $curr_zone);
 	$object->set_foreground_color($args[1]) if (defined($args[1]));
     } elsif ($func =~ /MountainBand/i) {
 	my $ds_i = build_datasource($args[0], $calc, $first, $last);
 	update_curr_range($ds_i->get_value_range());
 	my $ds_i2 = build_datasource($args[1], $calc, $first, $last);
 	update_curr_range($ds_i2->get_value_range());
-	$object = GT::Graphics::Object::MountainBand->new($ds_i, $curr_zone, $ds_i2);
+	$object = Finance::GeniusTrader::Graphics::Object::MountainBand->new($ds_i, $curr_zone, $ds_i2);
 	$object->set_foreground_color($args[2]) if (defined($args[2]));
     } elsif ($func =~ /Mountain/i) {
 	my $ds_i = build_datasource($args[0], $calc, $first, $last);
 	update_curr_range($ds_i->get_value_range());
-	$object = GT::Graphics::Object::Mountain->new($ds_i, $curr_zone);
+	$object = Finance::GeniusTrader::Graphics::Object::Mountain->new($ds_i, $curr_zone);
 	$object->set_foreground_color($args[1]) if (defined($args[1]));
     } elsif ($func =~ /Text/i) {
 	my ($text, $x, $y, $h, $v, $s, $c, $f) = @args;
-	$object = GT::Graphics::Object::Text->new($text, $curr_zone, $x, $y,
+	$object = Finance::GeniusTrader::Graphics::Object::Text->new($text, $curr_zone, $x, $y,
 						  $h, $v);
 	if (defined($s)) {
 	    ($s =~ /tiny/i) && ($object->set_font_size($FONT_SIZE_TINY));
@@ -744,14 +742,14 @@ foreach (@add) {
 	    ($f =~ /fixed/i) && ($object->set_font_face($FONT_FIXED));
 	}
     } elsif ($func =~ /Polygon/i) {
-	$object = GT::Graphics::Object::Polygon->new($calc, $curr_zone, \@args);
+	$object = Finance::GeniusTrader::Graphics::Object::Polygon->new($calc, $curr_zone, \@args);
     } elsif ($func =~ /BuySellArrows/i) {
 	my $ds_s = build_datasource($args[0], $calc, $first, $last);
-	$object = GT::Graphics::Object::BuySellArrows->new($ds_s, 
+	$object = Finance::GeniusTrader::Graphics::Object::BuySellArrows->new($ds_s, 
 							   $curr_zone, $ds);
     } elsif ($func =~ /VotingLine/i) {
 	my $ds_s = build_datasource(shift @args, $calc, $first, $last);
-	$object = GT::Graphics::Object::VotingLine->new($ds_s,
+	$object = Finance::GeniusTrader::Graphics::Object::VotingLine->new($ds_s,
 							$curr_zone, @args);
     }
     # Add the object if required
@@ -767,7 +765,7 @@ if (! defined($curr_zone->get_default_scale())) {
 }
 
 
-my $bottomtext = GT::Graphics::Object::Text->new("Created with GeniusTrader: www.geniustrader.org", 
+my $bottomtext = Finance::GeniusTrader::Graphics::Object::Text->new("Created with GeniusTrader: www.geniustrader.org", 
 		    $zone, 99 + 100 * 40 / $zone->width(), 1 - 100 * 40 / $zone->height(), 
 		    "right", "bottom");
 $bottomtext->set_font_size($FONT_SIZE_TINY);
@@ -844,19 +842,19 @@ sub build_datasource {
     }
 
     if ($desc =~ /^(I|Indicators)::?/i) {
-	$ds = GT::Graphics::DataSource::SingleIndicator->new($calc, $desc);
+	$ds = Finance::GeniusTrader::Graphics::DataSource::SingleIndicator->new($calc, $desc);
 	$ds->set_selected_range($first, $last);
     } elsif ($desc =~ /^(SY|Systems)::?/i) {
 	my @params = split /\s+/, $desc;
 	$desc =	shift @params;
 	my $system = create_standard_object($desc, @params);
 	if ($#params == -1) { $system = create_standard_object($desc); }
-	$ds = GT::Graphics::DataSource::Systems->new($calc, $system);
+	$ds = Finance::GeniusTrader::Graphics::DataSource::Systems->new($calc, $system);
 	$ds->set_selected_range($first, $last);
     } elsif ($desc =~ /^PortfolioEvaluation/i) {
 	my ($name, @args) = split_object_desc($desc);
 	my $portfolio = build_object($args[0]);
-        $ds = GT::Graphics::DataSource::PortfolioEvaluation->new($calc, 
+        $ds = Finance::GeniusTrader::Graphics::DataSource::PortfolioEvaluation->new($calc, 
 								 $portfolio);
 	$ds->set_selected_range($first, $last);
     } else {
@@ -878,15 +876,15 @@ sub build_object {
 	my $directory;
         if (defined($args[1]) && $args[1]) {
             $directory = $args[1];
-        } elsif (GT::Conf::get("BackTest::Directory")) {
-            $directory = GT::Conf::get("BackTest::Directory");
+        } elsif (Finance::GeniusTrader::Conf::get("BackTest::Directory")) {
+            $directory = Finance::GeniusTrader::Conf::get("BackTest::Directory");
         }
 
 	if (! (defined($directory) && $args[0])) {
 	    die "Bad syntax for BackTestPortfolio(sysname, directory) !\n";
 	}
 	
-        my $spool = GT::BackTest::Spool->new($directory);
+        my $spool = Finance::GeniusTrader::BackTest::Spool->new($directory);
         return $spool->get_portfolio($args[0], $code);
 	
     } else {

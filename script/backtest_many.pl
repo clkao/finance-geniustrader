@@ -4,27 +4,25 @@
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
-use lib '..';
-
 use strict;
 use vars qw($db);
 
-use GT::Prices;
-use GT::Portfolio;
-use GT::PortfolioManager;
-use GT::Calculator;
-use GT::Report;
-use GT::BackTest;
-use GT::BackTest::Spool;
-use GT::List;
-use GT::Eval;
-use GT::Conf;
-use GT::DateTime;
-use GT::Tools qw(:conf :timeframe);
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Portfolio;
+use Finance::GeniusTrader::PortfolioManager;
+use Finance::GeniusTrader::Calculator;
+use Finance::GeniusTrader::Report;
+use Finance::GeniusTrader::BackTest;
+use Finance::GeniusTrader::BackTest::Spool;
+use Finance::GeniusTrader::List;
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::Conf;
+use Finance::GeniusTrader::DateTime;
+use Finance::GeniusTrader::Tools qw(:conf :timeframe);
 use Getopt::Long;
 use Pod::Usage;
 
-GT::Conf::load();
+Finance::GeniusTrader::Conf::load();
 
 =head1 ./backtest_many.pl [ options ] <market file> <system file>
 
@@ -125,7 +123,7 @@ This option is effective only for certain data base modules and ignored otherwis
 =item --broker="NoCosts"
 
 Calculate commissions and annual account charge, if applicable, using
-GT::Brokers::<broker_name> as broker.
+Finance::GeniusTrader::Brokers::<broker_name> as broker.
 
 =item --nbprocess=2
 
@@ -166,7 +164,7 @@ my $man = 0;
 my @options;
 my ($verbose, $broker, $outputdir, $set, $nbprocess) = 
    (0, '', '', '', 1);
-$outputdir = GT::Conf::get("BackTest::Directory") || '';
+$outputdir = Finance::GeniusTrader::Conf::get("BackTest::Directory") || '';
 GetOptions('full!' => \$full, 'nb-item=i' => \$nb_item, 
 	   "start=s" => \$start, "end=s" => \$end, 
 	   "max-loaded-items" => \$max_loaded_items,
@@ -175,11 +173,11 @@ GetOptions('full!' => \$full, 'nb-item=i' => \$nb_item,
 	   'broker=s' => \$broker, 'set=s' => \$set,
 	   'nbprocess=s' => \$nbprocess,
 	   "option=s" => \@options, "help!" => \$man);
-$timeframe = GT::DateTime::name_to_timeframe($timeframe);
+$timeframe = Finance::GeniusTrader::DateTime::name_to_timeframe($timeframe);
 
 foreach (@options) {
     my ($key, $value) = split (/=/, $_);
-    GT::Conf::set($key, $value);
+    Finance::GeniusTrader::Conf::set($key, $value);
 }
 
 pod2usage( -verbose => 2) if ($man);
@@ -194,14 +192,14 @@ if (! -d $outputdir)
 check_dates($timeframe, $start, $end);
 
 # Create all the framework
-my $list = GT::List->new;
+my $list = Finance::GeniusTrader::List->new;
 my $file = shift;
 if (! -e $file)
 {
     die "File $file doesn't exist.\n";
 }
 $list->load($file);
-my $bkt_spool = GT::BackTest::Spool->new($outputdir);
+my $bkt_spool = Finance::GeniusTrader::BackTest::Spool->new($outputdir);
 
 # Build the list of systems to test
 my @desc_systems = <>;
@@ -210,8 +208,8 @@ foreach my $line (@desc_systems)
 {
     chomp($line);
     
-    my $pf_manager = GT::PortfolioManager->new;
-    my $sys_manager = GT::SystemManager->new;
+    my $pf_manager = Finance::GeniusTrader::PortfolioManager->new;
+    my $sys_manager = Finance::GeniusTrader::SystemManager->new;
 
     # Aliases
     if ($line !~ /\|/)
@@ -268,9 +266,9 @@ for (my $d = 0; $d < $list->count; $d++)
 	# Affichage des résultats
 	print "##\n## ANALYSIS OF $code with system\n## $_\n##\n";
 
-	#GT::Report::Portfolio($analysis->{'portfolio'}, $verbose);
+	#Finance::GeniusTrader::Report::Portfolio($analysis->{'portfolio'}, $verbose);
 	print "## Global analysis (full portfolio invested)\n";
-	GT::Report::PortfolioAnalysis($analysis->{'real'}, $verbose);
+	Finance::GeniusTrader::Report::PortfolioAnalysis($analysis->{'real'}, $verbose);
 
 	# Store intermediate result
 	my $stats = [ $analysis->{'real'}{'std_performance'},

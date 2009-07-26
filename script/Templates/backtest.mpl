@@ -69,7 +69,7 @@ $verbose
 	if (defined($position->timeframe)) {
 	    $timeframe = $position->timeframe;
 	}
-	$htmldata_duration = (GT::DateTime::map_date_to_time($timeframe, $end_date) - GT::DateTime::map_date_to_time($timeframe, $start_date)) / 86400;
+	$htmldata_duration = (Finance::GeniusTrader::DateTime::map_date_to_time($timeframe, $end_date) - Finance::GeniusTrader::DateTime::map_date_to_time($timeframe, $start_date)) / 86400;
 	
    $htmldata_entrydate=$start_date;
    $htmldata_entryprice=sprintf("%.4f", $start_price);

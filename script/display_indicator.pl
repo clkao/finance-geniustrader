@@ -4,20 +4,18 @@
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
-use lib '..';
-
 use strict;
 use vars qw($db);
 
-use GT::Prices;
-use GT::Conf;
-use GT::Eval;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Conf;
+use Finance::GeniusTrader::Eval;
 use Getopt::Long;
-use GT::DateTime;
-use GT::Tools qw(:timeframe);
+use Finance::GeniusTrader::DateTime;
+use Finance::GeniusTrader::Tools qw(:timeframe);
 use Pod::Usage;
 
-GT::Conf::load();
+Finance::GeniusTrader::Conf::load();
 
 =head1 ./display_indicator.pl [ options ] <indicatorname> <code> [args...]
 
@@ -120,7 +118,7 @@ args (if any) are passed to the new call that will create the indicator.
 =cut
 
 # Get all options
-my $nb_item = GT::Conf::get('Option::nb-item');
+my $nb_item = Finance::GeniusTrader::Conf::get('Option::nb-item');
 $nb_item = (defined($nb_item))?$nb_item:200;
 my ($full, $start, $end, $timeframe, $max_loaded_items) =
    (0, '', '', 'day', -1);
@@ -134,11 +132,11 @@ GetOptions('full!' => \$full, 'nb-item=i' => \$nb_item,
 	   "timeframe=s" => \$timeframe,
 	   "last-record" => \$last_record, "tight!" => \$tight,
 	   "option=s" => \@options, "help!" => \$man);
-$timeframe = GT::DateTime::name_to_timeframe($timeframe);
+$timeframe = Finance::GeniusTrader::DateTime::name_to_timeframe($timeframe);
 
 foreach (@options) {
     my ($key, $value) = split (/=/, $_);
-    GT::Conf::set($key, $value);
+    Finance::GeniusTrader::Conf::set($key, $value);
 }
 
 pod2usage( -verbose => 2) if ($man);

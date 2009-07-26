@@ -4,28 +4,26 @@
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
-use lib '..';
-
 use strict;
 use vars qw($db);
 
-use GT::Prices;
-use GT::Portfolio;
-use GT::PortfolioManager;
-use GT::Calculator;
-use GT::Report;
-use GT::BackTest;
-use GT::BackTest::Spool;
-use GT::List;
-use GT::Eval;
-use GT::Conf;
-use GT::DateTime;
-use GT::Tools qw(:conf :timeframe);
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Portfolio;
+use Finance::GeniusTrader::PortfolioManager;
+use Finance::GeniusTrader::Calculator;
+use Finance::GeniusTrader::Report;
+use Finance::GeniusTrader::BackTest;
+use Finance::GeniusTrader::BackTest::Spool;
+use Finance::GeniusTrader::List;
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::Conf;
+use Finance::GeniusTrader::DateTime;
+use Finance::GeniusTrader::Tools qw(:conf :timeframe);
 use Pod::Usage;
 use Getopt::Long;
 use Pod::Usage;
 
-GT::Conf::load();
+Finance::GeniusTrader::Conf::load();
 
 =head1 ./backtest_multi.pl [ options ] <market file> <system file>
 
@@ -126,7 +124,7 @@ This option is effective only for certain data base modules and ignored otherwis
 =item --broker="NoCosts"
 
 Calculate commissions and annual account charge, if applicable, using
-GT::Brokers::<broker_name> as broker.
+Finance::GeniusTrader::Brokers::<broker_name> as broker.
 
 =item --set=SETNAME
 
@@ -163,7 +161,7 @@ my $man = 0;
 my @options;
 my ($outputdir, $broker, $set, $init) = 
    ('', '', '', 10000);
-$outputdir = GT::Conf::get("BackTest::Directory") || '';
+$outputdir = Finance::GeniusTrader::Conf::get("BackTest::Directory") || '';
 GetOptions('full!' => \$full, 'nb-item=i' => \$nb_item, 
 	   "start=s" => \$start, "end=s" => \$end, 
 	   "max-loaded-items=s" => \$max_loaded_items,
@@ -171,11 +169,11 @@ GetOptions('full!' => \$full, 'nb-item=i' => \$nb_item,
 	   'output-directory=s' => \$outputdir, 'init=s' => \$init,
 	   'broker=s' => \$broker, 'set=s' => \$set,
 	   "option=s" => \@options, "help!" => \$man);
-$timeframe = GT::DateTime::name_to_timeframe($timeframe);
+$timeframe = Finance::GeniusTrader::DateTime::name_to_timeframe($timeframe);
 
 foreach (@options) {
     my ($key, $value) = split (/=/, $_);
-    GT::Conf::set($key, $value);
+    Finance::GeniusTrader::Conf::set($key, $value);
 }
 
 pod2usage( -verbose => 2) if ($man);
@@ -190,7 +188,7 @@ if (! -d $outputdir)
 check_dates($timeframe, $start, $end);
 
 # Create all the framework
-my $list = GT::List->new;
+my $list = Finance::GeniusTrader::List->new;
 my $file = shift;
 if (! -e $file)
 {
@@ -199,7 +197,7 @@ if (! -e $file)
 $list->load($file);
 
 # Create the Portfoliomanager
-my $pf_manager = GT::PortfolioManager->new;
+my $pf_manager = Finance::GeniusTrader::PortfolioManager->new;
 
 # Build the list of systems to test
 my @desc_systems = <>;
@@ -211,7 +209,7 @@ push @brokers, $broker; # the same broker for all systems
 foreach my $line (@desc_systems) {
     chomp($line);
     
-    my $sys_manager = GT::SystemManager->new;
+    my $sys_manager = Finance::GeniusTrader::SystemManager->new;
 
     # Aliases
     if ($line !~ /\|/)
@@ -248,16 +246,16 @@ my $db = create_db_object();
 my $analysis = backtest_multi($db, $pf_manager, \@sys_manager, \@brokers, \@codes, $timeframe, $full, $start, $end, $nb_item, $max_loaded_items, $init);
 
 # Print the analysis
-GT::Report::Portfolio($analysis->{'portfolio'}, 1);
+Finance::GeniusTrader::Report::Portfolio($analysis->{'portfolio'}, 1);
 print "## Global analysis (each position is $init, value of portfolio)\n";
-GT::Report::PortfolioAnalysis($analysis->{'real'}, 1);
+Finance::GeniusTrader::Report::PortfolioAnalysis($analysis->{'real'}, 1);
 #print "\n## Theoretical analysis (10keuros, full portfolio reinvested)\n";
-#GT::Report::PortfolioAnalysis($analysis->{'theoretical'}, $verbose);
+#Finance::GeniusTrader::Report::PortfolioAnalysis($analysis->{'theoretical'}, $verbose);
 
 $db->disconnect;
 
 if ($set) {
-    my $bkt_spool = GT::BackTest::Spool->new($outputdir);
+    my $bkt_spool = Finance::GeniusTrader::BackTest::Spool->new($outputdir);
     my $stats = [ $analysis->{'real'}{'std_performance'},
 		  $analysis->{'real'}{'performance'},
 		  $analysis->{'real'}{'max_draw_down'},

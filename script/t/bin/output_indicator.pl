@@ -11,9 +11,9 @@ use lib '../../..';
 use strict;
 use vars qw($db);
 
-use GT::Prices;
-use GT::Calculator;
-use GT::Eval;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Calculator;
+use Finance::GeniusTrader::Eval;
 use Getopt::Long;
 
 =head1 ./test_indicator.pl [ --full ] [ --last-record ] [ --verbose ] <indicatorname> <code> [args...]
@@ -41,7 +41,7 @@ $db->set_directory("data");
 
 my $indicator_name = $indicator->get_name;
 my $q = $db->get_prices($code);
-my $calc = GT::Calculator->new($q);
+my $calc = Finance::GeniusTrader::Calculator->new($q);
 
 $calc->set_code($code);
 my $last = $q->count() - 1;
@@ -51,7 +51,7 @@ my $first = 0;
 if ($with_interval) {
     $indicator->calculate_interval($calc, $first, $last);
 } else {
-    GT::Indicators::calculate_interval($indicator, $calc, $first, $last);
+    Finance::GeniusTrader::Indicators::calculate_interval($indicator, $calc, $first, $last);
 }
 
 print "# Results for $indicator_module @ARGV\n";
