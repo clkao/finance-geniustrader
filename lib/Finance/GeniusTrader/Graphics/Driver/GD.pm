@@ -1,17 +1,17 @@
-package GT::Graphics::Driver::GD;
+package Finance::GeniusTrader::Graphics::Driver::GD;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
 use strict;
-use GT::Graphics::Driver;
+use Finance::GeniusTrader::Graphics::Driver;
 use GD;
-use GT::Graphics::Zone;
+use Finance::GeniusTrader::Graphics::Zone;
 
-our @ISA = qw(GT::Graphics::Driver);
+our @ISA = qw(Finance::GeniusTrader::Graphics::Driver);
 
-=head1 GT::Graphics::Driver::GD
+=head1 Finance::GeniusTrader::Graphics::Driver::GD
 
 The GD driver implements the drawing primitives using the GD module
 that lets you create PNG images.
@@ -64,7 +64,7 @@ sub dashed_line {
 
 sub line_width {
     my ($self, $p, $width) = @_;
-    my $old = GT::Graphics::Driver::line_width(@_);
+    my $old = Finance::GeniusTrader::Graphics::Driver::line_width(@_);
     if ($GD::VERSION >= 2.0) {
 	if (defined $width) {
 	    $p->{'img'}->setThickness($width);

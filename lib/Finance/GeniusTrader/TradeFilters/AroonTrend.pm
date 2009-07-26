@@ -1,4 +1,4 @@
-package GT::TradeFilters::AroonTrend;
+package Finance::GeniusTrader::TradeFilters::AroonTrend;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::TradeFilters::AroonTrend;
 use strict;
 use vars qw(@NAMES @ISA @DEFAULT_ARGS);
 
-use GT::TradeFilters;
-use GT::Indicators::AROON;
+use Finance::GeniusTrader::TradeFilters;
+use Finance::GeniusTrader::Indicators::AROON;
 
 @NAMES = ("AroonTrend");
-@ISA = qw(GT::TradeFilters);
+@ISA = qw(Finance::GeniusTrader::TradeFilters);
 @DEFAULT_ARGS = ();
 
 =head1 NAME
 
-GT::TradeFilters::AroonTrend - Allow only trades following the trend defined by Aroon
+Finance::GeniusTrader::TradeFilters::AroonTrend - Allow only trades following the trend defined by Aroon
 
 =head1 DESCRIPTION
 
@@ -30,7 +30,7 @@ market (ie like buying in a bear market or selling in a bullish market).
 sub initialize {
     my ($self) = @_;
     
-    $self->{'aroon'} = GT::Indicators::AROON->new;
+    $self->{'aroon'} = Finance::GeniusTrader::Indicators::AROON->new;
     return;
 }
 

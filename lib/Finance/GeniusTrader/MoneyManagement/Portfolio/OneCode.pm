@@ -1,4 +1,4 @@
-package GT::MoneyManagement::Portfolio::OneCode;
+package Finance::GeniusTrader::MoneyManagement::Portfolio::OneCode;
 
 # Copyright 2004 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -7,15 +7,15 @@ package GT::MoneyManagement::Portfolio::OneCode;
 use strict;
 use vars qw(@NAMES @ISA);
 
-use GT::MoneyManagement;
-use GT::Prices;
-use GT::Analyzers::Process;
-use GT::Eval;
+use Finance::GeniusTrader::MoneyManagement;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Analyzers::Process;
+use Finance::GeniusTrader::Eval;
 
 @NAMES = ("PF:OneCode[#1]");
-@ISA = qw(GT::MoneyManagement);
+@ISA = qw(Finance::GeniusTrader::MoneyManagement);
 
-=head1 GT::MoneyManagement::Basic
+=head1 Finance::GeniusTrader::MoneyManagement::Basic
 
 Basic and dumb money management rules (ie no rules).
 

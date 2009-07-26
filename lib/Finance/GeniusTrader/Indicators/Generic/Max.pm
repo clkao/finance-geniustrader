@@ -1,4 +1,4 @@
-package GT::Indicators::Generic::Max;
+package Finance::GeniusTrader::Indicators::Generic::Max;
 
 # Copyright 2000-2002 Raphaël Hertzog
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Indicators::Generic::Max;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Indicators;
-use GT::Prices;
-use GT::Tools qw(:math);
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Tools qw(:math);
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("Max[#*]");
 
 =head1 NAME
 
-GT::Indicators::Generic::Max - Return the max of all parameters
+Finance::GeniusTrader::Indicators::Generic::Max - Return the max of all parameters
 
 =head1 DESCRIPTION
 

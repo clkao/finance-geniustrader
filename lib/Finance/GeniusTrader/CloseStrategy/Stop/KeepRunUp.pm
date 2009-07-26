@@ -1,4 +1,4 @@
-package GT::CloseStrategy::Stop::KeepRunUp;
+package Finance::GeniusTrader::CloseStrategy::Stop::KeepRunUp;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # Modified 2004 by Oliver Bossert
@@ -10,16 +10,16 @@ package GT::CloseStrategy::Stop::KeepRunUp;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::CloseStrategy;
-use GT::Indicators::Generic::MaxInPeriod;
-use GT::Indicators::Generic::MinInPeriod;
-use GT::Prices;
+use Finance::GeniusTrader::CloseStrategy;
+use Finance::GeniusTrader::Indicators::Generic::MaxInPeriod;
+use Finance::GeniusTrader::Indicators::Generic::MinInPeriod;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::CloseStrategy);
+@ISA = qw(Finance::GeniusTrader::CloseStrategy);
 @NAMES = ("KeepRunUp[#*]");
 @DEFAULT_ARGS = (10, "{I:Prices LOW}", "{I:Prices HIGH}", "{I:Prices CLOSE}");
 
-=head1 GT::CloseStrategy::Stop::KeepRunUp
+=head1 Finance::GeniusTrader::CloseStrategy::Stop::KeepRunUp
 
 =head2 Overview
 
@@ -68,7 +68,7 @@ sub manage_long_position {
     
     if ($i >= $prices->date($date)) {
 
-	my $max = GT::Indicators::Generic::MaxInPeriod->new([$date,
+	my $max = Finance::GeniusTrader::Indicators::Generic::MaxInPeriod->new([$date,
 							     $self->{'args'}->get_arg_names(3) ]);
         $max->calculate($calc, $i);
 	
@@ -89,7 +89,7 @@ sub manage_short_position {
 
     if ($i >= $prices->date($date)) {
 
-	my $min = GT::Indicators::Generic::MinInPeriod->new([$date,
+	my $min = Finance::GeniusTrader::Indicators::Generic::MinInPeriod->new([$date,
 							     $self->{'args'}->get_arg_names(2) ]);
 	$min->calculate($calc, $i);
 

@@ -1,4 +1,4 @@
-package GT::Indicators::PGO;
+package Finance::GeniusTrader::Indicators::PGO;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,17 +9,17 @@ package GT::Indicators::PGO;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Prices;
-use GT::Indicators;
-use GT::Indicators::SMA;
-use GT::Indicators::EMA;
-use GT::Indicators::TR;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::SMA;
+use Finance::GeniusTrader::Indicators::EMA;
+use Finance::GeniusTrader::Indicators::TR;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("PGO[#*]");
 @DEFAULT_ARGS = (89, "{I:Prices HIGH}", "{I:Prices LOW}", "{I:Prices CLOSE}");
 
-=head1 GT::Indicators::PGO
+=head1 Finance::GeniusTrader::Indicators::PGO
 
 =head2 Overview
 
@@ -41,9 +41,9 @@ sub initialize {
     my $tr = "{I:TR " . $self->{'args'}->get_arg_names(2) . " " .
       $self->{'args'}->get_arg_names(3) . " " .
 	$self->{'args'}->get_arg_names(4) . "}";
-    $self->{'ema'} = GT::Indicators::EMA->new([$self->{'args'}->get_arg_names(1),
+    $self->{'ema'} = Finance::GeniusTrader::Indicators::EMA->new([$self->{'args'}->get_arg_names(1),
 					       $tr ]);
-    $self->{'sma'} = GT::Indicators::SMA->new([ $self->{'args'}->get_arg_names(1),
+    $self->{'sma'} = Finance::GeniusTrader::Indicators::SMA->new([ $self->{'args'}->get_arg_names(1),
 					        $self->{'args'}->get_arg_names(4) ]);
 
     $self->add_indicator_dependency($self->{'ema'}, 1);

@@ -1,4 +1,4 @@
-package GT::Signals;
+package Finance::GeniusTrader::Signals;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -8,15 +8,15 @@ use strict;
 use vars qw(%OBJECT_REPOSITORY @ISA @EXPORT);
 
 require Exporter;
-@ISA = qw(Exporter GT::Dependency);
+@ISA = qw(Exporter Finance::GeniusTrader::Dependency);
 @EXPORT = qw(&build_object_name &manage_object);
 
-use GT::Registry;
-use GT::Dependency;
+use Finance::GeniusTrader::Registry;
+use Finance::GeniusTrader::Dependency;
 
 =head1 NAME
 
-GT::Signals - Base module for all signals
+Finance::GeniusTrader::Signals - Base module for all signals
 
 =head1 DESCRIPTION
 
@@ -32,7 +32,7 @@ cunjunction with other informations) to decide what to do
 
 =over
 
-=item C<< my $sig = GT::Signals::AnExample->new([ @args ]) >>
+=item C<< my $sig = Finance::GeniusTrader::Signals::AnExample->new([ @args ]) >>
 
 Create a signal object with the appropriate parameters.
 
@@ -75,23 +75,23 @@ Generate the name of a signal based on its "encoded" name.
 
 =head2 Functions to manage a repository of signals
 
-  GT::Signals::get_registered_object($name);
-  GT::Signals::register_object($name, $object);
-  GT::Signals::get_or_register_object($name, $object);
-  GT::Signals::manage_object(\@NAMES, $self, $class, $args, $key);
+  Finance::GeniusTrader::Signals::get_registered_object($name);
+  Finance::GeniusTrader::Signals::register_object($name, $object);
+  Finance::GeniusTrader::Signals::get_or_register_object($name, $object);
+  Finance::GeniusTrader::Signals::manage_object(\@NAMES, $self, $class, $args, $key);
 
 =cut
 sub get_registered_object {
-    GT::Registry::get_registered_object(\%OBJECT_REPOSITORY, @_);
+    Finance::GeniusTrader::Registry::get_registered_object(\%OBJECT_REPOSITORY, @_);
 }
 sub register_object {
-    GT::Registry::register_object(\%OBJECT_REPOSITORY, @_);
+    Finance::GeniusTrader::Registry::register_object(\%OBJECT_REPOSITORY, @_);
 }
 sub get_or_register_object {
-    GT::Registry::get_or_register_object(\%OBJECT_REPOSITORY, @_);
+    Finance::GeniusTrader::Registry::get_or_register_object(\%OBJECT_REPOSITORY, @_);
 }
 sub manage_object {
-    GT::Registry::manage_object(\%OBJECT_REPOSITORY, @_);
+    Finance::GeniusTrader::Registry::manage_object(\%OBJECT_REPOSITORY, @_);
 }
 
 
@@ -109,11 +109,11 @@ sub new {
                 push @{$args}, ${"$class\::DEFAULT_ARGS"}[$n];
             }
         }
-        $self->{'args'} = GT::ArgsTree->new(@{$args});
+        $self->{'args'} = Finance::GeniusTrader::ArgsTree->new(@{$args});
     } elsif (defined (@{"$class\::DEFAULT_ARGS"})) {
-        $self->{'args'} = GT::ArgsTree->new(@{"$class\::DEFAULT_ARGS"});
+        $self->{'args'} = Finance::GeniusTrader::ArgsTree->new(@{"$class\::DEFAULT_ARGS"});
     } else {
-        $self->{'args'} = GT::ArgsTree->new(); # no args
+        $self->{'args'} = Finance::GeniusTrader::ArgsTree->new(); # no args
     }
 
     return manage_object(\@{"$class\::NAMES"}, $self, $class, $self->{'args'}, $key);
@@ -128,7 +128,7 @@ sub new {
 sub detect_interval {
     my ($self, $calc, $first, $last) = @_;
 
-    if (ref($self->{'args'}) =~ /GT::ArgsTree/) {
+    if (ref($self->{'args'}) =~ /Finance::GeniusTrader::ArgsTree/) {
 	$self->{'args'}->prepare_interval($calc, $first, $last);
     }
     for (my $i = $first; $i <= $last; $i++)

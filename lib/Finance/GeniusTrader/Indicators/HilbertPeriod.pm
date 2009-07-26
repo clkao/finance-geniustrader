@@ -1,4 +1,4 @@
-package GT::Indicators::HilbertPeriod;
+package Finance::GeniusTrader::Indicators::HilbertPeriod;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,18 +7,18 @@ package GT::Indicators::HilbertPeriod;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Indicators;
-use GT::Indicators::WMA;
-use GT::Indicators::WTCL;
-use GT::Indicators::Generic::ByName;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::WMA;
+use Finance::GeniusTrader::Indicators::WTCL;
+use Finance::GeniusTrader::Indicators::Generic::ByName;
+use Finance::GeniusTrader::Prices;
 use POSIX;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("HilbertPeriod", "HP:Detrender", "HP:Q1", "HP:I1", "HP:jI", 
 	  "HP:jQ", "HP:I2", "HP:Q2", "HP:Re", "HP:Im");
 
-=head1 GT::Indicators::HilbertPeriod
+=head1 Finance::GeniusTrader::Indicators::HilbertPeriod
 
 =head2 Overview
 
@@ -35,15 +35,15 @@ sub initialize {
     my $self = shift;
     
     # Initilize TR (True Range)
-    $self->{'median'} = GT::Indicators::WTCL->new([0]);
-    $self->{'smoother'} = GT::Indicators::WMA->new([4,
+    $self->{'median'} = Finance::GeniusTrader::Indicators::WTCL->new([0]);
+    $self->{'smoother'} = Finance::GeniusTrader::Indicators::WMA->new([4,
       "{I:Generic:ByName " . $self->{'median'}->get_name . "}" ]);
 
     $self->add_indicator_dependency($self->{'median'}, 1);
     
 }
 
-=head2 GT::Indicators::HilbertPeriod::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::HilbertPeriod::calculate($calc, $day)
 
 =cut
 sub calculate {

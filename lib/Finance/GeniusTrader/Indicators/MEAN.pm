@@ -1,4 +1,4 @@
-package GT::Indicators::MEAN;
+package Finance::GeniusTrader::Indicators::MEAN;
 
 # Copyright 2008 Karsten Wippler
 # Based on and for GeniusTrader (C) 2000-2002 Raphaël Hertzog, Fabien Fulhaber
@@ -12,14 +12,14 @@ package GT::Indicators::MEAN;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("MEAN[#1,#2]");
 @DEFAULT_ARGS=("{I:Prices HIGH}", "{I:Prices LOW}");
 
-=head1 GT::Indicators::MEAN
+=head1 Finance::GeniusTrader::Indicators::MEAN
 
 =head2 Overview
 

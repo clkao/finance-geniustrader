@@ -1,4 +1,4 @@
-package GT::Indicators::Example;
+package Finance::GeniusTrader::Indicators::Example;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,14 +9,14 @@ package GT::Indicators::Example;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Indicators;
+use Finance::GeniusTrader::Indicators;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("Example[#1]");
 
 =head1 NAME
 
-GT::Indicators::Example - The example indicator
+Finance::GeniusTrader::Indicators::Example - The example indicator
 
 =head1 DESCRIPTION
 
@@ -42,7 +42,7 @@ sub initialize {
     # Here you create other indicators that you may need later
     # to do your calculations
     #
-    # $self->{'otherindic'} = GT::Indicators::Other->new([ ... ]);
+    # $self->{'otherindic'} = Finance::GeniusTrader::Indicators::Other->new([ ... ]);
     #
     # And you add the required dependencies
     if ($self->{'args'}->is_constant())

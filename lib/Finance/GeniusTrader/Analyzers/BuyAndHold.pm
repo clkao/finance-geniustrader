@@ -1,4 +1,4 @@
-package GT::Analyzers::BuyAndHold;
+package Finance::GeniusTrader::Analyzers::BuyAndHold;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,17 +9,17 @@ package GT::Analyzers::BuyAndHold;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
-use GT::Prices;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("BuyAndHold[#*]");
 @DEFAULT_ARGS = ();
 
 =head1 NAME
 
-  GT::Analyzers::AvgCosts - Average Costs per trade
+  Finance::GeniusTrader::Analyzers::AvgCosts - Average Costs per trade
 
 =head1 DESCRIPTION 
 

@@ -1,4 +1,4 @@
-package GT::Indicators;
+package Finance::GeniusTrader::Indicators;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,20 +9,20 @@ use vars qw(@ISA @EXPORT $GET_FIRST $GET_OPEN $GET_HIGH $GET_LOW $GET_LAST
 	    $GET_CLOSE $GET_VOLUME %OBJECT_REPOSITORY);
 
 require Exporter;
-@ISA = qw(Exporter GT::Dependency);
+@ISA = qw(Exporter Finance::GeniusTrader::Dependency);
 @EXPORT = qw($GET_FIRST $GET_OPEN $GET_HIGH $GET_LOW $GET_LAST $GET_CLOSE
 	     $GET_VOLUME &build_object_name &manage_object);
 
-use GT::Prices;
-use GT::Calculator;
-use GT::Registry;
-use GT::Dependency;
-use GT::ArgsTree;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Calculator;
+use Finance::GeniusTrader::Registry;
+use Finance::GeniusTrader::Dependency;
+use Finance::GeniusTrader::ArgsTree;
 #ALL#  use Log::Log4perl qw(:easy);
 
 =head1 NAME
 
-GT::Indicators - Provides some functions that will be used by all indicators.
+Finance::GeniusTrader::Indicators - Provides some functions that will be used by all indicators.
 
 =head1 DESCRIPTION
 
@@ -41,7 +41,7 @@ Generate the name of an indicator based on its "encoded" name.
 $GET_OPEN, $GET_FIRST, $GET_HIGH, $GET_LOW, $GET_LAST, $GET_CLOSE
 and $GET_VOLUME are functions references that can be passed as arguments
 to some indicators where input functions are expected. They are
-automatically exported when doing "use GT::Indicators;".
+automatically exported when doing "use Finance::GeniusTrader::Indicators;".
 
 For example, the indicator AMA (Arithmetic Moving Average) can be used
 to calculate the average of anything (other indicators or prices). You
@@ -57,30 +57,30 @@ $GET_VOLUME =              sub { $_[0]->prices()->at($_[1])->[$VOLUME] };
 
 =head2 MANAGE A REPOSITORY OF INDICATORS
 
-  GT::Indicators::get_registered_object($name);
-  GT::Indicators::register_object($name, $object);
-  GT::Indicators::get_or_register_object($name, $object);
-  GT::Indicators::manage_object(\@NAMES, $object, $class, $args, $key);
+  Finance::GeniusTrader::Indicators::get_registered_object($name);
+  Finance::GeniusTrader::Indicators::register_object($name, $object);
+  Finance::GeniusTrader::Indicators::get_or_register_object($name, $object);
+  Finance::GeniusTrader::Indicators::manage_object(\@NAMES, $object, $class, $args, $key);
 
 =cut
 sub get_registered_object {
-    GT::Registry::get_registered_object(\%OBJECT_REPOSITORY, @_);
+    Finance::GeniusTrader::Registry::get_registered_object(\%OBJECT_REPOSITORY, @_);
 }
 sub register_object {
-    GT::Registry::register_object(\%OBJECT_REPOSITORY, @_);
+    Finance::GeniusTrader::Registry::register_object(\%OBJECT_REPOSITORY, @_);
 }
 sub get_or_register_object {
-    GT::Registry::get_or_register_object(\%OBJECT_REPOSITORY, @_);
+    Finance::GeniusTrader::Registry::get_or_register_object(\%OBJECT_REPOSITORY, @_);
 }
 sub manage_object {
-    GT::Registry::manage_object(\%OBJECT_REPOSITORY, @_);
+    Finance::GeniusTrader::Registry::manage_object(\%OBJECT_REPOSITORY, @_);
 }
 
 =head2 DEFAULT FUNCTIONS FOR INDICATORS
 
 =over 
 
-=item C<< GT::Indicators::Module->new($args, $key, $func) >>
+=item C<< Finance::GeniusTrader::Indicators::Module->new($args, $key, $func) >>
 
 Create a new indicator with the given arguments. $key and $func are optional,
 they are useful for indicators which can use non-usual input streams.
@@ -99,11 +99,11 @@ sub new {
 		push @{$args}, ${"$class\::DEFAULT_ARGS"}[$n];
 	    }
 	}
-	$self->{'args'} = GT::ArgsTree->new(@{$args});
+	$self->{'args'} = Finance::GeniusTrader::ArgsTree->new(@{$args});
     } elsif (defined (@{"$class\::DEFAULT_ARGS"})) {
-	$self->{'args'} = GT::ArgsTree->new(@{"$class\::DEFAULT_ARGS"});
+	$self->{'args'} = Finance::GeniusTrader::ArgsTree->new(@{"$class\::DEFAULT_ARGS"});
     } else {
-	$self->{'args'} = GT::ArgsTree->new(); # no args
+	$self->{'args'} = Finance::GeniusTrader::ArgsTree->new(); # no args
     }
 
     if (defined($func)) {
@@ -149,7 +149,7 @@ the result of previous days.
 sub calculate_interval {
     my ($self, $calc, $first, $last) = @_;
 
-    if (ref($self->{'args'}) =~ /GT::ArgsTree/) {
+    if (ref($self->{'args'}) =~ /Finance::GeniusTrader::ArgsTree/) {
 	$self->{'args'}->prepare_interval($calc, $first, $last);
     }
     for (my $i = $first; $i <= $last; $i++)
@@ -183,6 +183,6 @@ available for use.
 =back
 
 =cut
-# Those functions are exported by GT::Registry
+# Those functions are exported by Finance::GeniusTrader::Registry
 
 1;

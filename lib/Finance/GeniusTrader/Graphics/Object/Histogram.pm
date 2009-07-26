@@ -1,4 +1,4 @@
-package GT::Graphics::Object::Histogram;
+package Finance::GeniusTrader::Graphics::Object::Histogram;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -10,19 +10,19 @@ package GT::Graphics::Object::Histogram;
 
 use strict;
 use vars qw(@ISA);
-@ISA = qw(GT::Graphics::Object);
+@ISA = qw(Finance::GeniusTrader::Graphics::Object);
 
-use GT::Prices;
-use GT::Graphics::Object;
-use GT::Graphics::Driver;
-use GT::Graphics::Tools qw(:color);
-use GT::Conf;
-use GT::Graphics::DataSource::GenericIndicatorResults;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Graphics::Object;
+use Finance::GeniusTrader::Graphics::Driver;
+use Finance::GeniusTrader::Graphics::Tools qw(:color);
+use Finance::GeniusTrader::Conf;
+use Finance::GeniusTrader::Graphics::DataSource::GenericIndicatorResults;
 
-GT::Conf::default("Graphic::Histogram::Color", "yellow");
-GT::Conf::default("Graphic::Histogram::ClipColor", "blue");
+Finance::GeniusTrader::Conf::default("Graphic::Histogram::Color", "yellow");
+Finance::GeniusTrader::Conf::default("Graphic::Histogram::ClipColor", "blue");
 
-=head1 GT::Graphics::Object::Histogram
+=head1 Finance::GeniusTrader::Graphics::Object::Histogram
 
 This graphic object displays a histogram.
 
@@ -69,12 +69,12 @@ sub init {
     my ($self, $calc) = @_;
 
     # Default values ...
-    $self->{'fg_color'} = GT::Conf::get("Graphic::Histogram::Color");
+    $self->{'fg_color'} = Finance::GeniusTrader::Conf::get("Graphic::Histogram::Color");
 
     $self->{'color_ds'} = undef;
 
     $self->{'clip_color'} = get_color(
-     GT::Conf::get("Graphic::Histogram::ClipColor"));
+     Finance::GeniusTrader::Conf::get("Graphic::Histogram::ClipColor"));
     
     if (defined($calc)) {
         $self->{'calc'} = $calc;
@@ -82,7 +82,7 @@ sub init {
 
     if (defined($calc) && $self->{'fg_color'} =~ /^\s*(Indicators|I:)/) {
         $self->{'color_ds'} =
-         GT::Graphics::DataSource::GenericIndicatorResults->new(
+         Finance::GeniusTrader::Graphics::DataSource::GenericIndicatorResults->new(
          $calc, $self->{'fg_color'});
     } else {
         $self->{'fg_color'} = get_color($self->{'fg_color'});
@@ -207,7 +207,7 @@ sub set_foreground_color {
     if ( $self->{'calc'} ne "" && $color =~ /^\s*(Indicators|I:)/ ) {
       $self->{'fg_color'} = $color;
       $self->{'color_ds'} =
-       GT::Graphics::DataSource::GenericIndicatorResults->new($self->{'calc'}, $color );
+       Finance::GeniusTrader::Graphics::DataSource::GenericIndicatorResults->new($self->{'calc'}, $color );
     }
     else {
       $self->{'fg_color'} = get_color($color);

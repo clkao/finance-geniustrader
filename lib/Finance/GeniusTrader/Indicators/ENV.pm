@@ -1,4 +1,4 @@
-package GT::Indicators::ENV;
+package Finance::GeniusTrader::Indicators::ENV;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,37 +9,37 @@ package GT::Indicators::ENV;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::EMA;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::EMA;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("ENVSup[#*]","ENVInf[#*]");
 @DEFAULT_ARGS = (25,6,"{I:Prices CLOSE}");
 
 =pod
 
-=head2 GT::Indicators::ENV
+=head2 Finance::GeniusTrader::Indicators::ENV
 
 An envelope is composed of two moving averages. One moving average is shifted upward and the second moving average is shifted downward.
 Envelopes define the upper and the lower boundaries of a security's normal trading range.
 
-The standard envelope (ENV 25-6) can be called like that : GT::Indicators::ENV->new()
+The standard envelope (ENV 25-6) can be called like that : Finance::GeniusTrader::Indicators::ENV->new()
 
 If you need a non standard ENV :
-GT::Indicators::ENV->new([21, 5])
+Finance::GeniusTrader::Indicators::ENV->new([21, 5])
 
 =cut
 
 sub initialize {
     my $self = shift;
 
-    $self->{'ema'} = GT::Indicators::EMA->new([ $self->{'args'}->get_arg_names(1), 
+    $self->{'ema'} = Finance::GeniusTrader::Indicators::EMA->new([ $self->{'args'}->get_arg_names(1), 
 						$self->{'args'}->get_arg_names(3) ]);
 
     $self->add_indicator_dependency($self->{'ema'}, 1);
 }
 
-=head2 GT::Indicators::ENV::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::ENV::calculate($calc, $day)
 
 =cut
 sub calculate {

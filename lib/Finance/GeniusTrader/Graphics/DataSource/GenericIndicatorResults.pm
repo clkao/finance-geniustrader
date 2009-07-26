@@ -1,4 +1,4 @@
-package GT::Graphics::DataSource::GenericIndicatorResults;
+package Finance::GeniusTrader::Graphics::DataSource::GenericIndicatorResults;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,15 +7,15 @@ package GT::Graphics::DataSource::GenericIndicatorResults;
 use strict;
 use vars qw(@ISA);
 
-@ISA = qw(GT::Graphics::DataSource);
+@ISA = qw(Finance::GeniusTrader::Graphics::DataSource);
 
-use GT::Eval;
-use GT::CacheValues;
-use GT::Graphics::DataSource;
-use GT::Tools qw(:math);
-use GT::Tools qw(extract_object_number);
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::CacheValues;
+use Finance::GeniusTrader::Graphics::DataSource;
+use Finance::GeniusTrader::Tools qw(:math);
+use Finance::GeniusTrader::Tools qw(extract_object_number);
 
-=head1 GT::Graphics::DataSource::GenericIndicatorResults
+=head1 Finance::GeniusTrader::Graphics::DataSource::GenericIndicatorResults
 
 This datasource is a generic module to handle any information provided by
 an indicator.
@@ -37,7 +37,7 @@ zero).
 We will either use only a single data serie or a all data available for
 the calculation of the value range.
 
-=head2 GT::Graphics::DataSource::GenericIndicatorResults->new($calc, $indicator_desc)
+=head2 Finance::GeniusTrader::Graphics::DataSource::GenericIndicatorResults->new($calc, $indicator_desc)
 
 Create a new indicator data source.
 

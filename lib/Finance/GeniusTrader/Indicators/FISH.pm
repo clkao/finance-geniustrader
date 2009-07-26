@@ -1,4 +1,4 @@
-package GT::Indicators::FISH;
+package Finance::GeniusTrader::Indicators::FISH;
 
 # Copyright 2008 Karsten Wippler
 # Based on and for GeniusTrader (C) 2000-2002 Raphaël Hertzog, Fabien Fulhaber
@@ -12,16 +12,16 @@ package GT::Indicators::FISH;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::ArgsTree;
-use GT::Indicators;
-use GT::Indicators::EMA;
-use GT::Prices;
+use Finance::GeniusTrader::ArgsTree;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::EMA;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("FISH[#1]","RAW[#1]");
 @DEFAULT_ARGS = (10, "{I:MEAN}" );
 
-=head1 GT::Indicators::FISH
+=head1 Finance::GeniusTrader::Indicators::FISH
 
 =head2 Overview
 Infos cited from chart manual at
@@ -65,28 +65,28 @@ http://www.geocities.com/user42_kevin/chart/index.html
 
 =head2 Creation
 
- GT::Indicators::FISH->new()
- GT::Indicators::FISH->new([20])
+ Finance::GeniusTrader::Indicators::FISH->new()
+ Finance::GeniusTrader::Indicators::FISH->new([20])
 
 If you need a 30 days Fisher Transform of the opening prices you can write
 one of those lines :
 
- GT::Indicators::FISH->new([30, "{I:Prices OPEN}"])
+ Finance::GeniusTrader::Indicators::FISH->new([30, "{I:Prices OPEN}"])
 
 A 10 days Fisher Transform  of the RSI could be created with :
 
- GT::Indicators::FISH->new([10, "{I:RSI}"])
+ Finance::GeniusTrader::Indicators::FISH->new([10, "{I:RSI}"])
 
 
 =cut
 sub initialize {
     my ($self) = @_;
     
-    $self->{'ema1'} = GT::Indicators::EMA->new([5,"{I:Generic::Eval ({I:STO/1 ".
+    $self->{'ema1'} = Finance::GeniusTrader::Indicators::EMA->new([5,"{I:Generic::Eval ({I:STO/1 ".
 	    $self->{'args'}->get_arg_names(1) . " 1 1 1" .
 	    $self->{'args'}->get_arg_names(2) ."})/50 - 1}" ]);
 
-    $self->{'ema2'} = GT::Indicators::EMA->new([3,"{I:Generic:ByName " . $self->get_name(1) . "}" ]);
+    $self->{'ema2'} = Finance::GeniusTrader::Indicators::EMA->new([3,"{I:Generic:ByName " . $self->get_name(1) . "}" ]);
 
 
     # Smoothing functions are args 2 and 3
@@ -100,7 +100,7 @@ sub initialize {
 
 =pod
 
-=head2 GT::Indicators::SMI::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::SMI::calculate($calc, $day)
 
 =cut
 

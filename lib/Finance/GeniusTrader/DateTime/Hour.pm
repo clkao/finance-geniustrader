@@ -1,4 +1,4 @@
-package GT::DateTime::Hour;
+package Finance::GeniusTrader::DateTime::Hour;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # Copyright 2005 João Antunes Costa
@@ -8,11 +8,11 @@ package GT::DateTime::Hour;
 use strict;
 use vars qw();
 
-use GT::DateTime;
+use Finance::GeniusTrader::DateTime;
 #ALL# use Log::Log4perl qw(:easy);
 use Time::Local;
 
-=head1 GT::DateTime::Hour
+=head1 Finance::GeniusTrader::DateTime::Hour
 
 This module treat dates describing an Hour. They have the following format :
 YYYY-MM-DD HH:00:00

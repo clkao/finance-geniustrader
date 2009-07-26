@@ -1,11 +1,11 @@
-package GT::Graphics::Driver;
+package Finance::GeniusTrader::Graphics::Driver;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
 use strict;
-use GT::Conf;
+use Finance::GeniusTrader::Conf;
 
 use vars qw(@EXPORT @ISA
 
@@ -40,7 +40,7 @@ require Exporter;
 	     $COLOR_WHITE $COLOR_BLACK $COLOR_RED $COLOR_GREEN $COLOR_BLUE
 	    );
 
-GT::Conf::load();
+Finance::GeniusTrader::Conf::load();
 
 $FONT_SIZE_TINY   = 8;
 $FONT_SIZE_SMALL  = 12;
@@ -48,13 +48,13 @@ $FONT_SIZE_MEDIUM = 14;
 $FONT_SIZE_LARGE  = 18;
 $FONT_SIZE_GIANT  = 30;
 
-$FONT_ARIAL = GT::Conf::get("Path::Font::Arial") || die("Undefined font.\nPlease set the Path::Font::Arial value in the ~/.gt/options file.\n");
-$FONT_TIMES = GT::Conf::get("Path::Font::Times") || $FONT_ARIAL;
-$FONT_HELVETICA = GT::Conf::get("Path::Font::Arial") || $FONT_ARIAL;
-$FONT_SANS_SERIF = GT::Conf::get("Path::Font::Arial") || $FONT_ARIAL;
-$FONT_FIXED = GT::Conf::get("Path::Font::Courier") || $FONT_ARIAL;
-$FONT_PROPORTIONNAL = GT::Conf::get("Path::Font::Times") || $FONT_ARIAL;
-$FONT_SERIF = GT::Conf::get("Path::Font::Times") || $FONT_ARIAL;
+$FONT_ARIAL = Finance::GeniusTrader::Conf::get("Path::Font::Arial") || die("Undefined font.\nPlease set the Path::Font::Arial value in the ~/.gt/options file.\n");
+$FONT_TIMES = Finance::GeniusTrader::Conf::get("Path::Font::Times") || $FONT_ARIAL;
+$FONT_HELVETICA = Finance::GeniusTrader::Conf::get("Path::Font::Arial") || $FONT_ARIAL;
+$FONT_SANS_SERIF = Finance::GeniusTrader::Conf::get("Path::Font::Arial") || $FONT_ARIAL;
+$FONT_FIXED = Finance::GeniusTrader::Conf::get("Path::Font::Courier") || $FONT_ARIAL;
+$FONT_PROPORTIONNAL = Finance::GeniusTrader::Conf::get("Path::Font::Times") || $FONT_ARIAL;
+$FONT_SERIF = Finance::GeniusTrader::Conf::get("Path::Font::Times") || $FONT_ARIAL;
 
 $ALIGN_LEFT = "left";
 $ALIGN_CENTER = "center";
@@ -74,7 +74,7 @@ $COLOR_GREEN = [ 0, 255, 0, 0 ];
 $COLOR_BLUE =  [ 0, 0, 255, 0 ];
 
 
-=head1 GT::Graphics::Driver
+=head1 Finance::GeniusTrader::Graphics::Driver
 
 A graphic driver is a well defined interface that let you actually
 generate a picture by using drawing primitives. Those primitives

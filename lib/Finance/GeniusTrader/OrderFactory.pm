@@ -1,4 +1,4 @@
-package GT::OrderFactory;
+package Finance::GeniusTrader::OrderFactory;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -8,16 +8,16 @@ use strict;
 use vars qw(@ISA @EXPORT %OBJECT_REPOSITORY);
 
 require Exporter;
-@ISA = qw(Exporter GT::Dependency);
+@ISA = qw(Exporter Finance::GeniusTrader::Dependency);
 @EXPORT = qw(&build_object_name &manage_object);
 
-use GT::Registry;
-use GT::Dependency;
+use Finance::GeniusTrader::Registry;
+use Finance::GeniusTrader::Dependency;
 #ALL#  use Log::Log4perl qw(:easy);
 
 =head1 NAME
 
-GT::OrderFactory - Create orders
+Finance::GeniusTrader::OrderFactory - Create orders
 
 An OrderFactory is used to create an order when a system has detected an
 opportunity. This order will then be sent to the PortfolioManager by
@@ -38,11 +38,11 @@ sub new {
                 push @{$args}, ${"$class\::DEFAULT_ARGS"}[$n];
             }
         }
-        $self->{'args'} = GT::ArgsTree->new(@{$args});
+        $self->{'args'} = Finance::GeniusTrader::ArgsTree->new(@{$args});
     } elsif (defined (@{"$class\::DEFAULT_ARGS"})) {
-        $self->{'args'} = GT::ArgsTree->new(@{"$class\::DEFAULT_ARGS"});
+        $self->{'args'} = Finance::GeniusTrader::ArgsTree->new(@{"$class\::DEFAULT_ARGS"});
     } else {
-        $self->{'args'} = GT::ArgsTree->new(); # no args
+        $self->{'args'} = Finance::GeniusTrader::ArgsTree->new(); # no args
     }
                                                                                                                                                            
     return manage_object(\@{"$class\::NAMES"}, $self, $class, $self->{'args'}, $key);
@@ -75,18 +75,18 @@ sub create_sell_order {
 # Default initialize that does nothing
 sub initialize { 1 }
 
-# GT::Registry functions
+# Finance::GeniusTrader::Registry functions
 sub get_registered_object {
-    GT::Registry::get_registered_object(\%OBJECT_REPOSITORY, @_);
+    Finance::GeniusTrader::Registry::get_registered_object(\%OBJECT_REPOSITORY, @_);
 }
 sub register_object {
-    GT::Registry::register_object(\%OBJECT_REPOSITORY, @_);
+    Finance::GeniusTrader::Registry::register_object(\%OBJECT_REPOSITORY, @_);
 }
 sub get_or_register_object {
-    GT::Registry::get_or_register_object(\%OBJECT_REPOSITORY, @_);
+    Finance::GeniusTrader::Registry::get_or_register_object(\%OBJECT_REPOSITORY, @_);
 }
 sub manage_object {
-    GT::Registry::manage_object(\%OBJECT_REPOSITORY, @_);
+    Finance::GeniusTrader::Registry::manage_object(\%OBJECT_REPOSITORY, @_);
 }
 
 =pod

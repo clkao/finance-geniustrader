@@ -1,4 +1,4 @@
-package GT::CloseStrategy::Stop::VAR;
+package Finance::GeniusTrader::CloseStrategy::Stop::VAR;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # Modified 2004 by Oliver Bossert
@@ -10,15 +10,15 @@ package GT::CloseStrategy::Stop::VAR;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::CloseStrategy;
-use GT::Prices;
-use GT::Indicators::StandardDeviation;
+use Finance::GeniusTrader::CloseStrategy;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Indicators::StandardDeviation;
 
-@ISA = qw(GT::CloseStrategy);
+@ISA = qw(Finance::GeniusTrader::CloseStrategy);
 @NAMES = ("VAR[#1]");
 @DEFAULT_ARGS = (10);
 
-=head1 GT::CloseStrategy::Stop::VAR
+=head1 Finance::GeniusTrader::CloseStrategy::Stop::VAR
 
 =head2 Overview
 
@@ -36,7 +36,7 @@ Technical Analysis of Stocks and Commodities - August 1999
 sub initialize {
     my ($self) = @_;
 
-    $self->{'sd'} = GT::Indicators::StandardDeviation->new([ $self->{'args'}->get_arg_names(1) ]);
+    $self->{'sd'} = Finance::GeniusTrader::Indicators::StandardDeviation->new([ $self->{'args'}->get_arg_names(1) ]);
     $self->add_indicator_dependency($self->{'sd'}, 1);
 }
 

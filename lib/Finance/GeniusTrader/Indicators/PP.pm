@@ -1,4 +1,4 @@
-package GT::Indicators::PP;
+package Finance::GeniusTrader::Indicators::PP;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,15 +9,15 @@ package GT::Indicators::PP;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::TP;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::TP;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("Pivot[#*]", "FirstSupport[#*]", "SecondSupport[#*]", "FirstResistance[#*]", "SecondResistance[#*]");
 @DEFAULT_ARGS = ("{I:Prices HIGH}", "{I:Prices LOW}", "{I:Prices CLOSE}");
 
-=head1 GT::Indicators::PP
+=head1 Finance::GeniusTrader::Indicators::PP
 
 =head2 Overview
 
@@ -42,7 +42,7 @@ http://www.tradertalk.com/tutorial/Pivpt.html
 sub initialize {
     my $self = shift;
  
-    $self->{'tp'} = GT::Indicators::TP->new( [ $self->{'args'}->get_arg_names(1),
+    $self->{'tp'} = Finance::GeniusTrader::Indicators::TP->new( [ $self->{'args'}->get_arg_names(1),
 					       $self->{'args'}->get_arg_names(2),
 					       $self->{'args'}->get_arg_names(3)
 					     ] );
@@ -51,7 +51,7 @@ sub initialize {
     $self->add_prices_dependency(2);
 }
 
-=head2 GT::Indicators::PP::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::PP::calculate($calc, $day)
 
 =cut
 

@@ -1,4 +1,4 @@
-package GT::Indicators::MaxDrawDown;
+package Finance::GeniusTrader::Indicators::MaxDrawDown;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # standards upgrade Copyright 2005 Thomas Weigert
@@ -12,15 +12,15 @@ package GT::Indicators::MaxDrawDown;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
+use Finance::GeniusTrader::Indicators;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("MaxDrawDown[#1]");
 @DEFAULT_ARGS = ("{I:Prices CLOSE}");
 
 =pod
 
-=head1 GT::Indicators::MaxDrawDown
+=head1 Finance::GeniusTrader::Indicators::MaxDrawDown
 
 =head2 Overview
 

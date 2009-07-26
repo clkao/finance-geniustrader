@@ -1,4 +1,4 @@
-package GT::Indicators::GMEAN;
+package Finance::GeniusTrader::Indicators::GMEAN;
 
 # Copyright 2008 Andreas Hartmann
 # Based on and for GeniusTrader (C) 2000-2002 Raphaël Hertzog, Fabien Fulhaber
@@ -12,14 +12,14 @@ package GT::Indicators::GMEAN;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("GMEAN[#1,#2]");
 @DEFAULT_ARGS=("{I:Prices HIGH}", "{I:Prices LOW}");
 
-=head1 GT::Indicators::GMEAN
+=head1 Finance::GeniusTrader::Indicators::GMEAN
 
 =head2 Overview
 

@@ -1,18 +1,18 @@
-package GT::Graphics::Zone;
+package Finance::GeniusTrader::Graphics::Zone;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
 use strict;
-use GT::Graphics::Graphic;
-use GT::Graphics::Driver;
-use GT::Graphics::Axis;
-use GT::Tools qw(:math);
-use GT::Graphics::Tools qw(:color);
-use GT::Conf;
+use Finance::GeniusTrader::Graphics::Graphic;
+use Finance::GeniusTrader::Graphics::Driver;
+use Finance::GeniusTrader::Graphics::Axis;
+use Finance::GeniusTrader::Tools qw(:math);
+use Finance::GeniusTrader::Graphics::Tools qw(:color);
+use Finance::GeniusTrader::Conf;
 
-=head1 GT::Graphics::Zone
+=head1 Finance::GeniusTrader::Graphics::Zone
 
 A zone is a part of the graphic. It has an external size and an internal
 size. The internal size may be split in several sub zones.
@@ -28,7 +28,7 @@ A zone can also be considered like a « drawable » object and as such
 it implements the display(...) method. It will call the display methods
 for the axis, draw the border if needed and draw the title.
   
-=head2 GT::Graphics::Zone->new($width, $height, $left, $right, $top, $bottom);
+=head2 Finance::GeniusTrader::Graphics::Zone->new($width, $height, $left, $right, $top, $bottom);
 
 Creates a new zone with the given internal size. $left, $right, $top, $bottom
 is the free space to keep around the internal zone.
@@ -50,14 +50,14 @@ sub new {
 		 "bottom" => defined($b) ? $b : 0,
 		 "border_width" => 0,
 		 "border_color" => 
-			get_color(GT::Conf::get_first(
+			get_color(Finance::GeniusTrader::Conf::get_first(
 			    "Graphic::Zone::BorderColor",
 			    "Graphic::ForegroundColor"
 			)),
 		 "font_name" => $FONT_ARIAL,
 		 "font_size" => $FONT_SIZE_MEDIUM,
 		 "font_color" => 
-			get_color(GT::Conf::get_first(
+			get_color(Finance::GeniusTrader::Conf::get_first(
 			    "Graphic::Zone::TitleColor",
 			    "Graphic::ForegroundColor"
 			))

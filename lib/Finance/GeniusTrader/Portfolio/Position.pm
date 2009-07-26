@@ -1,19 +1,19 @@
-package GT::Portfolio::Position;
+package Finance::GeniusTrader::Portfolio::Position;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
 use strict;
-our @ISA = qw(GT::Serializable);
+our @ISA = qw(Finance::GeniusTrader::Serializable);
 
 #ALL# use Log::Log4perl qw(:easy);
-use GT::Prices;
-use GT::Serializable;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Serializable;
 
 =head1 NAME
 
-GT::Portfolio::Position - An open position within a portfolio
+Finance::GeniusTrader::Portfolio::Position - An open position within a portfolio
 
 =head1 DESCRIPTION
 
@@ -36,7 +36,7 @@ GT::Portfolio::Position - An open position within a portfolio
 
 =over
 
-=item C<< $p = GT::Portfolio::Position->new($code, $source, $date) >>
+=item C<< $p = Finance::GeniusTrader::Portfolio::Position->new($code, $source, $date) >>
 
 =cut
 sub new {
@@ -286,7 +286,7 @@ sub apply_order {
     #ERR# ERROR "applying an order without price" unless (defined($price));
 
     # Store the modification to the position
-    my $history = GT::Portfolio::Order->new;
+    my $history = Finance::GeniusTrader::Portfolio::Order->new;
     if ($order->is_buy_order) {
 	$history->set_buy_order;
     } else {
@@ -368,7 +368,7 @@ sub apply_pending_orders {
     # Try to apply the stop if there's something left to stop
     if (defined($self->stop) && $self->stop && $self->quantity)
     {
-	my $order = GT::Portfolio::Order->new;
+	my $order = Finance::GeniusTrader::Portfolio::Order->new;
 	if ($self->is_long)
 	{
 	    $order->set_sell_order;
@@ -550,7 +550,7 @@ Calculate some statistics about the position.
 sub stats {
     my ($self, $portfolio, $quantity_factor) = @_;
     
-    #WAR# WARN "first arg of position->stats must be a portfolio" unless (ref($portfolio) =~ /GT::Portfolio/);
+    #WAR# WARN "first arg of position->stats must be a portfolio" unless (ref($portfolio) =~ /Finance::GeniusTrader::Portfolio/);
     
     if (! defined($quantity_factor))
     {

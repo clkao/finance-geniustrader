@@ -1,4 +1,4 @@
-package GT::DB::MetaStockReader;
+package Finance::GeniusTrader::DB::MetaStockReader;
 # Copyright 2003-2005 Yannick Tournedouet
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
@@ -15,17 +15,17 @@ package GT::DB::MetaStockReader;
 #		: test if security already exists before putting in the table.
 # v1.6 04/06/2005 : Changed the DB object interface to allow better timeframe support (João Costa)
 
-# ras 9mar08 : pod explaining GT::DB::MetaStockReader and GT::DB::MetaStock usage
+# ras 9mar08 : pod explaining Finance::GeniusTrader::DB::MetaStockReader and Finance::GeniusTrader::DB::MetaStock usage
 
 use strict;
 use vars qw(@ISA);
 
-use GT::DB;
-use GT::Prices;
-use GT::Conf;
-use GT::DateTime;
+use Finance::GeniusTrader::DB;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Conf;
+use Finance::GeniusTrader::DateTime;
 
-@ISA = qw(GT::DB);
+@ISA = qw(Finance::GeniusTrader::DB);
 
 =head1 DB::MetaStockReader access module
 
@@ -36,17 +36,17 @@ type of MetaStock database.
 
 This module does not require any other code
 to support its operation and it is not intended to be used with
-GT::DB::MetaStock and, although named MetaStockReader, it is not
-the companion program required by GT::DB::MetaStock.
+Finance::GeniusTrader::DB::MetaStock and, although named MetaStockReader, it is not
+the companion program required by Finance::GeniusTrader::DB::MetaStock.
 
 =head2 Synopsis
 
-   my $db = create_standard_object("DB::" . GT::Conf::get("DB::module"));
+   my $db = create_standard_object("DB::" . Finance::GeniusTrader::Conf::get("DB::module"));
    $db->initialize;
    $db->get_prices("FR0000130007");
    $db->disconnect;
 or
-   my $db = create_standard_object("DB::" . GT::Conf::get("DB::module"));
+   my $db = create_standard_object("DB::" . Finance::GeniusTrader::Conf::get("DB::module"));
    $db->get_prices("FR0000130007");
    $db->disconnect;
 
@@ -64,7 +64,7 @@ The XMASTER file all the others security (*.MWD) of your directory.
 
 =head2 Configuration
 
-NOTE: this module supercedes the module GT::DB::MetaStock. do not attempt
+NOTE: this module supercedes the module Finance::GeniusTrader::DB::MetaStock. do not attempt
 to use both.
 
 You can indicate the directory which contains the MetaStock database
@@ -80,9 +80,9 @@ sub new {
     my $type = shift;
     my $class = ref($type) || $type;
 
-    GT::Conf::default("DB::metastock::directory", "");
+    Finance::GeniusTrader::Conf::default("DB::metastock::directory", "");
 
-    my $self = { "directory" => GT::Conf::get("DB::metastock::directory"),
+    my $self = { "directory" => Finance::GeniusTrader::Conf::get("DB::metastock::directory"),
                  "codes" => undef};
 
     return bless $self, $class;
@@ -295,7 +295,7 @@ sub get_db_name {
 
 =head2 $db->get_prices($code, $timeframe)
 
-Returns a GT::Prices object containing all known prices for the symbol
+Returns a Finance::GeniusTrader::Prices object containing all known prices for the symbol
 $code.
 
 =cut
@@ -304,7 +304,7 @@ sub get_prices {
   my($self, $isin, $timeframe) = @_;
   $timeframe = $DAY unless ($timeframe);
   die "Intraday support not implemented in DB::MetaStockReader" if ($timeframe < $DAY);
-  return GT::Prices->new() if ($timeframe > $DAY);
+  return Finance::GeniusTrader::Prices->new() if ($timeframe > $DAY);
   my $reg;
   my $file;
   my $unpack = "S S A24";
@@ -328,7 +328,7 @@ sub get_prices {
     $self->initialize($self->{'directory'});
   }
 
-  my $prices = GT::Prices->new();
+  my $prices = Finance::GeniusTrader::Prices->new();
   $prices->set_timeframe($timeframe);
 
   $reg = $self->find_isin($isin);
@@ -418,7 +418,7 @@ sub convertFloat {
 
 NOT YET SUPPORTED for MetaStockReader module.
 
-Returns a GT::Prices object containing the $limit last known prices for
+Returns a Finance::GeniusTrader::Prices object containing the $limit last known prices for
 the symbol $code.
 
 =cut

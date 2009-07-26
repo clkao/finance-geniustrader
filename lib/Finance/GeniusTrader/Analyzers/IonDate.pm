@@ -1,4 +1,4 @@
-package GT::Analyzers::IonDate;
+package Finance::GeniusTrader::Analyzers::IonDate;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,17 +9,17 @@ package GT::Analyzers::IonDate;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
-use GT::Prices;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("IonDate[#*]");
 @DEFAULT_ARGS = ("{I:SMA}", "{A:OpenDate}");
 
 =head1 NAME
 
-  GT::Analyzers::AvgCosts - Average Costs per trade
+  Finance::GeniusTrader::Analyzers::AvgCosts - Average Costs per trade
 
 =head1 DESCRIPTION 
 

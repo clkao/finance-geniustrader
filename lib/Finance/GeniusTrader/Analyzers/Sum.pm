@@ -1,4 +1,4 @@
-package GT::Analyzers::Sum;
+package Finance::GeniusTrader::Analyzers::Sum;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::Sum;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("Sum[#*]");
 @DEFAULT_ARGS = ("{A:Costs}");
 
 =head1 NAME
 
-  GT::Analyzers::Sum - Summarizes the array #arg1
+  Finance::GeniusTrader::Analyzers::Sum - Summarizes the array #arg1
 
 =head1 DESCRIPTION 
 

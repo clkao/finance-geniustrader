@@ -1,4 +1,4 @@
-package GT::Systems::Stochastic;
+package Finance::GeniusTrader::Systems::Stochastic;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,11 +7,11 @@ package GT::Systems::Stochastic;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Prices;
-use GT::Systems;
-use GT::Indicators::STO;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Systems;
+use Finance::GeniusTrader::Indicators::STO;
 
-@ISA = qw(GT::Systems);
+@ISA = qw(Finance::GeniusTrader::Systems);
 @NAMES = ("Stochastic[#1,#2,#3,#4]");
 
 =pod
@@ -33,7 +33,7 @@ sub new {
 sub initialize {
     my ($self) = @_;
 
-    $self->{'sto'} = GT::Indicators::STO->new($self->{'args'});
+    $self->{'sto'} = Finance::GeniusTrader::Indicators::STO->new($self->{'args'});
 
     $self->{'allow_multiple'} = 0;
 

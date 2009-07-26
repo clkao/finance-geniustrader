@@ -1,4 +1,4 @@
-package GT::MetaInfo;
+package Finance::GeniusTrader::MetaInfo;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -10,7 +10,7 @@ use XML::LibXML;
 
 =head1 NAME
 
-GT::MetaInfo - keep various meta informations
+Finance::GeniusTrader::MetaInfo - keep various meta informations
 
 =head1 DESCRIPTION
 
@@ -31,9 +31,9 @@ to distinguish them.
 
 =over 
 
-=item C<< my $info = GT::MetaInfo->new; >>
+=item C<< my $info = Finance::GeniusTrader::MetaInfo->new; >>
 
-Create a new empty GT::MetaInfo object.
+Create a new empty Finance::GeniusTrader::MetaInfo object.
 
 =cut
 sub new {
@@ -185,7 +185,7 @@ sub load {
 
 =item C<< $info->save("/path/to/file.xml") >>
 
-Save the current GT::MetaInfo object in the given XML file. All values
+Save the current Finance::GeniusTrader::MetaInfo object in the given XML file. All values
 previously set can be reloaded later with $info->load(...).
 
 =cut

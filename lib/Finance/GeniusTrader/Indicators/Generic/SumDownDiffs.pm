@@ -1,4 +1,4 @@
-package GT::Indicators::Generic::SumDownDiffs;
+package Finance::GeniusTrader::Indicators::Generic::SumDownDiffs;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,18 +9,18 @@ package GT::Indicators::Generic::SumDownDiffs;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
-use GT::Tools qw(:math);
-use GT::ArgsTree;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Tools qw(:math);
+use Finance::GeniusTrader::ArgsTree;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("SumDownDiffs[#*]");
 @DEFAULT_ARGS = (14, "{I:Prices CLOSE}");
 
 =head1 NAME
 
-GT::Indicators::Generic::SumDownDiffs - Calculation of the Sum of the last n days when the price goes down
+Finance::GeniusTrader::Indicators::Generic::SumDownDiffs - Calculation of the Sum of the last n days when the price goes down
 
 =head1 DESCRIPTION 
 
@@ -32,7 +32,7 @@ Calculates the Sum of the difference of the last n days when the price goes down
 
 =head2 Examples
 
-GT::Indicators::Generic::SumDownDiffs->new()
+Finance::GeniusTrader::Indicators::Generic::SumDownDiffs->new()
 
 =head2 Links
 

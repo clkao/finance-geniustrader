@@ -1,4 +1,4 @@
-package GT::Signals::Swing::TrendEnding;
+package Finance::GeniusTrader::Signals::Swing::TrendEnding;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,16 +7,16 @@ package GT::Signals::Swing::TrendEnding;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Prices;
-use GT::Signals;
-use GT::Signals::Swing::Trend;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Signals;
+use Finance::GeniusTrader::Signals::Swing::Trend;
 
-@ISA = qw(GT::Signals);
+@ISA = qw(Finance::GeniusTrader::Signals);
 @NAMES = ("TrendUpEnding", "TrendDownEnding");
 
 =pod
 
-=head1 GT::Signals::Swing::TrendUpEnding
+=head1 Finance::GeniusTrader::Signals::Swing::TrendUpEnding
 
 An up-trend is going on and a little candle is constated. The trend may be
 ending ...
@@ -34,7 +34,7 @@ sub new {
 sub initialize {
     my $self = shift;
 
-    $self->{'trend'} = GT::Signals::Swing::Trend->new();
+    $self->{'trend'} = Finance::GeniusTrader::Signals::Swing::Trend->new();
 
     $self->add_signal_dependency($self->{'trend'}, 2);
     $self->add_prices_dependency(3);

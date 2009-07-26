@@ -1,4 +1,4 @@
-package GT::Indicators::REMA;
+package Finance::GeniusTrader::Indicators::REMA;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Indicators::REMA;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::SMA;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::SMA;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("REMA[#*]");
 @DEFAULT_ARGS = (20, 0.5, "{I:Prices CLOSE}");
 
 =head1 NAME
 
-GT::Indicators::REMA - Regularized Exponential Moving Average
+Finance::GeniusTrader::Indicators::REMA - Regularized Exponential Moving Average
 
 =head1 DESCRIPTION 
 
@@ -63,7 +63,7 @@ This is usually an indicator (detailed via {I:MyIndic <param>}).
 
 sub initialize {
     my ($self) = @_;
-    $self->{'sma'} = GT::Indicators::SMA->new([$self->{'args'}->get_arg_names(1), $self->{'args'}->get_arg_names(3) ]);
+    $self->{'sma'} = Finance::GeniusTrader::Indicators::SMA->new([$self->{'args'}->get_arg_names(1), $self->{'args'}->get_arg_names(3) ]);
 }
 
 sub calculate {

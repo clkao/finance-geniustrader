@@ -1,4 +1,4 @@
-package GT::Indicators::LinearRegression;
+package Finance::GeniusTrader::Indicators::LinearRegression;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # standards upgrade Copyright 2005 Thomas Weigert
@@ -12,12 +12,12 @@ package GT::Indicators::LinearRegression;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Indicators;
+use Finance::GeniusTrader::Indicators;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("LinearRegressionLine[#1,#2,#3]","LinearRegressionCoefficientA[#1,#2,#3]","LinearRegressionCoefficientB[#1,#2,#3]");
 
-=head1 GT::Indicators::LinearRegression
+=head1 Finance::GeniusTrader::Indicators::LinearRegression
 
 This function will calculate an L-Period linear regression line. Note that
 the term "linear regression" is the same as a "least squares" or "best

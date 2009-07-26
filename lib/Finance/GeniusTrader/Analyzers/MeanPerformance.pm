@@ -1,4 +1,4 @@
-package GT::Analyzers::MeanPerformance;
+package Finance::GeniusTrader::Analyzers::MeanPerformance;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::MeanPerformance;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("MeanPerformance[#*]");
 @DEFAULT_ARGS = ();
 
 =head1 NAME
 
-  GT::Analyzers::MeanPerformace - The Mean Performance of a Portfolio
+  Finance::GeniusTrader::Analyzers::MeanPerformace - The Mean Performance of a Portfolio
 
 =head1 DESCRIPTION 
 

@@ -1,4 +1,4 @@
-package GT::Systems::Swing::Trend;
+package Finance::GeniusTrader::Systems::Swing::Trend;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,12 +7,12 @@ package GT::Systems::Swing::Trend;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Prices;
-use GT::Systems;
-use GT::Signals::Swing::Trend;
-use GT::Signals::Swing::TrendEnding;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Systems;
+use Finance::GeniusTrader::Signals::Swing::Trend;
+use Finance::GeniusTrader::Signals::Swing::TrendEnding;
 
-@ISA = qw(GT::Systems);
+@ISA = qw(Finance::GeniusTrader::Systems);
 @NAMES = ("Trend");
 
 =pod
@@ -33,8 +33,8 @@ sub new {
 sub initialize {
     my ($self) = @_;
 
-    $self->{'trend'} = GT::Signals::Swing::Trend->new;
-    $self->{'trendending'} = GT::Signals::Swing::TrendEnding->new;
+    $self->{'trend'} = Finance::GeniusTrader::Signals::Swing::Trend->new;
+    $self->{'trendending'} = Finance::GeniusTrader::Signals::Swing::TrendEnding->new;
 
     $self->add_signal_dependency($self->{'trend'}, 1);
     $self->add_signal_dependency($self->{'trendending'}, 1);

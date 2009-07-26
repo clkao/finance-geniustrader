@@ -1,4 +1,4 @@
-package GT::Analyzers::Report;
+package Finance::GeniusTrader::Analyzers::Report;
 
 # Copyright 2004 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -6,7 +6,7 @@ package GT::Analyzers::Report;
 
 use strict;
 
-use GT::Analyzers::Process;
+use Finance::GeniusTrader::Analyzers::Process;
 
 use Cwd;
 use File::Spec;
@@ -14,7 +14,7 @@ use HTML::Mason;
 
 =head1 NAME
 
-GT::Analyzers Report
+Finance::GeniusTrader::Analyzers Report
 
 =head2 DESCRIPTION
 
@@ -38,7 +38,7 @@ sub new { # Generate a new Object
   if ( defined($proc) && ref($proc) =~ /Process/ ) {
       $self->{'proc'} = $proc;
   } else {
-      $self->{'proc'} = GT::Analyzers::Process->new();
+      $self->{'proc'} = Finance::GeniusTrader::Analyzers::Process->new();
   }
   return $self;
 }

@@ -1,4 +1,4 @@
-package GT::Signals::Trend::HilbertChannelBreakout;
+package Finance::GeniusTrader::Signals::Trend::HilbertChannelBreakout;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,14 +7,14 @@ package GT::Signals::Trend::HilbertChannelBreakout;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Signals;
-use GT::Prices;
-use GT::Indicators::HilbertPeriod;
+use Finance::GeniusTrader::Signals;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Indicators::HilbertPeriod;
 
-@ISA = qw(GT::Signals);
+@ISA = qw(Finance::GeniusTrader::Signals);
 @NAMES = ("HCBUp[#1,#2,#3,#4]", "HCBDown[#1,#2,#3,#4]");
 
-=head1 GT::Signals::Trend::HilbertChannelBreakout
+=head1 Finance::GeniusTrader::Signals::Trend::HilbertChannelBreakout
 
 =cut
 
@@ -36,7 +36,7 @@ sub new {
 sub initialize {
     my ($self) = @_;
     
-    $self->{'period'} = GT::Indicators::HilbertPeriod->new();
+    $self->{'period'} = Finance::GeniusTrader::Indicators::HilbertPeriod->new();
     $self->add_indicator_dependency($self->{'period'}, 1);
 }
 
@@ -108,7 +108,7 @@ sub detect_interval {
     my ($self, $calc, $first, $last) = @_;
 
     $self->{'period'}->calculate_interval($calc, $first, $last);
-    GT::Signals::detect_interval(@_);
+    Finance::GeniusTrader::Signals::detect_interval(@_);
 }
 
 1;

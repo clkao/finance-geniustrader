@@ -1,4 +1,4 @@
-package GT::Analyzers::Losses;
+package Finance::GeniusTrader::Analyzers::Losses;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::Losses;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("Losses[#*]");
 @DEFAULT_ARGS = ();
 
 =head1 NAME
 
-  GT::Analyzers::Losses - The losses of the trades
+  Finance::GeniusTrader::Analyzers::Losses - The losses of the trades
 
 =head1 DESCRIPTION 
 

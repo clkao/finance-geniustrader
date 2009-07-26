@@ -1,4 +1,4 @@
-package GT::Analyzers::SellPrice;
+package Finance::GeniusTrader::Analyzers::SellPrice;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::SellPrice;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("SellPrice[#*]");
 @DEFAULT_ARGS = ();
 
 =head1 NAME
 
-  GT::Analyzers::SellPrice - The price for which the position was sold
+  Finance::GeniusTrader::Analyzers::SellPrice - The price for which the position was sold
 
 =head1 DESCRIPTION 
 

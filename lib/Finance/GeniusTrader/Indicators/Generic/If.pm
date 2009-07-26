@@ -1,4 +1,4 @@
-package GT::Indicators::Generic::If;
+package Finance::GeniusTrader::Indicators::Generic::If;
 
 # Copyright 2000-2003 Raphaël Hertzog
 # This file is distributed under the terms of the General Public License
@@ -9,15 +9,15 @@ package GT::Indicators::Generic::If;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Indicators;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("If[#*]");
 
 =head1 NAME
 
-GT::Indicators::Generic::If - Return a value or another depending on a signal
+Finance::GeniusTrader::Indicators::Generic::If - Return a value or another depending on a signal
 
 =head1 DESCRIPTION
 

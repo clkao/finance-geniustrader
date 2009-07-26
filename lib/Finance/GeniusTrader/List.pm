@@ -1,4 +1,4 @@
-package GT::List;
+package Finance::GeniusTrader::List;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -11,7 +11,7 @@ use strict;
 
 =head1 NAME
 
-GT::List - List of symbols (shares)
+Finance::GeniusTrader::List - List of symbols (shares)
 
 =head1 DESCRIPTION
 
@@ -19,8 +19,8 @@ This package provide some simple functions to work with a list of symbols.
 
 =head2 Example
 
-Create an empty GT::List object :
-my $list = GT::List->new();
+Create an empty Finance::GeniusTrader::List object :
+my $list = Finance::GeniusTrader::List->new();
 
 Load data from a list of symbol :
 $list->load("/bourse/listes/us/nasdaq");

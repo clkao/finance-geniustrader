@@ -1,4 +1,4 @@
-package GT::CloseStrategy::Generic;
+package Finance::GeniusTrader::CloseStrategy::Generic;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # Modified 2004 by Oliver Bossert
@@ -10,12 +10,12 @@ package GT::CloseStrategy::Generic;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Prices;
-use GT::CloseStrategy;
-use GT::Eval;
-use GT::Tools qw(:generic);
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::CloseStrategy;
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::Tools qw(:generic);
 
-@ISA = qw(GT::CloseStrategy);
+@ISA = qw(Finance::GeniusTrader::CloseStrategy);
 @NAMES = ("Generic[#*]");
 @DEFAULT_ARGS = ("{S:Generic:False}", "{S:Generic:False}");
 

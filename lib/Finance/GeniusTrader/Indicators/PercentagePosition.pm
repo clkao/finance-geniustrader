@@ -1,4 +1,4 @@
-package GT::Indicators::PercentagePosition;
+package Finance::GeniusTrader::Indicators::PercentagePosition;
 
 # Copyright 2000-2002 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,19 +9,19 @@ package GT::Indicators::PercentagePosition;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
-use GT::Tools qw(:math);
-use GT::Indicators;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Tools qw(:math);
+use Finance::GeniusTrader::Indicators;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("PercentagePosition[#*]");
 @DEFAULT_ARGS = (65, "{I:Prices CLOSE}");
 
 
 =head1 NAME
 
-GT::Indicators::PercentagePosition - Relative Position in a certain period
+Finance::GeniusTrader::Indicators::PercentagePosition - Relative Position in a certain period
 
 =head1 DESCRIPTION
 

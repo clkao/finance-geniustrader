@@ -1,4 +1,4 @@
-package GT::CloseStrategy;
+package Finance::GeniusTrader::CloseStrategy;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -8,17 +8,17 @@ use strict;
 use vars qw(@ISA @EXPORT %OBJECT_REPOSITORY);
 
 require Exporter;
-@ISA = qw(Exporter GT::Dependency);
+@ISA = qw(Exporter Finance::GeniusTrader::Dependency);
 @EXPORT = qw(&build_object_name &manage_object);
 
-use GT::ArgsTree;
-use GT::Registry;
-use GT::Dependency;
+use Finance::GeniusTrader::ArgsTree;
+use Finance::GeniusTrader::Registry;
+use Finance::GeniusTrader::Dependency;
 #ALL#  use Log::Log4perl qw(:easy);
 
 =head1 NAME
 
-GT::CloseStrategy - Manages opened positions
+Finance::GeniusTrader::CloseStrategy - Manages opened positions
 
 =head1 DESCRIPTION
 
@@ -43,11 +43,11 @@ sub new {
 		push @{$args}, ${"$class\::DEFAULT_ARGS"}[$n];
 	    }
 	}
-	$self->{'args'} = GT::ArgsTree->new(@{$args});
+	$self->{'args'} = Finance::GeniusTrader::ArgsTree->new(@{$args});
     } elsif (defined (@{"$class\::DEFAULT_ARGS"})) {
-	$self->{'args'} = GT::ArgsTree->new(@{"$class\::DEFAULT_ARGS"});
+	$self->{'args'} = Finance::GeniusTrader::ArgsTree->new(@{"$class\::DEFAULT_ARGS"});
     } else {
-	$self->{'args'} = GT::ArgsTree->new(); # no args
+	$self->{'args'} = Finance::GeniusTrader::ArgsTree->new(); # no args
     }
 
     return manage_object(\@{"$class\::NAMES"}, $self, $class, $self->{'args'}, $key);
@@ -164,23 +164,23 @@ sub initialize              { 1; }
 
 =head2 Functions to manage a repository of close strategies
 
-  GT::CloseStrategy::get_registered_object($name);
-  GT::CloseStrategy::register_object($name, $object);
-  GT::CloseStrategy::get_or_register_object($name, $object);
-  GT::CloseStrategy::manage_object(\@NAMES, $object, $class, $args, $key);
+  Finance::GeniusTrader::CloseStrategy::get_registered_object($name);
+  Finance::GeniusTrader::CloseStrategy::register_object($name, $object);
+  Finance::GeniusTrader::CloseStrategy::get_or_register_object($name, $object);
+  Finance::GeniusTrader::CloseStrategy::manage_object(\@NAMES, $object, $class, $args, $key);
 
 =cut
 sub get_registered_object {
-    GT::Registry::get_registered_object(\%OBJECT_REPOSITORY, @_);
+    Finance::GeniusTrader::Registry::get_registered_object(\%OBJECT_REPOSITORY, @_);
 }
 sub register_object {
-    GT::Registry::register_object(\%OBJECT_REPOSITORY, @_);
+    Finance::GeniusTrader::Registry::register_object(\%OBJECT_REPOSITORY, @_);
 }
 sub get_or_register_object {
-    GT::Registry::get_or_register_object(\%OBJECT_REPOSITORY, @_);
+    Finance::GeniusTrader::Registry::get_or_register_object(\%OBJECT_REPOSITORY, @_);
 }
 sub manage_object {
-    GT::Registry::manage_object(\%OBJECT_REPOSITORY, @_);
+    Finance::GeniusTrader::Registry::manage_object(\%OBJECT_REPOSITORY, @_);
 }
 
 1;

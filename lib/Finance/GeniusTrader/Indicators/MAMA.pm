@@ -1,4 +1,4 @@
-package GT::Indicators::MAMA;
+package Finance::GeniusTrader::Indicators::MAMA;
 
 # Copyright 2008 Karsten Wippler
 # Based on and for GeniusTrader (C) 2000-2002 Raphaël Hertzog, Fabien Fulhaber
@@ -12,16 +12,16 @@ package GT::Indicators::MAMA;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::SMA;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::SMA;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("MAMA[#*]","FAMA[#*]","PERIOD[#*]","ALPHA[#*]");
 @DEFAULT_ARGS = (0.5,0.05,"{I:MEAN}");
 
 =head1 NAME
 
-GT::Indicators::MAMA - Mesa Adaptive Moving Average
+Finance::GeniusTrader::Indicators::MAMA - Mesa Adaptive Moving Average
 
 =head1 DESCRIPTION
 
@@ -37,7 +37,7 @@ please see Ehlers work
 
 =head2 Creation
 
- GT::Indicators::MAMA->new()
+ Finance::GeniusTrader::Indicators::MAMA->new()
 
 =cut
 sub initialize {
@@ -45,7 +45,7 @@ sub initialize {
     for (my $i=1;$i<=2;$i++) {
       die "Argument $i must be a constant value.\n" unless $self->{'args'}->is_constant($i);
     }
-    $self->{'sma'} = GT::Indicators::SMA->new([9,$self->{'args'}->get_arg_names(3)]);
+    $self->{'sma'} = Finance::GeniusTrader::Indicators::SMA->new([9,$self->{'args'}->get_arg_names(3)]);
     $self->add_indicator_dependency($self->{'sma'}, 29);
     $self->add_arg_dependency(3, 20);
 }

@@ -1,4 +1,4 @@
-package GT::Indicators::Generic::ByName;
+package Finance::GeniusTrader::Indicators::Generic::ByName;
 
 # Copyright 2000-2002 Raphaël Hertzog, Oliver Bossert
 # Copyright 2008 Thomas Weigert
@@ -12,17 +12,17 @@ package GT::Indicators::Generic::ByName;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::ArgsTree;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::ArgsTree;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("ByName[#*]");
 @DEFAULT_ARGS = ("");
 
 =head2 NAME
 
-GT::Indicators::Generic::ByName - Alias to another indicator
+Finance::GeniusTrader::Indicators::Generic::ByName - Alias to another indicator
 
 =head2 DESCRIPTION
 
@@ -41,10 +41,10 @@ or an output value.
 
 For example,
 
-    $self->{'sma1'} = GT::Indicators::SMA->new([ 
+    $self->{'sma1'} = Finance::GeniusTrader::Indicators::SMA->new([ 
                       $self->{'args'}->get_arg_names(1),
                       $self->{'args'}->get_arg_names(2) ]);
-    $self->{'sma2'} = GT::Indicators::SMA->new([ 
+    $self->{'sma2'} = Finance::GeniusTrader::Indicators::SMA->new([ 
                       $self->{'args'}->get_arg_names(1),
                       "{I:Generic:ByName "
                     . $self->{'sma1'}->get_name . "}" ]);
@@ -54,7 +54,7 @@ second parameter. The second statement takes that series and applies
 smoothing again. Similarly, the following applies smoothing to
 the first output value.
 
-    $self->{'sma3'} = GT::Indicators::SMA->new([
+    $self->{'sma3'} = Finance::GeniusTrader::Indicators::SMA->new([
                       $self->{'args'}->get_arg_names(1),
                       "{I:Generic:ByName " . $self->get_name(0) . "}" ]);
 

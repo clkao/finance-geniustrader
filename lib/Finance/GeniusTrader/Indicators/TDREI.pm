@@ -1,4 +1,4 @@
-package GT::Indicators::TDREI;
+package Finance::GeniusTrader::Indicators::TDREI;
 
 # Copyright 2002 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,20 +9,20 @@ package GT::Indicators::TDREI;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
-use GT::Tools qw(:math);
-use GT::ArgsTree;
-use GT::Indicators::Generic::Eval;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Tools qw(:math);
+use Finance::GeniusTrader::ArgsTree;
+use Finance::GeniusTrader::Indicators::Generic::Eval;
 
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("TDREI[#*]");
 @DEFAULT_ARGS = (2, 5, "{I:Prices HIGH}", "{I:Prices LOW}", "{I:Prices CLOSE}"); # Momentum, Period
 
 =head1 NAME
 
-GT::Indicators::TDREI - Tom Demarks REI
+Finance::GeniusTrader::Indicators::TDREI - Tom Demarks REI
 
 =head1 DESCRIPTION 
 
@@ -40,7 +40,7 @@ A new oscillator introduced by Tom DeMark.
 
 =head2 Creation
 
- GT::Indicators::TDREI->new()
+ Finance::GeniusTrader::Indicators::TDREI->new()
 
 =head2 Links
 

@@ -1,4 +1,4 @@
-package GT::Indicators::ADXR;
+package Finance::GeniusTrader::Indicators::ADXR;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -11,16 +11,16 @@ package GT::Indicators::ADXR;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::ADX;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::ADX;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("ADXR[#*]");
 @DEFAULT_ARGS = (14, 14, "{I:Prices HIGH}", "{I:Prices LOW}", "{I:Prices CLOSE}");
 
 =pod
 
-=head1 GT::Indicators::ADXR
+=head1 Finance::GeniusTrader::Indicators::ADXR
 
 =head2 Overview
 
@@ -30,8 +30,8 @@ ADXR = (Today's ADX + ADX #1 days ago) / 2
 
 =head2 Examples
 
-GT::Indicators::ADXR->new()
-GT::Indicators::ADXR->new([20])
+Finance::GeniusTrader::Indicators::ADXR->new()
+Finance::GeniusTrader::Indicators::ADXR->new([20])
 
 =head2 Links
 
@@ -41,13 +41,13 @@ sub initialize {
     my $self = shift;
     
     # Initilize ADX
-    $self->{'adx'} = GT::Indicators::ADX->new([ $self->{'args'}->get_arg_names(2), 
+    $self->{'adx'} = Finance::GeniusTrader::Indicators::ADX->new([ $self->{'args'}->get_arg_names(2), 
 						$self->{'args'}->get_arg_names(3),
 						$self->{'args'}->get_arg_names(4),
 						$self->{'args'}->get_arg_names(5) ] );
 }
 
-=head2 GT::Indicators::ADXR::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::ADXR::calculate($calc, $day)
 
 =cut
 sub calculate {

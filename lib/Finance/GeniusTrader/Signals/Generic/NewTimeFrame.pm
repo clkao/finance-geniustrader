@@ -1,4 +1,4 @@
-package GT::Signals::Generic::NewTimeFrame;
+package Finance::GeniusTrader::Signals::Generic::NewTimeFrame;
 
 # Copyright 2004 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,13 +9,13 @@ package GT::Signals::Generic::NewTimeFrame;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Signals;
-use GT::Eval;
-use GT::DateTime;
-use GT::Prices;
-use GT::Tools qw(:generic);
+use Finance::GeniusTrader::Signals;
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::DateTime;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Tools qw(:generic);
 
-@ISA = qw(GT::Signals);
+@ISA = qw(Finance::GeniusTrader::Signals);
 @NAMES = ("NewTimeFrame[#*]");
 @DEFAULT_ARGS = ("month");
 
@@ -31,7 +31,7 @@ This signal will tell you when you entered a new timeframe
 sub initialize {
     my ($self) = @_;
     $self->add_prices_dependency( 1 );
-    $self->{'special_tf'} = GT::DateTime::name_to_timeframe($self->{'args'}->get_arg_constant(1));
+    $self->{'special_tf'} = Finance::GeniusTrader::DateTime::name_to_timeframe($self->{'args'}->get_arg_constant(1));
 }
 
 sub detect {
@@ -43,11 +43,11 @@ sub detect {
     my $today = $calc->prices->at($i)->[$DATE];
     my $yesterday = $calc->prices->at($i-1)->[$DATE];
 
-    my $time = GT::DateTime::map_date_to_time($calc->prices->timeframe(), $today);
-    $today   = GT::DateTime::map_time_to_date($self->{'special_tf'}, $time);
+    my $time = Finance::GeniusTrader::DateTime::map_date_to_time($calc->prices->timeframe(), $today);
+    $today   = Finance::GeniusTrader::DateTime::map_time_to_date($self->{'special_tf'}, $time);
 
-    $time      = GT::DateTime::map_date_to_time($calc->prices->timeframe(), $yesterday);
-    $yesterday = GT::DateTime::map_time_to_date($self->{'special_tf'}, $time);
+    $time      = Finance::GeniusTrader::DateTime::map_date_to_time($calc->prices->timeframe(), $yesterday);
+    $yesterday = Finance::GeniusTrader::DateTime::map_time_to_date($self->{'special_tf'}, $time);
 
     if ( $today ne $yesterday ) {
 	$calc->signals->set($self->get_name, $i, 1);

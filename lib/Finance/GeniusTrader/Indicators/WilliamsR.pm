@@ -1,4 +1,4 @@
-package GT::Indicators::WilliamsR;
+package Finance::GeniusTrader::Indicators::WilliamsR;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Indicators::WilliamsR;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::Generic::MinInPeriod;
-use GT::Indicators::Generic::MaxInPeriod;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::Generic::MinInPeriod;
+use Finance::GeniusTrader::Indicators::Generic::MaxInPeriod;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("WilliamsPercentR[#1]");
 @DEFAULT_ARGS = (14, "{I:Prices HIGH}", "{I:Prices LOW}", "{I:Prices CLOSE}");
 
-=head1 GT::Indicators::WilliamsR
+=head1 Finance::GeniusTrader::Indicators::WilliamsR
 
 =head2 Overview
 
@@ -51,16 +51,16 @@ http://www.equis.com/free/taaz/williamspercr.html
 sub initialize {
     my $self = shift;
 
-    $self->{'min'} = GT::Indicators::Generic::MinInPeriod->new([ $self->{'args'}->get_arg_names(1),
+    $self->{'min'} = Finance::GeniusTrader::Indicators::Generic::MinInPeriod->new([ $self->{'args'}->get_arg_names(1),
 								 $self->{'args'}->get_arg_names(3) ] );
-    $self->{'max'} = GT::Indicators::Generic::MaxInPeriod->new([ $self->{'args'}->get_arg_names(1),
+    $self->{'max'} = Finance::GeniusTrader::Indicators::Generic::MaxInPeriod->new([ $self->{'args'}->get_arg_names(1),
 								 $self->{'args'}->get_arg_names(2)] );
 
     $self->add_indicator_dependency($self->{'min'}, 1);
     $self->add_indicator_dependency($self->{'max'}, 1);
 }
 
-=head2 GT::Indicators::Williams%R::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::Williams%R::calculate($calc, $day)
 
 =cut
 sub calculate {

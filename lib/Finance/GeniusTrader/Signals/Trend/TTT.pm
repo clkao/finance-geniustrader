@@ -1,4 +1,4 @@
-package GT::Signals::Trend::TTT;
+package Finance::GeniusTrader::Signals::Trend::TTT;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,15 +7,15 @@ package GT::Signals::Trend::TTT;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Signals;
-use GT::Prices;
-use GT::Indicators::HilbertPeriod;
-use GT::Indicators::InstantTrendLine;
+use Finance::GeniusTrader::Signals;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Indicators::HilbertPeriod;
+use Finance::GeniusTrader::Indicators::InstantTrendLine;
 
-@ISA = qw(GT::Signals);
+@ISA = qw(Finance::GeniusTrader::Signals);
 @NAMES = ("TTTUp", "TTTDown");
 
-=head1 GT::Signals::Trend::TTT
+=head1 Finance::GeniusTrader::Signals::Trend::TTT
 
 Trade The Trend !! Use Hilbert period to detect the start of a trend.
 
@@ -33,9 +33,9 @@ sub new {
 sub initialize {
     my ($self) = @_;
     
-    $self->{'median'} = GT::Indicators::WTCL->new([0]);
-    $self->{'period'} = GT::Indicators::HilbertPeriod->new;
-    $self->{'trend'} = GT::Indicators::InstantTrendLine->new;
+    $self->{'median'} = Finance::GeniusTrader::Indicators::WTCL->new([0]);
+    $self->{'period'} = Finance::GeniusTrader::Indicators::HilbertPeriod->new;
+    $self->{'trend'} = Finance::GeniusTrader::Indicators::InstantTrendLine->new;
 
     $self->add_indicator_dependency($self->{'median'}, 2);
     $self->add_indicator_dependency($self->{'trend'}, 2);
@@ -95,7 +95,7 @@ sub detect_interval {
     $self->{'trend'}->calculate_interval($calc, $first, $last);
     $self->{'median'}->calculate_interval($calc, $first, $last);
     
-    GT::Signals::detect_interval(@_);
+    Finance::GeniusTrader::Signals::detect_interval(@_);
 }
 
 1;

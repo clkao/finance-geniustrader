@@ -1,4 +1,4 @@
-package GT::Analyzers::Quantity;
+package Finance::GeniusTrader::Analyzers::Quantity;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::Quantity;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("Quantity[#*]");
 @DEFAULT_ARGS = ();
 
 =head1 NAME
 
-  GT::Analyzers::Quantity - The quantitiy of shares
+  Finance::GeniusTrader::Analyzers::Quantity - The quantitiy of shares
 
 =head1 DESCRIPTION 
 

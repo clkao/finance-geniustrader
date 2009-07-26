@@ -1,4 +1,4 @@
-package GT::Indicators::ChaikinsVola;
+package Finance::GeniusTrader::Indicators::ChaikinsVola;
 
 # Copyright 2002 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,19 +9,19 @@ package GT::Indicators::ChaikinsVola;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
-use GT::Tools qw(:math);
-use GT::ArgsTree;
-use GT::Indicators::ROC;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Tools qw(:math);
+use Finance::GeniusTrader::ArgsTree;
+use Finance::GeniusTrader::Indicators::ROC;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("ChaikinsVola[#*]");
 @DEFAULT_ARGS = (10,10,"{I:Prices HIGH}","{I:Prices LOW}");
 
 =head1 NAME
 
-GT::Indicators::ChaikinsVola - Chaikins Volatility
+Finance::GeniusTrader::Indicators::ChaikinsVola - Chaikins Volatility
 
 =head1 DESCRIPTION 
 
@@ -55,7 +55,7 @@ sub initialize {
       $self->{'args'}->get_arg_names(4) . "}";
     my $sma = "{I:SMA " . $self->{'args'}->get_arg_names(2) . " " . $diff . "}";
 
-    $self->{'roc'} = GT::Indicators::ROC->new( [ $self->{'args'}->get_arg_names(1), $sma ]);
+    $self->{'roc'} = Finance::GeniusTrader::Indicators::ROC->new( [ $self->{'args'}->get_arg_names(1), $sma ]);
     $self->add_indicator_dependency($self->{'roc'}, 1);
 }
 

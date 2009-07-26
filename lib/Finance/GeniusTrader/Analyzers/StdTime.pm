@@ -1,4 +1,4 @@
-package GT::Analyzers::StdTime;
+package Finance::GeniusTrader::Analyzers::StdTime;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,18 +9,18 @@ package GT::Analyzers::StdTime;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
-use GT::Conf;
-use GT::DateTime;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
+use Finance::GeniusTrader::Conf;
+use Finance::GeniusTrader::DateTime;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("StdTime[#*]");
 @DEFAULT_ARGS = ("{A:Sum {A:Costs}}");
 
 =head1 NAME
 
-  GT::Analyzers::StdTime - Normalizes the value #arg1 per year
+  Finance::GeniusTrader::Analyzers::StdTime - Normalizes the value #arg1 per year
 
 =head1 DESCRIPTION 
 
@@ -56,11 +56,11 @@ sub calculate {
 
     my $val = $self->{'args'}->get_arg_values($calc, $last, 1);
 
-    GT::Conf::default("Analysis::ReferenceTimeFrame", "year");
-    my $tf_name = GT::Conf::get("Analysis::ReferenceTimeFrame");
+    Finance::GeniusTrader::Conf::default("Analysis::ReferenceTimeFrame", "year");
+    my $tf_name = Finance::GeniusTrader::Conf::get("Analysis::ReferenceTimeFrame");
 
-    my $ref_tf = GT::DateTime::name_to_timeframe($tf_name);
-    my $exp = GT::DateTime::timeframe_ratio($ref_tf, $calc->current_timeframe) 
+    my $ref_tf = Finance::GeniusTrader::DateTime::name_to_timeframe($tf_name);
+    my $exp = Finance::GeniusTrader::DateTime::timeframe_ratio($ref_tf, $calc->current_timeframe) 
 	/ ($last - $first + 1);
     $val = (($val + 1) ** $exp) - 1;
 

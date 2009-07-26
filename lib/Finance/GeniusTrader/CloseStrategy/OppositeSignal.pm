@@ -1,4 +1,4 @@
-package GT::CloseStrategy::OppositeSignal;
+package Finance::GeniusTrader::CloseStrategy::OppositeSignal;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,12 +9,12 @@ package GT::CloseStrategy::OppositeSignal;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::CloseStrategy;
+use Finance::GeniusTrader::CloseStrategy;
 
-@ISA = qw(GT::CloseStrategy);
+@ISA = qw(Finance::GeniusTrader::CloseStrategy);
 @NAMES = ("OppositeSignal");
 
-=head1 GT::CloseStrategy::OppositeSignal
+=head1 Finance::GeniusTrader::CloseStrategy::OppositeSignal
 
 This strategy closes the position once the opposite signal has been emitted
 by the system. It will will close a long position on a sell signal and

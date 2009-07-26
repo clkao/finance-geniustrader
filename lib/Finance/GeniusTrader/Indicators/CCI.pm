@@ -1,4 +1,4 @@
-package GT::Indicators::CCI;
+package Finance::GeniusTrader::Indicators::CCI;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,15 +9,15 @@ package GT::Indicators::CCI;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::SMA;
-use GT::Indicators::TP;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::SMA;
+use Finance::GeniusTrader::Indicators::TP;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("CCI[#*]");
 @DEFAULT_ARGS = (20, "{I:Prices HIGH}", "{I:Prices LOW}", "{I:Prices CLOSE}");
 
-=head1 GT::Indicators::CCI
+=head1 Finance::GeniusTrader::Indicators::CCI
 
 =head2 Overview
 
@@ -39,8 +39,8 @@ Lambert recommended using 1/3 of a complete cycle (low to low or high to high) a
 
 =head2 Example
 
-GT::Indicators::CCI->new()
-GT::Indicators::CCI->new([25])
+Finance::GeniusTrader::Indicators::CCI->new()
+Finance::GeniusTrader::Indicators::CCI->new([25])
 
 =head2 Note
 
@@ -66,14 +66,14 @@ sub initialize {
     my $tp = "{I:TP " . $self->{'args'}->get_arg_names(2) . " " .
       $self->{'args'}->get_arg_names(3) . " " .
 	$self->{'args'}->get_arg_names(4) . "}";
-    $self->{'tp'} = GT::Indicators::TP->new( [ $self->{'args'}->get_arg_names(2),
+    $self->{'tp'} = Finance::GeniusTrader::Indicators::TP->new( [ $self->{'args'}->get_arg_names(2),
 					       $self->{'args'}->get_arg_names(3),
 					       $self->{'args'}->get_arg_names(4)
 					     ] );
-    $self->{'sma'} = GT::Indicators::SMA->new([ $self->{'args'}->get_arg_names(1), $tp ]);
+    $self->{'sma'} = Finance::GeniusTrader::Indicators::SMA->new([ $self->{'args'}->get_arg_names(1), $tp ]);
 }
 
-=head2 GT::Indicators::CCI::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::CCI::calculate($calc, $day)
 
 =cut
 sub calculate {

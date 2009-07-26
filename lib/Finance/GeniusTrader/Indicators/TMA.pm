@@ -1,4 +1,4 @@
-package GT::Indicators::TMA;
+package Finance::GeniusTrader::Indicators::TMA;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,13 +7,13 @@ package GT::Indicators::TMA;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
+use Finance::GeniusTrader::Indicators;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("TMA[#1,#2]");
 @DEFAULT_ARGS = (20, "{I:Prices CLOSE}");
 
-=head1 GT::Indicators::TMA
+=head1 Finance::GeniusTrader::Indicators::TMA
 
 =head2 Overview
 
@@ -25,9 +25,9 @@ TMA(5) = (1/9) * (1 * Close(i) + 2 * Close(i - 1) + 3 * Close(i - 2) + 2 * Close
 
 =head2 Examples
 
-GT::Indicators::TMA->new()
-GT::Indicators::TMA->new([50])
-GT::Indicators::TMA->new([30], {I:Prices OPEN})
+Finance::GeniusTrader::Indicators::TMA->new()
+Finance::GeniusTrader::Indicators::TMA->new([50])
+Finance::GeniusTrader::Indicators::TMA->new([30], {I:Prices OPEN})
 
 =head2 Links
 
@@ -42,7 +42,7 @@ sub initialize {
     $self->add_prices_dependency($self->{'args'}->get_arg_constant(1));
 }
 
-=head2 GT::Indicators::TMA::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::TMA::calculate($calc, $day)
 
 =cut
 sub calculate {

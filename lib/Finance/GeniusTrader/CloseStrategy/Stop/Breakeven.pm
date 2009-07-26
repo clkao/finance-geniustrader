@@ -1,4 +1,4 @@
-package GT::CloseStrategy::Stop::Breakeven;
+package Finance::GeniusTrader::CloseStrategy::Stop::Breakeven;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # Modified 2004 by Oliver Bossert
@@ -10,14 +10,14 @@ package GT::CloseStrategy::Stop::Breakeven;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::CloseStrategy;
-use GT::Prices;
+use Finance::GeniusTrader::CloseStrategy;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::CloseStrategy);
+@ISA = qw(Finance::GeniusTrader::CloseStrategy);
 @NAMES = ("Breakeven[#1,#2]");
 @DEFAULT_ARGS = (5, 2);
 
-=head1 GT::CloseStrategy::Stop::Breakeven
+=head1 Finance::GeniusTrader::CloseStrategy::Stop::Breakeven
 
 =head2 Overview
 

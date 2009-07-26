@@ -1,4 +1,4 @@
-package GT::Signals::Swing::Trend;
+package Finance::GeniusTrader::Signals::Swing::Trend;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,15 +7,15 @@ package GT::Signals::Swing::Trend;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Signals;
-use GT::Prices;
+use Finance::GeniusTrader::Signals;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Signals);
+@ISA = qw(Finance::GeniusTrader::Signals);
 @NAMES = ("TrendUp", "TrendDown");
 
 =pod
 
-=head1 GT::Signals::Swing::Trend
+=head1 Finance::GeniusTrader::Signals::Swing::Trend
 
 =cut
 sub new {

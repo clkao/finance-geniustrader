@@ -1,4 +1,4 @@
-package GT::Graphics::Tools;
+package Finance::GeniusTrader::Graphics::Tools;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -18,18 +18,18 @@ require Exporter;
 		 "color" => [qw(get_color)]
 	       );
 
-use GT::DateTime;
-use GT::Prices;
-use GT::Graphics::Driver;
+use Finance::GeniusTrader::DateTime;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Graphics::Driver;
 #ALL# use Log::Log4perl qw(:easy);
 
-=head1 GT::Graphics::Tools
+=head1 Finance::GeniusTrader::Graphics::Tools
 
 This modules provides several helper functions that can be used in all
 modules.
 
 It provides functions for managing labels on axes that can be imported with
-use GT::Graphics::Tools qw(:axis) :
+use Finance::GeniusTrader::Graphics::Tools qw(:axis) :
 
 =over 4
 
@@ -53,7 +53,7 @@ Return the range resulting of the union of the two given ranges.
 =back
 
 It provides functions to manage colors. They can be imported with
-use GT::Graphics::Tools qw(:color) :
+use Finance::GeniusTrader::Graphics::Tools qw(:color) :
 
 =over 4
 
@@ -76,13 +76,13 @@ sub build_axis_for_timeframe {
     
     my $date = $prices->at(0)->[$DATE];
     my ($prevdate, $newdate);
-    $prevdate = GT::DateTime::convert_date($date, $prices->timeframe,
+    $prevdate = Finance::GeniusTrader::DateTime::convert_date($date, $prices->timeframe,
 					   $timeframe);
     push @axis, [ 0, $period ? $prevdate : $date ];
     for(my $i = 0; $i < $prices->count; $i++) {
 	# Build the date in the new timeframe corresponding to the prices
         # being treated
-        $newdate = GT::DateTime::convert_date($prices->at($i)->[$DATE], 
+        $newdate = Finance::GeniusTrader::DateTime::convert_date($prices->at($i)->[$DATE], 
 					      $prices->timeframe, $timeframe);
 	
         # If the date differs from the previous one then we have completed

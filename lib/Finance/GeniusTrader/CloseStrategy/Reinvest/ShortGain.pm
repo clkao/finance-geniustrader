@@ -1,4 +1,4 @@
-package GT::CloseStrategy::Reinvest::ShortGain;
+package Finance::GeniusTrader::CloseStrategy::Reinvest::ShortGain;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # Modified 2004 by Oliver Bossert
@@ -10,14 +10,14 @@ package GT::CloseStrategy::Reinvest::ShortGain;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::CloseStrategy;
-use GT::Prices;
+use Finance::GeniusTrader::CloseStrategy;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::CloseStrategy);
+@ISA = qw(Finance::GeniusTrader::CloseStrategy);
 @NAMES = ("ReinvestShortGain[#1]");
 @DEFAULT_ARGS = (15);
 
-=head1 GT::CloseStrategy::Reinvest::ShortGain
+=head1 Finance::GeniusTrader::CloseStrategy::Reinvest::ShortGain
 
 In a long position the gains are "automatically" reinvested since the
 initial sum and the gains are on the market. With a short position this

@@ -1,4 +1,4 @@
-package GT::Indicators::QSTICK;
+package Finance::GeniusTrader::Indicators::QSTICK;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,15 +9,15 @@ package GT::Indicators::QSTICK;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::SMA;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::SMA;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("QSTICK[#*]");
 @DEFAULT_ARGS = (10, "{I:Prices CLOSE}", "{I:Prices OPEN}");
 
-=head1 GT::Indicators::QSTICK
+=head1 Finance::GeniusTrader::Indicators::QSTICK
 
 =head2 Overview
 
@@ -40,8 +40,8 @@ QStick Indicator = A-day simple moving average (SMA) of (Close - Open)
 
 =head2 Examples
 
-GT::Indicators::QSTICK->new()
-GT::Indicators::QSTICK->new([20])
+Finance::GeniusTrader::Indicators::QSTICK->new()
+Finance::GeniusTrader::Indicators::QSTICK->new([20])
 
 =head2 Links
 
@@ -56,12 +56,12 @@ sub initialize {
       $self->{'args'}->get_arg_names(3) . "}";
 
     # Initialize the simple moving average (SMA) of (Close - Open)
-    $self->{'qstick'} = GT::Indicators::SMA->new( [$self->{'args'}->get_arg_names(1), $eval] );
+    $self->{'qstick'} = Finance::GeniusTrader::Indicators::SMA->new( [$self->{'args'}->get_arg_names(1), $eval] );
 
     $self->add_indicator_dependency($self->{'qstick'}, 1);
 }
 
-=head2 GT::Indicators::QSTICK::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::QSTICK::calculate($calc, $day)
 
 =cut
 sub calculate {

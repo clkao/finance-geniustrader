@@ -1,4 +1,4 @@
-package GT::CloseStrategy::Reinvest::InWinners;
+package Finance::GeniusTrader::CloseStrategy::Reinvest::InWinners;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # Modified 2004 by Oliver Bossert
@@ -10,14 +10,14 @@ package GT::CloseStrategy::Reinvest::InWinners;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::CloseStrategy;
-use GT::Prices;
+use Finance::GeniusTrader::CloseStrategy;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::CloseStrategy);
+@ISA = qw(Finance::GeniusTrader::CloseStrategy);
 @NAMES = ("ReinvestShortGain[#1]");
 @DEFAULT_ARGS = (15);
 
-=head1 GT::CloseStrategy::Reinvest::InWinners
+=head1 Finance::GeniusTrader::CloseStrategy::Reinvest::InWinners
 
 This Position Manager will reinvest money in winning trades every time they meet a new target. This strategy is based on the famous "Let your profits run and cut your losses" while thinking about trend following systems where it is very profitable to bet more when we catched a "big one" !
 

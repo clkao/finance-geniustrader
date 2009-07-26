@@ -1,4 +1,4 @@
-package GT::PricesTools;
+package Finance::GeniusTrader::PricesTools;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -6,7 +6,7 @@ package GT::PricesTools;
 
 use strict;
 use vars qw(@ISA @EXPORT $DAILY $MONTHLY $YEARLY $WEEKLY);
-use GT::Prices;
+use Finance::GeniusTrader::Prices;
 use Date::Calc qw(Date_to_Days Day_of_Week Week_Number);
 
 require Exporter;
@@ -20,12 +20,12 @@ $WEEKLY = 3;
 
 =head1 NAME
 
-GT::PricesTools - Utility functions for manipulating GT::Prices
+Finance::GeniusTrader::PricesTools - Utility functions for manipulating Finance::GeniusTrader::Prices
 
 =head1 DESCRIPTION
 
 This package provide some simple functions to merge data from an existing
-GT::Prices to a new GT::Prices object. It's especially usefull to convert
+Finance::GeniusTrader::Prices to a new Finance::GeniusTrader::Prices object. It's especially usefull to convert
 daily data to a new time frame (ie: weekly/monthly).
 
 =head2 Examples
@@ -58,7 +58,7 @@ sub convert_prices_in_a_new_time_frame {
     return if not $prices;
     return if !$time_frame;
     
-    my $quotes = GT::Prices->new();
+    my $quotes = Finance::GeniusTrader::Prices->new();
 
     for (my $i = 0; $i < $prices->count(); $i++) {
 
@@ -136,7 +136,7 @@ sub convert_prices_in_a_new_time_frame {
 
 sub select_prices_by_period {
     my ($prices, $first_date, $last_date) = @_;
-    my $quotes = GT::Prices->new();
+    my $quotes = Finance::GeniusTrader::Prices->new();
 
     # Initialize $first_date to the first record's date and $last_date to the last record's date
     # if these arguments are not available
@@ -156,7 +156,7 @@ sub select_prices_by_period {
 	# Split record's date to something usable
 	my ($year, $month, $day) = split(/-/, $prices->at($i)->[$DATE]);
 
-	# Add a record in the new GT::Prices object if (First Date < Record's Date) and (Record's Date < Last Date)
+	# Add a record in the new Finance::GeniusTrader::Prices object if (First Date < Record's Date) and (Record's Date < Last Date)
 	if ( (Date_to_Days($first_date_year, $first_date_month, $first_date_day) <= Date_to_Days($year, $month, $day)) and
 	     (Date_to_Days($year, $month, $day) <= Date_to_Days($last_date_year, $last_date_month, $last_date_day)) ) {
 
@@ -168,7 +168,7 @@ sub select_prices_by_period {
 
 sub multiply_prices_by_number {
     my ($prices, $number) = @_;
-    my $quotes = GT::Prices->new();
+    my $quotes = Finance::GeniusTrader::Prices->new();
     
     for (my $i = 0; $i < $prices->count(); $i++) {
 	$quotes->add_prices([ ($prices->at($i)->[$OPEN] * $number), ($prices->at($i)->[$HIGH] * $number), ($prices->at($i)->[$LOW] * $number), ($prices->at($i)->[$CLOSE] * $number), ($prices->at($i)->[$VOLUME] * $number), $prices->at($i)->[$DATE] ]);
@@ -178,7 +178,7 @@ sub multiply_prices_by_number {
 
 sub divide_prices_by_number {
     my ($prices, $number) = @_;
-    my $quotes = GT::Prices->new();
+    my $quotes = Finance::GeniusTrader::Prices->new();
 
     for (my $i = 0; $i < $prices->count(); $i++) {
 	$quotes->add_prices([ ($prices->at($i)->[$OPEN] / $number), ($prices->at($i)->[$HIGH] / $number), ($prices->at($i)->[$LOW] / $number), ($prices->at($i)->[$CLOSE] / $number), ($prices->at($i)->[$VOLUME] / $number), $prices->at($i)->[$DATE] ]);
@@ -188,7 +188,7 @@ sub divide_prices_by_number {
 
 sub reverse_prices {
     my ($prices) = @_;
-    my $quotes = GT::Prices->new();
+    my $quotes = Finance::GeniusTrader::Prices->new();
     my $max = $prices->count();
     
     for (my $i = 0; $i < $max; $i++) {

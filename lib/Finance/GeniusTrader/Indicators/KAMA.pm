@@ -1,4 +1,4 @@
-package GT::Indicators::KAMA;
+package Finance::GeniusTrader::Indicators::KAMA;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,15 +9,15 @@ package GT::Indicators::KAMA;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
+use Finance::GeniusTrader::Indicators;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("KAMA[#*]");
 @DEFAULT_ARGS = (21, 2, 30, "{I:Prices CLOSE}");
 
 =head1 NAME
 
-GT::Indicators::KAMA - Perry Kaufmanns Adaptive Moving Average
+Finance::GeniusTrader::Indicators::KAMA - Perry Kaufmanns Adaptive Moving Average
 
 =head1 DESCRIPTION 
 
@@ -45,8 +45,8 @@ The slowest period to be considered.
 
 =head2 Creation
 
- GT::Indicators::KAMA->new()
- GT::Indicators::KAMA->new([10])
+ Finance::GeniusTrader::Indicators::KAMA->new()
+ Finance::GeniusTrader::Indicators::KAMA->new([10])
 
 =cut
 

@@ -1,4 +1,4 @@
-package GT::Indicators::AROON;
+package Finance::GeniusTrader::Indicators::AROON;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Indicators::AROON;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::Generic::MinInPeriod;
-use GT::Indicators::Generic::MaxInPeriod;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::Generic::MinInPeriod;
+use Finance::GeniusTrader::Indicators::Generic::MaxInPeriod;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("AroonUp[#*]","AroonDown[#*]","AroonOsc[#*]");
 @DEFAULT_ARGS = (25, "{I:Prices HIGH}", "{I:Prices LOW}");
 
-=head2 GT::Indicators::AROON
+=head2 Finance::GeniusTrader::Indicators::AROON
 
 =head2 Overview
 
@@ -32,8 +32,8 @@ Aroon(up) for a given time period is calculated by determining how much time (on
 
 =head2 Examples
 
-GT::Indicators::AROON->new()
-GT::Indicators::AROON->new([20])
+Finance::GeniusTrader::Indicators::AROON->new()
+Finance::GeniusTrader::Indicators::AROON->new([20])
 
 =head2 Validation
 
@@ -56,16 +56,16 @@ sub initialize {
     my $self = shift;
 
     my $mstr = "{I:Generic:Eval " .$self->{'args'}->get_arg_names(1) . " + 1}";
-    $self->{'min'} = GT::Indicators::Generic::MinInPeriod->new([ $mstr,
+    $self->{'min'} = Finance::GeniusTrader::Indicators::Generic::MinInPeriod->new([ $mstr,
 								 $self->{'args'}->get_arg_names(3) ] );
-    $self->{'max'} = GT::Indicators::Generic::MaxInPeriod->new([ $mstr,
+    $self->{'max'} = Finance::GeniusTrader::Indicators::Generic::MaxInPeriod->new([ $mstr,
 								 $self->{'args'}->get_arg_names(2) ] );
 
     $self->add_indicator_dependency($self->{'min'}, 1);
     $self->add_indicator_dependency($self->{'max'}, 1);
 }
 
-=head2 GT::Indicators::AROON::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::AROON::calculate($calc, $day)
 
 =cut
 sub calculate {

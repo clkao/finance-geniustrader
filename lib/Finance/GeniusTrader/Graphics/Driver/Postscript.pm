@@ -1,18 +1,18 @@
-package GT::Graphics::Driver::Postscript;
+package Finance::GeniusTrader::Graphics::Driver::Postscript;
 
 # Copyright 2004 Oliver Bossert
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
 use strict;
-use GT::Graphics::Driver;
-use GT::Graphics::Zone;
+use Finance::GeniusTrader::Graphics::Driver;
+use Finance::GeniusTrader::Graphics::Zone;
 use PostScript::Simple;
-use GT::Conf;
+use Finance::GeniusTrader::Conf;
 
-our @ISA = qw(GT::Graphics::Driver);
+our @ISA = qw(Finance::GeniusTrader::Graphics::Driver);
 
-=head1 GT::Graphics::Driver::Postscript
+=head1 Finance::GeniusTrader::Graphics::Driver::Postscript
 
 This driver implements the drawing primitives using the PostScripts::Simple-module.
 
@@ -41,8 +41,8 @@ sub line {
     my ($self, $p, $x1, $y1, $x2, $y2, $color) = @_;
     my ($xpt1, $ypt1) = _convert_coord($p, $x1, $y1);
     my ($xpt2, $ypt2) = _convert_coord($p, $x2, $y2);
-    GT::Conf::default("Graphic::Linewidth", "1");
-    $self->{'linewidth'} = GT::Conf::get("Graphic::Linewidth");
+    Finance::GeniusTrader::Conf::default("Graphic::Linewidth", "1");
+    $self->{'linewidth'} = Finance::GeniusTrader::Conf::get("Graphic::Linewidth");
 
     $p->{'img'}->setlinewidth( $self->{'linewidth'} );
     $p->{'img'}->line($xpt1, $ypt1, $xpt2, $ypt2, _get_color($p, $color));

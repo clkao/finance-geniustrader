@@ -1,4 +1,4 @@
-package GT::DB::genericdbi;
+package Finance::GeniusTrader::DB::genericdbi;
 
 # Copyright 2005 João Antunes Costa
 # This file is distributed under the terms of the General Public License
@@ -7,16 +7,16 @@ package GT::DB::genericdbi;
 use strict;
 use vars qw(@ISA);
 
-use GT::DB;
-use GT::Conf;
-use GT::DateTime qw();
+use Finance::GeniusTrader::DB;
+use Finance::GeniusTrader::Conf;
+use Finance::GeniusTrader::DateTime qw();
 use DBI;
 
-@ISA = qw(GT::DB);
+@ISA = qw(Finance::GeniusTrader::DB);
 
 =head1 NAME
 
-GT::DB::genericdbi - Access to any database of quotes, as long
+Finance::GeniusTrader::DB::genericdbi - Access to any database of quotes, as long
 as a dbi driver is available
 
 =head1 DESCRIPTION
@@ -67,7 +67,7 @@ Example:
 
 =over
 
-=item C<< GT::DB::genericdbi->new() >>
+=item C<< Finance::GeniusTrader::DB::genericdbi->new() >>
 
 =cut
 sub new {
@@ -75,24 +75,24 @@ sub new {
     my $class = ref($type) || $type;
 	my $self = shift;
 
-    GT::Conf::default("DB::genericdbi::dbhost", "");  #aka localhost
-    GT::Conf::default("DB::genericdbi::dbport", "");  #aka std port
-    GT::Conf::default("DB::genericdbi::dbuser", "");  #aka current user
-    GT::Conf::default("DB::genericdbi::dbpasswd", "");#aka user is already identified
-    GT::Conf::default("DB::genericdbi::db", "mysql");
+    Finance::GeniusTrader::Conf::default("DB::genericdbi::dbhost", "");  #aka localhost
+    Finance::GeniusTrader::Conf::default("DB::genericdbi::dbport", "");  #aka std port
+    Finance::GeniusTrader::Conf::default("DB::genericdbi::dbuser", "");  #aka current user
+    Finance::GeniusTrader::Conf::default("DB::genericdbi::dbpasswd", "");#aka user is already identified
+    Finance::GeniusTrader::Conf::default("DB::genericdbi::db", "mysql");
 
-	my $dbdriver= GT::Conf::get("DB::genericdbi::db");
-	my $dbname	= GT::Conf::get("DB::genericdbi::dbname");
+	my $dbdriver= Finance::GeniusTrader::Conf::get("DB::genericdbi::db");
+	my $dbname	= Finance::GeniusTrader::Conf::get("DB::genericdbi::dbname");
 
 	die("Invalid configuration. Please specify a valid dbi driver in your options file (DB::genericdbi::db)") unless ($dbdriver);
 	die("Invalid configuration. Please specify a valid database name in your options file (DB::genericdbi::dbname)") unless ($dbname);
 
 	eval "use DBD::" . $dbdriver . ";";
 
-	my $dbhost	= GT::Conf::get("DB::genericdbi::dbhost");
-	my $dbport	= GT::Conf::get("DB::genericdbi::dbport");
-	my $dbuser	= GT::Conf::get("DB::genericdbi::dbuser");
-	my $dbpasswd= GT::Conf::get("DB::genericdbi::dbpasswd");
+	my $dbhost	= Finance::GeniusTrader::Conf::get("DB::genericdbi::dbhost");
+	my $dbport	= Finance::GeniusTrader::Conf::get("DB::genericdbi::dbport");
+	my $dbuser	= Finance::GeniusTrader::Conf::get("DB::genericdbi::dbuser");
+	my $dbpasswd= Finance::GeniusTrader::Conf::get("DB::genericdbi::dbpasswd");
 
     my $connect_string = "dbi:$dbdriver:dbname=$dbname";
 	$connect_string .= ";host=$dbhost" if ($dbhost);
@@ -118,7 +118,7 @@ sub disconnect {
 
 =item C<< $db->get_prices($code, $timeframe) >>
 
-Returns a GT::Prices object containing all known prices for the symbol $code.
+Returns a Finance::GeniusTrader::Prices object containing all known prices for the symbol $code.
 
 =cut
 sub get_prices {
@@ -128,22 +128,22 @@ sub get_prices {
 
 =item C<< $db->get_last_prices($code, $limit, $timeframe) >>
 
-Returns a GT::Prices object containing the $limit last known prices for
+Returns a Finance::GeniusTrader::Prices object containing the $limit last known prices for
 the symbol $code in the given $timeframe.
 
 =cut
 sub get_last_prices {
     my ($self, $code, $limit, $timeframe) = @_;
-    $timeframe = $GT::DateTime::DAY unless ($timeframe);
+    $timeframe = $Finance::GeniusTrader::DateTime::DAY unless ($timeframe);
     $limit = 99999999 if ($limit==-1);
 
-    my $q = GT::Prices->new($limit);
+    my $q = Finance::GeniusTrader::Prices->new($limit);
     $q->set_timeframe($timeframe);
 
-    my $sql = GT::Conf::get("DB::genericdbi::prices_sql::$timeframe", GT::Conf::get('DB::genericdbi::prices_sql'));
+    my $sql = Finance::GeniusTrader::Conf::get("DB::genericdbi::prices_sql::$timeframe", Finance::GeniusTrader::Conf::get('DB::genericdbi::prices_sql'));
     die("Invalid configuration. You must specify a valid prices sql statment for your database in the options file") if (!defined($sql));
     $sql =~ s/\$code/$code/;
-    my $tf_map_value = GT::Conf::get("DB::genericdbi::tf_map::$timeframe",$timeframe);
+    my $tf_map_value = Finance::GeniusTrader::Conf::get("DB::genericdbi::tf_map::$timeframe",$timeframe);
     $sql =~ s/\$timeframe/$tf_map_value/;
     $sql =~ s/\$limit/$limit/;
 
@@ -166,7 +166,7 @@ Returns the name of the stock designated by $code.
 sub get_db_name {
     my ($self, $code) = @_;
 
-    my $sql = GT::Conf::get("DB::genericdbi::name_sql") || die("Invalid configuration. You must specify a valid name_sql sql statment for your database in the options file");
+    my $sql = Finance::GeniusTrader::Conf::get("DB::genericdbi::name_sql") || die("Invalid configuration. You must specify a valid name_sql sql statment for your database in the options file");
 	$sql =~ s/\$code/$code/;
 
     my $sth = $self->{'_dbh'}->prepare($sql) || die $self->{'_dbh'}->errstr;

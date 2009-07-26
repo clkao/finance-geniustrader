@@ -1,4 +1,4 @@
-package GT::Analyzers::OpenDate;
+package Finance::GeniusTrader::Analyzers::OpenDate;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::OpenDate;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("OpenDate[#*]");
 @DEFAULT_ARGS = ();
 
 =head1 NAME
 
-  GT::Analyzers::OpenDate - The date where the trade was opened
+  Finance::GeniusTrader::Analyzers::OpenDate - The date where the trade was opened
 
 =head1 DESCRIPTION 
 

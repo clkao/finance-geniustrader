@@ -1,4 +1,4 @@
-package GT::CloseStrategy::Systems::TFS;
+package Finance::GeniusTrader::CloseStrategy::Systems::TFS;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,11 +7,11 @@ package GT::CloseStrategy::Systems::TFS;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Prices;
-use GT::CloseStrategy;
-use GT::Indicators::TETHER;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::CloseStrategy;
+use Finance::GeniusTrader::Indicators::TETHER;
 
-@ISA = qw(GT::CloseStrategy);
+@ISA = qw(Finance::GeniusTrader::CloseStrategy);
 @NAMES = ("TFS[#1]");
 
 =head1 CloseStrategy of Trend Following System (TFS)
@@ -30,7 +30,7 @@ sub new {
 sub initialize {
     my ($self) = @_;
 
-    $self->{'tether'} = GT::Indicators::TETHER->new([ $self->{'args'}[0] ]);
+    $self->{'tether'} = Finance::GeniusTrader::Indicators::TETHER->new([ $self->{'args'}[0] ]);
 
     $self->add_indicator_dependency($self->{'tether'}, 2);
     $self->add_prices_dependency(1);

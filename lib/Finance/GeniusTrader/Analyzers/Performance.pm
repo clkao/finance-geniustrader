@@ -1,4 +1,4 @@
-package GT::Analyzers::Performance;
+package Finance::GeniusTrader::Analyzers::Performance;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::Performance;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("Performance[#*]");
 @DEFAULT_ARGS = ("{A:NetGainPercent}", "{A:OpenPrice}");
 
 =head1 NAME
 
-  GT::Analyzers::Performance - The Performance of the trades
+  Finance::GeniusTrader::Analyzers::Performance - The Performance of the trades
 
 =head1 DESCRIPTION 
 

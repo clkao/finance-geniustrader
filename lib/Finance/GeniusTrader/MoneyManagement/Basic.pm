@@ -1,4 +1,4 @@
-package GT::MoneyManagement::Basic;
+package Finance::GeniusTrader::MoneyManagement::Basic;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,13 +7,13 @@ package GT::MoneyManagement::Basic;
 use strict;
 use vars qw(@NAMES @ISA);
 
-use GT::MoneyManagement;
-use GT::Prices;
+use Finance::GeniusTrader::MoneyManagement;
+use Finance::GeniusTrader::Prices;
 
 @NAMES = ("Basic");
-@ISA = qw(GT::MoneyManagement);
+@ISA = qw(Finance::GeniusTrader::MoneyManagement);
 
-=head1 GT::MoneyManagement::Basic
+=head1 Finance::GeniusTrader::MoneyManagement::Basic
 
 Basic and dumb money management rules. Invest all cash available (provided
 that no marged position block the cash - in this money management rule

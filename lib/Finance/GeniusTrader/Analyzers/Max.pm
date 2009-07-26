@@ -1,4 +1,4 @@
-package GT::Analyzers::Max;
+package Finance::GeniusTrader::Analyzers::Max;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::Max;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("Max[#*]");
 @DEFAULT_ARGS = ("{A:Costs}");
 
 =head1 NAME
 
-  GT::Analyzers::Max - Calculates the Maximum of Arg1
+  Finance::GeniusTrader::Analyzers::Max - Calculates the Maximum of Arg1
 
 =head1 DESCRIPTION 
 

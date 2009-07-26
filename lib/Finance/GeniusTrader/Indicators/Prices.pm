@@ -1,4 +1,4 @@
-package GT::Indicators::Prices;
+package Finance::GeniusTrader::Indicators::Prices;
 
 # Copyright 2000-2003 Raphaël Hertzog
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Indicators::Prices;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Indicators;
-use GT::Prices;
-use GT::Eval;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Eval;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("Prices[#*]");
 
 =head1 NAME
 
-GT::Indicators::Prices - Return the prices/volume/date of any share
+Finance::GeniusTrader::Indicators::Prices - Return the prices/volume/date of any share
 
 =head1 DESCRIPTION
 

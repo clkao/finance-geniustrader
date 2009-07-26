@@ -1,4 +1,4 @@
-package GT::Analyzers::ProfitFactorGT;
+package Finance::GeniusTrader::Analyzers::ProfitFactorGT;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::ProfitFactorGT;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("ProfitFactorGT[#*]");
 @DEFAULT_ARGS = ("{A:AvgGain}", "{A:AvgLoss}");
 
 =head1 NAME
 
-  GT::Analyzers::Profitfactor - Calculates the profitfactor
+  Finance::GeniusTrader::Analyzers::Profitfactor - Calculates the profitfactor
 
 =head1 DESCRIPTION 
 

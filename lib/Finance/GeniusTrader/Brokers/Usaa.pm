@@ -1,4 +1,4 @@
-package GT::Brokers::Usaa;
+package Finance::GeniusTrader::Brokers::Usaa;
 ## Usaa.pm
 ## $Id$
 ## Copyright (C) 2003 Chris Beggy
@@ -36,14 +36,14 @@ package GT::Brokers::Usaa;
 use strict;
 use vars qw(@NAMES @ISA);
 
-use GT::Brokers;
-use GT::Eval;
-use GT::Conf;
+use Finance::GeniusTrader::Brokers;
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::Conf;
 
 @NAMES = ("Usaa[#1]");
-@ISA = qw(GT::Brokers);
+@ISA = qw(Finance::GeniusTrader::Brokers);
 
-=head1 GT::Brokers::Usaa
+=head1 Finance::GeniusTrader::Brokers::Usaa
 
 =head2 Overview
 
@@ -68,8 +68,8 @@ sub new {
     my $args = shift;
     my $option = "Découverte";
     
-    if (GT::Conf::get("Brokers::SelfTrade::Forfait")) {
-	$option = GT::Conf::get("Brokers::SelfTrade::Forfait");
+    if (Finance::GeniusTrader::Conf::get("Brokers::SelfTrade::Forfait")) {
+	$option = Finance::GeniusTrader::Conf::get("Brokers::SelfTrade::Forfait");
     }
     
     my $self = { 'args' => defined($args) ? $args : [ $option ] };

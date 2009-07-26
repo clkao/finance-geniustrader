@@ -1,4 +1,4 @@
-package GT::Analyzers::R4;
+package Finance::GeniusTrader::Analyzers::R4;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::R4;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("R4[#*]");
 @DEFAULT_ARGS = ("{A:WinRatio}", "{A:AvgNZ {A:Gain}}", "{A:AvgNZ {A:Losses}}", "{A:InitSum}" );
 
 =head1 NAME
 
-  GT::Analyzers::AvgCosts - Average Costs per trade
+  Finance::GeniusTrader::Analyzers::AvgCosts - Average Costs per trade
 
 =head1 DESCRIPTION 
 

@@ -1,4 +1,4 @@
-package GT::Indicators::TR;
+package Finance::GeniusTrader::Indicators::TR;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,17 +9,17 @@ package GT::Indicators::TR;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
-use GT::Tools qw(:math);
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Tools qw(:math);
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("TR[#*]");
 @DEFAULT_ARGS = ("{I:Prices HIGH}", "{I:Prices LOW}", "{I:Prices CLOSE}");
 
 =head1 NAME
 
-GT::Indicators::TR - True Range
+Finance::GeniusTrader::Indicators::TR - True Range
 
 =head1 DESCRIPTION
 

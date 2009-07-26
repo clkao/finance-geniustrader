@@ -1,4 +1,4 @@
-package GT::Indicators::PERF;
+package Finance::GeniusTrader::Indicators::PERF;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,15 +7,15 @@ package GT::Indicators::PERF;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Tools;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Tools;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("PERF[#1,#2]");
 @DEFAULT_ARGS = (0, "{I:Prices CLOSE}");
 
-=head1 GT::Indicators::PERF
+=head1 Finance::GeniusTrader::Indicators::PERF
 
 The performance indicator display a security's price performance from
 a reference day as a percentage. If the market is not available for
@@ -24,10 +24,10 @@ the reference day, use nearest preceding day.
 Note: The day must be given in GT internal format and must match the timeframe.
 
 Example :
-GT::Indicators::PERF->new(["2001-09-22"]);
-GT::Indicators::PERF->new(["2001-09-22", "{I:Prices VOLUME}"]);
+Finance::GeniusTrader::Indicators::PERF->new(["2001-09-22"]);
+Finance::GeniusTrader::Indicators::PERF->new(["2001-09-22", "{I:Prices VOLUME}"]);
 
-=head2 GT::Indicators::PERF::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::PERF::calculate($calc, $day)
 
 =cut
 

@@ -1,4 +1,4 @@
-package GT::DateTime::Tick;
+package Finance::GeniusTrader::DateTime::Tick;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # Copyright 2005 João Antunes Costa
@@ -8,10 +8,10 @@ package GT::DateTime::Tick;
 use strict;
 use vars qw();
 
-use GT::DateTime;
+use Finance::GeniusTrader::DateTime;
 use Time::Local;
 
-=head1 GT::DateTime::Tick
+=head1 Finance::GeniusTrader::DateTime::Tick
 
 This module treat dates describing ticks. They have the following format :
 YYYY-MM-DD HH:NN:SS

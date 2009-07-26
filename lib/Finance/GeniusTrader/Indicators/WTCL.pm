@@ -1,4 +1,4 @@
-package GT::Indicators::WTCL;
+package Finance::GeniusTrader::Indicators::WTCL;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,14 +9,14 @@ package GT::Indicators::WTCL;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("WTCL[#1]");
 @DEFAULT_ARGS=(2, "{I:Prices HIGH}", "{I:Prices LOW}", "{I:Prices CLOSE}");
 
-=head1 GT::Indicators::WTCL
+=head1 Finance::GeniusTrader::Indicators::WTCL
 
 =head2 Overview
 
@@ -44,7 +44,7 @@ sub initialize {
     $self->add_arg_dependency(4, 1);
 }
 
-=head2 GT::Indicators::WTCL::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::WTCL::calculate($calc, $day)
 
 =cut
 sub calculate {

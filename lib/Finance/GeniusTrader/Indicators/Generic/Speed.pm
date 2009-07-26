@@ -1,4 +1,4 @@
-package GT::Indicators::Generic::Speed;
+package Finance::GeniusTrader::Indicators::Generic::Speed;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,18 +9,18 @@ package GT::Indicators::Generic::Speed;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
-use GT::Tools qw(:generic);
-use GT::Eval;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Tools qw(:generic);
+use Finance::GeniusTrader::Eval;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("Speed[#*]","PercentSpeed[#*]");
 @DEFAULT_ARGS = ("{I:Prices CLOSE}");
 
 =head1 NAME
 
-GT::Indicators::Generic::Speed - Speed of a indicator
+Finance::GeniusTrader::Indicators::Generic::Speed - Speed of a indicator
 
 =head1 DESCRIPTION
 

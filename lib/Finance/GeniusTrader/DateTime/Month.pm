@@ -1,4 +1,4 @@
-package GT::DateTime::Month;
+package Finance::GeniusTrader::DateTime::Month;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,11 +7,11 @@ package GT::DateTime::Month;
 use strict;
 use vars qw();
 
-use GT::DateTime;
+use Finance::GeniusTrader::DateTime;
 #ALL# use Log::Log4perl qw(:easy);
 use Time::Local;
 
-=head1 GT::DateTime::Month
+=head1 Finance::GeniusTrader::DateTime::Month
 
 This module treat dates describing a month. They have the following format :
 YYYY-MM
@@ -36,7 +36,7 @@ sub timeframe_ratio {
 
     $tf == $DAY && return 30 * 5 / 7;
     $tf == $WEEK && return 30 / 7;
-    return GT::DateTime::timeframe_ratio($DAY, $tf) * 30 * 5 / 7;
+    return Finance::GeniusTrader::DateTime::timeframe_ratio($DAY, $tf) * 30 * 5 / 7;
 }
 
 1;

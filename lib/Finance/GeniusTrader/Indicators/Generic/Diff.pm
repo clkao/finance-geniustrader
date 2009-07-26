@@ -1,4 +1,4 @@
-package GT::Indicators::Generic::Diff;
+package Finance::GeniusTrader::Indicators::Generic::Diff;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,18 +9,18 @@ package GT::Indicators::Generic::Diff;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
-use GT::Tools qw(:math);
-use GT::ArgsTree;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Tools qw(:math);
+use Finance::GeniusTrader::ArgsTree;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("Diff[#*]");
 @DEFAULT_ARGS = ("{I:Prices CLOSE}", 1);
 
 =head1 NAME
 
-GT::Indicators::Generic::Diff - Difference between two days
+Finance::GeniusTrader::Indicators::Generic::Diff - Difference between two days
 
 =head1 DESCRIPTION 
 

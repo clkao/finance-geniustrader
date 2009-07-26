@@ -1,4 +1,4 @@
-package GT::Indicators::Generic::Eval;
+package Finance::GeniusTrader::Indicators::Generic::Eval;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,17 +9,17 @@ package GT::Indicators::Generic::Eval;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Indicators;
-use GT::Prices;
-use GT::Tools qw(:math);
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Tools qw(:math);
 use Math::Trig;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("Eval[#*]");
 
 =head1 NAME
 
-GT::Indicators::Generic::Eval - Evaluate the given expression
+Finance::GeniusTrader::Indicators::Generic::Eval - Evaluate the given expression
 
 =head1 DESCRIPTION
 

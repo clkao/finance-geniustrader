@@ -1,4 +1,4 @@
-package GT::Graphics::DataSource::PortfolioEvaluation;
+package Finance::GeniusTrader::Graphics::DataSource::PortfolioEvaluation;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,20 +7,20 @@ package GT::Graphics::DataSource::PortfolioEvaluation;
 use strict;
 use vars qw(@ISA);
 
-@ISA = qw(GT::Graphics::DataSource);
+@ISA = qw(Finance::GeniusTrader::Graphics::DataSource);
 
-use GT::Eval;
-use GT::CacheValues;
-use GT::Prices;
-use GT::Graphics::DataSource;
-use GT::Tools qw(:math);
-use GT::Tools qw(extract_object_number);
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::CacheValues;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Graphics::DataSource;
+use Finance::GeniusTrader::Tools qw(:math);
+use Finance::GeniusTrader::Tools qw(extract_object_number);
 
-=head1 GT::Graphics::DataSource::PortfolioEvaluation
+=head1 Finance::GeniusTrader::Graphics::DataSource::PortfolioEvaluation
 
 This datasource provides the evaluation of a portfolio.
 
-=head2 GT::Graphics::DataSource::PortfolioEvaluation->new($calc, $portfolio)
+=head2 Finance::GeniusTrader::Graphics::DataSource::PortfolioEvaluation->new($calc, $portfolio)
 
 To create a new portfolio evalution datasource object, you need to give a
 calculator and a portfolio as parameters.

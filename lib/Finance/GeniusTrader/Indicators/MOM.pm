@@ -1,4 +1,4 @@
-package GT::Indicators::MOM;
+package Finance::GeniusTrader::Indicators::MOM;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,18 +7,18 @@ package GT::Indicators::MOM;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
-use GT::ArgsTree;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::ArgsTree;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("MOM[#*]");
 @DEFAULT_ARGS = (12, "{I:Prices CLOSE}");
 
-=head2 GT::Indicators::MOM
+=head2 Finance::GeniusTrader::Indicators::MOM
 
-The standard Momentum is the Momentum 12 days : GT::Indicators::MOM->new()
-If you need a non standard Momentum use for example : GT::Indicators::MOM->new([9]) or GT::Indicators::MOM->new([25])
+The standard Momentum is the Momentum 12 days : Finance::GeniusTrader::Indicators::MOM->new()
+If you need a non standard Momentum use for example : Finance::GeniusTrader::Indicators::MOM->new([9]) or Finance::GeniusTrader::Indicators::MOM->new([25])
 
 =cut
 
@@ -27,7 +27,7 @@ sub initialize {
 }
 
 
-=head2 GT::Indicators::MOM::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::MOM::calculate($calc, $day)
 
 =cut
 sub calculate {

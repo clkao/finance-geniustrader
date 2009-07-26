@@ -1,4 +1,4 @@
-package GT::Indicators::STO;
+package Finance::GeniusTrader::Indicators::STO;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # Copyright 2008 by Karsten Wipple and Thomas Weigert
@@ -14,19 +14,19 @@ package GT::Indicators::STO;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::SMA;
-use GT::Indicators::Generic::MinInPeriod;
-use GT::Indicators::Generic::MaxInPeriod;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::SMA;
+use Finance::GeniusTrader::Indicators::Generic::MinInPeriod;
+use Finance::GeniusTrader::Indicators::Generic::MaxInPeriod;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("\%K Fast[#1]","\%D Fast[#1,#2]","\%K Slow[#1,#3]","\%D Slow[#1,#3,#4]");
 @DEFAULT_ARGS = (5, 3, 3, 3, "{I:Prices HIGH}", "{I:Prices LOW}", "{I:Prices CLOSE}" );
 
 =pod
 
-=head1 GT::Indicators::STO
+=head1 Finance::GeniusTrader::Indicators::STO
 
 =head2 Overview
 
@@ -73,8 +73,8 @@ rather than a SMA. Metastock displays %K Slow and %D Slow.
 
 =head2 Examples
 
-GT::Indicators::STO->new()
-GT::Indicators::STO->new([14, 3, 3, 3])
+Finance::GeniusTrader::Indicators::STO->new()
+Finance::GeniusTrader::Indicators::STO->new([14, 3, 3, 3])
 
 =head2 Links
 
@@ -87,21 +87,21 @@ sub initialize {
     my $self = shift;
     
     # We need to call MIN and MAX first
-    $self->{'min'} = GT::Indicators::Generic::MinInPeriod->new([ $self->{'args'}->get_arg_names(1), 
+    $self->{'min'} = Finance::GeniusTrader::Indicators::Generic::MinInPeriod->new([ $self->{'args'}->get_arg_names(1), 
 								 $self->{'args'}->get_arg_names(6)  ]);
-    $self->{'max'} = GT::Indicators::Generic::MaxInPeriod->new([ $self->{'args'}->get_arg_names(1), 
+    $self->{'max'} = Finance::GeniusTrader::Indicators::Generic::MaxInPeriod->new([ $self->{'args'}->get_arg_names(1), 
 								 $self->{'args'}->get_arg_names(5)  ]);
 
     # Initialize %D Fast
-    $self->{'%d_fast'} = GT::Indicators::SMA->new([ $self->{'args'}->get_arg_names(2), 
+    $self->{'%d_fast'} = Finance::GeniusTrader::Indicators::SMA->new([ $self->{'args'}->get_arg_names(2), 
 			    "{I:Generic:ByName " . $self->get_name(0) . "}" ]);
 
     # Initialize %K Slow
-    $self->{'%k_slow'} = GT::Indicators::SMA->new([ $self->{'args'}->get_arg_names(3), 
+    $self->{'%k_slow'} = Finance::GeniusTrader::Indicators::SMA->new([ $self->{'args'}->get_arg_names(3), 
 			    "{I:Generic:ByName " . $self->get_name(0) . "}" ]);
 
     # Initialize %D Slow
-    $self->{'%d_slow'} = GT::Indicators::SMA->new([ $self->{'args'}->get_arg_names(4),
+    $self->{'%d_slow'} = Finance::GeniusTrader::Indicators::SMA->new([ $self->{'args'}->get_arg_names(4),
 			    "{I:Generic:ByName " . $self->{'%k_slow'}->get_name(0) . "}" ]);
 
     # Now add dependencies
@@ -115,7 +115,7 @@ sub initialize {
 
 =pod
 
-=head2 GT::Indicators::STO::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::STO::calculate($calc, $day)
 
 =cut
 

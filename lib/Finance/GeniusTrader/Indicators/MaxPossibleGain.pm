@@ -1,4 +1,4 @@
-package GT::Indicators::MaxPossibleGain;
+package Finance::GeniusTrader::Indicators::MaxPossibleGain;
 
 # Copyright 2000-2002 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,18 +9,18 @@ package GT::Indicators::MaxPossibleGain;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
-use GT::Tools qw(:math);
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Tools qw(:math);
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("MaxPossibleGain[#*]", "MaxPossibleGainDays[#*]");
 @DEFAULT_ARGS = (20, "{I:Prices HIGH}");
 
 
 =head1 NAME
 
-GT::Indicators::MaxPossibleGain - Shows the maximal Gain for a long-strategy
+Finance::GeniusTrader::Indicators::MaxPossibleGain - Shows the maximal Gain for a long-strategy
 
 =head1 DESCRIPTION
 

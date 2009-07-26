@@ -1,4 +1,4 @@
-package GT::Indicators::IFISH;
+package Finance::GeniusTrader::Indicators::IFISH;
 
 # Copyright 2008 Karsten Wippler
 # Based on and for GeniusTrader (C) 2000-2002 Raphaël Hertzog, Fabien Fulhaber
@@ -12,16 +12,16 @@ package GT::Indicators::IFISH;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::ArgsTree;
-use GT::Indicators;
-use GT::Indicators::EMA;
-use GT::Prices;
+use Finance::GeniusTrader::ArgsTree;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::EMA;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("IFISH[#1]");
 @DEFAULT_ARGS = (9 , 0.1, 50,"{I:RSI 5}" );
 
-=head1 GT::Indicators::IFISH
+=head1 Finance::GeniusTrader::Indicators::IFISH
 
 =head2 Overview
 Remember The Fisher Transform
@@ -56,7 +56,7 @@ http://mesasoftware.com/technicalpapers.htm
 
 =head2 Creation
 
- GT::Indicators::IFISH->new()
+ Finance::GeniusTrader::Indicators::IFISH->new()
 
 
 =cut
@@ -65,7 +65,7 @@ sub initialize {
     my ($self) = @_;
     my $scale = "{I:G:Eval ".  $self->{'args'}->get_arg_names(2) ." * (".
    		  $self->{'args'}->get_arg_names(4) ." - " . $self->{'args'}->get_arg_names(3) . ")}";
-    $self->{'ema1'} = GT::Indicators::EMA->new([ $self->{'args'}->get_arg_names(1) , $scale ]);
+    $self->{'ema1'} = Finance::GeniusTrader::Indicators::EMA->new([ $self->{'args'}->get_arg_names(1) , $scale ]);
 
 
 
@@ -80,7 +80,7 @@ sub initialize {
 
 =pod
 
-=head2 GT::Indicators::SMI::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::SMI::calculate($calc, $day)
 
 =cut
 

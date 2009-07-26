@@ -1,4 +1,4 @@
-package GT::Indicators::DSS;
+package Finance::GeniusTrader::Indicators::DSS;
 
 # Copyright 2002 Oliver Bossert
 # Updated 2006, 2008 by Karsten Wippler, Thomas Weigert
@@ -10,19 +10,19 @@ package GT::Indicators::DSS;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::ArgsTree;
-use GT::Indicators;
-use GT::Indicators::EMA;
-use GT::Indicators::Generic::MinInPeriod;
-use GT::Indicators::Generic::MaxInPeriod;
+use Finance::GeniusTrader::ArgsTree;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::EMA;
+use Finance::GeniusTrader::Indicators::Generic::MinInPeriod;
+use Finance::GeniusTrader::Indicators::Generic::MaxInPeriod;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("DSS-BLAU[#1,#2,#3]");
 @DEFAULT_ARGS = (5,7,3,"{I:Prices HIGH}","{I:Prices LOW}","{I:Prices CLOSE}");
 
 =head1 NAME
 
-GT::Indicators::DSS - Double Smoothed Stochastic (William Blau).
+Finance::GeniusTrader::Indicators::DSS - Double Smoothed Stochastic (William Blau).
 
 
 =head1 DESCRIPTION 
@@ -96,8 +96,8 @@ sub initialize {
     my $min = "{I:Generic:Eval ".$args->get_arg_names(6)." - {I:Generic:MinInPeriod $nb1 ".$args->get_arg_names(5)."}}";
     my $max = "{I:Generic:Eval {I:Generic:MaxInPeriod $nb1 ".$args->get_arg_names(4)."} - {I:Generic:MinInPeriod $nb1 ".$args->get_arg_names(5)."}}";
 
-    $self->{'num'} = GT::Indicators::EMA->new([$nb3, "{I:EMA $nb2 $min}"]);
-    $self->{'den'} = GT::Indicators::EMA->new([$nb3, "{I:EMA $nb2 $max}"]);
+    $self->{'num'} = Finance::GeniusTrader::Indicators::EMA->new([$nb3, "{I:EMA $nb2 $min}"]);
+    $self->{'den'} = Finance::GeniusTrader::Indicators::EMA->new([$nb3, "{I:EMA $nb2 $max}"]);
 
     $self->add_prices_dependency( $nb1 + $nb2 + $nb3 );
     $self->add_indicator_dependency( $self->{'num'}, 1 );

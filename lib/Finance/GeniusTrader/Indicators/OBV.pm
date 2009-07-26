@@ -1,4 +1,4 @@
-package GT::Indicators::OBV;
+package Finance::GeniusTrader::Indicators::OBV;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,13 +7,13 @@ package GT::Indicators::OBV;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Indicators;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("OBV");
 
-=head1 GT::Indicators::OBV
+=head1 Finance::GeniusTrader::Indicators::OBV
 
 =head2 Overview
 
@@ -36,7 +36,7 @@ OBV = Yesterday's OBV
 
 =head2 Example
 
-GT::Indicators::OBV->new()
+Finance::GeniusTrader::Indicators::OBV->new()
 
 =head2 Links
 
@@ -55,7 +55,7 @@ sub initialize {
     $self->add_prices_dependency(2);
 }
 
-=head2 GT::Indicators::OBV::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::OBV::calculate($calc, $day)
 
 =cut
 sub calculate {

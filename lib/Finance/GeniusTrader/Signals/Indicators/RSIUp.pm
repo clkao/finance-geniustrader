@@ -1,4 +1,4 @@
-package GT::Signals::Indicators::RSIUp;
+package Finance::GeniusTrader::Signals::Indicators::RSIUp;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,14 +7,14 @@ package GT::Signals::Indicators::RSIUp;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Signals;
-use GT::Prices;
-use GT::Indicators::RSI;
+use Finance::GeniusTrader::Signals;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Indicators::RSI;
 
-@ISA = qw(GT::Signals);
+@ISA = qw(Finance::GeniusTrader::Signals);
 @NAMES = ("RSIUp[#1,#2]");
 
-=head1 GT::Signals::Indicators::RSIDown
+=head1 Finance::GeniusTrader::Signals::Indicators::RSIDown
 
 Signal when we cross up a limit on the RSI. Limit is 30 by default.
 
@@ -33,7 +33,7 @@ sub new {
 sub initialize {
     my ($self) = @_;
     
-    $self->{'rsi'} = GT::Indicators::RSI->new([ $self->{'args'}[1] ]);
+    $self->{'rsi'} = Finance::GeniusTrader::Indicators::RSI->new([ $self->{'args'}[1] ]);
 
     $self->add_indicator_dependency($self->{'rsi'}, 2);
 }

@@ -1,4 +1,4 @@
-package GT::Analyzers::SumPerformance;
+package Finance::GeniusTrader::Analyzers::SumPerformance;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::SumPerformance;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("SumPerformance[#*]");
 @DEFAULT_ARGS = ("{A:Sum {A:NetGain}}", "{A:InitSum}");
 
 =head1 NAME
 
-  GT::Analyzers::SumPerformance - The Sum of the Performance
+  Finance::GeniusTrader::Analyzers::SumPerformance - The Sum of the Performance
 
 =head1 DESCRIPTION 
 

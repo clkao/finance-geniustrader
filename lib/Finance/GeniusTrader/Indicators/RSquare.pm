@@ -1,4 +1,4 @@
-package GT::Indicators::RSquare;
+package Finance::GeniusTrader::Indicators::RSquare;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # standards upgrade and major corrections Copyright 2008 Thomas Weigert
@@ -12,17 +12,17 @@ package GT::Indicators::RSquare;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::BPCorrelation;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::BPCorrelation;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("RSquare[#1, #2]");
 @DEFAULT_ARGS = (14, "{I:Prices CLOSE}");
 
 =pod
 
-=head1 GT::Indicators::RSquare
+=head1 Finance::GeniusTrader::Indicators::RSquare
 
 =head2 Overview
 
@@ -37,7 +37,7 @@ Pwr(Corr(Cum(1),C,14,0),2)
 sub initialize {
     my $self = shift;
 
-    $self->{'correlation'} = GT::Indicators::BPCorrelation->new([ 
+    $self->{'correlation'} = Finance::GeniusTrader::Indicators::BPCorrelation->new([ 
                                  $self->{'args'}->get_arg_constant(1),
                                  '{I:Generic:Cum 1 }',
                                  $self->{'args'}->get_arg_names(2) ]);
@@ -48,7 +48,7 @@ sub initialize {
 
 =pod
 
-=head2 GT::Indicators::RSquare::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::RSquare::calculate($calc, $day)
 
 =cut
 

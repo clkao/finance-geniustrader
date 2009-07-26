@@ -1,4 +1,4 @@
-package GT::Systems::AlwaysInTheMarket;
+package Finance::GeniusTrader::Systems::AlwaysInTheMarket;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,9 +7,9 @@ package GT::Systems::AlwaysInTheMarket;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Systems;
+use Finance::GeniusTrader::Systems;
 
-@ISA = qw(GT::Systems);
+@ISA = qw(Finance::GeniusTrader::Systems);
 @NAMES = ("AlwaysInTheMarket");
 
 =head1 AlwaysInTheMarket Trading System

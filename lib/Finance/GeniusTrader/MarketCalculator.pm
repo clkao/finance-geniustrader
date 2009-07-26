@@ -1,28 +1,28 @@
-package GT::MarketCalculator;
+package Finance::GeniusTrader::MarketCalculator;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
-use GT::CacheValues;
-use GT::MetaInfo;
+use Finance::GeniusTrader::CacheValues;
+use Finance::GeniusTrader::MetaInfo;
 
 =head1 NAME
 
-GT::MarketCalculator - Calculator-like for Markets
+Finance::GeniusTrader::MarketCalculator - Calculator-like for Markets
 
 =head1 DESCRIPTION
 
 THIS OBJECT IS NOT USED ANYWHERE AT THE PRESENT TIME
 
 This is a facility object to ease the collaboration of
-between GT::List, GT::CacheValues and GT::MetaInfo
+between Finance::GeniusTrader::List, Finance::GeniusTrader::CacheValues and Finance::GeniusTrader::MetaInfo
 
 =over
 
-=item C<< my $market = GT::Markets->new($list [, $name]) >>
+=item C<< my $market = Finance::GeniusTrader::Markets->new($list [, $name]) >>
 
-Create a new GT::Markets object with $list used for calculations. The market is associated to market $name.
+Create a new Finance::GeniusTrader::Markets object with $list used for calculations. The market is associated to market $name.
 
 =item C<< $market->indices() >>
 
@@ -32,7 +32,7 @@ Create a new GT::Markets object with $list used for calculations. The market is 
 
 =item C<< $market->metainfo() >>
 
-Return the corresponding object that is part of GT::Markets.
+Return the corresponding object that is part of Finance::GeniusTrader::Markets.
 
 =item C<< $market->set_name($name) >>
 
@@ -52,10 +52,10 @@ sub new {
     my $name = shift || "";
     
     my $self = { '_list' => $list, 'name' => $name };
-    $self->{'_indices'} = GT::CacheValues->new();
-    $self->{'_indicators'}  = GT::CacheValues->new();
-    $self->{'_signals'} = GT::CacheValues->new();
-    $self->{'_metainfo'} = GT::MetaInfo->new();
+    $self->{'_indices'} = Finance::GeniusTrader::CacheValues->new();
+    $self->{'_indicators'}  = Finance::GeniusTrader::CacheValues->new();
+    $self->{'_signals'} = Finance::GeniusTrader::CacheValues->new();
+    $self->{'_metainfo'} = Finance::GeniusTrader::MetaInfo->new();
     
     return bless $self, $class;
 }

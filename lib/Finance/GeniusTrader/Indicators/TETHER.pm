@@ -1,4 +1,4 @@
-package GT::Indicators::TETHER;
+package Finance::GeniusTrader::Indicators::TETHER;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,18 +9,18 @@ package GT::Indicators::TETHER;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::Generic::MinInPeriod;
-use GT::Indicators::Generic::MaxInPeriod;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::Generic::MinInPeriod;
+use Finance::GeniusTrader::Indicators::Generic::MaxInPeriod;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("TETHER[#1]");
 @DEFAULT_ARGS = (50);
 
 =head1 NAME
 
-GT::Indicators::TETHER - Tether Line
+Finance::GeniusTrader::Indicators::TETHER - Tether Line
 
 =head1 DESCRIPTION
 
@@ -36,22 +36,22 @@ The standard Tether Line works with a 50-day parameter : n = 50
 
 =head1 EXAMPLE
 
-GT::Indicators::TETHER->new()
-GT::Indicators::TETHER->new([30])
+Finance::GeniusTrader::Indicators::TETHER->new()
+Finance::GeniusTrader::Indicators::TETHER->new([30])
 
 =cut
 sub initialize {
     my $self = shift;
 
-    $self->{'min'} = GT::Indicators::Generic::MinInPeriod->new([ $self->{'args'}->get_arg_names(1), "{I:Prices LOW}" ]);
-    $self->{'max'} = GT::Indicators::Generic::MaxInPeriod->new([ $self->{'args'}->get_arg_names(1), "{I:Prices HIGH}" ]);
+    $self->{'min'} = Finance::GeniusTrader::Indicators::Generic::MinInPeriod->new([ $self->{'args'}->get_arg_names(1), "{I:Prices LOW}" ]);
+    $self->{'max'} = Finance::GeniusTrader::Indicators::Generic::MaxInPeriod->new([ $self->{'args'}->get_arg_names(1), "{I:Prices HIGH}" ]);
 
     $self->add_indicator_dependency($self->{'min'}, 1);
     $self->add_indicator_dependency($self->{'max'}, 1);
     $self->add_prices_dependency($self->{'args'}->get_arg_constant(1));
 }
 
-=head2 GT::Indicators::TETHER::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::TETHER::calculate($calc, $day)
 
 =cut
 sub calculate {

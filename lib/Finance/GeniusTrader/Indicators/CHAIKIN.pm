@@ -1,4 +1,4 @@
-package GT::Indicators::CHAIKIN;
+package Finance::GeniusTrader::Indicators::CHAIKIN;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,16 +7,16 @@ package GT::Indicators::CHAIKIN;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::ADL;
-use GT::Indicators::EMA;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::ADL;
+use Finance::GeniusTrader::Indicators::EMA;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("CHAIKIN[#1,#2]");
 @DEFAULT_ARGS = (3, 10);
 
-=head2 GT::Indicators::CHAIKIN
+=head2 Finance::GeniusTrader::Indicators::CHAIKIN
 
 =head2 Overview
 
@@ -28,8 +28,8 @@ The formula is the difference between the 3-day exponential moving average and t
 
 =head2 Examples
 
-GT::Indicators::CHAIKIN->new()
-GT::Indicators::CHAIKIN->new([3, 10])
+Finance::GeniusTrader::Indicators::CHAIKIN->new()
+Finance::GeniusTrader::Indicators::CHAIKIN->new([3, 10])
 
 =head2 Links
 
@@ -41,14 +41,14 @@ http://www.equis.com/free/taaz/chaikinosc.html
 sub initialize {
     my $self = shift;
 
-    $self->{'ema1'} = GT::Indicators::EMA->new([ $self->{'args'}->get_arg_names(1), "{I:ADL}"] );
-    $self->{'ema2'} = GT::Indicators::EMA->new([ $self->{'args'}->get_arg_names(2), "{I:ADL}"] );
+    $self->{'ema1'} = Finance::GeniusTrader::Indicators::EMA->new([ $self->{'args'}->get_arg_names(1), "{I:ADL}"] );
+    $self->{'ema2'} = Finance::GeniusTrader::Indicators::EMA->new([ $self->{'args'}->get_arg_names(2), "{I:ADL}"] );
 
     $self->add_indicator_dependency($self->{'ema1'}, 1);
     $self->add_indicator_dependency($self->{'ema2'}, 1);
 }
 
-=head2 GT::Indicators::CHAIKIN::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::CHAIKIN::calculate($calc, $day)
 
 =cut
 sub calculate {

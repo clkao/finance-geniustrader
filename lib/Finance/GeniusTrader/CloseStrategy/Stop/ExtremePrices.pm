@@ -1,4 +1,4 @@
-package GT::CloseStrategy::Stop::ExtremePrices;
+package Finance::GeniusTrader::CloseStrategy::Stop::ExtremePrices;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # Modified 2004 by Oliver Bossert
@@ -10,16 +10,16 @@ package GT::CloseStrategy::Stop::ExtremePrices;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::CloseStrategy;
-use GT::Prices;
-use GT::Indicators::MIN;
-use GT::Indicators::MAX;
+use Finance::GeniusTrader::CloseStrategy;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Indicators::MIN;
+use Finance::GeniusTrader::Indicators::MAX;
 
-@ISA = qw(GT::CloseStrategy);
+@ISA = qw(Finance::GeniusTrader::CloseStrategy);
 @NAMES = ("ExtremePrices[#1,#2,#3]");
 @DEFAULT_ARGS = (20, 1, "{I:Prices CLOSE}");
 
-=head1 GT::CloseStrategy::Stop::ExtremePrices
+=head1 Finance::GeniusTrader::CloseStrategy::Stop::ExtremePrices
 
 This strategy closes the position once the prices have crossed up the
 highest high in a short position and crossed down the highest low in a
@@ -30,8 +30,8 @@ logn position.
 sub initialize {
     my ($self) = @_;
 
-    $self->{'min'} = GT::Indicators::MIN->new([ $self->{'args'}->get_arg_names(1) ]);
-    $self->{'max'} = GT::Indicators::MAX->new([ $self->{'args'}->get_arg_names(1) ]);
+    $self->{'min'} = Finance::GeniusTrader::Indicators::MIN->new([ $self->{'args'}->get_arg_names(1) ]);
+    $self->{'max'} = Finance::GeniusTrader::Indicators::MAX->new([ $self->{'args'}->get_arg_names(1) ]);
 
     $self->add_indicator_dependency($self->{'min'}, 1);
     $self->add_indicator_dependency($self->{'max'}, 1);

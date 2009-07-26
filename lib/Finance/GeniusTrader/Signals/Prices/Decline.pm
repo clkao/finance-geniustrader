@@ -1,4 +1,4 @@
-package GT::Signals::Prices::Decline;
+package Finance::GeniusTrader::Signals::Prices::Decline;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
 # Standards-Version: 1.0
 
-use GT::Signals;
-use GT::Prices;
+use Finance::GeniusTrader::Signals;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Signals);
+@ISA = qw(Finance::GeniusTrader::Signals);
 @NAMES = ("Decline[#1]");
 @DEFAULT_ARGS = (0);
 
 =head1 NAME
 
-GT::Signals::Decline
+Finance::GeniusTrader::Signals::Decline
 
 =head1 DESCRIPTION
 

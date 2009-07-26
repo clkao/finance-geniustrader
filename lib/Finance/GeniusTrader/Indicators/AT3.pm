@@ -1,4 +1,4 @@
-package GT::Indicators::AT3;
+package Finance::GeniusTrader::Indicators::AT3;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,18 +7,18 @@ package GT::Indicators::AT3;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::EMA;
-use GT::Indicators::RSquare;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::EMA;
+use Finance::GeniusTrader::Indicators::RSquare;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("AT3[#1,#2]");
 @DEFAULT_ARGS = (5, 4.1);
 
 =pod
 
-=head1 GT::Indicators::AT3
+=head1 Finance::GeniusTrader::Indicators::AT3
 
 =head2 Overview
 
@@ -54,21 +54,21 @@ sub initialize {
     my $self = shift;
     
     # Initialization of RSquare
-    $self->{'rsquare'} = GT::Indicators::RSquare->new([ $self->{'args'}->get_arg_names(2) ]);
+    $self->{'rsquare'} = Finance::GeniusTrader::Indicators::RSquare->new([ $self->{'args'}->get_arg_names(2) ]);
     
     # Initialize e1, e2, e3, e4, e5 and e6
     my $period = $self->{'args'}->get_arg_names(1);
-    $self->{'e1'} = GT::Indicators::EMA->new([ $period ]);
+    $self->{'e1'} = Finance::GeniusTrader::Indicators::EMA->new([ $period ]);
     
-    $self->{'e2'} = GT::Indicators::EMA->new([ $period, "{I:Generic:ByName " . $self->{'e1'}->get_name . "}" ]);
+    $self->{'e2'} = Finance::GeniusTrader::Indicators::EMA->new([ $period, "{I:Generic:ByName " . $self->{'e1'}->get_name . "}" ]);
     
-    $self->{'e3'} = GT::Indicators::EMA->new([ $period, "{I:Generic:ByName " . $self->{'e2'}->get_name . "}" ]);
+    $self->{'e3'} = Finance::GeniusTrader::Indicators::EMA->new([ $period, "{I:Generic:ByName " . $self->{'e2'}->get_name . "}" ]);
     
-    $self->{'e4'} = GT::Indicators::EMA->new([ $period, "{I:Generic:ByName " . $self->{'e3'}->get_name . "}" ]);
+    $self->{'e4'} = Finance::GeniusTrader::Indicators::EMA->new([ $period, "{I:Generic:ByName " . $self->{'e3'}->get_name . "}" ]);
     
-    $self->{'e5'} = GT::Indicators::EMA->new([ $period, "{I:Generic:ByName " . $self->{'e4'}->get_name . "}" ]);
+    $self->{'e5'} = Finance::GeniusTrader::Indicators::EMA->new([ $period, "{I:Generic:ByName " . $self->{'e4'}->get_name . "}" ]);
     
-    $self->{'e6'} = GT::Indicators::EMA->new([ $period, "{I:Generic:ByName " . $self->{'e5'}->get_name . "}" ]);
+    $self->{'e6'} = Finance::GeniusTrader::Indicators::EMA->new([ $period, "{I:Generic:ByName " . $self->{'e5'}->get_name . "}" ]);
 
     $self->add_indicator_dependency($self->{'e1'}, $period * 5 - 4);
     $self->add_indicator_dependency($self->{'e2'}, $period * 4 - 3);
@@ -81,7 +81,7 @@ sub initialize {
 
 =pod
 
-=head2 GT::Indicators::T3::calculate($calc, $day, $args, $key, $data)
+=head2 Finance::GeniusTrader::Indicators::T3::calculate($calc, $day, $args, $key, $data)
 
 =cut
 

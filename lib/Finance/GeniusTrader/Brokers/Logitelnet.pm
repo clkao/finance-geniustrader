@@ -1,4 +1,4 @@
-package GT::Brokers::Logitelnet;
+package Finance::GeniusTrader::Brokers::Logitelnet;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,14 +9,14 @@ package GT::Brokers::Logitelnet;
 use strict;
 use vars qw(@NAMES @ISA);
 
-use GT::Brokers;
-use GT::Eval;
-use GT::Conf;
+use Finance::GeniusTrader::Brokers;
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::Conf;
 
 @NAMES = ("Logitelnet[#1]");
-@ISA = qw(GT::Brokers);
+@ISA = qw(Finance::GeniusTrader::Brokers);
 
-=head1 GT::Brokers::Logitelnet
+=head1 Finance::GeniusTrader::Brokers::Logitelnet
 
 =head2 Overview
 
@@ -55,8 +55,8 @@ sub calculate_order_commission {
     # Override $TVA if Brokers::TVA is already defined in the user
     # configuration file
 
-    if (GT::Conf::get("Brokers::TVA")) {
-       $TVA = (1 + GT::Conf::get("Brokers::TVA") / 100);
+    if (Finance::GeniusTrader::Conf::get("Brokers::TVA")) {
+       $TVA = (1 + Finance::GeniusTrader::Conf::get("Brokers::TVA") / 100);
     }
 
     if ( (defined($order->quantity) && $order->quantity) and (defined($order->price) && $order->price) ) {

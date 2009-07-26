@@ -1,4 +1,4 @@
-package GT::Indicators::ADX;
+package Finance::GeniusTrader::Indicators::ADX;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -11,22 +11,22 @@ package GT::Indicators::ADX;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::TR;
-use GT::Indicators::SMA;
-use GT::Indicators::Generic::SumDownDiffs;
-use GT::Indicators::Generic::SumUpDiffs;
-use GT::Indicators::Generic::Sum;
-use GT::Prices;
-use GT::Tools qw(:math);
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::TR;
+use Finance::GeniusTrader::Indicators::SMA;
+use Finance::GeniusTrader::Indicators::Generic::SumDownDiffs;
+use Finance::GeniusTrader::Indicators::Generic::SumUpDiffs;
+use Finance::GeniusTrader::Indicators::Generic::Sum;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Tools qw(:math);
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("ADX[#*]","+DMI[#*]","-DMI[#*]","DMI[#*]");
 @DEFAULT_ARGS = (14, "{I:Prices HIGH}", "{I:Prices LOW}", "{I:Prices CLOSE}");
 
 =head1 NAME
 
-GT::Indicators::ADX - ADX
+Finance::GeniusTrader::Indicators::ADX - ADX
 
 =head1 DESCRIPTION
 
@@ -38,8 +38,8 @@ volatility index
 
 =head2 Examples
 
-GT::Indicators::ADX->new()
-GT::Indicators::ADX->new([20])
+Finance::GeniusTrader::Indicators::ADX->new()
+Finance::GeniusTrader::Indicators::ADX->new([20])
 
 =head2 Validation
 
@@ -59,21 +59,21 @@ sub initialize {
     my $self = shift;
 
     # Initilize TR (True Range)
-    $self->{'tr'} = GT::Indicators::TR->new( [ $self->{'args'}->get_arg_names(2), 
+    $self->{'tr'} = Finance::GeniusTrader::Indicators::TR->new( [ $self->{'args'}->get_arg_names(2), 
 					       $self->{'args'}->get_arg_names(3),
 					       $self->{'args'}->get_arg_names(4) ] );
 
-    $self->{'dm-'} = GT::Indicators::Generic::SumDownDiffs->new([ $self->{'args'}->get_arg_names(1), 
+    $self->{'dm-'} = Finance::GeniusTrader::Indicators::Generic::SumDownDiffs->new([ $self->{'args'}->get_arg_names(1), 
 								  $self->{'args'}->get_arg_names(3) ]);
-    $self->{'dm+'} = GT::Indicators::Generic::SumUpDiffs->new([ $self->{'args'}->get_arg_names(1), 
+    $self->{'dm+'} = Finance::GeniusTrader::Indicators::Generic::SumUpDiffs->new([ $self->{'args'}->get_arg_names(1), 
 								$self->{'args'}->get_arg_names(2) ]);
 
     my $tr = "{I:TR " . $self->{'args'}->get_arg_names(2) . " " .
       $self->{'args'}->get_arg_names(3) . " " .
 	$self->{'args'}->get_arg_names(4) . "}";
-    $self->{'sumtr'} = GT::Indicators::Generic::Sum->new([$self->{'args'}->get_arg_names(1),
+    $self->{'sumtr'} = Finance::GeniusTrader::Indicators::Generic::Sum->new([$self->{'args'}->get_arg_names(1),
 							  $tr]);
-    $self->{'sma'} = GT::Indicators::SMA->new([ $self->{'args'}->get_arg_names(1), 
+    $self->{'sma'} = Finance::GeniusTrader::Indicators::SMA->new([ $self->{'args'}->get_arg_names(1), 
 						"{I:Generic:ByName ". $self->get_name(3) . "}" ]);
 
 }

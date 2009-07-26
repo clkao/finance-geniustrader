@@ -1,4 +1,4 @@
-package GT::Brokers::NoCosts;
+package Finance::GeniusTrader::Brokers::NoCosts;
 
 # Copyright 2004 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -7,14 +7,14 @@ package GT::Brokers::NoCosts;
 use strict;
 use vars qw(@NAMES @ISA);
 
-use GT::Brokers;
-use GT::Eval;
-use GT::Conf;
+use Finance::GeniusTrader::Brokers;
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::Conf;
 
 @NAMES = ("NoCosts[]");
-@ISA = qw(GT::Brokers);
+@ISA = qw(Finance::GeniusTrader::Brokers);
 
-=head1 GT::Brokers::NoCosts
+=head1 Finance::GeniusTrader::Brokers::NoCosts
 
 =head2 Overview
 

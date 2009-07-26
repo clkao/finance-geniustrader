@@ -1,4 +1,4 @@
-package GT::Analyzers::Duration;
+package Finance::GeniusTrader::Analyzers::Duration;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::Duration;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("Duration[#*]");
 @DEFAULT_ARGS = ();
 
 =head1 NAME
 
-  GT::Analyzers::Duration - Duration of the trades
+  Finance::GeniusTrader::Analyzers::Duration - Duration of the trades
 
 =head1 DESCRIPTION 
 

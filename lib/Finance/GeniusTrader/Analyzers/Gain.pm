@@ -1,4 +1,4 @@
-package GT::Analyzers::Gain;
+package Finance::GeniusTrader::Analyzers::Gain;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::Gain;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("Gain[#*]");
 @DEFAULT_ARGS = ();
 
 =head1 NAME
 
-  GT::Analyzers::Gain - Gain of each trade
+  Finance::GeniusTrader::Analyzers::Gain - Gain of each trade
 
 =head1 DESCRIPTION 
 

@@ -1,4 +1,4 @@
-package GT::Graphics::DataSource::Close;
+package Finance::GeniusTrader::Graphics::DataSource::Close;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,18 +7,18 @@ package GT::Graphics::DataSource::Close;
 use strict;
 use vars qw(@ISA);
 
-@ISA = qw(GT::Graphics::DataSource);
+@ISA = qw(Finance::GeniusTrader::Graphics::DataSource);
 
-use GT::Prices;
-use GT::Graphics::DataSource;
-use GT::Tools qw(:math);
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Graphics::DataSource;
+use Finance::GeniusTrader::Tools qw(:math);
 
-=head1 GT::Graphics::DataSource::Close
+=head1 Finance::GeniusTrader::Graphics::DataSource::Close
 
 This datasource provides close price information.
-It uses a GT::Prices object as a basis.
+It uses a Finance::GeniusTrader::Prices object as a basis.
 
-=head2 GT::Prices::DataSource::Close->new($prices)
+=head2 Finance::GeniusTrader::Prices::DataSource::Close->new($prices)
 
 Create a new close prices data source.
 

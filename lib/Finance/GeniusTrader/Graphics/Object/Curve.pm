@@ -1,4 +1,4 @@
-package GT::Graphics::Object::Curve;
+package Finance::GeniusTrader::Graphics::Object::Curve;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -6,15 +6,15 @@ package GT::Graphics::Object::Curve;
 
 use strict;
 use vars qw(@ISA);
-@ISA = qw(GT::Graphics::Object);
+@ISA = qw(Finance::GeniusTrader::Graphics::Object);
 
-use GT::Graphics::Graphic;
-use GT::Graphics::Object;
-use GT::Graphics::Driver;
-use GT::Graphics::Tools qw(:color);
-use GT::Conf;
+use Finance::GeniusTrader::Graphics::Graphic;
+use Finance::GeniusTrader::Graphics::Object;
+use Finance::GeniusTrader::Graphics::Driver;
+use Finance::GeniusTrader::Graphics::Tools qw(:color);
+use Finance::GeniusTrader::Conf;
 
-=head1 GT::Graphics::Object::Curve
+=head1 Finance::GeniusTrader::Graphics::Object::Curve
 
 This graphical object display a curve.
 
@@ -23,8 +23,8 @@ This graphical object display a curve.
 sub init {
     my ($self) = @_;
     
-    # Default values ... maybe we should use GT::Conf ?
-    $self->{'fg_color'} = get_color(GT::Conf::get("Graphic::ForegroundColor"));
+    # Default values ... maybe we should use Finance::GeniusTrader::Conf ?
+    $self->{'fg_color'} = get_color(Finance::GeniusTrader::Conf::get("Graphic::ForegroundColor"));
     $self->{'aa'} = 1;
     $self->{'linewidth'} = 1;
 }

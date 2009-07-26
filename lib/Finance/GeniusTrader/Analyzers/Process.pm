@@ -1,4 +1,4 @@
-package GT::Analyzers::Process;
+package Finance::GeniusTrader::Analyzers::Process;
 
 # Copyright 2004 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -6,25 +6,25 @@ package GT::Analyzers::Process;
 
 use strict;
 
-use GT::ArgsTree;
-use GT::Prices;
-use GT::Calculator;
-use GT::Conf;
-use GT::Eval;
-use GT::BackTest::Spool;
-use GT::BackTest;
-use GT::Portfolio;
-use GT::PortfolioManager;
-use GT::DateTime;
-use GT::Tools qw(:conf);
-use GT::Analyzers::Report;
+use Finance::GeniusTrader::ArgsTree;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Calculator;
+use Finance::GeniusTrader::Conf;
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::BackTest::Spool;
+use Finance::GeniusTrader::BackTest;
+use Finance::GeniusTrader::Portfolio;
+use Finance::GeniusTrader::PortfolioManager;
+use Finance::GeniusTrader::DateTime;
+use Finance::GeniusTrader::Tools qw(:conf);
+use Finance::GeniusTrader::Analyzers::Report;
 
 use Compress::Zlib ;
 use Data::Dumper;
 use IO::Handle;
 
-use GT::Brokers::InteractiveBrokers;
-use GT::Brokers::NoCosts;
+use Finance::GeniusTrader::Brokers::InteractiveBrokers;
+use Finance::GeniusTrader::Brokers::NoCosts;
 
 # Uncomment this to use PGPLOT instead of R:
 # use PGPLOT;
@@ -38,7 +38,7 @@ our $myself;
 
 =head1 NAME
 
-  GT::Analyzers::Process
+  Finance::GeniusTrader::Analyzers::Process
 
 =head1 DESCRIPTION
 
@@ -49,7 +49,7 @@ shell to interactively analyze and test portfolios.
 
 =over
 
-=item C<< GT::Analyzers::Process->new() >>
+=item C<< Finance::GeniusTrader::Analyzers::Process->new() >>
 
 =cut
 
@@ -62,7 +62,7 @@ sub new { # Generate a new Object
   my $self = {};
   bless $self, $class;
 
-  $self->{'db'} = create_standard_object("DB::" . GT::Conf::get("DB::module"));
+  $self->{'db'} = create_standard_object("DB::" . Finance::GeniusTrader::Conf::get("DB::module"));
 
   $self->{'VERSION'} = "0.5";
   %{$self->{'config'}} = ( 'code' => '',
@@ -71,7 +71,7 @@ sub new { # Generate a new Object
 			   'expert' => '1',
 			   'last' => 'auto',
 			   'full' => 0,
-			   'broker' => GT::Conf::get("Brokers::module"),
+			   'broker' => Finance::GeniusTrader::Conf::get("Brokers::module"),
 			   'system' => "Systems::Generic {S:Generic:CrossOverUp {I:SMA 20} {I:SMA 60}} " . 
 			               "{S:Generic:CrossOverDown {I:SMA 20} {I:SMA 60}}",
 			   'cs' => "OppositeSignal",
@@ -115,7 +115,7 @@ sub new { # Generate a new Object
 }
 
 
-=item C<< GT::Analyzers::Process->parse( $cmd ) >>
+=item C<< Finance::GeniusTrader::Analyzers::Process->parse( $cmd ) >>
 
 This function parses the command $cmd. If the shell is set in expert
 mod it tries first to map $cmd to an internat command and otherwise
@@ -152,7 +152,7 @@ sub parse {
   return $erg;
 }
 
-=item C<< GT::Analyzers::Process->bye() >>
+=item C<< Finance::GeniusTrader::Analyzers::Process->bye() >>
 
 Exits the program after asking if the history should be stored.
 
@@ -162,7 +162,7 @@ Exits the program after asking if the history should be stored.
 sub bye {
 ############################################################
   my $self;
-  if ( defined($_[0]) && ref($_[0]) =~ /GT::Analyzers::Process/ ) {
+  if ( defined($_[0]) && ref($_[0]) =~ /Finance::GeniusTrader::Analyzers::Process/ ) {
     $self = shift;
   } else {
     $self = $myself;
@@ -200,7 +200,7 @@ sub bye {
   exit;
 }
 
-=item C<< GT::Analyzers::Process->set( [ $key ] ) >>
+=item C<< Finance::GeniusTrader::Analyzers::Process->set( [ $key ] ) >>
 
 Set a configuration-parameter. If key is not given, the list of
 parameters is given. The variable key consits of the real key and the
@@ -214,7 +214,7 @@ array.
 sub set {
 ############################################################
   my $self;
-  if ( defined($_[0]) && ref($_[0]) =~ /GT::Analyzers::Process/ ) {
+  if ( defined($_[0]) && ref($_[0]) =~ /Finance::GeniusTrader::Analyzers::Process/ ) {
     $self = shift;
   } else {
     $self = $myself;
@@ -277,7 +277,7 @@ sub set {
   return "";
 }
 
-=item C<< GT::Analyzers::Process->set_code( $code ) >>
+=item C<< Finance::GeniusTrader::Analyzers::Process->set_code( $code ) >>
 
 Set the code and do the necessary initialization-stuff.
 
@@ -287,7 +287,7 @@ Set the code and do the necessary initialization-stuff.
 sub set_code {
 ############################################################
   my $self;
-  if ( defined($_[0]) && ref($_[0]) =~ /GT::Analyzers::Process/ ) {
+  if ( defined($_[0]) && ref($_[0]) =~ /Finance::GeniusTrader::Analyzers::Process/ ) {
     $self = shift;
   } else {
     $self = $myself;
@@ -298,12 +298,12 @@ sub set_code {
 
   $self->{'config'}{'code'} = $param;
   $self->{'q'} = $self->{'db'}->get_prices($self->{'config'}{'code'});
-  $self->{'calc'} = GT::Calculator->new( $self->{'q'} );
+  $self->{'calc'} = Finance::GeniusTrader::Calculator->new( $self->{'q'} );
   $self->{'calc'}->set_code($self->{'config'}{'code'});
 
   if ($self->{'config'}{'timeframe'} ne "day") {
     if (! $self->{'calc'}->set_current_timeframe( 
-            GT::DateTime::name_to_timeframe($self->{'config'}{'timeframe'})) ) {
+            Finance::GeniusTrader::DateTime::name_to_timeframe($self->{'config'}{'timeframe'})) ) {
       warn "Can't create « ".$self->{'config'}{'timeframe'}." » timeframe ...\n";
     }
   }
@@ -313,7 +313,7 @@ sub set_code {
   return if ($chngtime == 0);
 
   $self->{'last'} = $self->{'c'} - 1;
-  $self->{'first'} = $self->{'c'} - 2 * GT::DateTime::timeframe_ratio($YEAR, 
+  $self->{'first'} = $self->{'c'} - 2 * Finance::GeniusTrader::DateTime::timeframe_ratio($YEAR, 
 								      $self->{'calc'}->current_timeframe);
 
   $self->{'first'} = 0 if ($self->{'config'}{'full'});
@@ -341,7 +341,7 @@ sub set_code {
   $self->{'calc'}->{'last'} = $self->{'last'};
 }
 
-=item C<< GT::Analyzers::Process->load( $sys, $dir, $code ) >>
+=item C<< Finance::GeniusTrader::Analyzers::Process->load( $sys, $dir, $code ) >>
 
 Loads $sys from $dir and $code (optional).
 
@@ -351,7 +351,7 @@ Loads $sys from $dir and $code (optional).
 sub load {
 ############################################################
   my $self;
-  if ( defined($_[0]) && ref($_[0]) =~ /GT::Analyzers::Process/ ) {
+  if ( defined($_[0]) && ref($_[0]) =~ /Finance::GeniusTrader::Analyzers::Process/ ) {
     $self = shift;
   } else {
     $self = $myself;
@@ -366,8 +366,8 @@ sub load {
 
   # Load a single portfolio
   if ( -e $sys ) {#=~ /^\./ || $sys =~ /^\// ) {
-    $self->{'pf'} = GT::Portfolio->create_from_file($sys);
-    my $name = GT::Conf::get("Brokers::module");
+    $self->{'pf'} = Finance::GeniusTrader::Portfolio->create_from_file($sys);
+    my $name = Finance::GeniusTrader::Conf::get("Brokers::module");
     $self->{'pf'}->{'broker'} = create_standard_object(split (/\s+/, "Brokers::$name"));
     $self->{'calc'}->{'pf'} = $self->{'pf'};
 
@@ -385,15 +385,15 @@ sub load {
   my $directory;
   if (defined($dir) && $dir) {
     $directory = $dir;
-  } elsif (GT::Conf::get("BackTest::Directory")) {
-    $directory = GT::Conf::get("BackTest::Directory");
+  } elsif (Finance::GeniusTrader::Conf::get("BackTest::Directory")) {
+    $directory = Finance::GeniusTrader::Conf::get("BackTest::Directory");
   }
 
   if (! (defined($directory) && $sys)) {
     die "Bad syntax for BackTestPortfolio(sysname, directory) !\n";
   }
 	
-  my $spool = GT::BackTest::Spool->new($directory);
+  my $spool = Finance::GeniusTrader::BackTest::Spool->new($directory);
 
   my $index = $spool->{'index'};
   $self->{'pf'}->{'name'} = $sys;
@@ -410,7 +410,7 @@ sub load {
 
   my $name = $self->{'pf'}->{'broker'}->{'names'}[0];
   $name =~ s/[\[\],]/ /g;
-  $name = GT::Conf::get("Brokers::module") if ($name =~ /^\s*$/);
+  $name = Finance::GeniusTrader::Conf::get("Brokers::module") if ($name =~ /^\s*$/);
   $self->{'pf'}->{'broker'} = create_standard_object(split (/\s+/, "Brokers::$name"));
 
   $self->{'calc'}->{'pf'} = $self->{'pf'};
@@ -437,7 +437,7 @@ sub load {
   return "Loaded Portfolio $sys...\n";
 }
 
-=item C<< GT::Analyzers::Process->save( $sys, $dir ) >>
+=item C<< Finance::GeniusTrader::Analyzers::Process->save( $sys, $dir ) >>
 
 Saves the portfolio with name $sys to directory $dir.
 
@@ -447,7 +447,7 @@ Saves the portfolio with name $sys to directory $dir.
 sub save {
 ############################################################
   my $self;
-  if ( defined($_[0]) && ref($_[0]) =~ /GT::Analyzers::Process/ ) {
+  if ( defined($_[0]) && ref($_[0]) =~ /Finance::GeniusTrader::Analyzers::Process/ ) {
     $self = shift;
   } else {
     $self = $myself;
@@ -458,7 +458,7 @@ sub save {
   delete( $self->{'analysis'}->{'portfolio'}->{objects} )
     if defined( $self->{'analysis'}->{'portfolio'}->{objects} );
 
-  my $bkt_spool = GT::BackTest::Spool->new($dir);
+  my $bkt_spool = Finance::GeniusTrader::BackTest::Spool->new($dir);
   my $stats = [ $self->{'analysis'}->{'real'}{'std_performance'},
 		$self->{'analysis'}->{'real'}{'performance'},
 		$self->{'analysis'}->{'real'}{'max_draw_down'},
@@ -484,7 +484,7 @@ sub save {
   return "Saved $alias in $dir...\n";
 }
 
-=item C<< GT::Analyzers::Process->list( $dir ) >>
+=item C<< Finance::GeniusTrader::Analyzers::Process->list( $dir ) >>
 
 Lists the systems in directory $dir.
 
@@ -494,13 +494,13 @@ Lists the systems in directory $dir.
 sub list {
 ############################################################
   my $self;
-  if ( defined($_[0]) && ref($_[0]) =~ /GT::Analyzers::Process/ ) {
+  if ( defined($_[0]) && ref($_[0]) =~ /Finance::GeniusTrader::Analyzers::Process/ ) {
     $self = shift;
   } else {
     $self = $myself;
   }
   my $dir = shift;
-  my $bkt_spool = GT::BackTest::Spool->new($dir);
+  my $bkt_spool = Finance::GeniusTrader::BackTest::Spool->new($dir);
   my $list = $bkt_spool->list_available_data();
   if ( wantarray() ) {
     return %{$list};
@@ -520,7 +520,7 @@ sub list {
   }
 }
 
-=item C<< GT::Analyzers::Process->btest() >>
+=item C<< Finance::GeniusTrader::Analyzers::Process->btest() >>
 
 start the backtest.
 
@@ -530,7 +530,7 @@ start the backtest.
 sub btest {
 ############################################################
   my $self;
-  if ( defined($_[0]) && ref($_[0]) =~ /GT::Analyzers::Process/ ) {
+  if ( defined($_[0]) && ref($_[0]) =~ /Finance::GeniusTrader::Analyzers::Process/ ) {
     $self = shift;
   } else {
     $self = $myself;
@@ -541,11 +541,11 @@ sub btest {
 
   my $start = time();
 
-  $self->{'pf_manager'} = GT::PortfolioManager->new;
-  $self->{'sys_manager'} = GT::SystemManager->new;
+  $self->{'pf_manager'} = Finance::GeniusTrader::PortfolioManager->new;
+  $self->{'sys_manager'} = Finance::GeniusTrader::SystemManager->new;
 
   # Clear calc-object
-  $self->set_code( $self->{'config'}{'code'}, 1 ); #{'calc'} = GT::Calculator->new( $self->{'q'} );
+  $self->set_code( $self->{'config'}{'code'}, 1 ); #{'calc'} = Finance::GeniusTrader::Calculator->new( $self->{'q'} );
 
   # Set up the System or alias
   if ( defined($self->{'config'}{'system'}) && $self->{'config'}{'system'} ne "" ) {
@@ -616,7 +616,7 @@ sub btest {
 }
 
 
-=item C<< GT::Analyzers::Process->calc($args) >>
+=item C<< Finance::GeniusTrader::Analyzers::Process->calc($args) >>
 
 Calculates the expression given as argument(s).
 
@@ -626,12 +626,12 @@ Calculates the expression given as argument(s).
 sub calc {
 ############################################################
   my $self;
-  if ( defined($_[0]) && ref($_[0]) =~ /GT::Analyzers::Process/ ) {
+  if ( defined($_[0]) && ref($_[0]) =~ /Finance::GeniusTrader::Analyzers::Process/ ) {
     $self = shift;
   } else {
     $self = $myself;
   }
-  my $args = GT::ArgsTree->new( @_ );
+  my $args = Finance::GeniusTrader::ArgsTree->new( @_ );
 
   my $nb = $args->get_nb_args();
   my $expr = "";
@@ -642,7 +642,7 @@ sub calc {
       my $ob = $args->get_arg_object($n);
 
       $ob->calculate($self->{'calc'}, $self->{'last'})
-	if ( $ob->isa("GT::Indicators") );
+	if ( $ob->isa("Finance::GeniusTrader::Indicators") );
 
       my $val = $args->get_arg_values($self->{'calc'}, $self->{'last'}, $n);
       return if (! defined($val));
@@ -660,7 +660,7 @@ sub calc {
   return $res . "\n";
 }
 
-=item C<< GT::Analyzers::Process->calc_array($arg1, $arg2, ...) >>
+=item C<< Finance::GeniusTrader::Analyzers::Process->calc_array($arg1, $arg2, ...) >>
 
 Calculates each array and prints out/returns a list.
 
@@ -672,7 +672,7 @@ The arry should have the same length.
 sub calc_array {
 ############################################################
   my $self;
-  if ( defined($_[0]) && ref($_[0]) =~ /GT::Analyzers::Process/ ) {
+  if ( defined($_[0]) && ref($_[0]) =~ /Finance::GeniusTrader::Analyzers::Process/ ) {
     $self = shift;
   } else {
     $self = $myself;
@@ -680,7 +680,7 @@ sub calc_array {
 #  my $self = shift;
   my $param = join(" ", @_ );
 
-  my $args = GT::ArgsTree->new( $param );
+  my $args = Finance::GeniusTrader::ArgsTree->new( $param );
   my $nb = $args->get_nb_args();
   my $expr = "";
   my $val;
@@ -739,7 +739,7 @@ sub calc_array {
   return $val;
 }
 
-=item C<< GT::Analyzers::Process->p($arg) >>
+=item C<< Finance::GeniusTrader::Analyzers::Process->p($arg) >>
 
 Prints out the string $arg and replaces the variable elements
 
@@ -749,14 +749,14 @@ Prints out the string $arg and replaces the variable elements
 sub p {
 ############################################################
   my $self;
-  if ( defined($_[0]) && ref($_[0]) =~ /GT::Analyzers::Process/ ) {
+  if ( defined($_[0]) && ref($_[0]) =~ /Finance::GeniusTrader::Analyzers::Process/ ) {
     $self = shift;
   } else {
     $self = $myself;
   }
 #  my $self = shift;
 #  my $param = shift;
-  my $args = GT::ArgsTree->new( @_ ); #split /\s+/, $param );
+  my $args = Finance::GeniusTrader::ArgsTree->new( @_ ); #split /\s+/, $param );
 
   my $nb = $args->get_nb_args();
   my $expr = "";
@@ -772,7 +772,7 @@ sub p {
   return $expr . "\n";
 }
 
-=item C<< GT::Analyzers::Process->help() >>
+=item C<< Finance::GeniusTrader::Analyzers::Process->help() >>
 
 Print the help screen
 
@@ -818,7 +818,7 @@ Only available in expert-mode (set expert 1):
 HELP
 }
 
-=item C<< GT::Analyzers::Process->licence() >>
+=item C<< Finance::GeniusTrader::Analyzers::Process->licence() >>
 
 Print the licence
 
@@ -830,7 +830,7 @@ sub licence {
     license();
 }
 
-=item C<< GT::Analyzers::Process->license() >>
+=item C<< Finance::GeniusTrader::Analyzers::Process->license() >>
 
 Prints the license
 
@@ -862,7 +862,7 @@ sub license {
 GPL
 }
 
-=item C<< GT::Analyzers::Process->disconnect() >>
+=item C<< Finance::GeniusTrader::Analyzers::Process->disconnect() >>
 
 Disconnect from database.
 
@@ -872,7 +872,7 @@ Disconnect from database.
 sub disconnect {
 ############################################################
   my $self;
-  if ( defined($_[0]) && ref($_[0]) =~ /GT::Analyzers::Process/ ) {
+  if ( defined($_[0]) && ref($_[0]) =~ /Finance::GeniusTrader::Analyzers::Process/ ) {
     $self = shift;
   } else {
     $self = $myself;
@@ -881,7 +881,7 @@ sub disconnect {
   $self->{'db'}->disconnect();
 }
 
-=item C<< GT::Analyzers::Process->info() >>
+=item C<< Finance::GeniusTrader::Analyzers::Process->info() >>
 
 Prints a small information shown at the start of anashell.
 
@@ -891,7 +891,7 @@ Prints a small information shown at the start of anashell.
 sub info {
 ############################################################
   my $self;
-  if ( defined($_[0]) && ref($_[0]) =~ /GT::Analyzers::Process/ ) {
+  if ( defined($_[0]) && ref($_[0]) =~ /Finance::GeniusTrader::Analyzers::Process/ ) {
     $self = shift;
   } else {
     $self = $myself;
@@ -907,7 +907,7 @@ sub info {
   return $erg;
 }
 
-=item C<< GT::Analyzers::Process->pg_hist() >>
+=item C<< Finance::GeniusTrader::Analyzers::Process->pg_hist() >>
 
 Uncomment this function to plot histograms with pgplot.
 
@@ -917,7 +917,7 @@ Uncomment this function to plot histograms with pgplot.
 sub pg_hist {
 ############################################################
 #  my $self;
-#  if ( defined($_[0]) && ref($_[0]) =~ /GT::Analyzers::Process/ ) {
+#  if ( defined($_[0]) && ref($_[0]) =~ /Finance::GeniusTrader::Analyzers::Process/ ) {
 #    $self = shift;
 #  } else {
 #    $self = $myself;
@@ -948,7 +948,7 @@ sub pg_hist {
 
 }
 
-=item C<< GT::Analyzers::Process->r_hist( $array ) >>
+=item C<< Finance::GeniusTrader::Analyzers::Process->r_hist( $array ) >>
 
 Plots a histogram using R (www.r-project.org) of the values of $array.
 
@@ -958,7 +958,7 @@ Plots a histogram using R (www.r-project.org) of the values of $array.
 sub r_hist {
 ############################################################
   my $self;
-  if ( defined($_[0]) && ref($_[0]) =~ /GT::Analyzers::Process/ ) {
+  if ( defined($_[0]) && ref($_[0]) =~ /Finance::GeniusTrader::Analyzers::Process/ ) {
     $self = shift;
   } else {
     $self = $myself;
@@ -996,7 +996,7 @@ sub r_hist {
 
 }
 
-=item C<< GT::Analyzers::Process->r_bar( $array ) >>
+=item C<< Finance::GeniusTrader::Analyzers::Process->r_bar( $array ) >>
 
 Generates a barplot in R by using the values of $array
 
@@ -1006,7 +1006,7 @@ Generates a barplot in R by using the values of $array
 sub r_bar {
 ############################################################
   my $self;
-  if ( defined($_[0]) && ref($_[0]) =~ /GT::Analyzers::Process/ ) {
+  if ( defined($_[0]) && ref($_[0]) =~ /Finance::GeniusTrader::Analyzers::Process/ ) {
     $self = shift;
   } else {
     $self = $myself;
@@ -1032,7 +1032,7 @@ sub r_bar {
   system("xv /tmp/Rtmp.png &");
 }
 
-=item C<< GT::Analyzers::Process->r_corr( $arr1, $arr2 ) >>
+=item C<< Finance::GeniusTrader::Analyzers::Process->r_corr( $arr1, $arr2 ) >>
 
 Plots the correlation of $arr1 and $arr2 in R.
 
@@ -1042,7 +1042,7 @@ Plots the correlation of $arr1 and $arr2 in R.
 sub r_corr {
 ############################################################
   my $self;
-  if ( defined($_[0]) && ref($_[0]) =~ /GT::Analyzers::Process/ ) {
+  if ( defined($_[0]) && ref($_[0]) =~ /Finance::GeniusTrader::Analyzers::Process/ ) {
     $self = shift;
   } else {
     $self = $myself;
@@ -1077,7 +1077,7 @@ sub r_corr {
 sub r_hist2 {
 ############################################################
   my $self;
-  if ( defined($_[0]) && ref($_[0]) =~ /GT::Analyzers::Process/ ) {
+  if ( defined($_[0]) && ref($_[0]) =~ /Finance::GeniusTrader::Analyzers::Process/ ) {
     $self = shift;
   } else {
     $self = $myself;
@@ -1108,7 +1108,7 @@ sub r_hist2 {
   system("xv /tmp/Rtmp.png &");
 }
 
-=item C<< GT::Analyzers::Process->report( $file ) >>
+=item C<< Finance::GeniusTrader::Analyzers::Process->report( $file ) >>
 
 Prints the report of the portfolio using $file as template.
 
@@ -1118,14 +1118,14 @@ Prints the report of the portfolio using $file as template.
 sub report {
 ############################################################
     my $self;
-    if ( defined($_[0]) && ref($_[0]) =~ /GT::Analyzers::Process/ ) {
+    if ( defined($_[0]) && ref($_[0]) =~ /Finance::GeniusTrader::Analyzers::Process/ ) {
 	$self = shift;
     } else {
 	$self = $myself;
     }
     my $filename = shift;
 
-    my $rep = GT::Analyzers::Report->new( $self );
+    my $rep = Finance::GeniusTrader::Analyzers::Report->new( $self );
     $rep->interpret( $filename );
 }
 
@@ -1135,7 +1135,7 @@ sub report {
 sub source {
 ############################################################
   my $self;
-  if ( defined($_[0]) && ref($_[0]) =~ /GT::Analyzers::Process/ ) {
+  if ( defined($_[0]) && ref($_[0]) =~ /Finance::GeniusTrader::Analyzers::Process/ ) {
     $self = shift;
   } else {
     $self = $myself;

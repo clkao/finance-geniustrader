@@ -1,4 +1,4 @@
-package GT::Indicators::InstantTrendLine;
+package Finance::GeniusTrader::Indicators::InstantTrendLine;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,16 +7,16 @@ package GT::Indicators::InstantTrendLine;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Indicators;
-use GT::Indicators::WMA;
-use GT::Indicators::WTCL;
-use GT::Indicators::HilbertPeriod;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::WMA;
+use Finance::GeniusTrader::Indicators::WTCL;
+use Finance::GeniusTrader::Indicators::HilbertPeriod;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("InstantTrendLine");
 
-=head1 GT::Indicators::InstantTrendLine
+=head1 Finance::GeniusTrader::Indicators::InstantTrendLine
 
 =head2 Overview
 
@@ -32,13 +32,13 @@ TASC May 2000 - page 22
 sub initialize {
     my $self = shift;
     
-    $self->{'median'} = GT::Indicators::WTCL->new([0]);
-    $self->{'period'} = GT::Indicators::HilbertPeriod->new;
+    $self->{'median'} = Finance::GeniusTrader::Indicators::WTCL->new([0]);
+    $self->{'period'} = Finance::GeniusTrader::Indicators::HilbertPeriod->new;
 
     $self->add_indicator_dependency($self->{'period'}, 1);
 }
 
-=head2 GT::Indicators::InstantTrendLine::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::InstantTrendLine::calculate($calc, $day)
 
 =cut
 sub calculate {

@@ -1,17 +1,17 @@
-package GT::Graphics::Driver::ImageMagick;
+package Finance::GeniusTrader::Graphics::Driver::ImageMagick;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
 use strict;
-use GT::Graphics::Driver;
-use GT::Graphics::Zone;
+use Finance::GeniusTrader::Graphics::Driver;
+use Finance::GeniusTrader::Graphics::Zone;
 use Image::Magick;
 
-our @ISA = qw(GT::Graphics::Driver);
+our @ISA = qw(Finance::GeniusTrader::Graphics::Driver);
 
-=head1 GT::Graphics::Driver::ImageMagick
+=head1 Finance::GeniusTrader::Graphics::Driver::ImageMagick
 
 This driver implements the drawing primitives using the ImageMagick Perl extension.
 

@@ -1,4 +1,4 @@
-package GT::Indicators::KirshenbaumBands;
+package Finance::GeniusTrader::Indicators::KirshenbaumBands;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # standards upgrade Copyright 2005 Thomas Weigert
@@ -13,16 +13,16 @@ package GT::Indicators::KirshenbaumBands;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::EMA;
-use GT::Indicators::StandardError;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::EMA;
+use Finance::GeniusTrader::Indicators::StandardError;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("KB[#1,#3]","KBSup[#1,#2,#3]","KBInf[#1,#2,#3]");
 @DEFAULT_ARGS = (20, 1.75, "{I:Prices CLOSE}");
 
-=head1 GT::Indicators::KirshenbaumBands
+=head1 Finance::GeniusTrader::Indicators::KirshenbaumBands
 
 =head2 Overview
 
@@ -43,8 +43,8 @@ from NYU, submitted this rather unique trading band which is "de-trended".
 sub initialize {
     my $self = shift;
 
-    $self->{'ema'} = GT::Indicators::EMA->new([ $self->{'args'}->get_arg_names(1), $self->{'args'}->get_arg_names(3) ]);
-    $self->{'standard_error'} = GT::Indicators::StandardError->new(
+    $self->{'ema'} = Finance::GeniusTrader::Indicators::EMA->new([ $self->{'args'}->get_arg_names(1), $self->{'args'}->get_arg_names(3) ]);
+    $self->{'standard_error'} = Finance::GeniusTrader::Indicators::StandardError->new(
 	[ $self->{'args'}->get_arg_names(1), $self->{'args'}->get_arg_names(3) ]);
 
     $self->add_indicator_dependency($self->{'ema'}, 1);
@@ -52,7 +52,7 @@ sub initialize {
     $self->add_prices_dependency($self->{'args'}->get_arg_constant(1));
 }
 
-=head2 GT::Indicators::KirshenbaumBands::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::KirshenbaumBands::calculate($calc, $day)
 
 =cut
 

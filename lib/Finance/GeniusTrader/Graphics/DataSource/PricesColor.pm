@@ -1,4 +1,4 @@
-package GT::Graphics::DataSource::PricesColor;
+package Finance::GeniusTrader::Graphics::DataSource::PricesColor;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,27 +7,27 @@ package GT::Graphics::DataSource::PricesColor;
 use strict;
 use vars qw(@ISA);
 
-@ISA = qw(GT::Graphics::DataSource);
+@ISA = qw(Finance::GeniusTrader::Graphics::DataSource);
 
-use GT::Prices;
-use GT::Graphics::DataSource;
-use GT::Graphics::Driver;
-use GT::Tools qw(:math);
-use GT::Graphics::Tools qw(:color);
-use GT::Conf;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Graphics::DataSource;
+use Finance::GeniusTrader::Graphics::Driver;
+use Finance::GeniusTrader::Tools qw(:math);
+use Finance::GeniusTrader::Graphics::Tools qw(:color);
+use Finance::GeniusTrader::Conf;
 
-GT::Conf::default("Graphic::PricesColor::Up",    "green");
-GT::Conf::default("Graphic::PricesColor::Down",  "red");
-GT::Conf::default("Graphic::PricesColor::Equal", "dark grey");
+Finance::GeniusTrader::Conf::default("Graphic::PricesColor::Up",    "green");
+Finance::GeniusTrader::Conf::default("Graphic::PricesColor::Down",  "red");
+Finance::GeniusTrader::Conf::default("Graphic::PricesColor::Equal", "dark grey");
 
-=head1 GT::Graphics::DataSource::PricesColor
+=head1 Finance::GeniusTrader::Graphics::DataSource::PricesColor
 
 This datasource provides a color depending on the prices movement.
 Green when up, red when down, black when equal.
 
-It uses a GT::Prices object as a basis.
+It uses a Finance::GeniusTrader::Prices object as a basis.
 
-=head2 GT::Prices::DataSource::PricesColor->new($prices)
+=head2 Finance::GeniusTrader::Prices::DataSource::PricesColor->new($prices)
 
 Create a new prices color data source.
 
@@ -39,9 +39,9 @@ sub new {
     
     my $self = { "prices" => $prices, 
 		 "color" => [ 
-		 get_color(GT::Conf::get("Graphic::PricesColor::Equal")),
-		 get_color(GT::Conf::get("Graphic::PricesColor::Down")),
-		 get_color(GT::Conf::get("Graphic::PricesColor::Up"))
+		 get_color(Finance::GeniusTrader::Conf::get("Graphic::PricesColor::Equal")),
+		 get_color(Finance::GeniusTrader::Conf::get("Graphic::PricesColor::Down")),
+		 get_color(Finance::GeniusTrader::Conf::get("Graphic::PricesColor::Up"))
 			    ] 
 		};
     

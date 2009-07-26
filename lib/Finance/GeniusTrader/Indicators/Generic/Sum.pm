@@ -1,4 +1,4 @@
-package GT::Indicators::Generic::Sum;
+package Finance::GeniusTrader::Indicators::Generic::Sum;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,18 +9,18 @@ package GT::Indicators::Generic::Sum;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
-use GT::Tools qw(:math);
-use GT::ArgsTree;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Tools qw(:math);
+use Finance::GeniusTrader::ArgsTree;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("Sum[#*]");
 @DEFAULT_ARGS = (14, "{I:Prices CLOSE}");
 
 =head1 NAME
 
-GT::Indicators::Generic::Sum - Calculation of the Sum of the last n days 
+Finance::GeniusTrader::Indicators::Generic::Sum - Calculation of the Sum of the last n days 
 
 =head1 DESCRIPTION 
 
@@ -32,7 +32,7 @@ Calculates the Sum of the last n days.
 
 =head2 Examples
 
-GT::Indicators::Generic::SumUp->new()
+Finance::GeniusTrader::Indicators::Generic::SumUp->new()
 
 =head2 Links
 

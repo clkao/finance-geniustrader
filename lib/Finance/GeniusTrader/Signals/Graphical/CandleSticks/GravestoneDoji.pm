@@ -1,4 +1,4 @@
-package GT::Signals::Graphical::CandleSticks::GravestoneDoji;
+package Finance::GeniusTrader::Signals::Graphical::CandleSticks::GravestoneDoji;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,14 +7,14 @@ package GT::Signals::Graphical::CandleSticks::GravestoneDoji;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Signals;
-use GT::Prices;
-use GT::Indicators::CNDL;
+use Finance::GeniusTrader::Signals;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Indicators::CNDL;
 
-@ISA = qw(GT::Signals);
+@ISA = qw(Finance::GeniusTrader::Signals);
 @NAMES = ("GravestoneDoji");
 
-=head1 GT::Signals::Graphical::CandleSticks::GravestoneDoji
+=head1 Finance::GeniusTrader::Signals::Graphical::CandleSticks::GravestoneDoji
 
 =head2 Overview
 
@@ -47,7 +47,7 @@ sub new {
 sub initialize {
     my ($self) = @_;
     
-    $self->{'cndl'} = GT::Indicators::CNDL->new($self->{'args'});
+    $self->{'cndl'} = Finance::GeniusTrader::Indicators::CNDL->new($self->{'args'});
 
     $self->add_indicator_dependency($self->{'cndl'}, 1);
 }

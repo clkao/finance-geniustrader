@@ -1,4 +1,4 @@
-package GT::Indicators::Generic::Container;
+package Finance::GeniusTrader::Indicators::Generic::Container;
 
 # Copyright 2004 Raphaël Hertzog
 # This file is distributed under the terms of the General Public License
@@ -9,14 +9,14 @@ package GT::Indicators::Generic::Container;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Indicators;
+use Finance::GeniusTrader::Indicators;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("Container[#*]");
 
 =head1 NAME
 
-GT::Indicators::Generic::Container - Fake indicator which does nothing but acts as a data container
+Finance::GeniusTrader::Indicators::Generic::Container - Fake indicator which does nothing but acts as a data container
 
 =head1 DESCRIPTION
 
@@ -39,7 +39,7 @@ sub new {
     my $self = { };
     no strict "refs";
     $self->{'args'}->[0] = join(" ", @{$args});
-    # Just to avoid problems created by adding of spaces by GT::ArgsTree
+    # Just to avoid problems created by adding of spaces by Finance::GeniusTrader::ArgsTree
     # parsing ...
     $self->{'args'}->[0] =~ s/\s+{/{/g;
     $self->{'args'}->[0] =~ s/}\s+/}/g;

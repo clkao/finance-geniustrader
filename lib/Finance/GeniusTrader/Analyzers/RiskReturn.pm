@@ -1,4 +1,4 @@
-package GT::Analyzers::RiskReturn;
+package Finance::GeniusTrader::Analyzers::RiskReturn;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::RiskReturn;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("RiskReturn[#*]");
 @DEFAULT_ARGS = ("{A:CompleteValue}");
 
 =head1 NAME
 
-  GT::Analyzers::RiskReturn - Caluclates the Risk-/Return-Ratio
+  Finance::GeniusTrader::Analyzers::RiskReturn - Caluclates the Risk-/Return-Ratio
 
 =head1 DESCRIPTION 
 

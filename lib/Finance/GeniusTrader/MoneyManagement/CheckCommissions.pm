@@ -1,4 +1,4 @@
-package GT::MoneyManagement::CheckCommissions;
+package Finance::GeniusTrader::MoneyManagement::CheckCommissions;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,13 +7,13 @@ package GT::MoneyManagement::CheckCommissions;
 use strict;
 use vars qw(@NAMES @ISA);
 
-use GT::MoneyManagement;
-use GT::Prices;
+use Finance::GeniusTrader::MoneyManagement;
+use Finance::GeniusTrader::Prices;
 
 @NAMES = ("CheckCommissions[#1]");
-@ISA = qw(GT::MoneyManagement);
+@ISA = qw(Finance::GeniusTrader::MoneyManagement);
 
-=head1 GT::MoneyManagement::CheckCommissions
+=head1 Finance::GeniusTrader::MoneyManagement::CheckCommissions
 
 =head2 Overview
 
@@ -52,7 +52,7 @@ sub manage_quantity {
 	# A fake order is created with an execution price so that
 	# we can calculate an associated cost (that's only an evaluation)
 	
-	my $bidon = GT::Portfolio::Order->new;
+	my $bidon = Finance::GeniusTrader::Portfolio::Order->new;
 	%{$bidon} = %{$order};
 	$bidon->set_price($calc->prices->at($i)->[$LAST]);
 	$commission = $portfolio->get_order_cost($bidon);

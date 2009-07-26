@@ -1,4 +1,4 @@
-package GT::Registry;
+package Finance::GeniusTrader::Registry;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # Copyright 2008 Thomas Weigert
@@ -16,17 +16,17 @@ require Exporter;
 
 =head1 NAME
 
-GT::Registry - Generic registry functions
+Finance::GeniusTrader::Registry - Generic registry functions
 
 =head1 DESCRIPTION
 
-This module is used by GT::Indicators, GT::Signals and GT::Systems
+This module is used by Finance::GeniusTrader::Indicators, Finance::GeniusTrader::Signals and Finance::GeniusTrader::Systems
 to keep a list of available objects. Those objects can be reused
 with different datas.
 
 =over
 
-=item C<< GT::Registry::get_registered_object($repository, $name) >>
+=item C<< Finance::GeniusTrader::Registry::get_registered_object($repository, $name) >>
 
 Returns the object corresponding to $name if available. Otherwise
 returns undef.
@@ -41,7 +41,7 @@ sub get_registered_object {
     return undef;
 }
 
-=item C<< GT::Registry::register_object($repository, $name, $object) >>
+=item C<< Finance::GeniusTrader::Registry::register_object($repository, $name, $object) >>
 
 Register the object $object under the name $name. Replaces any previous
 object registered under the same name.
@@ -53,7 +53,7 @@ sub register_object {
     $repository->{$name} = $object;
 }
 
-=item C<< GT::Registry::get_or_register_object($repository, $name, $object) >>
+=item C<< Finance::GeniusTrader::Registry::get_or_register_object($repository, $name, $object) >>
 
 If an object corresponding to name $name is already registered then
 returns this object. Otherwise register $object under the name
@@ -77,7 +77,7 @@ Example:
       my $self = {};
       
       # Check the registry and register it
-      $self = GT::Indicators::get_or_register_object($name, $self);
+      $self = Finance::GeniusTrader::Indicators::get_or_register_object($name, $self);
 
       return $self;
   }
@@ -93,7 +93,7 @@ sub get_or_register_object {
     $repository->{$name} = $object;
 }
 
-=item C<< GT::Registry::manage_object($repository, \@NAMES, $obj, $class, $args, $key) >>
+=item C<< Finance::GeniusTrader::Registry::manage_object($repository, \@NAMES, $obj, $class, $args, $key) >>
 
 Manage the creation of a new object. Build their names, stores and/or
 retrieve the object from the database. Calls initialize for a new object.
@@ -113,7 +113,7 @@ sub manage_object {
     my $object_name = "${1}[";
     if (ref($args) =~ /ARRAY/) {
         $object_name .= join(',',@{$args});
-    } elsif (ref($args) =~ /GT::ArgsTree/) {
+    } elsif (ref($args) =~ /Finance::GeniusTrader::ArgsTree/) {
         $object_name .= join(',',$args->get_arg_names());
     }
     $object_name .= ']';
@@ -132,7 +132,7 @@ sub manage_object {
     return $newobj;
 }
 
-=item C<< GT::Registry::build_object_name($encoded, [ @args ], $key) >>
+=item C<< Finance::GeniusTrader::Registry::build_object_name($encoded, [ @args ], $key) >>
 
 Returns the real $name of the object by substitution of #1, #2 (and so on)
 by the real values of the parameters (given in the second argument).
@@ -150,7 +150,7 @@ sub build_object_name {
 	{
 	    $name =~ s/#$i/$args->[$i-1]/;
 	}
-    } elsif (ref($args) =~ /GT::ArgsTree/) {
+    } elsif (ref($args) =~ /Finance::GeniusTrader::ArgsTree/) {
 	$name =~ s/#\*/join(", ",$args->get_arg_names())/ge;
 	my $nb = $args->get_nb_args();
 	for(my $i = 1; $i <= $nb; $i++)

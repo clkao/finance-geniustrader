@@ -1,4 +1,4 @@
-package GT::PortfolioManager;
+package Finance::GeniusTrader::PortfolioManager;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -8,14 +8,14 @@ use strict;
 use vars qw();
 
 #ALL#  use Log::Log4perl qw(:easy);
-use GT::Portfolio;
-use GT::Prices;
-use GT::SystemManager;
-use GT::Eval;
+use Finance::GeniusTrader::Portfolio;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::SystemManager;
+use Finance::GeniusTrader::Eval;
 
 =head1 NAME
 
-GT::PortfolioManager - Manages a portfolio
+Finance::GeniusTrader::PortfolioManager - Manages a portfolio
 
 =head1 DESCRIPTION
 
@@ -31,7 +31,7 @@ various trading systems.
 
 =over
 
-=item C<< my $manager = GT::PortfolioManager->new($portfolio) >>
+=item C<< my $manager = Finance::GeniusTrader::PortfolioManager->new($portfolio) >>
 
 Create a new portfolio manager that implements a money management
 strategy.
@@ -122,7 +122,7 @@ and submitted later.
 sub buy_market_price {
     my ($self, $calc, $source) = @_;
 
-    my $order = GT::Portfolio::Order->new;
+    my $order = Finance::GeniusTrader::Portfolio::Order->new;
     $order->set_buy_order;
     $order->set_type_market_price;
     $order->set_code($calc->code);
@@ -133,7 +133,7 @@ sub buy_market_price {
 sub buy_limited_price {
     my ($self, $calc, $source, $price) = @_;
 
-    my $order = GT::Portfolio::Order->new;
+    my $order = Finance::GeniusTrader::Portfolio::Order->new;
     $order->set_buy_order;
     $order->set_type_limited;
     $order->set_code($calc->code);
@@ -145,7 +145,7 @@ sub buy_limited_price {
 sub buy_conditional {
     my ($self, $calc, $source, $price, $price2) = @_;
     
-    my $order = GT::Portfolio::Order->new;
+    my $order = Finance::GeniusTrader::Portfolio::Order->new;
     $order->set_buy_order;
     $order->set_code($calc->code);
     $order->set_source($source);
@@ -163,7 +163,7 @@ sub buy_conditional {
 sub virtual_buy_at_open {
     my ($self, $calc, $source) = @_;
  
-    my $order = GT::Portfolio::Order->new;
+    my $order = Finance::GeniusTrader::Portfolio::Order->new;
     $order->set_buy_order;
     $order->set_type_theoric_at_open;
     $order->set_code($calc->code);
@@ -174,7 +174,7 @@ sub virtual_buy_at_open {
 sub virtual_buy_at_high {
     my ($self, $calc, $source) = @_;
  
-    my $order = GT::Portfolio::Order->new;
+    my $order = Finance::GeniusTrader::Portfolio::Order->new;
     $order->set_buy_order;
     $order->set_type_theoric_at_high;
     $order->set_code($calc->code);
@@ -185,7 +185,7 @@ sub virtual_buy_at_high {
 sub virtual_buy_at_low {
     my ($self, $calc, $source) = @_;
  
-    my $order = GT::Portfolio::Order->new;
+    my $order = Finance::GeniusTrader::Portfolio::Order->new;
     $order->set_buy_order;
     $order->set_type_theoric_at_low;
     $order->set_code($calc->code);
@@ -196,7 +196,7 @@ sub virtual_buy_at_low {
 sub virtual_buy_at_close {
     my ($self, $calc, $source) = @_;
  
-    my $order = GT::Portfolio::Order->new;
+    my $order = Finance::GeniusTrader::Portfolio::Order->new;
     $order->set_buy_order;
     $order->set_type_theoric_at_close;
     $order->set_code($calc->code);
@@ -207,7 +207,7 @@ sub virtual_buy_at_close {
 sub virtual_buy_at_signal {
     my ($self, $calc, $source) = @_;
  
-    my $order = GT::Portfolio::Order->new;
+    my $order = Finance::GeniusTrader::Portfolio::Order->new;
     $order->set_buy_order;
     $order->set_type_theoric_at_signal;
     $order->set_code($calc->code);
@@ -218,7 +218,7 @@ sub virtual_buy_at_signal {
 sub sell_market_price {
     my ($self, $calc, $source) = @_;
 
-    my $order = GT::Portfolio::Order->new;
+    my $order = Finance::GeniusTrader::Portfolio::Order->new;
     $order->set_sell_order;
     $order->set_type_market_price;
     $order->set_code($calc->code);
@@ -229,7 +229,7 @@ sub sell_market_price {
 sub sell_limited_price {
     my ($self, $calc, $source, $price) = @_;
     
-    my $order = GT::Portfolio::Order->new;
+    my $order = Finance::GeniusTrader::Portfolio::Order->new;
     $order->set_sell_order;
     $order->set_type_limited;
     $order->set_code($calc->code);
@@ -241,7 +241,7 @@ sub sell_limited_price {
 sub sell_conditional {
     my ($self, $calc, $source, $price, $price2) = @_;
     
-    my $order = GT::Portfolio::Order->new;
+    my $order = Finance::GeniusTrader::Portfolio::Order->new;
     $order->set_sell_order;
     $order->set_code($calc->code);
     $order->set_source($source);
@@ -259,7 +259,7 @@ sub sell_conditional {
 sub virtual_sell_at_open {
     my ($self, $calc, $source) = @_;
  
-    my $order = GT::Portfolio::Order->new;
+    my $order = Finance::GeniusTrader::Portfolio::Order->new;
     $order->set_sell_order;
     $order->set_type_theoric_at_open;
     $order->set_code($calc->code);
@@ -270,7 +270,7 @@ sub virtual_sell_at_open {
 sub virtual_sell_at_high {
     my ($self, $calc, $source) = @_;
  
-    my $order = GT::Portfolio::Order->new;
+    my $order = Finance::GeniusTrader::Portfolio::Order->new;
     $order->set_sell_order;
     $order->set_type_theoric_at_high;
     $order->set_code($calc->code);
@@ -281,7 +281,7 @@ sub virtual_sell_at_high {
 sub virtual_sell_at_low {
     my ($self, $calc, $source) = @_;
  
-    my $order = GT::Portfolio::Order->new;
+    my $order = Finance::GeniusTrader::Portfolio::Order->new;
     $order->set_sell_order;
     $order->set_type_theoric_at_low;
     $order->set_code($calc->code);
@@ -292,7 +292,7 @@ sub virtual_sell_at_low {
 sub virtual_sell_at_close {
     my ($self, $calc, $source) = @_;
  
-    my $order = GT::Portfolio::Order->new;
+    my $order = Finance::GeniusTrader::Portfolio::Order->new;
     $order->set_sell_order;
     $order->set_type_theoric_at_close;
     $order->set_code($calc->code);
@@ -303,7 +303,7 @@ sub virtual_sell_at_close {
 sub virtual_sell_at_signal {
     my ($self, $calc, $source) = @_;
  
-    my $order = GT::Portfolio::Order->new;
+    my $order = Finance::GeniusTrader::Portfolio::Order->new;
     $order->set_sell_order;
     $order->set_type_theoric_at_signal;
     $order->set_code($calc->code);

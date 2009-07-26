@@ -1,4 +1,4 @@
-package GT::MoneyManagement::OrderSizeLimit;
+package Finance::GeniusTrader::MoneyManagement::OrderSizeLimit;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,13 +7,13 @@ package GT::MoneyManagement::OrderSizeLimit;
 use strict;
 use vars qw(@NAMES @ISA);
 
-use GT::MoneyManagement;
-use GT::Prices;
+use Finance::GeniusTrader::MoneyManagement;
+use Finance::GeniusTrader::Prices;
 
 @NAMES = ("OrderSizeLimit[#1]");
-@ISA = qw(GT::MoneyManagement);
+@ISA = qw(Finance::GeniusTrader::MoneyManagement);
 
-=head1 GT::MoneyManagement::OrderSizeLimit
+=head1 Finance::GeniusTrader::MoneyManagement::OrderSizeLimit
 
 =head2 Overview
 

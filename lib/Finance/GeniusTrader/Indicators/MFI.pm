@@ -1,4 +1,4 @@
-package GT::Indicators::MFI;
+package Finance::GeniusTrader::Indicators::MFI;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,14 +7,14 @@ package GT::Indicators::MFI;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Indicators;
-use GT::Indicators::TP;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::TP;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("MFI[#1]");
 
-=head1 GT::Indicators::MFI
+=head1 Finance::GeniusTrader::Indicators::MFI
 
 =head2 Overview
 
@@ -47,8 +47,8 @@ The standard MFI works with a fourteen-day parameter : n = 14
 
 =head2 Example
 
-GT::Indicators::MFI->new()
-GT::Indicators::MFI->new([8])
+Finance::GeniusTrader::Indicators::MFI->new()
+Finance::GeniusTrader::Indicators::MFI->new([8])
 
 =head2 Links
 
@@ -70,14 +70,14 @@ sub new {
 sub initialize {
     my $self = shift;
 
-    $self->{'tp'} = GT::Indicators::TP->new();
+    $self->{'tp'} = Finance::GeniusTrader::Indicators::TP->new();
 
     $self->add_indicator_dependency($self->{'tp'}, $self->{'args'}[0] + 1);
 }
 
 =pod
 
-=head2 GT::Indicators::TP::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::TP::calculate($calc, $day)
 
 =cut
 

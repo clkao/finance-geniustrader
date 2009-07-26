@@ -1,4 +1,4 @@
-package GT::Analyzers::Type;
+package Finance::GeniusTrader::Analyzers::Type;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::Type;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("Type[#*]");
 @DEFAULT_ARGS = ();
 
 =head1 NAME
 
-  GT::Analyzers::Type - String: long if long and short if short
+  Finance::GeniusTrader::Analyzers::Type - String: long if long and short if short
 
 =head1 DESCRIPTION 
 

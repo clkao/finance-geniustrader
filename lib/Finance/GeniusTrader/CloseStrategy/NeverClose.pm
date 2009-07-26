@@ -1,4 +1,4 @@
-package GT::CloseStrategy::NeverClose;
+package Finance::GeniusTrader::CloseStrategy::NeverClose;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,12 +9,12 @@ package GT::CloseStrategy::NeverClose;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::CloseStrategy;
+use Finance::GeniusTrader::CloseStrategy;
 
-@ISA = qw(GT::CloseStrategy);
+@ISA = qw(Finance::GeniusTrader::CloseStrategy);
 @NAMES = ("NeverClose");
 
-=head1 GT::CloseStrategy::NeverClose
+=head1 Finance::GeniusTrader::CloseStrategy::NeverClose
 
 This strategy never close the already opened positions. This is very
 usefull to design a sort of Multiple Buy & Hold or Multiple Sell & Hold

@@ -1,4 +1,4 @@
-package GT::Graphics::Object::BarChart;
+package Finance::GeniusTrader::Graphics::Object::BarChart;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -6,19 +6,19 @@ package GT::Graphics::Object::BarChart;
 
 use strict;
 use vars qw(@ISA);
-@ISA = qw(GT::Graphics::Object);
+@ISA = qw(Finance::GeniusTrader::Graphics::Object);
 
-use GT::Prices;
-use GT::Graphics::Object;
-use GT::Graphics::Driver;
-use GT::Graphics::Tools qw(:color);
-use GT::Conf;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Graphics::Object;
+use Finance::GeniusTrader::Graphics::Driver;
+use Finance::GeniusTrader::Graphics::Tools qw(:color);
+use Finance::GeniusTrader::Conf;
 
-GT::Conf::default("Graphic::BarChart::UpColor",   "green");
-GT::Conf::default("Graphic::BarChart::DownColor", "red");
-GT::Conf::default("Graphic::BarChart::Width", 6);
+Finance::GeniusTrader::Conf::default("Graphic::BarChart::UpColor",   "green");
+Finance::GeniusTrader::Conf::default("Graphic::BarChart::DownColor", "red");
+Finance::GeniusTrader::Conf::default("Graphic::BarChart::Width", 6);
 
-=head1 GT::Graphics::Object::BarChart
+=head1 Finance::GeniusTrader::Graphics::Object::BarChart
 
 This graphical object display a serie of bars.
 
@@ -29,10 +29,10 @@ sub init {
     
     # Default values ...
     $self->{'up_color'} = 
-		    get_color(GT::Conf::get("Graphic::BarChart::UpColor"));
+		    get_color(Finance::GeniusTrader::Conf::get("Graphic::BarChart::UpColor"));
     $self->{'down_color'} = 
-		    get_color(GT::Conf::get("Graphic::BarChart::DownColor"));
-    $self->{'width'} = GT::Conf::get("Graphic::BarChart::Width");
+		    get_color(Finance::GeniusTrader::Conf::get("Graphic::BarChart::DownColor"));
+    $self->{'width'} = Finance::GeniusTrader::Conf::get("Graphic::BarChart::Width");
 }
 
 sub display {

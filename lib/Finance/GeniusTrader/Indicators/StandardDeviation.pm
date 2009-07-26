@@ -1,4 +1,4 @@
-package GT::Indicators::StandardDeviation;
+package Finance::GeniusTrader::Indicators::StandardDeviation;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,17 +9,17 @@ package GT::Indicators::StandardDeviation;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::SMA;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::SMA;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("StandardDeviation[#*]");
 @DEFAULT_ARGS = (20, "{I:Prices CLOSE}");
 
 =pod
 
-=head1 GT::Indicators::StandardDeviation
+=head1 Finance::GeniusTrader::Indicators::StandardDeviation
 
 =head2 Overview
 
@@ -40,7 +40,7 @@ http://www.equis.com/free/taaz/standardevia.html
 sub initialize {
     my $self = shift;
 
-    $self->{'sma'} = GT::Indicators::SMA->new([ $self->{'args'}->get_arg_names() ]);
+    $self->{'sma'} = Finance::GeniusTrader::Indicators::SMA->new([ $self->{'args'}->get_arg_names() ]);
 
 }
 

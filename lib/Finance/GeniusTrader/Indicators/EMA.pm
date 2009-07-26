@@ -1,4 +1,4 @@
-package GT::Indicators::EMA;
+package Finance::GeniusTrader::Indicators::EMA;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # Copyright 2008 Thomas Weigert
@@ -13,18 +13,18 @@ package GT::Indicators::EMA;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::SMA;
-use GT::Eval;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::SMA;
+use Finance::GeniusTrader::Eval;
 
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("EMA[#*]");
 @DEFAULT_ARGS = (20, "{I:Prices CLOSE}");
 
 =head1 NAME
 
-GT::Indicators::EMA - Exponential Moving Average
+Finance::GeniusTrader::Indicators::EMA - Exponential Moving Average
 
 =head1 DESCRIPTION
 
@@ -73,17 +73,17 @@ start computation from the loaded data on.
 
 =head2 Creation
 
- GT::Indicators::EMA->new()
- GT::Indicators::EMA->new([20])
+ Finance::GeniusTrader::Indicators::EMA->new()
+ Finance::GeniusTrader::Indicators::EMA->new([20])
 
 If you need a 30 days EMA of the opening prices you can write
 one of those lines :
 
- GT::Indicators::EMA->new([30, "{I:Prices OPEN}"])
+ Finance::GeniusTrader::Indicators::EMA->new([30, "{I:Prices OPEN}"])
 
 A 10 days EMA of the RSI could be created with :
 
- GT::Indicators::EMA->new([10, "{I:RSI}"])
+ Finance::GeniusTrader::Indicators::EMA->new([10, "{I:RSI}"])
 
 Z<>
 
@@ -102,7 +102,7 @@ sub initialize {
 	die "Inappropriate argument $start given to ".$self->get_name." .\n";
       }
    } else {
-      $self->{'start'} = GT::Indicators::SMA->new([ $self->{'args'}->get_arg_names() ]);
+      $self->{'start'} = Finance::GeniusTrader::Indicators::SMA->new([ $self->{'args'}->get_arg_names() ]);
     }
     $self->add_indicator_dependency($self->{'start'}, 1);
 }

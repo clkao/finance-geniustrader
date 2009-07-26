@@ -1,4 +1,4 @@
-package GT::Graphics::Scale;
+package Finance::GeniusTrader::Graphics::Scale;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -6,7 +6,7 @@ package GT::Graphics::Scale;
 
 use strict;
 
-=head1 GT::Graphics::Scale
+=head1 Finance::GeniusTrader::Graphics::Scale
 
 A scale converts local data (numbers) into coordinate ready to be displayed.
 

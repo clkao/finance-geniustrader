@@ -1,4 +1,4 @@
-package GT::Analyzers::OpenPrice;
+package Finance::GeniusTrader::Analyzers::OpenPrice;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::OpenPrice;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("OpenPrice[#*]");
 @DEFAULT_ARGS = ();
 
 =head1 NAME
 
-  GT::Analyzers::OpenPrice - The price at the opening
+  Finance::GeniusTrader::Analyzers::OpenPrice - The price at the opening
 
 =head1 DESCRIPTION 
 

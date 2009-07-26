@@ -1,4 +1,4 @@
-package GT::CloseStrategy::Stop::BasedOnIndicators;
+package Finance::GeniusTrader::CloseStrategy::Stop::BasedOnIndicators;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # Modified 2004 by Oliver Bossert
@@ -10,16 +10,16 @@ package GT::CloseStrategy::Stop::BasedOnIndicators;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::CloseStrategy;
-use GT::Eval;
-use GT::Prices;
-use GT::Tools qw(:generic);
+use Finance::GeniusTrader::CloseStrategy;
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Tools qw(:generic);
 
-@ISA = qw(GT::CloseStrategy);
+@ISA = qw(Finance::GeniusTrader::CloseStrategy);
 @NAMES = ("BasedOnIndicators[#*]");
 @DEFAULT_ARGS = ("{I:SMA}", "{I:SMA}", "{I:Prices CLOSE}");
 
-=head1 GT::CloseStrategy::Stop::BasedOnIndicators
+=head1 Finance::GeniusTrader::CloseStrategy::Stop::BasedOnIndicators
 
 =head2 Overview
 

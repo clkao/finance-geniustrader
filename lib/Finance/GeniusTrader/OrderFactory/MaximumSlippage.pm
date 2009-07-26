@@ -1,4 +1,4 @@
-package GT::OrderFactory::MaximumSlippage;
+package Finance::GeniusTrader::OrderFactory::MaximumSlippage;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,15 +9,15 @@ package GT::OrderFactory::MaximumSlippage;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::OrderFactory;
+use Finance::GeniusTrader::OrderFactory;
 
-@ISA = qw(GT::OrderFactory);
+@ISA = qw(Finance::GeniusTrader::OrderFactory);
 @NAMES = ("MaximumSlippage");
 @DEFAULT_ARGS = ();
 
 =head1 NAME
 
-GT::OrderFactory::MaximumSlippage
+Finance::GeniusTrader::OrderFactory::MaximumSlippage
 
 =head1 DESCRIPTION
 

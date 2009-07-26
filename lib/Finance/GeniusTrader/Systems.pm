@@ -1,4 +1,4 @@
-package GT::Systems;
+package Finance::GeniusTrader::Systems;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -8,18 +8,18 @@ use strict;
 use vars qw(@ISA @EXPORT %OBJECT_REPOSITORY);
 
 require Exporter;
-@ISA = qw(Exporter GT::Dependency);
+@ISA = qw(Exporter Finance::GeniusTrader::Dependency);
 @EXPORT = qw(&build_object_name &manage_object);
 
-use GT::Registry;
-use GT::Dependency;
-use GT::OrderFactory::MarketPrice;
+use Finance::GeniusTrader::Registry;
+use Finance::GeniusTrader::Dependency;
+use Finance::GeniusTrader::OrderFactory::MarketPrice;
 #ALL#  use Log::Log4perl qw(:easy);
-use GT::ArgsTree;
+use Finance::GeniusTrader::ArgsTree;
 
 =head1 NAME
 
-GT::Systems - 
+Finance::GeniusTrader::Systems - 
 
 =head1 DESCRIPTION
 
@@ -110,7 +110,7 @@ to be used.
 
 =cut
 sub default_order_factory {
-    return GT::OrderFactory::MarketPrice->new;
+    return Finance::GeniusTrader::OrderFactory::MarketPrice->new;
 }
 
 # Default functions so that they are not mandatory
@@ -120,28 +120,28 @@ sub initialize              { 1; }
 
 =head2 Functions to manage a repository of systems
 
-  GT::Systems::get_registered_object($name);
-  GT::Systems::register_object($name, $object);
-  GT::Systems::get_or_register_object($name, $object);
-  GT::Systems::manage_object(\@NAMES, $object, $class, $args, $key);
+  Finance::GeniusTrader::Systems::get_registered_object($name);
+  Finance::GeniusTrader::Systems::register_object($name, $object);
+  Finance::GeniusTrader::Systems::get_or_register_object($name, $object);
+  Finance::GeniusTrader::Systems::manage_object(\@NAMES, $object, $class, $args, $key);
 
 =over
 
 =cut
 sub get_registered_object {
-    GT::Registry::get_registered_object(\%OBJECT_REPOSITORY, @_);
+    Finance::GeniusTrader::Registry::get_registered_object(\%OBJECT_REPOSITORY, @_);
 }
 sub register_object {
-    GT::Registry::register_object(\%OBJECT_REPOSITORY, @_);
+    Finance::GeniusTrader::Registry::register_object(\%OBJECT_REPOSITORY, @_);
 }
 sub get_or_register_object {
-    GT::Registry::get_or_register_object(\%OBJECT_REPOSITORY, @_);
+    Finance::GeniusTrader::Registry::get_or_register_object(\%OBJECT_REPOSITORY, @_);
 }
 sub manage_object {
-    GT::Registry::manage_object(\%OBJECT_REPOSITORY, @_);
+    Finance::GeniusTrader::Registry::manage_object(\%OBJECT_REPOSITORY, @_);
 }
 
-=item C<< GT::Systems::Module->new($args) >>
+=item C<< Finance::GeniusTrader::Systems::Module->new($args) >>
 
 Create a new Systems with the given arguments. $args is optional.
 
@@ -159,11 +159,11 @@ sub new {
 		push @{$args}, ${"$class\::DEFAULT_ARGS"}[$n];
 	    }
 	}
-	$self->{'args'} = GT::ArgsTree->new(@{$args});
+	$self->{'args'} = Finance::GeniusTrader::ArgsTree->new(@{$args});
     } elsif (defined (@{"$class\::DEFAULT_ARGS"})) {
-	$self->{'args'} = GT::ArgsTree->new(@{"$class\::DEFAULT_ARGS"});
+	$self->{'args'} = Finance::GeniusTrader::ArgsTree->new(@{"$class\::DEFAULT_ARGS"});
     } else {
-	$self->{'args'} = GT::ArgsTree->new(); # no args
+	$self->{'args'} = Finance::GeniusTrader::ArgsTree->new(); # no args
     }
 
     return manage_object(\@{"$class\::NAMES"}, $self, $class, $self->{'args'},'');

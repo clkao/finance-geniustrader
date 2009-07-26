@@ -1,4 +1,4 @@
-package GT::Indicators::UI;
+package Finance::GeniusTrader::Indicators::UI;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,14 +9,14 @@ package GT::Indicators::UI;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("UI[#*]");
 @DEFAULT_ARGS = ("{I:Prices HIGH}", "{I:Prices CLOSE}");
 
-=head1 GT::Indicators::UI
+=head1 Finance::GeniusTrader::Indicators::UI
 
 =head2 Overview
 
@@ -29,7 +29,7 @@ It is the square root of the average of the squared retracements from the latest
 
 =head2 Example
 
-GT::Indicators::UI->new()
+Finance::GeniusTrader::Indicators::UI->new()
 
 =cut
 
@@ -39,7 +39,7 @@ sub initialize {
     $self->add_arg_dependency(2,2);
 }
 
-=head2 GT::Indicators::UI::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::UI::calculate($calc, $day)
 
 =cut
 sub calculate {

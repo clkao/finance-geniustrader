@@ -1,20 +1,20 @@
-package GT::Calculator;
+package Finance::GeniusTrader::Calculator;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
-use GT::CacheValues;
+use Finance::GeniusTrader::CacheValues;
 
 =head1 NAME
 
-GT::Calculator - All data (of a single share) used for calculations
+Finance::GeniusTrader::Calculator - All data (of a single share) used for calculations
 
 =head1 DESCRIPTION
 
-This is a facility object to ease the collaboration between GT::Prices
-and GT::CacheValues. It contains the prices (GT::Prices),
-and the result of various indicators and signals within two GT::CacheValues
+This is a facility object to ease the collaboration between Finance::GeniusTrader::Prices
+and Finance::GeniusTrader::CacheValues. It contains the prices (Finance::GeniusTrader::Prices),
+and the result of various indicators and signals within two Finance::GeniusTrader::CacheValues
 object. This object is manipulated by all the indicators, signals and
 systems.
 
@@ -23,9 +23,9 @@ time frames.
 
 =over
 
-=item C<< my $c = GT::Calculator->new($prices [, $code]) >>
+=item C<< my $c = Finance::GeniusTrader::Calculator->new($prices [, $code]) >>
 
-Create a new GT::Calculator object with $prices used for
+Create a new Finance::GeniusTrader::Calculator object with $prices used for
 calculations. The calculator is associated to share named $code.
 
 =item C<< $c->prices() >>
@@ -43,7 +43,7 @@ Return the corresponding object of the current timeframe.
 =item C<< $c->signals_on_timeframe($timeframe) >>
 
 Return the corresponding object of the indicated timeframe. Learn
-more about the timeframes in GT::DateTime.
+more about the timeframes in Finance::GeniusTrader::DateTime.
 
 =item C<< $c->set_code($code) >>
 
@@ -63,8 +63,8 @@ sub new {
     my $self = { 'code' => $code, 'tf' => {} };
     
     $self->{'tf'}{$prices->timeframe}{'prices'} = $prices;
-    $self->{'tf'}{$prices->timeframe}{'indics'} = GT::CacheValues->new;
-    $self->{'tf'}{$prices->timeframe}{'signals'} = GT::CacheValues->new;
+    $self->{'tf'}{$prices->timeframe}{'indics'} = Finance::GeniusTrader::CacheValues->new;
+    $self->{'tf'}{$prices->timeframe}{'signals'} = Finance::GeniusTrader::CacheValues->new;
     
     bless $self, $class;
     
@@ -136,8 +136,8 @@ sub create_timeframe {
     {
 	my $new = $self->{'tf'}{$tfs[0]}{'prices'}->convert_to_timeframe($tf);
 	$self->{'tf'}{$tf}{'prices'} = $new;
-	$self->{'tf'}{$tf}{'indics'} = GT::CacheValues->new;
-	$self->{'tf'}{$tf}{'signals'} = GT::CacheValues->new;
+	$self->{'tf'}{$tf}{'indics'} = Finance::GeniusTrader::CacheValues->new;
+	$self->{'tf'}{$tf}{'signals'} = Finance::GeniusTrader::CacheValues->new;
 
 	# If we udpated the current timeframe, then let's sync it
 	if ($self->current_timeframe == $tf)

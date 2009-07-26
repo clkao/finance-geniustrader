@@ -1,4 +1,4 @@
-package GT::Indicators::Generic::SignalLength;
+package Finance::GeniusTrader::Indicators::Generic::SignalLength;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,15 +9,15 @@ package GT::Indicators::Generic::SignalLength;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Indicators;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("SignalLength[#1]");
 
 =head1 NAME
 
-GT::Indicators::Generic::SignalLength - Length of any signal
+Finance::GeniusTrader::Indicators::Generic::SignalLength - Length of any signal
 
 =head1 DESCRIPTION
 

@@ -1,4 +1,4 @@
-package GT::Indicators::TP;
+package Finance::GeniusTrader::Indicators::TP;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,14 +9,14 @@ package GT::Indicators::TP;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("TP[#*]");
 @DEFAULT_ARGS = ("{I:Prices HIGH}", "{I:Prices LOW}", "{I:Prices CLOSE}");
 
-=head1 GT::Indicators::TP
+=head1 Finance::GeniusTrader::Indicators::TP
 
 =head2 Overview
 
@@ -38,7 +38,7 @@ This indicator is indirectly validatet by I:CCI.
 
 =cut
 
-=head2 GT::Indicators::TP::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::TP::calculate($calc, $day)
 
 =cut
 sub calculate {

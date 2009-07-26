@@ -1,4 +1,4 @@
-package GT::Indicators::HilbertSine;
+package Finance::GeniusTrader::Indicators::HilbertSine;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,17 +7,17 @@ package GT::Indicators::HilbertSine;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Indicators;
-use GT::Indicators::WTCL;
-use GT::Indicators::HilbertPeriod;
-use GT::Prices;
-use GT::Tools qw(:math);
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::WTCL;
+use Finance::GeniusTrader::Indicators::HilbertPeriod;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Tools qw(:math);
 use POSIX;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("HilbertSine", "HilbertLeadSine");
 
-=head1 GT::Indicators::HilbertSine
+=head1 Finance::GeniusTrader::Indicators::HilbertSine
 
 =head2 Overview
 
@@ -33,8 +33,8 @@ TASC May 2000 - page 27
 sub initialize {
     my $self = shift;
     
-    $self->{'median'} = GT::Indicators::WTCL->new([0]);
-    $self->{'period'} = GT::Indicators::HilbertPeriod->new;
+    $self->{'median'} = Finance::GeniusTrader::Indicators::WTCL->new([0]);
+    $self->{'period'} = Finance::GeniusTrader::Indicators::HilbertPeriod->new;
 
     $self->add_indicator_dependency($self->{'period'}, 1);
 }

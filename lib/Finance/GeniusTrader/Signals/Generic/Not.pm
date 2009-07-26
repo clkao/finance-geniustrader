@@ -1,4 +1,4 @@
-package GT::Signals::Generic::Not;
+package Finance::GeniusTrader::Signals::Generic::Not;
 
 # Copyright 2004 João Antunes Costa
 # This file is distributed under the terms of the General Public License
@@ -9,9 +9,9 @@ package GT::Signals::Generic::Not;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Signals;
+use Finance::GeniusTrader::Signals;
 
-@ISA = qw(GT::Signals);
+@ISA = qw(Finance::GeniusTrader::Signals);
 @NAMES = ("Not[#*]");
 
 =head1 Not Signal Negation

@@ -1,30 +1,30 @@
-package GT::Graphics::Object;
+package Finance::GeniusTrader::Graphics::Object;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
 use strict;
-use GT::Graphics::Graphic;
-use GT::Graphics::Tools qw(:color);
-use GT::Conf;
+use Finance::GeniusTrader::Graphics::Graphic;
+use Finance::GeniusTrader::Graphics::Tools qw(:color);
+use Finance::GeniusTrader::Conf;
 
-require GT::Graphics::Object::Candle;
-require GT::Graphics::Object::CandleVolume;
-require GT::Graphics::Object::CandleVolumePlace;
-require GT::Graphics::Object::BarChart;
-require GT::Graphics::Object::Histogram;
-require GT::Graphics::Object::Marks;
-#require GT::Graphics::Object::PointAndFigure;
-require GT::Graphics::Object::Curve;
-require GT::Graphics::Object::Mountain;
-require GT::Graphics::Object::MountainBand;
-require GT::Graphics::Object::Text;
-require GT::Graphics::Object::Polygon;
-require GT::Graphics::Object::BuySellArrows;
-require GT::Graphics::Object::VotingLine;
+require Finance::GeniusTrader::Graphics::Object::Candle;
+require Finance::GeniusTrader::Graphics::Object::CandleVolume;
+require Finance::GeniusTrader::Graphics::Object::CandleVolumePlace;
+require Finance::GeniusTrader::Graphics::Object::BarChart;
+require Finance::GeniusTrader::Graphics::Object::Histogram;
+require Finance::GeniusTrader::Graphics::Object::Marks;
+#require Finance::GeniusTrader::Graphics::Object::PointAndFigure;
+require Finance::GeniusTrader::Graphics::Object::Curve;
+require Finance::GeniusTrader::Graphics::Object::Mountain;
+require Finance::GeniusTrader::Graphics::Object::MountainBand;
+require Finance::GeniusTrader::Graphics::Object::Text;
+require Finance::GeniusTrader::Graphics::Object::Polygon;
+require Finance::GeniusTrader::Graphics::Object::BuySellArrows;
+require Finance::GeniusTrader::Graphics::Object::VotingLine;
 
-=head1 GT::Graphics::Object
+=head1 Finance::GeniusTrader::Graphics::Object
 
 A graphical object is a part of a graphic. It can display itself
 on a picture.
@@ -46,7 +46,7 @@ the constructor.
 
 =head1 GENERIC FUNCTIONS
 
-=head2 GT::Graphics::Object::<Something>->new($datasource, $zone, ...)
+=head2 Finance::GeniusTrader::Graphics::Object::<Something>->new($datasource, $zone, ...)
 
 The constructor.
 
@@ -59,9 +59,9 @@ sub new {
 
     my $self = { "source" => $source, "zone" => $zone,
 		 "bg_color" => 
-			get_color(GT::Conf::get("Graphic::BackgroundColor")),
+			get_color(Finance::GeniusTrader::Conf::get("Graphic::BackgroundColor")),
 	         "fg_color" => 
-			get_color(GT::Conf::get("Graphic::ForegroundColor"))
+			get_color(Finance::GeniusTrader::Conf::get("Graphic::ForegroundColor"))
 	       };
     bless $self, $class;
 

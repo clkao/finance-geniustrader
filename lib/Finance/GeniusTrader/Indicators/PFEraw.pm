@@ -1,4 +1,4 @@
-package GT::Indicators::PFEraw;
+package Finance::GeniusTrader::Indicators::PFEraw;
 
 # Copyright 2002 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -12,16 +12,16 @@ package GT::Indicators::PFEraw;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::ArgsTree;
-use GT::Indicators;
+use Finance::GeniusTrader::ArgsTree;
+use Finance::GeniusTrader::Indicators;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("PFEraw[#*]");
 @DEFAULT_ARGS = (10,2,1,"{I:Prices CLOSE}");
 
 =head1 NAME
 
-GT::Indicators::PFE - Polarized Fractal Efficiency
+Finance::GeniusTrader::Indicators::PFE - Polarized Fractal Efficiency
 
 =head1 DESCRIPTION 
 

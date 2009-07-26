@@ -1,4 +1,4 @@
-package GT::Analyzers::DrawDown;
+package Finance::GeniusTrader::Analyzers::DrawDown;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::DrawDown;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("DrawDown[#*]");
 @DEFAULT_ARGS = ("{A:NetGain}", "{A:InitSum}", "{A:Max {A:NetGain}}");
 
 =head1 NAME
 
-  GT::Analyzers::DrwaDown - The Drawdown of the portfolio
+  Finance::GeniusTrader::Analyzers::DrwaDown - The Drawdown of the portfolio
 
 =head1 DESCRIPTION 
 

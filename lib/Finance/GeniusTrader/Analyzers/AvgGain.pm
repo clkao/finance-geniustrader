@@ -1,4 +1,4 @@
-package GT::Analyzers::AvgGain;
+package Finance::GeniusTrader::Analyzers::AvgGain;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::AvgGain;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("AvgGain[#*]");
 @DEFAULT_ARGS = ("{A:CumGain}", "{A:Sum {A:IsGain}}");
 
 =head1 NAME
 
-  GT::Analyzers::AvgGain - Average Gain per trade
+  Finance::GeniusTrader::Analyzers::AvgGain - Average Gain per trade
 
 =head1 DESCRIPTION 
 

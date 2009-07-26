@@ -1,4 +1,4 @@
-package GT::Analyzers::Consec;
+package Finance::GeniusTrader::Analyzers::Consec;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::Consec;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("Consec[#*]");
 @DEFAULT_ARGS = ("{A:Costs}");
 
 =head1 NAME
 
-  GT::Analyzers::Consec - Maximum of consecutive nonzero-values
+  Finance::GeniusTrader::Analyzers::Consec - Maximum of consecutive nonzero-values
 
 =head1 DESCRIPTION 
 

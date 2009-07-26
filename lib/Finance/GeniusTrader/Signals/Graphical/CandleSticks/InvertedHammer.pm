@@ -1,4 +1,4 @@
-package GT::Signals::Graphical::CandleSticks::InvertedHammer;
+package Finance::GeniusTrader::Signals::Graphical::CandleSticks::InvertedHammer;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,19 +7,19 @@ package GT::Signals::Graphical::CandleSticks::InvertedHammer;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Signals;
-use GT::Prices;
-use GT::Indicators::CNDL;
+use Finance::GeniusTrader::Signals;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Indicators::CNDL;
 
-@ISA = qw(GT::Signals);
+@ISA = qw(Finance::GeniusTrader::Signals);
 @NAMES = ("InvertedHammer");
 
-=head1 GT::Signals::Graphical::CandelSticks::InvertedHammer
+=head1 Finance::GeniusTrader::Signals::Graphical::CandelSticks::InvertedHammer
 
 =head2 Overview
 
 Inverted Hammers are just the opposite of Hammers (see
-GT::Signals::Graphical::CandleSticks::Hammer), i.e., a small body occurs
+Finance::GeniusTrader::Signals::Graphical::CandleSticks::Hammer), i.e., a small body occurs
 at the bottom of a long trail. Black Inverted Hammers occuring at the end
 of uptrends are clearly bearish, since the markets fails in its attempt to
 rally higher, closing near the open.
@@ -63,7 +63,7 @@ sub new {
 sub initialize {
     my ($self) = @_;
     
-    $self->{'cndl'} = GT::Indicators::CNDL->new($self->{'args'});
+    $self->{'cndl'} = Finance::GeniusTrader::Indicators::CNDL->new($self->{'args'});
 
     $self->add_indicator_dependency($self->{'cndl'}, 1);
 }

@@ -1,4 +1,4 @@
-package GT::Analyzers::PerShare;
+package Finance::GeniusTrader::Analyzers::PerShare;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::PerShare;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("PerShare[#*]");
 @DEFAULT_ARGS = ("{A:Costs}");
 
 =head1 NAME
 
-  GT::Analyzers::PerShare - Normalizes a value per share of a position
+  Finance::GeniusTrader::Analyzers::PerShare - Normalizes a value per share of a position
 
 =head1 DESCRIPTION 
 

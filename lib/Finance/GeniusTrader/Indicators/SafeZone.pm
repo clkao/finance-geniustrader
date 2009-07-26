@@ -1,4 +1,4 @@
-package GT::Indicators::SafeZone;
+package Finance::GeniusTrader::Indicators::SafeZone;
 
 # Copyright 2000-2003 Raphaël Hertzog, Fabien Fulhaber, Oliver Bossert, Joerg Sauer
 # This file is distributed under the terms of the General Public License
@@ -9,19 +9,19 @@ package GT::Indicators::SafeZone;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::Generic::MaxInPeriod;
-use GT::Indicators::Generic::MinInPeriod;
-use GT::Tools qw(:math);
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::Generic::MaxInPeriod;
+use Finance::GeniusTrader::Indicators::Generic::MinInPeriod;
+use Finance::GeniusTrader::Tools qw(:math);
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("SafeUp[#*]","SafeDn[#*]");
 @DEFAULT_ARGS = (20, 2, 6);
 
 =pod
 
-=head2 GT::Indicators::SafeZone
+=head2 Finance::GeniusTrader::Indicators::SafeZone
 
 The SafeZone stop is described in Dr. Alexander Elder's Book "Come into my Trading Room" and provides
 stops for closing long or short positions.
@@ -39,9 +39,9 @@ If this doesn't seem to make sense just plot this indicator and you will know wh
 sub initialize {
     my $self = shift;
 
-    $self->{'min'} = GT::Indicators::Generic::MinInPeriod->new([ $self->{'args'}->get_arg_constant(3), 
+    $self->{'min'} = Finance::GeniusTrader::Indicators::Generic::MinInPeriod->new([ $self->{'args'}->get_arg_constant(3), 
 								 "{I:Prices HIGH}" ]);
-    $self->{'max'} = GT::Indicators::Generic::MaxInPeriod->new([ $self->{'args'}->get_arg_constant(3), 
+    $self->{'max'} = Finance::GeniusTrader::Indicators::Generic::MaxInPeriod->new([ $self->{'args'}->get_arg_constant(3), 
 								 "{I:Prices LOW}" ]);
 						
     $self->add_indicator_dependency($self->{'min'}, 1);
@@ -49,7 +49,7 @@ sub initialize {
     $self->add_prices_dependency($self->{'args'}->get_arg_constant(1) + $self->{'args'}->get_arg_constant(3));
 }
 
-=head2 GT::Indicators::SafeZone::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::SafeZone::calculate($calc, $day)
 
 =cut
 sub calculate {

@@ -1,4 +1,4 @@
-package GT::Brokers::InteractiveBrokers;
+package Finance::GeniusTrader::Brokers::InteractiveBrokers;
 
 # Copyright 2003 Olaf Dietsche
 # This file is distributed under the terms of the General Public License
@@ -7,14 +7,14 @@ package GT::Brokers::InteractiveBrokers;
 use strict;
 use vars qw(@NAMES @ISA);
 
-use GT::Brokers;
-use GT::Eval;
-use GT::Conf;
+use Finance::GeniusTrader::Brokers;
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::Conf;
 
 @NAMES = ("InteractiveBrokers[#1]", "IB[#1]");
-@ISA = qw(GT::Brokers);
+@ISA = qw(Finance::GeniusTrader::Brokers);
 
-=head1 GT::Brokers::InteractiveBrokers
+=head1 Finance::GeniusTrader::Brokers::InteractiveBrokers
 
 =head2 Overview
 
@@ -63,8 +63,8 @@ sub new {
     my $type = shift;
     my $class = ref($type) || $type;
     my $args = shift;
-    GT::Conf::default('Brokers::InteractiveBrokers::Market', 'de');
-    my $option = GT::Conf::get('Brokers::InteractiveBrokers::Market');
+    Finance::GeniusTrader::Conf::default('Brokers::InteractiveBrokers::Market', 'de');
+    my $option = Finance::GeniusTrader::Conf::get('Brokers::InteractiveBrokers::Market');
     my $self = { 'args' => defined($args) ? $args : [$option] };
 
     return manage_object(\@NAMES, $self, $class, $self->{'args'}, '');

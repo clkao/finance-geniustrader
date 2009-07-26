@@ -1,4 +1,4 @@
-package GT::Systems::Generic;
+package Finance::GeniusTrader::Systems::Generic;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # Modified 2004 Oliver Bossert
@@ -8,12 +8,12 @@ package GT::Systems::Generic;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Prices;
-use GT::Systems;
-use GT::Eval;
-use GT::Tools qw(:generic);
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Systems;
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::Tools qw(:generic);
 
-@ISA = qw(GT::Systems);
+@ISA = qw(Finance::GeniusTrader::Systems);
 @NAMES = ("Generic[#*]");
 
 =head1 Generic System module
@@ -35,7 +35,7 @@ use GT::Tools qw(:generic);
  opened by a prior long signal. open position management is
  controlled by a close strategy.
 
- according to GT::Systems a signal is acted upon in the following
+ according to Finance::GeniusTrader::Systems a signal is acted upon in the following
  day (timeframe). if a position is opened (long or short) closing
  that position is controlled by a close strategy (CS). therefore,
  most system descriptions will also include a close strategy
@@ -71,7 +71,7 @@ use GT::Tools qw(:generic);
  system descriptions can specify multiple trade filters
 
 
- SY:Generic inherits new from GT::Systems::
+ SY:Generic inherits new from Finance::GeniusTrader::Systems::
 
 =cut
 

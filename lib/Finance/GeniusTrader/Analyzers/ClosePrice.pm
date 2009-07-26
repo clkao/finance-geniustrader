@@ -1,4 +1,4 @@
-package GT::Analyzers::ClosePrice;
+package Finance::GeniusTrader::Analyzers::ClosePrice;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::ClosePrice;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("ClosePrice[#*]");
 @DEFAULT_ARGS = ();
 
 =head1 NAME
 
-  GT::Analyzers::ClosePricce - The price on the closing date
+  Finance::GeniusTrader::Analyzers::ClosePricce - The price on the closing date
 
 =head1 DESCRIPTION 
 

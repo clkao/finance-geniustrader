@@ -1,11 +1,11 @@
-package GT::Indicators::StandardError;
+package Finance::GeniusTrader::Indicators::StandardError;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # standards upgrade Copyright 2005 Thomas Weigert
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
-# requires Thomas Weigert revision to GT::Indicators::LinearRegression
+# requires Thomas Weigert revision to Finance::GeniusTrader::Indicators::LinearRegression
 # $Id$
 
 # Standards-Version: 1.0
@@ -13,17 +13,17 @@ package GT::Indicators::StandardError;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::LinearRegression;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::LinearRegression;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("StandardError[#1, #2]");
 @DEFAULT_ARGS = (20, "{I:Prices CLOSE}");
 
 =pod
 
-=head1 GT::Indicators::StandardError
+=head1 Finance::GeniusTrader::Indicators::StandardError
 
 =head2 Overview
 
@@ -51,7 +51,7 @@ sub initialize {
     my $self = shift;
 
     # Linear regression of the CLOSE against the sequence number
-    $self->{'linear_regression_line'} = GT::Indicators::LinearRegression->new([ $self->{'args'}->get_arg_names(1), $self->{'args'}->get_arg_names(2) ]);
+    $self->{'linear_regression_line'} = Finance::GeniusTrader::Indicators::LinearRegression->new([ $self->{'args'}->get_arg_names(1), $self->{'args'}->get_arg_names(2) ]);
 
     $self->add_indicator_dependency($self->{'linear_regression_line'}, $self->{'args'}->get_arg_constant(1));
     $self->add_prices_dependency($self->{'args'}->get_arg_constant(1));

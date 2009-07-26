@@ -1,4 +1,4 @@
-package GT::CloseStrategy::Conditional::TradeFilter;
+package Finance::GeniusTrader::CloseStrategy::Conditional::TradeFilter;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,13 +7,13 @@ package GT::CloseStrategy::Conditional::TradeFilter;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::CloseStrategy;
-use GT::Eval;
+use Finance::GeniusTrader::CloseStrategy;
+use Finance::GeniusTrader::Eval;
 
-@ISA = qw(GT::CloseStrategy);
+@ISA = qw(Finance::GeniusTrader::CloseStrategy);
 @NAMES = ("ConditionalTF[#*]");
 
-=head1 GT::CloseStrategy::OppositeSignal
+=head1 Finance::GeniusTrader::CloseStrategy::OppositeSignal
 
 This strategy closes the position once the opposite signal has been emitted
 by the system. It will will close a long position on a sell signal and

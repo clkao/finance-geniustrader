@@ -1,4 +1,4 @@
- package GT::Indicators::EVWMA;
+ package Finance::GeniusTrader::Indicators::EVWMA;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # standards upgrade Copyright 2005 Thomas Weigert
@@ -14,15 +14,15 @@
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
-use GT::MetaInfo;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::MetaInfo;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("EVWMA");
 @DEFAULT_ARGS = ("{I:Prices CLOSE}");
 
-=head1 GT::Indicators::EVWMA (Elastic Volume Weighted Moving Average)
+=head1 Finance::GeniusTrader::Indicators::EVWMA (Elastic Volume Weighted Moving Average)
 
 =head2 Overview
 
@@ -60,20 +60,20 @@ eVWMA(i) = ( (Number of shares floating - Today's Volume) \
 
 =head2 Example
 
-GT::Indicators::EVWMA->new()
+Finance::GeniusTrader::Indicators::EVWMA->new()
 
 =head2 Links
 
 http://www.christian-fries.de/evwma/
 http://www.linnsoft.com/tour/techind/evwma.htm
 
-=head2 GT::Indicators::EVWMA::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::EVWMA::calculate($calc, $day)
 
 =cut
 sub initialize {
     my ($self) = @_;
 
-    $self->{'metainfo'} = GT::MetaInfo->new();
+    $self->{'metainfo'} = Finance::GeniusTrader::MetaInfo->new();
 }
 
 sub calculate {

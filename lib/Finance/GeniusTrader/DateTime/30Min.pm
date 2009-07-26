@@ -1,4 +1,4 @@
-package GT::DateTime::30Min;
+package Finance::GeniusTrader::DateTime::30Min;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # Copyright 2005 João Antunes Costa
@@ -8,11 +8,11 @@ package GT::DateTime::30Min;
 use strict;
 use vars qw();
 
-use GT::DateTime;
+use Finance::GeniusTrader::DateTime;
 #ALL# use Log::Log4perl qw(:easy);
 use Time::Local;
 
-=head1 GT::DateTime::30Min
+=head1 Finance::GeniusTrader::DateTime::30Min
 
 This module treat dates describing an half-hour. They have the following format :
 YYYY-MM-DD HH:N0:00

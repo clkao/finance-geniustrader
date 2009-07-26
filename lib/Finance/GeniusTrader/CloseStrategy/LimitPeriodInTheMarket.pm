@@ -1,4 +1,4 @@
-package GT::CloseStrategy::LimitPeriodInTheMarket;
+package Finance::GeniusTrader::CloseStrategy::LimitPeriodInTheMarket;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # Modified 2004 by Oliver Bossert
@@ -10,16 +10,16 @@ package GT::CloseStrategy::LimitPeriodInTheMarket;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::CloseStrategy;
-use GT::Prices;
+use Finance::GeniusTrader::CloseStrategy;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::CloseStrategy);
+@ISA = qw(Finance::GeniusTrader::CloseStrategy);
 @NAMES = ("LimitPeriodInTheMarket[#1]");
 @DEFAULT_ARGS = (30, "{S:Generic:True}", "{S:Generic:True}");
 
 =head1 NAME
 
-GT::CloseStrategy::LimitPeriodInTheMarket - Only allow the trade to last for X days
+Finance::GeniusTrader::CloseStrategy::LimitPeriodInTheMarket - Only allow the trade to last for X days
 
 =head1 DESCRIPTION
 

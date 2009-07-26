@@ -1,4 +1,4 @@
-package GT::Conf;
+package Finance::GeniusTrader::Conf;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -13,7 +13,7 @@ use vars qw(%conf);
 
 =head1 NAME
 
-GT::Conf - Manage configuration
+Finance::GeniusTrader::Conf - Manage configuration
 
 =head1 DESCRIPTION
 
@@ -59,7 +59,7 @@ Aliases::Global::TFS2[] SY:TFS #1 #2 | CS:SY:TFS #1
 
 =head1 FUNCTIONS
 
-=item C<< GT::Conf::load([ $file ]) >>
+=item C<< Finance::GeniusTrader::Conf::load([ $file ]) >>
 
 Load the configuration from the indicated file. If the file is omitted
 then it looks at ~/.gt/options by default.
@@ -105,15 +105,15 @@ sub load {
                       "MoneyManagement", "TradeFilters", "OrderFactory",
                       "Analyzers")
     {
-        foreach my $file (GT::Conf::_get_home_path()."/.gt/aliases/".lc($kind),
-         GT::Conf::get("Path::Aliases::$kind"))
+        foreach my $file (Finance::GeniusTrader::Conf::_get_home_path()."/.gt/aliases/".lc($kind),
+         Finance::GeniusTrader::Conf::get("Path::Aliases::$kind"))
 	{
 	    next unless defined $file;
 	    next if not -e $file;
             open(ALIAS, "<", "$file") || die "Can't open $file : $!\n";
 	    while (defined($_=<ALIAS>)) {
 		if (/^\s*(\S+)\s+(.*)$/) {
-		    GT::Conf::default("Aliases::$kind\::$1", $2);
+		    Finance::GeniusTrader::Conf::default("Aliases::$kind\::$1", $2);
 		}
 	    }
 	    close ALIAS;
@@ -122,14 +122,14 @@ sub load {
 
 }
 
-=item C<< GT::Conf::clear() >>
+=item C<< Finance::GeniusTrader::Conf::clear() >>
 
 Clear all the configuration.
 
 =cut
 sub clear { %conf = () }
 
-=item C<< GT::Conf::store($file) >>
+=item C<< Finance::GeniusTrader::Conf::store($file) >>
 
 Write all the current configuration in the given file. Note: all prior
 commentary, if any is lost.
@@ -148,7 +148,7 @@ sub store {
     close FILE;
 }
 
-=item C<< GT::Conf::get($key,$defaultValue) >>
+=item C<< Finance::GeniusTrader::Conf::get($key,$defaultValue) >>
 
 Return the configuration value for the given key. If the
 key doesn't exist, it returns the optional defaultValue.
@@ -163,7 +163,7 @@ sub get {
     return undef;
 }
 
-=item C<< GT::Conf::set($key, $value) >>
+=item C<< Finance::GeniusTrader::Conf::set($key, $value) >>
 
 Set the given configuration item to the corresponding value. Replaces any
 previous value.
@@ -171,7 +171,7 @@ previous value.
 =cut
 sub set { $conf{lc($_[0])} = $_[1] }
 
-=item C<< GT::Conf::default($key, $value) >>
+=item C<< Finance::GeniusTrader::Conf::default($key, $value) >>
 
 Set a default value to the given item. Must be called by GT itself to
 give reasonable default values to most of configurations items.
@@ -186,7 +186,7 @@ sub default {
     }
 }
 
-=item C<< GT::Conf::get_first($key, ...) >>
+=item C<< Finance::GeniusTrader::Conf::get_first($key, ...) >>
 
 Return the value of the first item that does have a non-zero value.
 
@@ -206,7 +206,7 @@ sub get_first {
 #This is usually defined as the environment variable HOME on Unix like
 #systems, and HOMEDRIVE + HOMEPATH on Windows
 
-=item C<< GT::Conf::=_get_home_path() >>
+=item C<< Finance::GeniusTrader::Conf::=_get_home_path() >>
 
 Helper function, returns the home directory environment variable HOME on Unix
 or on windows the environment variables HOMEDRIVE . HOMEPATH

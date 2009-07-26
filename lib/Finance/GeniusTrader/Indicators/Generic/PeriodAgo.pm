@@ -1,4 +1,4 @@
-package GT::Indicators::Generic::PeriodAgo;
+package Finance::GeniusTrader::Indicators::Generic::PeriodAgo;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,17 +9,17 @@ package GT::Indicators::Generic::PeriodAgo;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
-use GT::Tools qw(:generic);
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Tools qw(:generic);
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("PeriodAgo[#*]");
 @DEFAULT_ARGS = (1, "{I:Prices CLOSE}");
 
 =head1 NAME
 
-GT::Indicators::Generic::PeriodAgo - Return data from some periods ago
+Finance::GeniusTrader::Indicators::Generic::PeriodAgo - Return data from some periods ago
 
 =head1 DESCRIPTION
 

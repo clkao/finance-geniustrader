@@ -1,4 +1,4 @@
-package GT::CloseStrategy::Stop::Fixed;
+package Finance::GeniusTrader::CloseStrategy::Stop::Fixed;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # Modified 2004 by Oliver Bossert
@@ -10,14 +10,14 @@ package GT::CloseStrategy::Stop::Fixed;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::CloseStrategy;
-use GT::Prices;
+use Finance::GeniusTrader::CloseStrategy;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::CloseStrategy);
+@ISA = qw(Finance::GeniusTrader::CloseStrategy);
 @NAMES = ("StopFixed[#1]");
 @DEFAULT_ARGS = (4);
 
-=head1 GT::CloseStrategy::Stop::Fixed
+=head1 Finance::GeniusTrader::CloseStrategy::Stop::Fixed
 
 This strategy closes the position once the prices have crossed a limit
 called stop. This stop is defined as a percentage from the initial price.

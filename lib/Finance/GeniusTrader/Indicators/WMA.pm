@@ -1,4 +1,4 @@
-package GT::Indicators::WMA;
+package Finance::GeniusTrader::Indicators::WMA;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,13 +9,13 @@ package GT::Indicators::WMA;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
+use Finance::GeniusTrader::Indicators;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("WMA[#*]");
 @DEFAULT_ARGS = (20, "{I:Prices CLOSE}");
 
-=head1 GT::Indicators::WMA
+=head1 Finance::GeniusTrader::Indicators::WMA
 
 =head2 Overview
 
@@ -27,9 +27,9 @@ WMA(5) = (1/15) * (5 * Close(i) + 4 * Close(i - 1) + 3 * Close(i - 2) + 2 * Clos
 
 =head2 Examples
 
-GT::Indicators::WMA->new()
-GT::Indicators::WMA->new([50])
-GT::Indicators::WMA->new([30], "OPEN", $GET_OPEN)
+Finance::GeniusTrader::Indicators::WMA->new()
+Finance::GeniusTrader::Indicators::WMA->new([50])
+Finance::GeniusTrader::Indicators::WMA->new([30], "OPEN", $GET_OPEN)
 
 =head2 Links
 
@@ -41,7 +41,7 @@ sub initialize {
     my ($self) = @_;
 }
 
-=head2 GT::Indicators::WMA::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::WMA::calculate($calc, $day)
 
 =cut
 sub calculate {

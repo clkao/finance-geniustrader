@@ -1,4 +1,4 @@
-package GT::Indicators::PFE;
+package Finance::GeniusTrader::Indicators::PFE;
 
 # Copyright 2002 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,17 +9,17 @@ package GT::Indicators::PFE;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::ArgsTree;
-use GT::Indicators;
-use GT::Indicators::EMA;
+use Finance::GeniusTrader::ArgsTree;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::EMA;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("PFE[#*]");
 @DEFAULT_ARGS = (10,5,2,1,"{I:Prices CLOSE}");
 
 =head1 NAME
 
-GT::Indicators::PFE - Polarized Fractal Efficiency
+Finance::GeniusTrader::Indicators::PFE - Polarized Fractal Efficiency
 
 =head1 DESCRIPTION 
 
@@ -60,7 +60,7 @@ sub initialize {
     my $pfe = "{I:PFEraw " . $self->{'args'}->get_arg_names(1) . " " .$self->{'args'}->get_arg_names(3) . " " .
       $self->{'args'}->get_arg_names(4) . " " . $self->{'args'}->get_arg_names(5) . "}";
 
-    $self->{'ema'} = GT::Indicators::EMA->new([$self->{'args'}->get_arg_names(2), $pfe]);
+    $self->{'ema'} = Finance::GeniusTrader::Indicators::EMA->new([$self->{'args'}->get_arg_names(2), $pfe]);
     
 }
 

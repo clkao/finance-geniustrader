@@ -1,4 +1,4 @@
-package GT::Graphics::Object::BuySellArrows;
+package Finance::GeniusTrader::Graphics::Object::BuySellArrows;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # Copyright 2008 Robert A. Schmied
@@ -10,20 +10,20 @@ package GT::Graphics::Object::BuySellArrows;
 
 use strict;
 use vars qw(@ISA);
-@ISA = qw(GT::Graphics::Object);
+@ISA = qw(Finance::GeniusTrader::Graphics::Object);
 
-use GT::Prices;
-use GT::Graphics::Object;
-use GT::Graphics::Driver;
-use GT::Graphics::Tools qw(:color);
-use GT::Conf;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Graphics::Object;
+use Finance::GeniusTrader::Graphics::Driver;
+use Finance::GeniusTrader::Graphics::Tools qw(:color);
+use Finance::GeniusTrader::Conf;
 
-GT::Conf::default("Graphic::BuySellArrows::BuyColor", "green");
-GT::Conf::default("Graphic::BuySellArrows::SellColor", "red");
-GT::Conf::default("Graphic::BuySellArrows::Distance", 8);
-GT::Conf::default("Graphic::Candle::Height", 3);
+Finance::GeniusTrader::Conf::default("Graphic::BuySellArrows::BuyColor", "green");
+Finance::GeniusTrader::Conf::default("Graphic::BuySellArrows::SellColor", "red");
+Finance::GeniusTrader::Conf::default("Graphic::BuySellArrows::Distance", 8);
+Finance::GeniusTrader::Conf::default("Graphic::Candle::Height", 3);
 
-GT::Conf::default("Graphic::BuySellArrows::SizeFactor", 1);
+Finance::GeniusTrader::Conf::default("Graphic::BuySellArrows::SizeFactor", 1);
 # SizeFactor can be used to adjust the default size in both height and width
 # without it the width cannot be altered
 #
@@ -39,7 +39,7 @@ GT::Conf::default("Graphic::BuySellArrows::SizeFactor", 1);
 #   Graphic::BuySellArrows::SellColor   "[150,0,0,64]"  # partly transparent dark red
 #
 
-=head1 GT::Graphics::Object::BuySellArrows
+=head1 Finance::GeniusTrader::Graphics::Object::BuySellArrows
 
 This graphical object display buy and sell arrows.
 
@@ -96,11 +96,11 @@ sub init {
     my ($self, $prices_ds) = @_;
     
     # Default values ...
-    $self->{'buy_color'} = get_color(GT::Conf::get("Graphic::BuySellArrows::BuyColor"));
-    $self->{'sell_color'} = get_color(GT::Conf::get("Graphic::BuySellArrows::SellColor"));
-    $self->{'distance'} = GT::Conf::get("Graphic::BuySellArrows::Distance");
-    $self->{'height'} = GT::Conf::get("Graphic::Candle::Height");
-    $self->{'sizefactor'} = GT::Conf::get("Graphic::BuySellArrows::SizeFactor");
+    $self->{'buy_color'} = get_color(Finance::GeniusTrader::Conf::get("Graphic::BuySellArrows::BuyColor"));
+    $self->{'sell_color'} = get_color(Finance::GeniusTrader::Conf::get("Graphic::BuySellArrows::SellColor"));
+    $self->{'distance'} = Finance::GeniusTrader::Conf::get("Graphic::BuySellArrows::Distance");
+    $self->{'height'} = Finance::GeniusTrader::Conf::get("Graphic::Candle::Height");
+    $self->{'sizefactor'} = Finance::GeniusTrader::Conf::get("Graphic::BuySellArrows::SizeFactor");
     $self->{'prices_ds'} = $prices_ds;
 }
 

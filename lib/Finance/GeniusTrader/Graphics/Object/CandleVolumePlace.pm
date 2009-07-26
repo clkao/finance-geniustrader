@@ -1,4 +1,4 @@
-package GT::Graphics::Object::CandleVolumePlace;
+package Finance::GeniusTrader::Graphics::Object::CandleVolumePlace;
 
 # Copyright 2003 Oliver Bossert
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
@@ -9,19 +9,19 @@ package GT::Graphics::Object::CandleVolumePlace;
 
 use strict;
 use vars qw(@ISA);
-@ISA = qw(GT::Graphics::Object);
+@ISA = qw(Finance::GeniusTrader::Graphics::Object);
 
-use GT::Prices;
-use GT::Graphics::Object;
-use GT::Graphics::Driver;
-use GT::Graphics::Tools qw(:color);
-use GT::Conf;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Graphics::Object;
+use Finance::GeniusTrader::Graphics::Driver;
+use Finance::GeniusTrader::Graphics::Tools qw(:color);
+use Finance::GeniusTrader::Conf;
 
-GT::Conf::default("Graphic::Candle::UpColor", "green");
-GT::Conf::default("Graphic::Candle::DownColor", "red");
-GT::Conf::default("Graphic::Candle::Width", 6);
+Finance::GeniusTrader::Conf::default("Graphic::Candle::UpColor", "green");
+Finance::GeniusTrader::Conf::default("Graphic::Candle::DownColor", "red");
+Finance::GeniusTrader::Conf::default("Graphic::Candle::Width", 6);
 
-=head1 GT::Graphics::Object::CandleVolumePlace
+=head1 Finance::GeniusTrader::Graphics::Object::CandleVolumePlace
 
 This graphical object display a series of candlesticks.
 The width of each candle is determined by the volume.
@@ -33,15 +33,15 @@ sub init {
     
     # Default values ...
     $self->{'up_body_color'} = 
-			get_color(GT::Conf::get("Graphic::Candle::UpColor"));
+			get_color(Finance::GeniusTrader::Conf::get("Graphic::Candle::UpColor"));
     $self->{'up_body_border_color'} = 
-			get_color(GT::Conf::get_first(
+			get_color(Finance::GeniusTrader::Conf::get_first(
 			    "Graphic::Candle::UpBorderColor",
 			    "Graphic::Candle::BorderColor",
 			    "Graphic::ForegroundColor"
 			));
     $self->{'up_shadows_color'} = 
-			get_color(GT::Conf::get_first(
+			get_color(Finance::GeniusTrader::Conf::get_first(
 			    "Graphic::Candle::UpShadowColor",
 			    "Graphic::Candle::ShadowColor",
 			    "Graphic::Candle::UpBorderColor",
@@ -50,15 +50,15 @@ sub init {
 			));
     
     $self->{'down_body_color'} =
-			get_color(GT::Conf::get("Graphic::Candle::DownColor"));
+			get_color(Finance::GeniusTrader::Conf::get("Graphic::Candle::DownColor"));
     $self->{'down_body_border_color'} =
-			get_color(GT::Conf::get_first(
+			get_color(Finance::GeniusTrader::Conf::get_first(
 			    "Graphic::Candle::DownBorderColor",
 			    "Graphic::Candle::BorderColor",
 			    "Graphic::ForegroundColor"
 			));
     $self->{'down_shadows_color'} =
-			get_color(GT::Conf::get_first(
+			get_color(Finance::GeniusTrader::Conf::get_first(
 			    "Graphic::Candle::DowbShadowColor",
 			    "Graphic::Candle::ShadowColor",
 			    "Graphic::Candle::DownBorderColor",
@@ -66,7 +66,7 @@ sub init {
 			    "Graphic::ForegroundColor"
 			));
     
-    $self->{'width'} = GT::Conf::get("Graphic::Candle::Width");
+    $self->{'width'} = Finance::GeniusTrader::Conf::get("Graphic::Candle::Width");
 }
 
 sub display {

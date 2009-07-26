@@ -1,4 +1,4 @@
-package GT::Indicators::Interquartil;
+package Finance::GeniusTrader::Indicators::Interquartil;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,15 +9,15 @@ package GT::Indicators::Interquartil;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
+use Finance::GeniusTrader::Indicators;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("IQ[#*]");
 @DEFAULT_ARGS = (80, 50, "{I:Prices CLOSE}");
 
 =head1 NAME
 
-GT::Indicators::Interquartil - Interquartil-Distance
+Finance::GeniusTrader::Indicators::Interquartil - Interquartil-Distance
 
 =head1 DESCRIPTION 
 

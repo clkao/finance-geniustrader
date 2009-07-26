@@ -1,4 +1,4 @@
-package GT::Tools;
+package Finance::GeniusTrader::Tools;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -25,15 +25,15 @@ require Exporter;
                 "timeframe" => [qw(get_timeframe_data parse_date_str find_calculator check_dates)]
 		);
 
-use GT::DateTime;
-use GT::Prices;
-use GT::Eval;
-use GT::ArgsTree;
+use Finance::GeniusTrader::DateTime;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::ArgsTree;
 use Date::Calc qw( Date_to_Days );
 
 =head1 NAME
 
-GT::Tools - Various helper functions
+Finance::GeniusTrader::Tools - Various helper functions
 
 =head1 DESCRIPTION
 
@@ -59,7 +59,7 @@ There are 5 groupings
 =head2 math
 
 It provides mathematical functions, that can be imported with
-use GT::Tools qw(:math) :
+use Finance::GeniusTrader::Tools qw(:math) :
 
 =over 4
 
@@ -88,11 +88,11 @@ sub max {
     my $max = $_[0];
     foreach (@_) {
 	if (! defined($_)) {
-	    warn "GT::Tools::max called with undef argument !\n";
+	    warn "Finance::GeniusTrader::Tools::max called with undef argument !\n";
 	    next;
 	}
         if ( ! m/\d/ ) {
-#           warn "GT::Tools::max called with non-numeric argument \"$_\" !\n";
+#           warn "Finance::GeniusTrader::Tools::max called with non-numeric argument \"$_\" !\n";
             next;
         }
 	$max = ($_ > $max) ? $_ : $max;
@@ -104,11 +104,11 @@ sub min {
     my $min = $_[0];
     foreach (@_) { 
 	if (! defined($_)) {
-	    warn "GT::Tools::min called with undef argument !\n";
+	    warn "Finance::GeniusTrader::Tools::min called with undef argument !\n";
 	    next;
 	}
         if ( ! m/\d/ ) {
-#           warn "GT::Tools::min called with non-numeric argument \"$_\" !\n";
+#           warn "Finance::GeniusTrader::Tools::min called with non-numeric argument \"$_\" !\n";
             next;
         }
 	$min = ($_ < $min) ? $_ : $min;
@@ -125,7 +125,7 @@ sub sign {
 =head2 generic
 
 It provides helper functions to manage arguments in "Generic" objects.
-You can import those functions with use GT::Tools qw(:generic) :
+You can import those functions with use Finance::GeniusTrader::Tools qw(:generic) :
 
 =over 4
 
@@ -152,7 +152,7 @@ sub extract_object_number {
 
 And a few other very-specific functions :
 
-use GT::Tools qw(:conf) :
+use Finance::GeniusTrader::Tools qw(:conf) :
 
 =over
 
@@ -172,9 +172,9 @@ sub resolve_alias {
     }
     my $sysname = '';
     if (scalar @param) {
-	$sysname = GT::Conf::get("Aliases::Global::$name" . "[]");
+	$sysname = Finance::GeniusTrader::Conf::get("Aliases::Global::$name" . "[]");
     } else {
-	$sysname = GT::Conf::get("Aliases::Global::$name");
+	$sysname = Finance::GeniusTrader::Conf::get("Aliases::Global::$name");
     }
     if (! $sysname)
     {
@@ -210,7 +210,7 @@ sub resolve_alias {
 =item C<< resolve_object_alias($alias, @param) >>
 
 Return the complete description of the object designed by "alias". @param
-is the array of parameters as returned by GT::ArgsTree::parse_args().
+is the array of parameters as returned by Finance::GeniusTrader::ArgsTree::parse_args().
 
 Object aliases can be defined in global files (as defined in the option
 Path::Aliases::<object_kind>), for each kind of object (e.g., Signals, 
@@ -242,10 +242,10 @@ sub resolve_object_alias {
     my ($alias, @param) = (@_);
 
     # Lookup the alias
-    my $def = GT::Conf::get("Aliases\::$alias");
+    my $def = Finance::GeniusTrader::Conf::get("Aliases\::$alias");
     
     my $n = 1;
-    foreach my $arg (GT::ArgsTree::args_to_ascii(@param))
+    foreach my $arg (Finance::GeniusTrader::ArgsTree::args_to_ascii(@param))
     {
 	$def =~ s/#$n/$arg/g;
 	$n++;
@@ -330,7 +330,7 @@ sub short_name {
 
 =head2 isin
 
-use GT::Tools qw(:isin) :
+use Finance::GeniusTrader::Tools qw(:isin) :
 
 =over 4
 
@@ -404,7 +404,7 @@ sub isin_create_from_local {
 
 =head2 timeframe
 
-use GT::Tools qw(:timeframe) :
+use Finance::GeniusTrader::Tools qw(:timeframe) :
 
 =over 4
 
@@ -426,7 +426,7 @@ my ($code, $timeframe, $db, $max_loaded_items) = @_;
 #WAR# WARN "Fetching all available data, because the max_loaded_items parameter was not set." unless(defined($max_loaded_items));
 $max_loaded_items = -1 unless(defined($max_loaded_items));
 my @tf;
-my $available_timeframes = GT::Conf::get('DB::timeframes_available');
+my $available_timeframes = Finance::GeniusTrader::Conf::get('DB::timeframes_available');
 my $q;
 
 die("Max loaded items cannot be zero") if ($max_loaded_items==0);
@@ -436,19 +436,19 @@ die("Parameter \$db not set in get_timeframe_data") if (!defined($db));
 
 if (defined($available_timeframes)) {
 	foreach my $tf_name (split(',', $available_timeframes)) {
-	        my $tf_code = GT::DateTime::name_to_timeframe($tf_name);
+	        my $tf_code = Finance::GeniusTrader::DateTime::name_to_timeframe($tf_name);
 		push @tf, $tf_code;
 		if (!defined($tf_code)) {
-		    my $tfs = join("\n\t", map(GT::DateTime::name_of_timeframe($_), GT::DateTime::list_of_timeframe));
+		    my $tfs = join("\n\t", map(Finance::GeniusTrader::DateTime::name_of_timeframe($_), Finance::GeniusTrader::DateTime::list_of_timeframe));
 		    die("Invalid timeframe name in available_timeframes configuration item: $tf_name\n\nValid timeframes are: \n\t" . $tfs . "\n\n");
 		}
 	}
 	@tf = sort(@tf);
 } else {
-	@tf = GT::DateTime::list_of_timeframe;
+	@tf = Finance::GeniusTrader::DateTime::list_of_timeframe;
 }
 
-#ERR#  ERROR  "Invalid db argument in get_timeframe_data" unless ( ref($db) =~ /GT::DB/);
+#ERR#  ERROR  "Invalid db argument in get_timeframe_data" unless ( ref($db) =~ /Finance::GeniusTrader::DB/);
 #ERR#  ERROR  "Timeframe parameter not set in get_timeframe_data." unless(defined($timeframe));
 
 foreach(reverse(@tf)) {
@@ -458,13 +458,13 @@ foreach(reverse(@tf)) {
 }
 
 if (!defined($q) || $q->count == 0) {
-my $msg="No data available to generate ".GT::DateTime::name_of_timeframe($timeframe)." data.";
+my $msg="No data available to generate ".Finance::GeniusTrader::DateTime::name_of_timeframe($timeframe)." data.";
 $msg.="\nAvailable timeframes are: ($available_timeframes)" if (defined($available_timeframes));
 die($msg);
 }
 
 warn ("No data is available to complete the request for $code") if ($q && $q->count == 0);
-my $calc = GT::Calculator->new($q);
+my $calc = Finance::GeniusTrader::Calculator->new($q);
 $calc->set_code($code);
 
 if ($q->timeframe != $timeframe) {
@@ -608,7 +608,7 @@ without Date::Manip you will need to use:
 
 =head3 Usage of parse_date_str in application script
 
-  use GT::Tools qw( :timeframe );  
+  use Finance::GeniusTrader::Tools qw( :timeframe );  
   # tag name to get &parse_date_str visibility
 
   my $err_msg;
@@ -647,8 +647,8 @@ sub find_calculator {
 
   if (!defined $timeframe) {
     my $msg = "Unkown timeframe. Available timeframes are:\n";
-    foreach (GT::DateTime::list_of_timeframe()) {
-      $msg .= "\t".GT::DateTime::name_of_timeframe($_) . "\n";
+    foreach (Finance::GeniusTrader::DateTime::list_of_timeframe()) {
+      $msg .= "\t".Finance::GeniusTrader::DateTime::name_of_timeframe($_) . "\n";
     }
     die($msg);
   }
@@ -668,14 +668,14 @@ sub find_calculator {
     $first = $prices->date($date);
   }
   unless ($start) {
-    $first = $last - 2 * GT::DateTime::timeframe_ratio($YEAR, 
+    $first = $last - 2 * Finance::GeniusTrader::DateTime::timeframe_ratio($YEAR, 
 						     $calc->current_timeframe);
     $first = 0 if ($full);
     $first = $last - $nb_item + 1 if ($nb_item);
     $first = 0 if ($first < 0);
   }
   unless ($last) {
-    $last = $first + 2 * GT::DateTime::timeframe_ratio($YEAR, 
+    $last = $first + 2 * Finance::GeniusTrader::DateTime::timeframe_ratio($YEAR, 
 						     $calc->current_timeframe);
     $last = $c - 1 if ($full);
     $last = $first + $nb_item - 1 if ($nb_item);
@@ -738,11 +738,11 @@ sub check_dates {
   
   # timeframe relative date conversions
   if ( $start && $timeframe != $DAY ) {
-    $start = GT::DateTime::convert_date($start, $DAY, $timeframe);
+    $start = Finance::GeniusTrader::DateTime::convert_date($start, $DAY, $timeframe);
   }
 
   if ( $end && $timeframe != $DAY ) {
-    $end = GT::DateTime::convert_date($end, $DAY, $timeframe);
+    $end = Finance::GeniusTrader::DateTime::convert_date($end, $DAY, $timeframe);
   }
 
   my ( $d_yr, $d_mn, $d_dy, $d_tm );
@@ -770,7 +770,7 @@ sub check_dates {
     }
 
     if ( $timeframe != $DAY && $timeframe > $DAY ) {
-      $date = GT::DateTime::convert_date($date, $DAY, $timeframe);
+      $date = Finance::GeniusTrader::DateTime::convert_date($date, $DAY, $timeframe);
     }
     
     $_[3] = $date;

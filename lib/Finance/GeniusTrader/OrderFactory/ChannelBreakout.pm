@@ -1,4 +1,4 @@
-package GT::OrderFactory::ChannelBreakout;
+package Finance::GeniusTrader::OrderFactory::ChannelBreakout;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,18 +9,18 @@ package GT::OrderFactory::ChannelBreakout;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::OrderFactory;
-use GT::Eval;
-use GT::Indicators qw($GET_LAST);
-use GT::Tools qw(:generic);
+use Finance::GeniusTrader::OrderFactory;
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::Indicators qw($GET_LAST);
+use Finance::GeniusTrader::Tools qw(:generic);
 
-@ISA = qw(GT::OrderFactory);
+@ISA = qw(Finance::GeniusTrader::OrderFactory);
 @NAMES = ("ChannelBreakout[#*]");
 @DEFAULT_ARGS = ();
 
 =head1 NAME
 
-GT::OrderFactory::ChannelBreakout
+Finance::GeniusTrader::OrderFactory::ChannelBreakout
 
 =head1 DESCRIPTION
 

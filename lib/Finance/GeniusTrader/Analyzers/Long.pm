@@ -1,4 +1,4 @@
-package GT::Analyzers::Long;
+package Finance::GeniusTrader::Analyzers::Long;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::Long;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("Long[#*]");
 @DEFAULT_ARGS = ();
 
 =head1 NAME
 
-  GT::Analyzers::Long - Boolean value: True if trade is long
+  Finance::GeniusTrader::Analyzers::Long - Boolean value: True if trade is long
 
 =head1 DESCRIPTION 
 

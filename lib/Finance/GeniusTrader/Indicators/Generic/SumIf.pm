@@ -1,4 +1,4 @@
-package GT::Indicators::Generic::SumIf;
+package Finance::GeniusTrader::Indicators::Generic::SumIf;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,15 +9,15 @@ package GT::Indicators::Generic::SumIf;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Indicators;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("SumIf[#*]");
 
 =head1 NAME
 
-GT::Indicators::Generic::SumIf - Return a sum depending on a signal
+Finance::GeniusTrader::Indicators::Generic::SumIf - Return a sum depending on a signal
 
 =head1 DESCRIPTION
 

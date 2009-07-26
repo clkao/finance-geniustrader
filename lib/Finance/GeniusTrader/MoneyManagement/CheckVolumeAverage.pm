@@ -1,4 +1,4 @@
-package GT::MoneyManagement::CheckVolumeAverage;
+package Finance::GeniusTrader::MoneyManagement::CheckVolumeAverage;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,14 +7,14 @@ package GT::MoneyManagement::CheckVolumeAverage;
 use strict;
 use vars qw(@NAMES @ISA);
 
-use GT::MoneyManagement;
-use GT::Indicators;
-use GT::Indicators::SMA;
+use Finance::GeniusTrader::MoneyManagement;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::SMA;
 
 @NAMES = ("CheckVolumeAverage[#1,#2]");
-@ISA = qw(GT::MoneyManagement);
+@ISA = qw(Finance::GeniusTrader::MoneyManagement);
 
-=head1 GT::MoneyManagement::CheckVolumeAverage
+=head1 Finance::GeniusTrader::MoneyManagement::CheckVolumeAverage
 
 =head2 Overview
 
@@ -44,7 +44,7 @@ sub new {
 sub initialize {
     my $self = shift;
 
-    $self->{'sma'} = GT::Indicators::SMA->new([ $self->{'args'}[0] ], "Volume Average", $GET_VOLUME);
+    $self->{'sma'} = Finance::GeniusTrader::Indicators::SMA->new([ $self->{'args'}[0] ], "Volume Average", $GET_VOLUME);
 
     $self->add_indicator_dependency($self->{'sma'}, 1);
     $self->add_prices_dependency(1);

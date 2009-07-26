@@ -1,4 +1,4 @@
-package GT::CloseStrategy::PartialGain;
+package Finance::GeniusTrader::CloseStrategy::PartialGain;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # Modified 2004 by Oliver Bossert
@@ -10,13 +10,13 @@ package GT::CloseStrategy::PartialGain;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::CloseStrategy;
+use Finance::GeniusTrader::CloseStrategy;
 
-@ISA = qw(GT::CloseStrategy);
+@ISA = qw(Finance::GeniusTrader::CloseStrategy);
 @NAMES = ("PartialGain[#1, #2]");
 @DEFAULT_ARGS = (10, 0.5);
 
-=head1 GT::CloseStrategy::PartialGain
+=head1 Finance::GeniusTrader::CloseStrategy::PartialGain
 
 This strategy partialy closes the position once the prices have crossed a
 limit called stop. This stop is defined as a percentage from the initial

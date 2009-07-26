@@ -1,4 +1,4 @@
-package GT::Systems::MacdDiff;
+package Finance::GeniusTrader::Systems::MacdDiff;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,12 +7,12 @@ package GT::Systems::MacdDiff;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Prices;
-use GT::Systems;
-use GT::Signals::Systems::MacdDiff;
-use GT::Indicators::ATR;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Systems;
+use Finance::GeniusTrader::Signals::Systems::MacdDiff;
+use Finance::GeniusTrader::Indicators::ATR;
 
-@ISA = qw(GT::Systems);
+@ISA = qw(Finance::GeniusTrader::Systems);
 @NAMES = ("MacdDiff");
 
 =pod
@@ -34,8 +34,8 @@ sub new {
 sub initialize {
     my ($self) = @_;
 
-    $self->{'macddiff'} = GT::Signals::Systems::MacdDiff->new([12,26,4]);
-    $self->{'atr'} = GT::Indicators::ATR->new([ $self->{'args'}[0] ]);
+    $self->{'macddiff'} = Finance::GeniusTrader::Signals::Systems::MacdDiff->new([12,26,4]);
+    $self->{'atr'} = Finance::GeniusTrader::Indicators::ATR->new([ $self->{'args'}[0] ]);
 
     $self->add_signal_dependency($self->{'macddiff'}, 1);
     $self->add_indicator_dependency($self->{'atr'}, 1);

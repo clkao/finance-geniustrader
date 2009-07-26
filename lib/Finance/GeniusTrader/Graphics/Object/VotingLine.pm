@@ -1,4 +1,4 @@
-package GT::Graphics::Object::VotingLine;
+package Finance::GeniusTrader::Graphics::Object::VotingLine;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -6,21 +6,21 @@ package GT::Graphics::Object::VotingLine;
 
 use strict;
 use vars qw(@ISA);
-@ISA = qw(GT::Graphics::Object);
+@ISA = qw(Finance::GeniusTrader::Graphics::Object);
 
-use GT::Prices;
-use GT::Graphics::Object;
-use GT::Graphics::Driver;
-use GT::Graphics::Tools qw(:color);
-use GT::Tools qw(:math);
-use GT::Conf;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Graphics::Object;
+use Finance::GeniusTrader::Graphics::Driver;
+use Finance::GeniusTrader::Graphics::Tools qw(:color);
+use Finance::GeniusTrader::Tools qw(:math);
+use Finance::GeniusTrader::Conf;
 
-GT::Conf::default("Graphic::VotingLine::BuyColor", "green");
-GT::Conf::default("Graphic::VotingLine::SellColor", "red");
-GT::Conf::default("Graphic::VotingLine::Height", 4);
-GT::Conf::default("Graphic::VotingLine::Width", 4);
+Finance::GeniusTrader::Conf::default("Graphic::VotingLine::BuyColor", "green");
+Finance::GeniusTrader::Conf::default("Graphic::VotingLine::SellColor", "red");
+Finance::GeniusTrader::Conf::default("Graphic::VotingLine::Height", 4);
+Finance::GeniusTrader::Conf::default("Graphic::VotingLine::Width", 4);
 
-=head1 GT::Graphics::Object::VotingLine
+=head1 Finance::GeniusTrader::Graphics::Object::VotingLine
 
 This graphical object display buy and sell arrows.
 
@@ -35,13 +35,13 @@ sub init {
     
     # Default values ...
     $self->{'buy_color'} = get_color(
-	    GT::Conf::get("Graphic::VotingLine::BuyColor")
+	    Finance::GeniusTrader::Conf::get("Graphic::VotingLine::BuyColor")
 	);
     $self->{'sell_color'} = get_color(
-	    GT::Conf::get("Graphic::VotingLine::SellColor")
+	    Finance::GeniusTrader::Conf::get("Graphic::VotingLine::SellColor")
 	);
-    $self->{'height'} = GT::Conf::get("Graphic::VotingLine::Height");
-    $self->{'width'} = GT::Conf::get("Graphic::VotingLine::Width");
+    $self->{'height'} = Finance::GeniusTrader::Conf::get("Graphic::VotingLine::Height");
+    $self->{'width'} = Finance::GeniusTrader::Conf::get("Graphic::VotingLine::Width");
     $self->{'y'} = 0;
     $self->{'y'} = $y if (defined($y));
 }

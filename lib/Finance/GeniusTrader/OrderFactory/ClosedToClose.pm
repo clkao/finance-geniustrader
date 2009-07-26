@@ -1,4 +1,4 @@
-package GT::OrderFactory::ClosedToClose;
+package Finance::GeniusTrader::OrderFactory::ClosedToClose;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::OrderFactory::ClosedToClose;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::OrderFactory;
-use GT::Prices;
+use Finance::GeniusTrader::OrderFactory;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::OrderFactory);
+@ISA = qw(Finance::GeniusTrader::OrderFactory);
 @NAMES = ("ClosedToClose[#1]");
 @DEFAULT_ARGS = (0);
 
 =head1 NAME
 
-GT::OrderFactory::StopOnExtreme
+Finance::GeniusTrader::OrderFactory::StopOnExtreme
 
 =head1 DESCRIPTION
 

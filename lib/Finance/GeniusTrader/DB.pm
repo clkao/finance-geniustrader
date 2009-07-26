@@ -1,4 +1,4 @@
-package GT::DB;
+package Finance::GeniusTrader::DB;
 
 # Copyright 2000-2004 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -11,7 +11,7 @@ our %sharenames;
 
 =head1 NAME
 
-GT::DB - Database to retrieve (an history of) prices of various shares
+Finance::GeniusTrader::DB - Database to retrieve (an history of) prices of various shares
 
 =head1 DESCRIPTION
 
@@ -54,7 +54,7 @@ sub get_name {
     return $name if (defined($name) && $name);
 
     if (! $loaded_sharenames) {
-        my $file = GT::Conf::_get_home_path()."/.gt/sharenames";
+        my $file = Finance::GeniusTrader::Conf::_get_home_path()."/.gt/sharenames";
         if (-e $file) {
             open(NAMES, "<", "$file") || die "Can't open $file : $!\n";
             foreach (<NAMES>) {

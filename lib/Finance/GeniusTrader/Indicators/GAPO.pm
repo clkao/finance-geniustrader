@@ -1,4 +1,4 @@
-package GT::Indicators::GAPO;
+package Finance::GeniusTrader::Indicators::GAPO;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,16 +7,16 @@ package GT::Indicators::GAPO;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::Generic::MinInPeriod;
-use GT::Indicators::Generic::MaxInPeriod;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::Generic::MinInPeriod;
+use Finance::GeniusTrader::Indicators::Generic::MaxInPeriod;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("GAPO[#*]");
 @DEFAULT_ARGS = (5, "{I:Prices LOW}", "{I:Prices HIGH}");
 
-=head1 GT::Indicators::GAPO
+=head1 Finance::GeniusTrader::Indicators::GAPO
 
 =head2 Overview
 
@@ -32,8 +32,8 @@ The standard GAPO index works with a five-day parameter : n = 5
 
 =head2 Example
 
-GT::Indicators::GAPO->new()
-GT::Indicators::GAPO->new([6])
+Finance::GeniusTrader::Indicators::GAPO->new()
+Finance::GeniusTrader::Indicators::GAPO->new([6])
 
 =head2 Advice/Idea
 
@@ -43,15 +43,15 @@ I think that the best way to use the results of this indicator is to look after 
 sub initialize {
     my $self = shift;
 
-    $self->{'min'} = GT::Indicators::Generic::MinInPeriod->new([ $self->{'args'}->get_arg_names(1), $self->{'args'}->get_arg_names(2) ]);
-    $self->{'max'} = GT::Indicators::Generic::MaxInPeriod->new([ $self->{'args'}->get_arg_names(1), $self->{'args'}->get_arg_names(3) ]);
+    $self->{'min'} = Finance::GeniusTrader::Indicators::Generic::MinInPeriod->new([ $self->{'args'}->get_arg_names(1), $self->{'args'}->get_arg_names(2) ]);
+    $self->{'max'} = Finance::GeniusTrader::Indicators::Generic::MaxInPeriod->new([ $self->{'args'}->get_arg_names(1), $self->{'args'}->get_arg_names(3) ]);
 
     $self->add_indicator_dependency($self->{'min'}, 1);
     $self->add_indicator_dependency($self->{'max'}, 1);
     $self->add_prices_dependency($self->{'args'}->get_arg_names(1));
 }
 
-=head2 GT::Indicators::GAPO::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::GAPO::calculate($calc, $day)
 
 =cut
 sub calculate {

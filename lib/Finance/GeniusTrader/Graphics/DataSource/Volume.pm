@@ -1,4 +1,4 @@
-package GT::Graphics::DataSource::Volume;
+package Finance::GeniusTrader::Graphics::DataSource::Volume;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,18 +7,18 @@ package GT::Graphics::DataSource::Volume;
 use strict;
 use vars qw(@ISA);
 
-@ISA = qw(GT::Graphics::DataSource);
+@ISA = qw(Finance::GeniusTrader::Graphics::DataSource);
 
-use GT::Prices;
-use GT::Graphics::DataSource;
-use GT::Tools qw(:math);
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Graphics::DataSource;
+use Finance::GeniusTrader::Tools qw(:math);
 
-=head1 GT::Graphics::DataSource::Volume
+=head1 Finance::GeniusTrader::Graphics::DataSource::Volume
 
 This datasource provides volume information.
-It uses a GT::Prices object as a basis.
+It uses a Finance::GeniusTrader::Prices object as a basis.
 
-=head2 GT::Prices::DataSource::Volume->new($prices)
+=head2 Finance::GeniusTrader::Prices::DataSource::Volume->new($prices)
 
 Create a new volume data source.
 

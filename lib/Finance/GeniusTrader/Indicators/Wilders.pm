@@ -1,4 +1,4 @@
-package GT::Indicators::Wilders;
+package Finance::GeniusTrader::Indicators::Wilders;
 
 # Copyright 2005 Thomas Weigert
 # Based on and for GeniusTrader (C) 2000-2002 Raphaël Hertzog, Fabien Fulhaber
@@ -12,16 +12,16 @@ package GT::Indicators::Wilders;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::SMA;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::SMA;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("Wilders[#*]");
 @DEFAULT_ARGS = (14, "{I:Prices CLOSE}");
 
 =head1 NAME
 
-GT::Indicators::Wilders - Wilder's smoothing (aka wells wilders moving average)
+Finance::GeniusTrader::Indicators::Wilders - Wilder's smoothing (aka wells wilders moving average)
 
 =head1 DESCRIPTION 
 
@@ -52,17 +52,17 @@ This is usually an indicator, including I:Prices.
 
 =head2 Creation
 
- GT::Indicators::Wilders->new()
- GT::Indicators::Wilders->new([20])
+ Finance::GeniusTrader::Indicators::Wilders->new()
+ Finance::GeniusTrader::Indicators::Wilders->new([20])
 
 If you need a 30 days Wilders of the opening prices you can write
 the following line:
 
- GT::Indicators::Wilders->new([30, "{I:Prices OPEN}"])
+ Finance::GeniusTrader::Indicators::Wilders->new([30, "{I:Prices OPEN}"])
 
 A 10 days Wilders of the RSI could be created with :
 
- GT::Indicators::Wilders->new([10, "{I:RSI}"])
+ Finance::GeniusTrader::Indicators::Wilders->new([10, "{I:RSI}"])
 
 =cut
 
@@ -76,7 +76,7 @@ sub initialize {
       die "\n";
     } 
 
-    $self->{'sma'} = GT::Indicators::SMA->new([ $self->{'args'}->get_arg_names() ]);
+    $self->{'sma'} = Finance::GeniusTrader::Indicators::SMA->new([ $self->{'args'}->get_arg_names() ]);
     $self->add_indicator_dependency($self->{'sma'}, 1);
     $self->add_arg_dependency(2, $self->{'args'}->get_arg_names(1));
 }

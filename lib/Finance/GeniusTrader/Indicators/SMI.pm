@@ -1,4 +1,4 @@
-package GT::Indicators::SMI;
+package Finance::GeniusTrader::Indicators::SMI;
 
 # Copyright 2008 Thomas Weigert
 # Based on and for GeniusTrader (C) 2000-2002 Raphaël Hertzog, Fabien Fulhaber
@@ -12,20 +12,20 @@ package GT::Indicators::SMI;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::EMA;
-use GT::Indicators::Generic::MinInPeriod;
-use GT::Indicators::Generic::MaxInPeriod;
-use GT::Indicators::Generic::Container;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::EMA;
+use Finance::GeniusTrader::Indicators::Generic::MinInPeriod;
+use Finance::GeniusTrader::Indicators::Generic::MaxInPeriod;
+use Finance::GeniusTrader::Indicators::Generic::Container;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("\%K[#1,#2,#3]","\%D[#1,#2,#3,#4]");
 @DEFAULT_ARGS = (5, 3, 3, 3, "{I:Prices HIGH}", "{I:Prices LOW}", "{I:Prices CLOSE}" );
 
 =pod
 
-=head1 GT::Indicators::SMI
+=head1 Finance::GeniusTrader::Indicators::SMI
 
 =head2 Overview
 
@@ -67,8 +67,8 @@ values and will abort otherwise.
 
 =head2 Examples
 
-GT::Indicators::SMI->new()
-GT::Indicators::SMI->new([14, 3, 3, 3])
+Finance::GeniusTrader::Indicators::SMI->new()
+Finance::GeniusTrader::Indicators::SMI->new([14, 3, 3, 3])
 
 =head2 Links
 
@@ -88,24 +88,24 @@ sub initialize {
     }
 
     # Define a container for CM and HL
-    $self->{'cm'} = GT::Indicators::Generic::Container->new(['CM']);
-    $self->{'hl'} = GT::Indicators::Generic::Container->new(['HL']);
+    $self->{'cm'} = Finance::GeniusTrader::Indicators::Generic::Container->new(['CM']);
+    $self->{'hl'} = Finance::GeniusTrader::Indicators::Generic::Container->new(['HL']);
 
     
     # We need to call MIN and MAX first
-    $self->{'min'} = GT::Indicators::Generic::MinInPeriod->new([ $self->{'args'}->get_arg_names(1), 
+    $self->{'min'} = Finance::GeniusTrader::Indicators::Generic::MinInPeriod->new([ $self->{'args'}->get_arg_names(1), 
                                                                  $self->{'args'}->get_arg_names(6)  ]);
-    $self->{'max'} = GT::Indicators::Generic::MaxInPeriod->new([ $self->{'args'}->get_arg_names(1), 
+    $self->{'max'} = Finance::GeniusTrader::Indicators::Generic::MaxInPeriod->new([ $self->{'args'}->get_arg_names(1), 
                                                                  $self->{'args'}->get_arg_names(5)  ]);
 
     # Initialize smoothing of CM
-    $self->{'smooth_cm'} = GT::Indicators::EMA->new([ $self->{'args'}->get_arg_names(3), "{I:EMA " . $self->{'args'}->get_arg_names(2) . "{I:Generic:Container CM }}" ]);
+    $self->{'smooth_cm'} = Finance::GeniusTrader::Indicators::EMA->new([ $self->{'args'}->get_arg_names(3), "{I:EMA " . $self->{'args'}->get_arg_names(2) . "{I:Generic:Container CM }}" ]);
 
     # Initialize smoothing of HL
-    $self->{'smooth_hl'} = GT::Indicators::EMA->new([ $self->{'args'}->get_arg_names(3), "{I:EMA " . $self->{'args'}->get_arg_names(2) . "{I:Generic:Container HL }}" ]);
+    $self->{'smooth_hl'} = Finance::GeniusTrader::Indicators::EMA->new([ $self->{'args'}->get_arg_names(3), "{I:EMA " . $self->{'args'}->get_arg_names(2) . "{I:Generic:Container HL }}" ]);
 
     # Initialize smoothing of %K
-    $self->{'%d'} = GT::Indicators::SMA->new([ $self->{'args'}->get_arg_names(4), "{I:Generic:ByName " . $self->get_name(0) . "}" ]);
+    $self->{'%d'} = Finance::GeniusTrader::Indicators::SMA->new([ $self->{'args'}->get_arg_names(4), "{I:Generic:ByName " . $self->get_name(0) . "}" ]);
 
     # Smoothing functions are args 2 and 3
     my $nb_days = $self->{'args'}->get_arg_names(2) + $self->{'args'}->get_arg_names(3) + $self->{'args'}->get_arg_names(4);
@@ -119,7 +119,7 @@ sub initialize {
 
 =pod
 
-=head2 GT::Indicators::SMI::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::SMI::calculate($calc, $day)
 
 =cut
 

@@ -1,4 +1,4 @@
-package GT::Indicators::WWMA;
+package Finance::GeniusTrader::Indicators::WWMA;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,13 +9,13 @@ package GT::Indicators::WWMA;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
+use Finance::GeniusTrader::Indicators;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("WWMA[#1]");
 @DEFAULT_ARGS = (20, "{I:Prices CLOSE}");
 
-=head1 GT::Indicators::WWMA
+=head1 Finance::GeniusTrader::Indicators::WWMA
 
 Welles Wilder Moving Average (WWMA) is a modified verson of the EMA.
 
@@ -25,15 +25,15 @@ WWMA(i) = (1/n) * Close(i) + (1 - 1/n) * WWMA(i-1)
 
 =head2 Examples
 
-GT::Indicators::WWMA->new()
-GT::Indicators::WWMA->new([15])
-GT::Indicators::WWMA->new([30], "OPEN", $GET_OPEN)
+Finance::GeniusTrader::Indicators::WWMA->new()
+Finance::GeniusTrader::Indicators::WWMA->new([15])
+Finance::GeniusTrader::Indicators::WWMA->new([30], "OPEN", $GET_OPEN)
 
 
 =head1 NOTICES
 
 this version of Welles Wilder Moving Average (WWMA) is depreciated
-in favor of Wilders (GT::Indicators::Wilders).
+in favor of Wilders (Finance::GeniusTrader::Indicators::Wilders).
 
 
 =cut
@@ -42,7 +42,7 @@ in favor of Wilders (GT::Indicators::Wilders).
 #    my ($self) = @_;
 #}
 
-=head2 GT::Indicators::WWMA::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::WWMA::calculate($calc, $day)
 
 =cut
 sub calculate {

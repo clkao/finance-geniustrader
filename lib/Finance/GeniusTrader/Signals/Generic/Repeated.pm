@@ -1,4 +1,4 @@
-package GT::Signals::Generic::Repeated;
+package Finance::GeniusTrader::Signals::Generic::Repeated;
 
 # Copyright 2000-2002 Raphaël Hertzog
 # This file is distributed under the terms of the General Public License
@@ -9,14 +9,14 @@ package GT::Signals::Generic::Repeated;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Signals;
+use Finance::GeniusTrader::Signals;
 
-@ISA = qw(GT::Signals);
+@ISA = qw(Finance::GeniusTrader::Signals);
 @NAMES = ("Repeated[#*]");
 
 =head1 NAME
 
-GT::Signals::Generic::Repeated - Detect repetition of a given signal
+Finance::GeniusTrader::Signals::Generic::Repeated - Detect repetition of a given signal
 
 =head2 DESCRIPTION
 

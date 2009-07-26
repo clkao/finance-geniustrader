@@ -1,4 +1,4 @@
-package GT::Indicators::Generic::MaxInPeriod;
+package Finance::GeniusTrader::Indicators::Generic::MaxInPeriod;
 
 # Copyright 2000-2002 Raphaël Hertzog
 # This file is distributed under the terms of the General Public License
@@ -9,17 +9,17 @@ package GT::Indicators::Generic::MaxInPeriod;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
-use GT::Tools qw(:math);
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Tools qw(:math);
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("MaxInPeriod[#*]");
 @DEFAULT_ARGS = (2, "{I:Prices CLOSE}");
 
 =head1 NAME
 
-GT::Indicators::Generic::MaxInPeriod - Calculate a maximum
+Finance::GeniusTrader::Indicators::Generic::MaxInPeriod - Calculate a maximum
 
 =head1 DESCRIPTION
 

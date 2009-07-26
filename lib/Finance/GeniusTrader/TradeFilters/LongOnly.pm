@@ -1,4 +1,4 @@
-package GT::TradeFilters::LongOnly;
+package Finance::GeniusTrader::TradeFilters::LongOnly;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,15 +9,15 @@ package GT::TradeFilters::LongOnly;
 use strict;
 use vars qw(@NAMES @ISA @DEFAULT_ARGS);
 
-use GT::TradeFilters;
+use Finance::GeniusTrader::TradeFilters;
 
 @NAMES = ("LongOnly");
-@ISA = qw(GT::TradeFilters);
+@ISA = qw(Finance::GeniusTrader::TradeFilters);
 @DEFAULT_ARGS = ();
 
 =head1 NAME
 
-GT::TradeFilters::LongOnly - Only allow long trades
+Finance::GeniusTrader::TradeFilters::LongOnly - Only allow long trades
 
 =head1 DESCRIPTION
 

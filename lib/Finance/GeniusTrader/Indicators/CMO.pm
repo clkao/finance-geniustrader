@@ -1,4 +1,4 @@
-package GT::Indicators::CMO;
+package Finance::GeniusTrader::Indicators::CMO;
 
 # Copyright 2002 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,20 +9,20 @@ package GT::Indicators::CMO;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
-use GT::Tools qw(:math);
-use GT::ArgsTree;
-use GT::Indicators::Generic::SumUpDiffs;
-use GT::Indicators::Generic::SumDownDiffs;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Tools qw(:math);
+use Finance::GeniusTrader::ArgsTree;
+use Finance::GeniusTrader::Indicators::Generic::SumUpDiffs;
+use Finance::GeniusTrader::Indicators::Generic::SumDownDiffs;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("CMO[#*]");
 @DEFAULT_ARGS = (10, "{I:Prices CLOSE}");
 
 =head1 NAME
 
-GT::Indicators::CMO - Chande Moment Oscillator
+Finance::GeniusTrader::Indicators::CMO - Chande Moment Oscillator
 
 =head1 DESCRIPTION 
 
@@ -46,7 +46,7 @@ This argument is used to calculate the SumUp and SumDown.
 
 =head2 Creation
 
- GT::Indicators::CMO->new()
+ Finance::GeniusTrader::Indicators::CMO->new()
 
 =head2 Links
 
@@ -56,9 +56,9 @@ This argument is used to calculate the SumUp and SumDown.
 sub initialize {
     my $self = shift;
 
-    $self->{'sumup'} = GT::Indicators::Generic::SumUpDiffs->new( [ $self->{'args'}->get_arg_names(1), 
+    $self->{'sumup'} = Finance::GeniusTrader::Indicators::Generic::SumUpDiffs->new( [ $self->{'args'}->get_arg_names(1), 
 								   $self->{'args'}->get_arg_names(2) ] );
-    $self->{'sumdown'} = GT::Indicators::Generic::SumDownDiffs->new( [ $self->{'args'}->get_arg_names(1),
+    $self->{'sumdown'} = Finance::GeniusTrader::Indicators::Generic::SumDownDiffs->new( [ $self->{'args'}->get_arg_names(1),
 								   $self->{'args'}->get_arg_names(2) ] );
 
 }

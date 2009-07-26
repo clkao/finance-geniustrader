@@ -1,4 +1,4 @@
-package GT::Indicators::VOSC;
+package Finance::GeniusTrader::Indicators::VOSC;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,17 +9,17 @@ package GT::Indicators::VOSC;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::SMA;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::SMA;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("VOSC[#1]", "VOSC-volume[#1]");
 @DEFAULT_ARGS = (7);
 
 =head1 NAME
 
-GT::Indicators::VOSC - 
+Finance::GeniusTrader::Indicators::VOSC - 
 
 =head1 OVERVIEW
 
@@ -27,8 +27,8 @@ GT::Indicators::VOSC -
 
 =head1 EXAMPLES
 
-GT::Indicators::VOSC->new()
-GT::Indicators::VOSC->new([20])
+Finance::GeniusTrader::Indicators::VOSC->new()
+Finance::GeniusTrader::Indicators::VOSC->new([20])
 
 =head1 LINKS
 
@@ -38,7 +38,7 @@ sub initialize {
     my $self = shift;
     
     # Initialize SMA
-    $self->{'sma'} = GT::Indicators::SMA->new([ $self->{'args'}->get_arg_names(1), "{I:Generic:ByName ". $self->get_name(1) ."}"]);
+    $self->{'sma'} = Finance::GeniusTrader::Indicators::SMA->new([ $self->{'args'}->get_arg_names(1), "{I:Generic:ByName ". $self->get_name(1) ."}"]);
 
     # Can't add this dependency since the indicator will not be
     # able to be computed at the check time

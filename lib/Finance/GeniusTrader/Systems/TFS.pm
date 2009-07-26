@@ -1,4 +1,4 @@
-package GT::Systems::TFS;
+package Finance::GeniusTrader::Systems::TFS;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,12 +7,12 @@ package GT::Systems::TFS;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Prices;
-use GT::Systems;
-use GT::Indicators::TETHER;
-use GT::Indicators::VOSC;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Systems;
+use Finance::GeniusTrader::Indicators::TETHER;
+use Finance::GeniusTrader::Indicators::VOSC;
 
-@ISA = qw(GT::Systems);
+@ISA = qw(Finance::GeniusTrader::Systems);
 @NAMES = ("TFS[#1,#2]");
 
 =head1 Trend Following System (TFS)
@@ -31,8 +31,8 @@ sub new {
 sub initialize {
     my ($self) = @_;
 
-    $self->{'tether'} = GT::Indicators::TETHER->new([ $self->{'args'}[0] ]);
-    $self->{'vosc'} = GT::Indicators::VOSC->new([ $self->{'args'}[1] ]);
+    $self->{'tether'} = Finance::GeniusTrader::Indicators::TETHER->new([ $self->{'args'}[0] ]);
+    $self->{'vosc'} = Finance::GeniusTrader::Indicators::VOSC->new([ $self->{'args'}[1] ]);
 
     $self->add_indicator_dependency($self->{'tether'}, 2);
     $self->add_indicator_dependency($self->{'vosc'}, 1);

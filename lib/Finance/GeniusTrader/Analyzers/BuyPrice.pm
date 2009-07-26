@@ -1,4 +1,4 @@
-package GT::Analyzers::BuyPrice;
+package Finance::GeniusTrader::Analyzers::BuyPrice;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::BuyPrice;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("BuyPrice[#*]");
 @DEFAULT_ARGS = ();
 
 =head1 NAME
 
-  GT::Analyzers::BuyPrice - The price for which the stock was bought
+  Finance::GeniusTrader::Analyzers::BuyPrice - The price for which the stock was bought
 
 =head1 DESCRIPTION 
 

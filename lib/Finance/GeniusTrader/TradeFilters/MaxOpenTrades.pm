@@ -1,4 +1,4 @@
-package GT::TradeFilters::MaxOpenTrades;
+package Finance::GeniusTrader::TradeFilters::MaxOpenTrades;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,15 +9,15 @@ package GT::TradeFilters::MaxOpenTrades;
 use strict;
 use vars qw(@NAMES @ISA @DEFAULT_ARGS);
 
-use GT::TradeFilters;
+use Finance::GeniusTrader::TradeFilters;
 
 @NAMES = ("MaxOpenTrades[#1]");
-@ISA = qw(GT::TradeFilters);
+@ISA = qw(Finance::GeniusTrader::TradeFilters);
 @DEFAULT_ARGS = (4);
 
 =head1 NAME
 
-GT::TradeFilters::MaxOpenTrades - Refuse more than N trades
+Finance::GeniusTrader::TradeFilters::MaxOpenTrades - Refuse more than N trades
 
 =head1 DESCRIPTION
 

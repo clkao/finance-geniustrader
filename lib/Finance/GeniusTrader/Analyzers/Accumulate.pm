@@ -1,4 +1,4 @@
-package GT::Analyzers::Accumulate;
+package Finance::GeniusTrader::Analyzers::Accumulate;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::Accumulate;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("Accumulate[#*]");
 @DEFAULT_ARGS = ("{A:Costs}");
 
 =head1 NAME
 
-  GT::Analyzers::Accumulate - Accumulates the Days of arg1
+  Finance::GeniusTrader::Analyzers::Accumulate - Accumulates the Days of arg1
 
 =head1 DESCRIPTION 
 

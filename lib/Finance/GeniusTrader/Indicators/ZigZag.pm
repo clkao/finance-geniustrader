@@ -1,4 +1,4 @@
-package GT::Indicators::ZigZag;
+package Finance::GeniusTrader::Indicators::ZigZag;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,15 +7,15 @@ package GT::Indicators::ZigZag;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
+use Finance::GeniusTrader::Indicators;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("ZigZag[#*]");
 @DEFAULT_ARGS = (10, "{I:Prices CLOSE}");
 
 =head1 NAME
 
-GT::Indicators::ZigZag
+Finance::GeniusTrader::Indicators::ZigZag
 
 =head1 DESCRIPTION 
 
@@ -33,18 +33,18 @@ The first argument is the percentage change required to yield a line that only r
 
 =head2 Creation
 
- GT::Indicators::ZigZag->new()
- GT::Indicators::ZigZag->new([5])
+ Finance::GeniusTrader::Indicators::ZigZag->new()
+ Finance::GeniusTrader::Indicators::ZigZag->new([5])
 
 If you need an 8 % ZigZag indicator of the opening prices you can write
 one of those lines :
 
- GT::Indicators::SMA->new([8], "OPEN", $GET_OPEN)
- GT::Indicators::SMA->new([8, "OPEN"])
+ Finance::GeniusTrader::Indicators::SMA->new([8], "OPEN", $GET_OPEN)
+ Finance::GeniusTrader::Indicators::SMA->new([8, "OPEN"])
 
 A ZigZag indicator with a 20 % threshold of the Volume could be created with :
 
- GT::Indicators::ZigZag->new([20, "{I:Volume}"])
+ Finance::GeniusTrader::Indicators::ZigZag->new([20, "{I:Volume}"])
 
 =cut
 

@@ -1,4 +1,4 @@
-package GT::Indicators::FromTimeframe;
+package Finance::GeniusTrader::Indicators::FromTimeframe;
 
 # Copyright 2004 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,20 +9,20 @@ package GT::Indicators::FromTimeframe;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
-use GT::Eval;
-use GT::DateTime;
-use GT::Calculator;
-use GT::Tools qw(extract_object_number);
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::DateTime;
+use Finance::GeniusTrader::Calculator;
+use Finance::GeniusTrader::Tools qw(extract_object_number);
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("FromTimeframe[#*]");
 @DEFAULT_ARGS = ("{I:Prices CLOSE}", "week", 0);
 
 =head1 NAME
 
-GT::Indicators::FromTimeframe - Get data from an other timeframe
+Finance::GeniusTrader::Indicators::FromTimeframe - Get data from an other timeframe
 
 =head1 DESCRIPTION
 
@@ -60,24 +60,24 @@ sub calculate {
 
     # Initialize
     if (!defined($self->{$code}->{'special_calc'})) {
-        $self->{$code}->{'special_tf'} = GT::DateTime::name_to_timeframe($self->{'args'}->get_arg_constant(2));
+        $self->{$code}->{'special_tf'} = Finance::GeniusTrader::DateTime::name_to_timeframe($self->{'args'}->get_arg_constant(2));
         $self->{$code}->{'special_prices'} = $calc->prices->convert_to_timeframe($self->{$code}->{'special_tf'});
-        $self->{$code}->{'special_calc'} = GT::Calculator->new($self->{$code}->{'special_prices'});
+        $self->{$code}->{'special_calc'} = Finance::GeniusTrader::Calculator->new($self->{$code}->{'special_prices'});
 	$self->{$code}->{'special_calc'}->set_code($calc->code());
     } else {
     }
 
 
     my $date = $calc->prices->at($i)->[$DATE];
-    my $time = GT::DateTime::map_date_to_time($calc->prices->timeframe(), $date);
-    $date = GT::DateTime::map_time_to_date($self->{$code}->{'special_tf'}, $time);
+    my $time = Finance::GeniusTrader::DateTime::map_date_to_time($calc->prices->timeframe(), $date);
+    $date = Finance::GeniusTrader::DateTime::map_time_to_date($self->{$code}->{'special_tf'}, $time);
 
     if ($self->{$code}->{'special_prices'}->has_date($date)) {
         my $j = $self->{$code}->{'special_prices'}->date($date);
         my $tmp = $self->{'args'}->get_arg_names(1);
         $tmp =~ s/^{|}$//g;
 
-        my $args = GT::ArgsTree->new( $tmp );
+        my $args = Finance::GeniusTrader::ArgsTree->new( $tmp );
         my $name_index = extract_object_number($args->get_arg_names(1));
 	    my $ob = $self->{'args'}->get_arg_object(1);
 	    $ob->calculate($self->{$code}->{'special_calc'}, $j - $nb);

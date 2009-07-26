@@ -1,4 +1,4 @@
-package GT::Analyzers::NetGain;
+package Finance::GeniusTrader::Analyzers::NetGain;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::NetGain;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("NetGain[#*]");
 @DEFAULT_ARGS = ();
 
 =head1 NAME
 
-  GT::Analyzers::NetGain - The net gain of the positions
+  Finance::GeniusTrader::Analyzers::NetGain - The net gain of the positions
 
 =head1 DESCRIPTION 
 

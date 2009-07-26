@@ -1,4 +1,4 @@
-package GT::Analyzers::WinRatio;
+package Finance::GeniusTrader::Analyzers::WinRatio;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::WinRatio;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("WinRatio[#*]");
 @DEFAULT_ARGS = ("{A:Sum {A:IsGain}}", "{A:Sum {A:IsLoss}}");
 
 =head1 NAME
 
-  GT::Analyzers::WinRatio - Calcuates the WinRatio
+  Finance::GeniusTrader::Analyzers::WinRatio - Calcuates the WinRatio
 
 =head1 DESCRIPTION 
 

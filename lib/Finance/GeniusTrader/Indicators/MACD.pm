@@ -1,4 +1,4 @@
-package GT::Indicators::MACD;
+package Finance::GeniusTrader::Indicators::MACD;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,21 +9,21 @@ package GT::Indicators::MACD;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::EMA;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::EMA;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("MACD[#1,#2,#4]","MACDSignal[#3,#4]","MACDDifference[#1,#2,#3,#4]");
 @DEFAULT_ARGS = (12, 26, 9, "{I:Prices CLOSE}");
 
 =pod
 
-=head2 GT::Indicators::MACD
+=head2 Finance::GeniusTrader::Indicators::MACD
 
-The standard Moving Average Convergence Divergence (MACD 12-26-9) can be called like that : GT::Indicators::MACD->new()
+The standard Moving Average Convergence Divergence (MACD 12-26-9) can be called like that : Finance::GeniusTrader::Indicators::MACD->new()
 
 If you need a non standard MACD :
-GT::Indicators::MACD->new([20, 50, 15])
+Finance::GeniusTrader::Indicators::MACD->new([20, 50, 15])
 
 =cut
 
@@ -31,15 +31,15 @@ sub initialize {
     my $self = shift;
     
     # We need 3 EMA indicators to calculate the MACD
-    $self->{'first_ema'} = GT::Indicators::EMA->new([ $self->{'args'}->get_arg_names(1), $self->{'args'}->get_arg_names(4)]);
-    $self->{'second_ema'} = GT::Indicators::EMA->new([ $self->{'args'}->get_arg_names(2), $self->{'args'}->get_arg_names(4)]);
+    $self->{'first_ema'} = Finance::GeniusTrader::Indicators::EMA->new([ $self->{'args'}->get_arg_names(1), $self->{'args'}->get_arg_names(4)]);
+    $self->{'second_ema'} = Finance::GeniusTrader::Indicators::EMA->new([ $self->{'args'}->get_arg_names(2), $self->{'args'}->get_arg_names(4)]);
     my $diff = "{I:Generic:Eval {I:EMA @{[$self->{'first_ema'}->{'args'}->get_arg_names()]}} - {I:EMA @{[$self->{'second_ema'}->{'args'}->get_arg_names()]}}}";
-    $self->{'third_ema'} = GT::Indicators::EMA->new([ $self->{'args'}->get_arg_names(3), "$diff" ]);
+    $self->{'third_ema'} = Finance::GeniusTrader::Indicators::EMA->new([ $self->{'args'}->get_arg_names(3), "$diff" ]);
 }
 
 =pod
 
-=head2 GT::Indicators::MACD::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::MACD::calculate($calc, $day)
 
 =cut
 
@@ -83,7 +83,7 @@ sub calculate {
 
 =pod
 
-=head2 GT::Indicators::MACD::calculate_interval($calc, $first, $last)
+=head2 Finance::GeniusTrader::Indicators::MACD::calculate_interval($calc, $first, $last)
 
 =cut
 

@@ -1,4 +1,4 @@
-package GT::Graphics::DataSource::SingleIndicator;
+package Finance::GeniusTrader::Graphics::DataSource::SingleIndicator;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,15 +7,15 @@ package GT::Graphics::DataSource::SingleIndicator;
 use strict;
 use vars qw(@ISA);
 
-@ISA = qw(GT::Graphics::DataSource);
+@ISA = qw(Finance::GeniusTrader::Graphics::DataSource);
 
-use GT::Eval;
-use GT::CacheValues;
-use GT::Graphics::DataSource;
-use GT::Tools qw(:math);
-use GT::Tools qw(extract_object_number);
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::CacheValues;
+use Finance::GeniusTrader::Graphics::DataSource;
+use Finance::GeniusTrader::Tools qw(:math);
+use Finance::GeniusTrader::Tools qw(extract_object_number);
 
-=head1 GT::Graphics::DataSource::SingleIndicator
+=head1 Finance::GeniusTrader::Graphics::DataSource::SingleIndicator
 
 This datasource is a generic module to handle any information provided by an 
 indicator.

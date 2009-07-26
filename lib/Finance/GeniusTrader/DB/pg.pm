@@ -1,5 +1,5 @@
 
-package GT::DB::pg;
+package Finance::GeniusTrader::DB::pg;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -8,18 +8,18 @@ package GT::DB::pg;
 use strict;
 use vars qw(@ISA);
 
-use GT::DB;
-use GT::Prices;
-use GT::Conf;
-use GT::DateTime;
+use Finance::GeniusTrader::DB;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Conf;
+use Finance::GeniusTrader::DateTime;
 
 use DBD::Pg;
 
-@ISA = qw(GT::DB);
+@ISA = qw(Finance::GeniusTrader::DB);
 
 =head1 NAME
 
-GT::DB::pg - Access to PostgreSQL database of quotes
+Finance::GeniusTrader::DB::pg - Access to PostgreSQL database of quotes
 
 =head1 DESCRIPTION
 
@@ -48,22 +48,22 @@ the database is.
 
 =over
 
-=item C<< GT::DB::pg->new() >>
+=item C<< Finance::GeniusTrader::DB::pg->new() >>
 
 =cut
 sub new {
     my $type = shift;
     my $class = ref($type) || $type;
 
-    GT::Conf::default("DB::pg::dbname", "cours");
-    GT::Conf::default("DB::pg::dbhost", "");   #aka localhost
-    GT::Conf::default("DB::pg::dbuser", "");   #aka current user
-    GT::Conf::default("DB::pg::dbpasswd", ""); #aka user is already identified
+    Finance::GeniusTrader::Conf::default("DB::pg::dbname", "cours");
+    Finance::GeniusTrader::Conf::default("DB::pg::dbhost", "");   #aka localhost
+    Finance::GeniusTrader::Conf::default("DB::pg::dbuser", "");   #aka current user
+    Finance::GeniusTrader::Conf::default("DB::pg::dbpasswd", ""); #aka user is already identified
 
-    my $self = { 'dbname'   => GT::Conf::get("DB::pg::dbname"),
-    		 'dbhost'   => GT::Conf::get("DB::pg::dbhost"), 
-		 'dbuser'   => GT::Conf::get("DB::pg::dbuser"), 
-		 'dbpasswd' => GT::Conf::get("DB::pg::dbpasswd"), 
+    my $self = { 'dbname'   => Finance::GeniusTrader::Conf::get("DB::pg::dbname"),
+    		 'dbhost'   => Finance::GeniusTrader::Conf::get("DB::pg::dbhost"), 
+		 'dbuser'   => Finance::GeniusTrader::Conf::get("DB::pg::dbuser"), 
+		 'dbpasswd' => Finance::GeniusTrader::Conf::get("DB::pg::dbpasswd"), 
 		 @_
 		};
 		
@@ -91,7 +91,7 @@ sub disconnect {
 
 =item C<< $db->get_prices($code, $timeframe) >>
 
-Returns a GT::Prices object containing all known prices for the symbol $code.
+Returns a Finance::GeniusTrader::Prices object containing all known prices for the symbol $code.
 
 =cut
 sub get_prices {
@@ -101,17 +101,17 @@ sub get_prices {
 
 =item C<< $db->get_last_prices($code, $limit, $timeframe) >>
 
-Returns a GT::Prices object containing the $limit last known prices for
+Returns a Finance::GeniusTrader::Prices object containing the $limit last known prices for
 the symbol $code.
 
 =cut
 sub get_last_prices {
     my ($self, $code, $limit, $timeframe) = @_;
 
-    my $q = GT::Prices->new($limit);
+    my $q = Finance::GeniusTrader::Prices->new($limit);
     $timeframe = $DAY unless ($timeframe);
     die "Intraday support not implemented in DB::pg" if ($timeframe < $DAY);
-    return GT::Prices->new() if ($timeframe > $DAY);
+    return Finance::GeniusTrader::Prices->new() if ($timeframe > $DAY);
 
     $q->set_timeframe($timeframe);
 

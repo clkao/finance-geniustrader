@@ -1,4 +1,4 @@
-package GT::Analyzers::CompleteValue;
+package Finance::GeniusTrader::Analyzers::CompleteValue;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::CompleteValue;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("CompleteValue[#*]");
 @DEFAULT_ARGS = ();
 
 =head1 NAME
 
-  GT::Analyzers::Complete Value - The values of the portfolio history
+  Finance::GeniusTrader::Analyzers::Complete Value - The values of the portfolio history
 
 =head1 DESCRIPTION 
 

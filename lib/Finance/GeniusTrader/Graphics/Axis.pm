@@ -1,24 +1,24 @@
-package GT::Graphics::Axis;
+package Finance::GeniusTrader::Graphics::Axis;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
 use strict;
-use GT::Graphics::Graphic;
-use GT::Graphics::Driver;
-use GT::Graphics::Scale;
-use GT::Graphics::Tools qw(:color);
-use GT::Conf;
+use Finance::GeniusTrader::Graphics::Graphic;
+use Finance::GeniusTrader::Graphics::Driver;
+use Finance::GeniusTrader::Graphics::Scale;
+use Finance::GeniusTrader::Graphics::Tools qw(:color);
+use Finance::GeniusTrader::Conf;
 
-GT::Conf::default("Graphic::Grid::Color", "light grey");
+Finance::GeniusTrader::Conf::default("Graphic::Grid::Color", "light grey");
 
-=head1 GT::Graphics::Axis
+=head1 Finance::GeniusTrader::Graphics::Axis
 
 An axis can be displayed on a side of a Zone. It's associated to a scale.
 It precises how much space there's between ticks.
 
-=head2 GT::Graphics::Axis->new($scale)
+=head2 Finance::GeniusTrader::Graphics::Axis->new($scale)
 
 Create a new axis and use the associated scale.
 
@@ -29,10 +29,10 @@ sub new {
     my $scale = shift;
     my $self = { 'scale' => $scale, 
 		 "color" => 
-		    get_color(GT::Conf::get("Graphic::ForegroundColor")),
+		    get_color(Finance::GeniusTrader::Conf::get("Graphic::ForegroundColor")),
 		 'grid_level' => 1, 
 		 "grid_color" => 
-			    get_color(GT::Conf::get("Graphic::Grid::Color")),
+			    get_color(Finance::GeniusTrader::Conf::get("Graphic::Grid::Color")),
 		 'label' => 1
 	       };
     return bless $self, $class;

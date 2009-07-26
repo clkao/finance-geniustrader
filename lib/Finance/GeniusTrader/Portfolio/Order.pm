@@ -1,19 +1,19 @@
-package GT::Portfolio::Order;
+package Finance::GeniusTrader::Portfolio::Order;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
 # version 2 or (at your option) any later version.
 
-our @ISA = qw(GT::Serializable);
+our @ISA = qw(Finance::GeniusTrader::Serializable);
 
 use strict;
 #ALL# use Log::Log4perl qw(:easy);
-use GT::Prices;
-use GT::Serializable;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Serializable;
 
 =head1 NAME
 
-GT::Portfolio::Order - An order within the portfolio
+Finance::GeniusTrader::Portfolio::Order - An order within the portfolio
 
 =head1 DESCRIPTION
 
@@ -39,7 +39,7 @@ GT::Portfolio::Order - An order within the portfolio
 
 =over
 
-=item C<< $o = GT::Portfolio::Order->new; >>
+=item C<< $o = Finance::GeniusTrader::Portfolio::Order->new; >>
 
 =cut
 sub new {

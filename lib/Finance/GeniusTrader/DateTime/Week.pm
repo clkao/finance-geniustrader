@@ -1,4 +1,4 @@
-package GT::DateTime::Week;
+package Finance::GeniusTrader::DateTime::Week;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,12 +7,12 @@ package GT::DateTime::Week;
 use strict;
 use vars qw();
 
-use GT::DateTime;
+use Finance::GeniusTrader::DateTime;
 use Date::Calc qw(Week_of_Year Monday_of_Week);
 #ALL# use Log::Log4perl qw(:easy);
 use Time::Local;
 
-=head1 GT::DateTime::Week
+=head1 Finance::GeniusTrader::DateTime::Week
 
 This module treat dates describing a week. They have the following format :
 YYYY-WW
@@ -41,7 +41,7 @@ sub timeframe_ratio {
     #WAR# WARN "timeframe must be smaller than a week" unless ($tf < $WEEK);
 
     $tf == $DAY && return 5;
-    return GT::DateTime::timeframe_ratio($DAY, $tf) * 5;
+    return Finance::GeniusTrader::DateTime::timeframe_ratio($DAY, $tf) * 5;
 }
 
 1;

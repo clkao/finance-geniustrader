@@ -1,4 +1,4 @@
-package GT::Indicators::DMI;
+package Finance::GeniusTrader::Indicators::DMI;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,17 +9,17 @@ package GT::Indicators::DMI;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::TR;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::TR;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("UDMI[#1]", "LDMI[#1]", "UDMI-LDMI[#1]");
 @DEFAULT_ARGS = (14);
 
 =head1 NAME
 
-GT::Indicators::DMI - 
+Finance::GeniusTrader::Indicators::DMI - 
 
 =head1 DESCRIPTION
 
@@ -30,7 +30,7 @@ GT::Indicators::DMI -
 sub initialize {
     my $self = shift;
 
-    $self->{'tr'} = GT::Indicators::TR->new();
+    $self->{'tr'} = Finance::GeniusTrader::Indicators::TR->new();
 
     $self->add_indicator_dependency($self->{'tr'}, $self->{'args'}->get_arg_constant(1));
     $self->add_prices_dependency($self->{'args'}->get_arg_constant(1) + 1);

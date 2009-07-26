@@ -1,4 +1,4 @@
-package GT::Signals::Prices::RecordPriceLow;
+package Finance::GeniusTrader::Signals::Prices::RecordPriceLow;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,19 +9,19 @@ use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
 # Standards-Version: 1.0
 
-use GT::Signals;
-use GT::Prices;
-use GT::Indicators;
-use GT::Indicators::Generic::MinInPeriod;
+use Finance::GeniusTrader::Signals;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::Generic::MinInPeriod;
 
-@ISA = qw(GT::Signals);
+@ISA = qw(Finance::GeniusTrader::Signals);
 @NAMES = ("RecordPriceLow[#*]");
 @DEFAULT_ARGS = ("30", "{I:Prices LOW}");
 
 sub initialize {
     my ($self) = @_;
     
-    $self->{'min'} = GT::Indicators::Generic::MinInPeriod->new([ $self->{'args'}->get_arg_constant(1) - 1, $self->{'args'}->get_arg_names(2) ]);
+    $self->{'min'} = Finance::GeniusTrader::Indicators::Generic::MinInPeriod->new([ $self->{'args'}->get_arg_constant(1) - 1, $self->{'args'}->get_arg_names(2) ]);
 
     $self->add_indicator_dependency($self->{'min'}, 2);
     $self->add_prices_dependency($self->{'args'}->get_arg_constant(1));

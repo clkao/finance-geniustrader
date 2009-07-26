@@ -1,4 +1,4 @@
-package GT::Indicators::BBO;
+package Finance::GeniusTrader::Indicators::BBO;
 
 # Copyright 2002 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,19 +9,19 @@ package GT::Indicators::BBO;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
-use GT::Tools qw(:math);
-use GT::ArgsTree;
-use GT::Indicators::BOL;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Tools qw(:math);
+use Finance::GeniusTrader::ArgsTree;
+use Finance::GeniusTrader::Indicators::BOL;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("BBO[#*]");
 @DEFAULT_ARGS = (20,2,"{I:Prices CLOSE}");
 
 =head1 NAME
 
-GT::Indicators::BBO - %B - the Bollinger Band Oscillator
+Finance::GeniusTrader::Indicators::BBO - %B - the Bollinger Band Oscillator
 
 =head1 DESCRIPTION 
 
@@ -38,7 +38,7 @@ The parameters are identical with those of the BOL-Indicator.
 
 sub initialize {
     my $self = shift;
-    $self->{'bol'} = GT::Indicators::BOL->new( [ $self->{'args'}->get_arg_names() ]);
+    $self->{'bol'} = Finance::GeniusTrader::Indicators::BOL->new( [ $self->{'args'}->get_arg_names() ]);
     $self->add_indicator_dependency($self->{'bol'}, 1);
 }
 

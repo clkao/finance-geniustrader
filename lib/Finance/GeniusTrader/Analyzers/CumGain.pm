@@ -1,4 +1,4 @@
-package GT::Analyzers::CumGain;
+package Finance::GeniusTrader::Analyzers::CumGain;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::CumGain;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("CumGain[#*]");
 @DEFAULT_ARGS = ();
 
 =head1 NAME
 
-  GT::Analyzers::CumGain - Cummulative Gain
+  Finance::GeniusTrader::Analyzers::CumGain - Cummulative Gain
 
 =head1 DESCRIPTION 
 

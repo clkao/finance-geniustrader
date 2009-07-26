@@ -1,4 +1,4 @@
-package GT::BackTest::Spool;
+package Finance::GeniusTrader::BackTest::Spool;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,17 +9,17 @@ use warnings;
 
 use vars qw(@ISA);
 
-use GT::Tools qw(:conf);
-use GT::Serializable;
+use Finance::GeniusTrader::Tools qw(:conf);
+use Finance::GeniusTrader::Serializable;
 #ALL# use Log::Log4perl qw(:easy);
 
-@ISA = qw(GT::Serializable);
+@ISA = qw(Finance::GeniusTrader::Serializable);
 
-=head1 GT::BackTest::Spool
+=head1 Finance::GeniusTrader::BackTest::Spool
 
 This modules provides some functions to manage a backtest directory.
 
-=head2 $spool = GT::BackTest::Spool->new($data_directory);
+=head2 $spool = Finance::GeniusTrader::BackTest::Spool->new($data_directory);
 
 Create and initialize a BackTest::Spool object with a specific directory,
 where backtest data are stored.
@@ -37,9 +37,9 @@ sub new {
 
     # Open the index file of the specified directory
     if (-e "$directory/index") {
-        $self->{'index'} = GT::BackTest::Spool::File->create_from_file("$directory/index");
+        $self->{'index'} = Finance::GeniusTrader::BackTest::Spool::File->create_from_file("$directory/index");
     } else {
-	$self->{'index'} = GT::BackTest::Spool::File->new();
+	$self->{'index'} = Finance::GeniusTrader::BackTest::Spool::File->new();
 	$self->{'index'}->store("$directory/index");
     }
     
@@ -73,7 +73,7 @@ sub update_index {
     if ($self->{'index_modified'}) {
 	warn "You just lost modifications to the index of backtests ...";
     }
-    $self->{'index'} = GT::BackTest::Spool::File->create_from_file("$dir/index");
+    $self->{'index'} = Finance::GeniusTrader::BackTest::Spool::File->create_from_file("$dir/index");
 }
 
 =head2 $spool->add_alias_name($sysname, $alias);
@@ -126,9 +126,9 @@ sub add_results {
     # Open the "$code-$set.bkt" file if required
     if (! exists $self->{'bkt'}{"$code-$set"}) {
 	if (-e "$directory/$code-$set.bkt") {
-	    $self->{'bkt'}{"$code-$set"} = GT::BackTest::Spool::File->create_from_file("$directory/$code-$set.bkt");
+	    $self->{'bkt'}{"$code-$set"} = Finance::GeniusTrader::BackTest::Spool::File->create_from_file("$directory/$code-$set.bkt");
 	} else {
-	    $self->{'bkt'}{"$code-$set"} = GT::BackTest::Spool::File->new();
+	    $self->{'bkt'}{"$code-$set"} = Finance::GeniusTrader::BackTest::Spool::File->new();
 	}
     }
 
@@ -231,17 +231,17 @@ sub get_portfolio {
     if (exists $self->{'bkt'}{"$code-$set"}) {
 	return $self->{'bkt'}{"$code-$set"}{$sysname}{$code}{'portfolio'};
     } elsif (-e "$directory/$code-$set.bkt") {
-        my $bkt = GT::BackTest::Spool::File->create_from_file("$directory/$code-$set.bkt");
+        my $bkt = Finance::GeniusTrader::BackTest::Spool::File->create_from_file("$directory/$code-$set.bkt");
 	return $bkt->{$sysname}{$code}{'portfolio'};
     }
     return undef;
 }
 
-package GT::BackTest::Spool::File;
+package Finance::GeniusTrader::BackTest::Spool::File;
 
 use vars qw(@ISA);
 
-@ISA = qw(GT::Serializable);
+@ISA = qw(Finance::GeniusTrader::Serializable);
 
 sub new {
     my $type = shift;

@@ -1,4 +1,4 @@
-package GT::Indicators::FRAMA;
+package Finance::GeniusTrader::Indicators::FRAMA;
 
 # Copyright 2008 Karsten Wippler
 # Based on and for GeniusTrader (C) 2000-2002 Raphaël Hertzog, Fabien Fulhaber
@@ -12,18 +12,18 @@ package GT::Indicators::FRAMA;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::SMA;
-use GT::Indicators::Generic::MinInPeriod;
-use GT::Indicators::Generic::MaxInPeriod;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::SMA;
+use Finance::GeniusTrader::Indicators::Generic::MinInPeriod;
+use Finance::GeniusTrader::Indicators::Generic::MaxInPeriod;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("FRAMA[#*]","ALPHA[#1]");
 @DEFAULT_ARGS = (16, "{I:MEAN}");
 
 =head1 NAME
 
-GT::Indicators::FRAMA - FRactal Adaprive Moving Average
+Finance::GeniusTrader::Indicators::FRAMA - FRactal Adaprive Moving Average
 
 =head1 DESCRIPTION
 
@@ -63,17 +63,17 @@ start computation from the loaded data on.
 
 =head2 Creation
 
- GT::Indicators::FRAMA->new()
- GT::Indicators::FRAMA->new([20])
+ Finance::GeniusTrader::Indicators::FRAMA->new()
+ Finance::GeniusTrader::Indicators::FRAMA->new([20])
 
 If you need a 30 days FRAMA of the opening prices you can write
 one of those lines :
 
- GT::Indicators::FRAMA->new([30, "{I:Prices OPEN}"])
+ Finance::GeniusTrader::Indicators::FRAMA->new([30, "{I:Prices OPEN}"])
 
 A 10 days EMA of the RSI could be created with :
 
- GT::Indicators::FRAMA->new([10, "{I:RSI}"])
+ Finance::GeniusTrader::Indicators::FRAMA->new([10, "{I:RSI}"])
 
  note!!! The number of days has to be EVEN!!
 
@@ -84,14 +84,14 @@ sub initialize {
     my ($self) = @_;
     my $period = $self->{'args'}->get_arg_names(1);
     $period=$period/2;
-    $self->{'hmin'} = GT::Indicators::Generic::MinInPeriod->new([ $period, $self->{'args'}->get_arg_names(2)  ]);
-    $self->{'hmax'} = GT::Indicators::Generic::MaxInPeriod->new([ $period, $self->{'args'}->get_arg_names(2)  ]);
-    $self->{'min'} = GT::Indicators::Generic::MinInPeriod->new([ $self->{'args'}->get_arg_names(1), 
+    $self->{'hmin'} = Finance::GeniusTrader::Indicators::Generic::MinInPeriod->new([ $period, $self->{'args'}->get_arg_names(2)  ]);
+    $self->{'hmax'} = Finance::GeniusTrader::Indicators::Generic::MaxInPeriod->new([ $period, $self->{'args'}->get_arg_names(2)  ]);
+    $self->{'min'} = Finance::GeniusTrader::Indicators::Generic::MinInPeriod->new([ $self->{'args'}->get_arg_names(1), 
 								 $self->{'args'}->get_arg_names(2)  ]);
-    $self->{'max'} = GT::Indicators::Generic::MaxInPeriod->new([ $self->{'args'}->get_arg_names(1), 
+    $self->{'max'} = Finance::GeniusTrader::Indicators::Generic::MaxInPeriod->new([ $self->{'args'}->get_arg_names(1), 
 								 $self->{'args'}->get_arg_names(2)  ]);
 
-    $self->{'sma'} = GT::Indicators::SMA->new([ $self->{'args'}->get_arg_names() ]);
+    $self->{'sma'} = Finance::GeniusTrader::Indicators::SMA->new([ $self->{'args'}->get_arg_names() ]);
     $self->add_indicator_dependency($self->{'sma'}, 1);
     $self->add_indicator_dependency($self->{'hmin'},  $self->{'args'}->get_arg_names(1));
     $self->add_indicator_dependency($self->{'hmax'},  $self->{'args'}->get_arg_names(1));

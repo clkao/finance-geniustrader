@@ -1,4 +1,4 @@
-package GT::Analyzers::CumLoss;
+package Finance::GeniusTrader::Analyzers::CumLoss;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::CumLoss;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("CumLoss[#*]");
 @DEFAULT_ARGS = ();
 
 =head1 NAME
 
-  GT::Analyzers::CumLoss - Cummulative Loss
+  Finance::GeniusTrader::Analyzers::CumLoss - Cummulative Loss
 
 =head1 DESCRIPTION 
 

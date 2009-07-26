@@ -1,4 +1,4 @@
-package GT::Indicators::CNDL;
+package Finance::GeniusTrader::Indicators::CNDL;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,18 +9,18 @@ package GT::Indicators::CNDL;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::BOL;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::BOL;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("CNDL[#*]");
 @DEFAULT_ARGS = (55, 0.5, "{I:Prices OPEN}", "{I:Prices HIGH}",
 		 "{I:Prices LOW}", "{I:Prices CLOSE}");
 
 =pod
 
-=head1 GT::Indicators::CNDL
+=head1 Finance::GeniusTrader::Indicators::CNDL
 
 =head2 Overview
 
@@ -34,8 +34,8 @@ Two parameters are used to initialize the Bollinger Bands necessary to calculate
 
 =head2 Examples
 
-GT::Indicators::CNDL->new()
-GT::Indicators::CNDL->new([55, 0.5])
+Finance::GeniusTrader::Indicators::CNDL->new()
+Finance::GeniusTrader::Indicators::CNDL->new([55, 0.5])
 
 =head2 Appendix
 
@@ -59,7 +59,7 @@ sub initialize {
 	$self->{'args'}->get_arg_names(6) . ")}";
     
     $self->{'body_thresholds'} =
-	GT::Indicators::BOL->new([$self->{'args'}->get_arg_names(1),
+	Finance::GeniusTrader::Indicators::BOL->new([$self->{'args'}->get_arg_names(1),
 				  $self->{'args'}->get_arg_names(2),
 				  $evalbody
 				  ]);
@@ -75,7 +75,7 @@ sub initialize {
 	$self->{'args'}->get_arg_names(3) . "}";
 
     $self->{'upper_shadow_thresholds'} =
-	GT::Indicators::BOL->new([$self->{'args'}->get_arg_names(1),
+	Finance::GeniusTrader::Indicators::BOL->new([$self->{'args'}->get_arg_names(1),
 				  $self->{'args'}->get_arg_names(2),
 				  $evalupper
 				  ]);
@@ -91,7 +91,7 @@ sub initialize {
 	$self->{'args'}->get_arg_names(5) . "}";
 
     $self->{'lower_shadow_thresholds'} =
-	GT::Indicators::BOL->new([$self->{'args'}->get_arg_names(1),
+	Finance::GeniusTrader::Indicators::BOL->new([$self->{'args'}->get_arg_names(1),
 				  $self->{'args'}->get_arg_names(2),
 				  $evallower
 				  ]);

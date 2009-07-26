@@ -1,4 +1,4 @@
-package GT::DateTime::Day;
+package Finance::GeniusTrader::DateTime::Day;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,11 +7,11 @@ package GT::DateTime::Day;
 use strict;
 use vars qw();
 
-use GT::DateTime;
+use Finance::GeniusTrader::DateTime;
 #ALL# use Log::Log4perl qw(:easy);
 use Time::Local;
 
-=head1 GT::DateTime::Day
+=head1 Finance::GeniusTrader::DateTime::Day
 
 This module treat dates describing a day. They have the following format :
 YYYY-MM-DD

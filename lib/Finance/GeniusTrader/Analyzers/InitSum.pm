@@ -1,4 +1,4 @@
-package GT::Analyzers::InitSum;
+package Finance::GeniusTrader::Analyzers::InitSum;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::InitSum;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("InitSum[#*]");
 @DEFAULT_ARGS = ();
 
 =head1 NAME
 
-  GT::Analyzers::InitSum - The initial amount of cash
+  Finance::GeniusTrader::Analyzers::InitSum - The initial amount of cash
 
 =head1 DESCRIPTION 
 

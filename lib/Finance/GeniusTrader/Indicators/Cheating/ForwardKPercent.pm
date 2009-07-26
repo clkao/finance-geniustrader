@@ -1,4 +1,4 @@
-package GT::Indicators::Cheating::ForwardKPercent;
+package Finance::GeniusTrader::Indicators::Cheating::ForwardKPercent;
 
 # Copyright 2000-2002 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,18 +9,18 @@ package GT::Indicators::Cheating::ForwardKPercent;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
-use GT::Tools qw(:math);
-use GT::Indicators::Generic::MaxInPeriod;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Tools qw(:math);
+use Finance::GeniusTrader::Indicators::Generic::MaxInPeriod;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("ForwardKPercent[#*]");
 @DEFAULT_ARGS = (3, "{I:Prices CLOSE}", "{I:Prices HIGH}", "{I:Prices LOW}", );
 
 =head1 NAME
 
-GT::Indicators::ForwardKPercent - Probability to make a profitable trade
+Finance::GeniusTrader::Indicators::ForwardKPercent - Probability to make a profitable trade
 
 =head1 DESCRIPTION
 

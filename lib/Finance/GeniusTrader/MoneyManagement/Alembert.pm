@@ -1,4 +1,4 @@
-package GT::MoneyManagement::Alembert;
+package Finance::GeniusTrader::MoneyManagement::Alembert;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,13 +7,13 @@ package GT::MoneyManagement::Alembert;
 use strict;
 use vars qw(@NAMES @ISA);
 
-use GT::MoneyManagement;
-use GT::Prices;
+use Finance::GeniusTrader::MoneyManagement;
+use Finance::GeniusTrader::Prices;
 
 @NAMES = ("Alembert");
-@ISA = qw(GT::MoneyManagement);
+@ISA = qw(Finance::GeniusTrader::MoneyManagement);
 
-=head1 GT::MoneyManagement::Alembert
+=head1 Finance::GeniusTrader::MoneyManagement::Alembert
 
 =head2 Introduction
 

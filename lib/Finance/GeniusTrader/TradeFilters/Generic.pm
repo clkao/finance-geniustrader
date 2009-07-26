@@ -1,4 +1,4 @@
-package GT::TradeFilters::Generic;
+package Finance::GeniusTrader::TradeFilters::Generic;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,12 +9,12 @@ package GT::TradeFilters::Generic;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Prices;
-use GT::TradeFilters;
-use GT::Eval;
-use GT::Tools qw(:generic);
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::TradeFilters;
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::Tools qw(:generic);
 
-@ISA = qw(GT::TradeFilters);
+@ISA = qw(Finance::GeniusTrader::TradeFilters);
 @NAMES = ("Generic[#*]");
 @DEFAULT_ARGS = ("{S:Generic:False}", "{S:Generic:False}");
 

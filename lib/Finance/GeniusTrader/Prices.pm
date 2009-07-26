@@ -1,4 +1,4 @@
-package GT::Prices;
+package Finance::GeniusTrader::Prices;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,7 +9,7 @@ use vars qw(@ISA @EXPORT $FIRST $OPEN $HIGH $LOW $CLOSE $LAST $VOLUME $DATE);
 
 use Date::Calc qw(Decode_Date_US Decode_Date_EU Today);
 #ALL#  use Log::Log4perl qw(:easy);
-use GT::DateTime;
+use Finance::GeniusTrader::DateTime;
 
 require Exporter;
 @ISA = qw(Exporter);
@@ -24,17 +24,17 @@ $DATE = 5;
 
 =head1 NAME
 
-GT::Prices - A serie of prices
+Finance::GeniusTrader::Prices - A serie of prices
 
 =head1 DESCRIPTION
 
-GT::Prices stores all historic prices (open, high, low, close, volume, date).
+Finance::GeniusTrader::Prices stores all historic prices (open, high, low, close, volume, date).
 
 =over
 
-=item C<< my $p = GT::Prices->new() >>
+=item C<< my $p = Finance::GeniusTrader::Prices->new() >>
 
-Create an empty GT::Prices object.
+Create an empty Finance::GeniusTrader::Prices object.
 
 =cut
 sub new {
@@ -128,7 +128,7 @@ sub count {
 =item C<< $p->timeframe() >>
 
 Defines the time frame used for the prices. It's one of the value exported
-by GT::DateTime;
+by Finance::GeniusTrader::DateTime;
 
 =cut
 sub set_timeframe { $_[0]->{'timeframe'} = $_[1] }
@@ -142,8 +142,8 @@ Sort the prices by date.
 sub sort {
     my ($self) = @_;
     my @prices = sort { 
-	GT::DateTime::map_date_to_time($self->timeframe, $a->[$DATE]) <=>
-	GT::DateTime::map_date_to_time($self->timeframe, $b->[$DATE])
+	Finance::GeniusTrader::DateTime::map_date_to_time($self->timeframe, $a->[$DATE]) <=>
+	Finance::GeniusTrader::DateTime::map_date_to_time($self->timeframe, $b->[$DATE])
     } @{$self->{'prices'}};
     $self->{'prices'} = \@prices;
 }
@@ -169,21 +169,21 @@ sub convert_to_timeframe {
     my ($self, $timeframe) = @_;
 
     #WAR# WARN "new timeframe must be larger" unless ($timeframe > $self->timeframe);
-    my $prices = GT::Prices->new($self->count);
+    my $prices = Finance::GeniusTrader::Prices->new($self->count);
     $prices->set_timeframe($timeframe);
 
     # Initialize the iteration
     my ($open, $high, $low, $close, $volume, $date) = @{$self->{'prices'}[0]};
     $volume = 0;
     my ($prevdate, $newdate);
-    $prevdate = GT::DateTime::convert_date($date, $self->timeframe, $timeframe);
+    $prevdate = Finance::GeniusTrader::DateTime::convert_date($date, $self->timeframe, $timeframe);
 
     # Iterate over all the prices (hope they are sorted)
     foreach my $q (@{$self->{'prices'}})
     {
 	# Build the date in the new timeframe corresponding to the prices
 	# being treated
-	$newdate = GT::DateTime::convert_date($q->[$DATE], $self->timeframe,
+	$newdate = Finance::GeniusTrader::DateTime::convert_date($q->[$DATE], $self->timeframe,
 					      $timeframe);
 	# If the date differs from the previous one then we have completed
 	# a new item
@@ -224,12 +224,12 @@ Find the nearest date available
 =cut
 sub find_nearest_following_date {
     my ($self, $date) = @_;
-    my $time = GT::DateTime::map_date_to_time($self->timeframe, $date);
+    my $time = Finance::GeniusTrader::DateTime::map_date_to_time($self->timeframe, $date);
     my $mindiff = $time;
     my $mindate = '';
     foreach (@{$self->{'prices'}})
     {
-	my $dtime = GT::DateTime::map_date_to_time($self->timeframe, $_->[$DATE]);
+	my $dtime = Finance::GeniusTrader::DateTime::map_date_to_time($self->timeframe, $_->[$DATE]);
 	my $diff = $dtime - $time;
 	next if ($diff < 0);
 	if ($diff < $mindiff)
@@ -243,12 +243,12 @@ sub find_nearest_following_date {
 
 sub find_nearest_preceding_date {
     my ($self, $date) = @_;
-    my $time = GT::DateTime::map_date_to_time($self->timeframe, $date);
+    my $time = Finance::GeniusTrader::DateTime::map_date_to_time($self->timeframe, $date);
     my $mindiff = $time;
     my $mindate = '';
     foreach (@{$self->{'prices'}})
     {
-	my $dtime = GT::DateTime::map_date_to_time($self->timeframe, $_->[$DATE]);
+	my $dtime = Finance::GeniusTrader::DateTime::map_date_to_time($self->timeframe, $_->[$DATE]);
 	my $diff = $time - $dtime;
 	next if ($diff < 0);
 	if ($diff < $mindiff)
@@ -262,12 +262,12 @@ sub find_nearest_preceding_date {
 
 sub find_nearest_date {
     my ($self, $date) = @_;
-    my $time = GT::DateTime::map_date_to_time($self->timeframe, $date);
+    my $time = Finance::GeniusTrader::DateTime::map_date_to_time($self->timeframe, $date);
     my $mindiff = $time;
     my $mindate = '';
     foreach (@{$self->{'prices'}})
     {
-	my $dtime = GT::DateTime::map_date_to_time($self->timeframe, $_->[$DATE]);
+	my $dtime = Finance::GeniusTrader::DateTime::map_date_to_time($self->timeframe, $_->[$DATE]);
 	my $diff = abs($time - $dtime);
 	if ($diff < $mindiff)
 	{
@@ -386,7 +386,7 @@ sub loadtxt {
 		$date .= " $tm" if $tm;
 	    }
 
-	    # Add all data within the GT::Prices object
+	    # Add all data within the Finance::GeniusTrader::Prices object
 	    $self->add_prices([ $open, $high, $low, $close, $volume, $date ]);
 	}
     }

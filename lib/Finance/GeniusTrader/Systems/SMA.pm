@@ -1,4 +1,4 @@
-package GT::Systems::SMA;
+package Finance::GeniusTrader::Systems::SMA;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,11 +7,11 @@ package GT::Systems::SMA;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Prices;
-use GT::Systems;
-use GT::Indicators::SMA;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Systems;
+use Finance::GeniusTrader::Indicators::SMA;
 
-@ISA = qw(GT::Systems);
+@ISA = qw(Finance::GeniusTrader::Systems);
 @NAMES = ("SMA[#1,#2,#3]");
 
 =pod
@@ -33,9 +33,9 @@ sub new {
 sub initialize {
     my ($self) = @_;
 
-    $self->{'sma1'} = GT::Indicators::SMA->new([ $self->{'args'}[0] ]);
-    $self->{'sma2'} = GT::Indicators::SMA->new([ $self->{'args'}[1] ]);
-    $self->{'sma3'} = GT::Indicators::SMA->new([ $self->{'args'}[2] ]);
+    $self->{'sma1'} = Finance::GeniusTrader::Indicators::SMA->new([ $self->{'args'}[0] ]);
+    $self->{'sma2'} = Finance::GeniusTrader::Indicators::SMA->new([ $self->{'args'}[1] ]);
+    $self->{'sma3'} = Finance::GeniusTrader::Indicators::SMA->new([ $self->{'args'}[2] ]);
 
     $self->{'allow_multiple'} = 0;
 

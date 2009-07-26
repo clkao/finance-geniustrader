@@ -1,4 +1,4 @@
-package GT::Graphics::Object::Marks;
+package Finance::GeniusTrader::Graphics::Object::Marks;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -6,25 +6,25 @@ package GT::Graphics::Object::Marks;
 
 use strict;
 use vars qw(@ISA);
-@ISA = qw(GT::Graphics::Object);
+@ISA = qw(Finance::GeniusTrader::Graphics::Object);
 
-use GT::Prices;
-use GT::Graphics::Object;
-use GT::Graphics::Driver;
-use GT::Graphics::Tools qw(:color);
-use GT::Conf;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Graphics::Object;
+use Finance::GeniusTrader::Graphics::Driver;
+use Finance::GeniusTrader::Graphics::Tools qw(:color);
+use Finance::GeniusTrader::Conf;
 
-GT::Conf::default("Graphic::Marks::Color", "green");
-GT::Conf::default("Graphic::Marks::Width", 4);
+Finance::GeniusTrader::Conf::default("Graphic::Marks::Color", "green");
+Finance::GeniusTrader::Conf::default("Graphic::Marks::Width", 4);
 
-=head1 GT::Graphics::Object::Marks
+=head1 Finance::GeniusTrader::Graphics::Object::Marks
 
 This graphical object display a serie of '+' marks.
 
 It needs a data source with a single value per coordinate pair
 (in other words typical datasource for prices will not work)
-  my $graph_ds = GT::Graphics::DataSource::Prices->new($q);    # wrong
-  my $marks_ds = GT::Graphics::DataSource::Close->new($q);     # ok
+  my $graph_ds = Finance::GeniusTrader::Graphics::DataSource::Prices->new($q);    # wrong
+  my $marks_ds = Finance::GeniusTrader::Graphics::DataSource::Close->new($q);     # ok
 
 =cut
 
@@ -32,8 +32,8 @@ sub init {
     my ($self) = @_;
     
     # Default values ...
-    $self->{'fg_color'} = get_color(GT::Conf::get("Graphic::Marks::Color"));
-    $self->{'width'} = GT::Conf::get("Graphic::Marks::Width");
+    $self->{'fg_color'} = get_color(Finance::GeniusTrader::Conf::get("Graphic::Marks::Color"));
+    $self->{'width'} = Finance::GeniusTrader::Conf::get("Graphic::Marks::Width");
 }
 
 sub display {

@@ -1,4 +1,4 @@
-package GT::DateTime::10Min;
+package Finance::GeniusTrader::DateTime::10Min;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # Copyright 2005 João Antunes Costa
@@ -8,10 +8,10 @@ package GT::DateTime::10Min;
 use strict;
 use vars qw();
 
-use GT::DateTime;
+use Finance::GeniusTrader::DateTime;
 use Time::Local;
 
-=head1 GT::DateTime::10Min
+=head1 Finance::GeniusTrader::DateTime::10Min
 
 This module treat dates describing a 10 minute period. They have the following format :
 YYYY-MM-DD HH:N0:00

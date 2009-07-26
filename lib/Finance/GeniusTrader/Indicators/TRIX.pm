@@ -1,4 +1,4 @@
-package GT::Indicators::TRIX;
+package Finance::GeniusTrader::Indicators::TRIX;
 
 # Copyright 2002 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,17 +9,17 @@ package GT::Indicators::TRIX;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::ArgsTree;
-use GT::Indicators;
-use GT::Indicators::EMA;
+use Finance::GeniusTrader::ArgsTree;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::EMA;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("TRIX[#*]");
 @DEFAULT_ARGS = (5);
 
 =head1 NAME
 
-GT::Indicators::TRIX - TRIX-Indicator from Jack Hutson
+Finance::GeniusTrader::Indicators::TRIX - TRIX-Indicator from Jack Hutson
 
 =head1 DESCRIPTION 
 
@@ -45,8 +45,8 @@ The first argument is the period used to calculed the average.
 
 =head2 Creation
 
- GT::Indicators::TRIX->new()
- GT::Indicators::TRIX->new([20])
+ Finance::GeniusTrader::Indicators::TRIX->new()
+ Finance::GeniusTrader::Indicators::TRIX->new([20])
 
 =head2 Link
 
@@ -58,12 +58,12 @@ The first argument is the period used to calculed the average.
 sub initialize {
     my ($self) = @_;
 
-    $self->{'ema1'} = GT::Indicators::EMA->new( [ $self->{'args'}->get_arg_names() ] );
+    $self->{'ema1'} = Finance::GeniusTrader::Indicators::EMA->new( [ $self->{'args'}->get_arg_names() ] );
 
-    $self->{'ema2'} = GT::Indicators::EMA->new([ $self->{'args'}->get_arg_names(1),
+    $self->{'ema2'} = Finance::GeniusTrader::Indicators::EMA->new([ $self->{'args'}->get_arg_names(1),
         "{I:EMA @{[$self->{'ema1'}->{'args'}->get_arg_names()]}}" ]);
 
-    $self->{'ema3'} = GT::Indicators::EMA->new([ $self->{'args'}->get_arg_names(1),
+    $self->{'ema3'} = Finance::GeniusTrader::Indicators::EMA->new([ $self->{'args'}->get_arg_names(1),
         "{I:EMA @{[$self->{'ema2'}->{'args'}->get_arg_names()]}}" ]);
 }
 

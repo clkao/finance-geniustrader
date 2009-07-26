@@ -1,4 +1,4 @@
-package GT::Signals::Volatility::NR;
+package Finance::GeniusTrader::Signals::Volatility::NR;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,18 +9,18 @@ package GT::Signals::Volatility::NR;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Signals;
-use GT::Prices;
-use GT::Indicators::Range;
-use GT::Indicators::Generic::MinInPeriod;
+use Finance::GeniusTrader::Signals;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Indicators::Range;
+use Finance::GeniusTrader::Indicators::Generic::MinInPeriod;
 
-@ISA = qw(GT::Signals);
+@ISA = qw(Finance::GeniusTrader::Signals);
 @NAMES = ("NR[#1]");
 @DEFAULT_ARGS = (7);
 
 =head1 NAME
 
-GT::Signals::Volatility::NR
+Finance::GeniusTrader::Signals::Volatility::NR
 
 =head1 DESCRIPTION
 
@@ -31,8 +31,8 @@ look at for the size of ranges.
 sub initialize {
     my ($self) = @_;
     
-    $self->{'range'} = GT::Indicators::Range->new;
-    $self->{'min_range'} = GT::Indicators::Generic::MinInPeriod->new(
+    $self->{'range'} = Finance::GeniusTrader::Indicators::Range->new;
+    $self->{'min_range'} = Finance::GeniusTrader::Indicators::Generic::MinInPeriod->new(
 	    [ $self->{'args'}->get_arg_constant(1), "{I:Range}" ]);
 
     $self->add_indicator_dependency($self->{'range'}, $self->{'args'}->get_arg_constant(1));

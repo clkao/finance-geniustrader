@@ -1,4 +1,4 @@
-package GT::ArgsTree;
+package Finance::GeniusTrader::ArgsTree;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,14 +7,14 @@ package GT::ArgsTree;
 use strict;
 use vars qw();
 
-use GT::Eval;
-use GT::Tools qw(:generic :conf);
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::Tools qw(:generic :conf);
 
 #ALL#  use Log::Log4perl qw(:easy);
 
 =head1 NAME
 
-GT::ArgsTree - Represent the arguments of calculation objects (indics/signals/systems)
+Finance::GeniusTrader::ArgsTree - Represent the arguments of calculation objects (indics/signals/systems)
 
 =head1 DESCRIPTION
 
@@ -35,7 +35,7 @@ computable one, it should be given with a different syntax :
 
 =over
 
-=item C<< GT::ArgsTree->new(@args) >>
+=item C<< Finance::GeniusTrader::ArgsTree->new(@args) >>
 
 Create an ArgsTree object for the given list of arguments. Instead of a
 list you can give a string representation of all the arguments.
@@ -81,10 +81,10 @@ sub create_objects {
     {
 	next if (ref($self->[$i]) !~ /ARRAY/);
 	my @args = get_arg_names($self->[$i]);
-	my $object = GT::Eval::create_standard_object($self->[$i][0]{"name"}, @args);
+	my $object = Finance::GeniusTrader::Eval::create_standard_object($self->[$i][0]{"name"}, @args);
 	my $number = extract_object_number($self->[$i][0]{"name"});
 	$self->[$i][0]{"object"} = $object;
-	$self->[$i][0]{"standard_name"} = "{" . GT::Eval::get_standard_name($object, 1, $number) . "}";
+	$self->[$i][0]{"standard_name"} = "{" . Finance::GeniusTrader::Eval::get_standard_name($object, 1, $number) . "}";
 	$self->[$i][0]{"number"} = $number;
     }
     return;
@@ -131,7 +131,7 @@ The first argument is numbered "1" (and not "0").
 =cut
 sub get_arg_values {
     my ($self, $calc, $day, $n) = @_;
-    #ERR#  ERROR  "Bad calculator argument for get_arg_values" if ( ref($calc) =~ /GT::Calculator/);
+    #ERR#  ERROR  "Bad calculator argument for get_arg_values" if ( ref($calc) =~ /Finance::GeniusTrader::Calculator/);
     #ERR#  ERROR  "Bad day argument for get_arg_values" if ( $day =~ /^\d+$/);
     if (defined($n)) {
 	#ERR#  ERROR  "Bad argument index in get_arg_values" if ( $n >= 1 && $n < scalar(@{$self}));
@@ -140,21 +140,21 @@ sub get_arg_values {
 	    my $object = $self->[$n][0]{"object"};
 	    my $number = $self->[$n][0]{"number"};
 	    my $name = $object->get_name($number);
-	    if (ref($object) =~ /GT::Indicators/) {
+	    if (ref($object) =~ /Finance::GeniusTrader::Indicators/) {
 		$object->calculate($calc, $day) 
 		  unless ($calc->indicators->is_available($name, $day));
 		if ($calc->indicators->is_available($name, $day)) {
 		    $res = $calc->indicators->get($name, $day);
 		    return $res;
 		}
-	    } elsif (ref($object) =~ /GT::Signals/) {
+	    } elsif (ref($object) =~ /Finance::GeniusTrader::Signals/) {
 		$object->detect($calc, $day)
 		  unless ($calc->signals->is_available($name, $day));
 		if ($calc->signals->is_available($name, $day)) {
 		    $res = $calc->signals->get($name, $day);
 		    return $res;
 		}
-	    } elsif (ref($object) =~ /GT::Analyzers/) {
+	    } elsif (ref($object) =~ /Finance::GeniusTrader::Analyzers/) {
 		$object->calculate($calc, $day) 
 		  unless ($calc->indicators->is_available($name, $day));
 		if ($calc->indicators->is_available($name, $day)) {
@@ -247,7 +247,7 @@ sub get_nb_args {
     return $res;
 }
 
-=item C<< my ($full_name, @args) = GT::ArgsTree::parse_args($args) >>
+=item C<< my ($full_name, @args) = Finance::GeniusTrader::ArgsTree::parse_args($args) >>
 
 Parse the arguments in $args and return the parsed content in the form
 of two arrays (list of arguments).
@@ -357,7 +357,7 @@ sub parse_args {
     return ($full_name, @objects);
 }
 
-=item C<< GT::ArgsTree::args_to_ascii(@args) >>
+=item C<< Finance::GeniusTrader::ArgsTree::args_to_ascii(@args) >>
 
 Return the ascii representation of all the parameters described in
 @args.
@@ -385,11 +385,11 @@ sub prepare {
     for(my $i = 1; $i < scalar(@{$self}); $i++) {
 	next if $self->is_constant($i);
 	my $object = $self->[$i][0]{"object"};
-	if (ref($object) =~ /GT::Indicators/) {
+	if (ref($object) =~ /Finance::GeniusTrader::Indicators/) {
 	    $object->calculate($calc, $day);
-	} elsif (ref($object) =~ /GT::Signals/) {
+	} elsif (ref($object) =~ /Finance::GeniusTrader::Signals/) {
 	    $object->detect($calc, $day);
-	} elsif (ref($object) =~ /GT::Analyzers/) {
+	} elsif (ref($object) =~ /Finance::GeniusTrader::Analyzers/) {
 	    $object->calculate($calc, $day);
 	}
     }
@@ -406,11 +406,11 @@ sub prepare_interval {
     for(my $i = 1; $i < scalar(@{$self}); $i++) {
 	next if $self->is_constant($i);
 	my $object = $self->[$i][0]{"object"};
-	if (ref($object) =~ /GT::Indicators/) {
+	if (ref($object) =~ /Finance::GeniusTrader::Indicators/) {
 	    $object->calculate_interval($calc, $first, $last);
-	} elsif (ref($object) =~ /GT::Signals/) {
+	} elsif (ref($object) =~ /Finance::GeniusTrader::Signals/) {
 	    $object->detect_interval($calc, $first, $last);
-	} elsif (ref($object) =~ /GT::Analyzers/) {
+	} elsif (ref($object) =~ /Finance::GeniusTrader::Analyzers/) {
 	    $object->calculate_interval($calc, $first, $last);
 	}
     }

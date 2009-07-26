@@ -1,4 +1,4 @@
-package GT::DB::MetaStock;
+package Finance::GeniusTrader::DB::MetaStock;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,9 +7,9 @@ package GT::DB::MetaStock;
 use strict;
 use Date::Calc qw(Decode_Date_EU);
 
-use GT::DB;
-use GT::Prices;
-use GT::DateTime;
+use Finance::GeniusTrader::DB;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::DateTime;
 
 =head1 DB::MetaStock access module
 
@@ -51,12 +51,12 @@ sub new {
     my $type = shift;
     my $class = ref($type) || $type;
 
-    GT::Conf::default("DB::metastock::directory", "");
-    GT::Conf::default("DB::metastock::program", 
+    Finance::GeniusTrader::Conf::default("DB::metastock::directory", "");
+    Finance::GeniusTrader::Conf::default("DB::metastock::program", 
 		      "/bourse/tools/MetaStockReader");
 
-    my $self = { "directory" => GT::Conf::get("DB::metastock::directory"),
-		 "program"   => GT::Conf::get("DB::metastock::program") };
+    my $self = { "directory" => Finance::GeniusTrader::Conf::get("DB::metastock::directory"),
+		 "program"   => Finance::GeniusTrader::Conf::get("DB::metastock::program") };
 		
     return bless $self, $class;
 }
@@ -82,14 +82,14 @@ sub set_directory {
 
 =head2 $db->get_prices($code, $timeframe)
 
-Returns a GT::Prices object containing all known prices for the symbol $code.
+Returns a Finance::GeniusTrader::Prices object containing all known prices for the symbol $code.
 
 =cut
 sub get_prices {
     my ($self, $code, $timeframe) = @_;
 	$timeframe = $DAY unless ($timeframe);
     die "Intraday support not implemented in DB::MetaStock" if ($timeframe < $DAY);
-    return GT::Prices->new() if ($timeframe > $DAY);
+    return Finance::GeniusTrader::Prices->new() if ($timeframe > $DAY);
 
     my ($open, $high, $low, $close, $volume, $date, $time);
     my ($year, $month, $day);
@@ -100,7 +100,7 @@ sub get_prices {
     # in order to get all quotes for the specified symbol
     my @results = `$self->{'program'} -r $self->{'directory'} $code`;
  
-    my $prices = GT::Prices->new();
+    my $prices = Finance::GeniusTrader::Prices->new();
     $prices->set_timeframe($timeframe);
     
     foreach (@results) {
@@ -167,7 +167,7 @@ sub get_prices {
 		$date .= "-" . $time;
 	    }
 	    
-	    # Add all data within the GT::Prices object
+	    # Add all data within the Finance::GeniusTrader::Prices object
 	    $prices->add_prices([ $open, $high, $low, $close, $volume, $date ]);
 	    
 	}
@@ -180,7 +180,7 @@ sub get_prices {
 
 NOT SUPPORTED for text db.
 
-Returns a GT::Prices object containing the $limit last known prices for
+Returns a Finance::GeniusTrader::Prices object containing the $limit last known prices for
 the symbol $code.
 
 =cut

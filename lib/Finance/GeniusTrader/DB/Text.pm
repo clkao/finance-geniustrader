@@ -1,4 +1,4 @@
-package GT::DB::Text;
+package Finance::GeniusTrader::DB::Text;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -8,12 +8,12 @@ package GT::DB::Text;
 # $Id$
 
 use strict;
-our @ISA = qw(GT::DB);
+our @ISA = qw(Finance::GeniusTrader::DB);
 
-use GT::DB;
-use GT::Prices;
-use GT::Conf;
-use GT::DateTime;
+use Finance::GeniusTrader::DB;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Conf;
+use Finance::GeniusTrader::DateTime;
 
 =head1 DB::Text access module
 
@@ -116,29 +116,29 @@ sub new {
     my $type = shift;
     my $class = ref($type) || $type;
 
-    my $self = { "directory" => GT::Conf::get("DB::Text::directory")};
+    my $self = { "directory" => Finance::GeniusTrader::Conf::get("DB::Text::directory")};
 
-    GT::Conf::default('DB::Text::header_lines', '0');
-    GT::Conf::default('DB::Text::marker', "\t");
-    GT::Conf::default('DB::Text::file_extension', '.txt');
-    GT::Conf::default('DB::Text::format', '3');
-    GT::Conf::default('DB::Text::fields::datetime', '5');
-    GT::Conf::default('DB::Text::fields::open', '0');
-    GT::Conf::default('DB::Text::fields::low', '2');
-    GT::Conf::default('DB::Text::fields::high', '1');
-    GT::Conf::default('DB::Text::fields::close', '3');
-    GT::Conf::default('DB::Text::fields::volume', '4');
+    Finance::GeniusTrader::Conf::default('DB::Text::header_lines', '0');
+    Finance::GeniusTrader::Conf::default('DB::Text::marker', "\t");
+    Finance::GeniusTrader::Conf::default('DB::Text::file_extension', '.txt');
+    Finance::GeniusTrader::Conf::default('DB::Text::format', '3');
+    Finance::GeniusTrader::Conf::default('DB::Text::fields::datetime', '5');
+    Finance::GeniusTrader::Conf::default('DB::Text::fields::open', '0');
+    Finance::GeniusTrader::Conf::default('DB::Text::fields::low', '2');
+    Finance::GeniusTrader::Conf::default('DB::Text::fields::high', '1');
+    Finance::GeniusTrader::Conf::default('DB::Text::fields::close', '3');
+    Finance::GeniusTrader::Conf::default('DB::Text::fields::volume', '4');
 
-    $self->{'header_lines'} = GT::Conf::get('DB::Text::header_lines');
-    $self->{'mark'} = GT::Conf::get('DB::Text::marker');
-    $self->{'date_format'} = GT::Conf::get('DB::Text::format');
-    $self->{'extension'} = GT::Conf::get('DB::Text::file_extension');
-    $self->{'datetime'} = GT::Conf::get('DB::Text::fields::datetime');
-    $self->{'open'} = GT::Conf::get('DB::Text::fields::open');
-    $self->{'low'} = GT::Conf::get('DB::Text::fields::low');
-    $self->{'high'} = GT::Conf::get('DB::Text::fields::high');
-    $self->{'close'} = GT::Conf::get('DB::Text::fields::close');
-    $self->{'volume'} = GT::Conf::get('DB::Text::fields::volume');
+    $self->{'header_lines'} = Finance::GeniusTrader::Conf::get('DB::Text::header_lines');
+    $self->{'mark'} = Finance::GeniusTrader::Conf::get('DB::Text::marker');
+    $self->{'date_format'} = Finance::GeniusTrader::Conf::get('DB::Text::format');
+    $self->{'extension'} = Finance::GeniusTrader::Conf::get('DB::Text::file_extension');
+    $self->{'datetime'} = Finance::GeniusTrader::Conf::get('DB::Text::fields::datetime');
+    $self->{'open'} = Finance::GeniusTrader::Conf::get('DB::Text::fields::open');
+    $self->{'low'} = Finance::GeniusTrader::Conf::get('DB::Text::fields::low');
+    $self->{'high'} = Finance::GeniusTrader::Conf::get('DB::Text::fields::high');
+    $self->{'close'} = Finance::GeniusTrader::Conf::get('DB::Text::fields::close');
+    $self->{'volume'} = Finance::GeniusTrader::Conf::get('DB::Text::fields::volume');
 
     return bless $self, $class;
 }
@@ -166,7 +166,7 @@ sub set_directory {
 
 =head2 $db->get_prices($code, $timeframe)
 
-Returns a GT::Prices object containing all known prices for the symbol $code.
+Returns a Finance::GeniusTrader::Prices object containing all known prices for the symbol $code.
 
 =cut
 
@@ -174,7 +174,7 @@ sub get_prices {
     my ($self, $code, $timeframe) = @_;
     $timeframe = $DAY unless ($timeframe);
 
-    my $prices = GT::Prices->new;
+    my $prices = Finance::GeniusTrader::Prices->new;
 
     # WARNING: Can only load data that is in daily format or smaller
     # Trying to load weekly or monthly data will fail.
@@ -188,7 +188,7 @@ sub get_prices {
     $self->{'fields'} = \%fields;
 
     my $extension = $self->{'extension'};
-    my $tfname = GT::DateTime::name_of_timeframe($timeframe);
+    my $tfname = Finance::GeniusTrader::DateTime::name_of_timeframe($timeframe);
     $extension =~ s/\$timeframe/$tfname/g;
 
     my $file = $self->{'directory'} . "/$code" . $extension;
@@ -203,7 +203,7 @@ sub get_prices {
 
 =head2 $db->get_last_prices($code, $limit, $timeframe)
 
-Returns a GT::Prices object containing the $limit last known prices for
+Returns a Finance::GeniusTrader::Prices object containing the $limit last known prices for
 the symbol $code.
 
 =cut

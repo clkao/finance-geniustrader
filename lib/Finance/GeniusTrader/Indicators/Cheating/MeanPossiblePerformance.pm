@@ -1,4 +1,4 @@
-package GT::Indicators::Cheating::MeanPossiblePerformance;
+package Finance::GeniusTrader::Indicators::Cheating::MeanPossiblePerformance;
 
 # Copyright 2000-2002 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,18 +9,18 @@ package GT::Indicators::Cheating::MeanPossiblePerformance;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
-use GT::Tools qw(:math);
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Tools qw(:math);
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("MeanPossiblePerformance[#*]", "MeanPossiblePerformancePercent[#*]");
 @DEFAULT_ARGS = (20, "{I:Prices CLOSE}");
 
 
 =head1 NAME
 
-GT::Indicators::MeanPossiblePerformance
+Finance::GeniusTrader::Indicators::MeanPossiblePerformance
 
 =head1 DESCRIPTION
 

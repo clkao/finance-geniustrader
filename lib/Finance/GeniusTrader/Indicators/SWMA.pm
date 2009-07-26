@@ -1,4 +1,4 @@
-package GT::Indicators::SWMA;
+package Finance::GeniusTrader::Indicators::SWMA;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,13 +7,13 @@ package GT::Indicators::SWMA;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
+use Finance::GeniusTrader::Indicators;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("SWMA[#1,#2]");
 @DEFAULT_ARGS = (5, "{I:Prices CLOSE}");
 
-=head1 GT::Indicators::SWMA
+=head1 Finance::GeniusTrader::Indicators::SWMA
 
 The Sine-Weighted Moving Average (SWMA) is a moving average using a sine factor to take into account both time and price movements. Very good at catching tops and bottoms, while filtering out unnecessary noise.
 
@@ -24,8 +24,8 @@ of (sin(n*180/6*PI/180)) for i = 1 to i = period)
 
 =head2 Examples
 
-GT::Indicators::SWMA->>new()
-GT::Indicators::SWMA->new([30, {I:Prices OPEN}])
+Finance::GeniusTrader::Indicators::SWMA->>new()
+Finance::GeniusTrader::Indicators::SWMA->new([30, {I:Prices OPEN}])
 
 =head2 Links
 
@@ -39,7 +39,7 @@ sub initialize {
     $self->add_prices_dependency($self->{'args'}->get_arg_constant(1));
 }
 
-=head2 GT::Indicators::SWMA::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::SWMA::calculate($calc, $day)
 
 =cut
 sub calculate {

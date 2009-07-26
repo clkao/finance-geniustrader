@@ -1,4 +1,4 @@
-package GT::Indicators::Generic::Abs;
+package Finance::GeniusTrader::Indicators::Generic::Abs;
 
 # Copyright 2008 João Antunes Costa
 # This file is distributed under the terms of the General Public License
@@ -9,14 +9,14 @@ package GT::Indicators::Generic::Abs;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Indicators;
-@ISA = qw(GT::Indicators);
+use Finance::GeniusTrader::Indicators;
+@ISA = qw(Finance::GeniusTrader::Indicators);
 
 @NAMES = ("Abs[#1]");
 
 =head1 NAME
 
-GT::Indicators::Generic::Abs - Return the absolute value of its 1st parameter
+Finance::GeniusTrader::Indicators::Generic::Abs - Return the absolute value of its 1st parameter
 
 =head1 DESCRIPTION
 

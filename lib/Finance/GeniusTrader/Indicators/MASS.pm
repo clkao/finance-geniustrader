@@ -1,4 +1,4 @@
-package GT::Indicators::MASS;
+package Finance::GeniusTrader::Indicators::MASS;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,14 +7,14 @@ package GT::Indicators::MASS;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Indicators;
-use GT::Indicators::EMA;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::EMA;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("MASS[#1,#2]");
 
-=head1 GT::Indicators::MASS
+=head1 Finance::GeniusTrader::Indicators::MASS
 
 =head2 Overview
 
@@ -32,8 +32,8 @@ The standard Mass Index is calculated with : A = 25 and B = 9
 
 =head2 Examples
 
-GT::Indicators::MASS->new()
-GT::Indicators::MASS->new([30, 14])
+Finance::GeniusTrader::Indicators::MASS->new()
+Finance::GeniusTrader::Indicators::MASS->new([30, 14])
 
 =head2 Links
 
@@ -57,7 +57,7 @@ sub initialize {
     my $self = shift;
     
     # Initialize the fast moving average
-    $self->{'fast_moving_average'} = GT::Indicators::EMA->new(
+    $self->{'fast_moving_average'} = Finance::GeniusTrader::Indicators::EMA->new(
 	[ $self->{'args'}[1] ], 
 	"HIGH - LOW", 
 	sub { 
@@ -66,7 +66,7 @@ sub initialize {
 	});
 
     # Initialize the slow moving average
-    $self->{'slow_moving_average'} = GT::Indicators::EMA->new(
+    $self->{'slow_moving_average'} = Finance::GeniusTrader::Indicators::EMA->new(
 	[ $self->{'args'}[1] ], 
 	"Slow Moving Average", 
 	sub { 
@@ -79,7 +79,7 @@ sub initialize {
 			    $self->{'args'}[0]);
 }
 
-=head2 GT::Indicators::MASS::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::MASS::calculate($calc, $day)
 
 =cut
 sub calculate {

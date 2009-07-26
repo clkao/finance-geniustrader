@@ -1,4 +1,4 @@
-package GT::Indicators::ATR;
+package Finance::GeniusTrader::Indicators::ATR;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,15 +9,15 @@ package GT::Indicators::ATR;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::SMA;
-use GT::Indicators::TR;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::SMA;
+use Finance::GeniusTrader::Indicators::TR;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("ATR[#*]");
 @DEFAULT_ARGS = (14, "{I:Prices HIGH}", "{I:Prices LOW}", "{I:Prices CLOSE}");
 
-=head1 GT::Indicators::ATR
+=head1 Finance::GeniusTrader::Indicators::ATR
 
 =head2 Overview
 
@@ -34,8 +34,8 @@ The standard ATR works with a fourteen-day parameter : n = 14
 
 =head2 Example
 
-GT::Indicators::ATR->new()
-GT::Indicators::ATR->new([12])
+Finance::GeniusTrader::Indicators::ATR->new()
+Finance::GeniusTrader::Indicators::ATR->new([12])
 
 =head2 Note
 
@@ -62,11 +62,11 @@ sub initialize {
     my $tr = "{I:TR " . $self->{'args'}->get_arg_names(2) . " " .
       $self->{'args'}->get_arg_names(3) . " " .
 	$self->{'args'}->get_arg_names(4) . "}";
-    $self->{'sma'} = GT::Indicators::SMA->new([$self->{'args'}->get_arg_names(1), $tr ]);
+    $self->{'sma'} = Finance::GeniusTrader::Indicators::SMA->new([$self->{'args'}->get_arg_names(1), $tr ]);
     $self->add_indicator_dependency($self->{'sma'}, 1);
 }
 
-=head2 GT::Indicators::ATR::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::ATR::calculate($calc, $day)
 
 =cut
 sub calculate {

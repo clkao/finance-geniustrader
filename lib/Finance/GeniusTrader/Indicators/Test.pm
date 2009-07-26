@@ -1,4 +1,4 @@
-package GT::Indicators::Test;
+package Finance::GeniusTrader::Indicators::Test;
 
 # Copyright 2008 Thomas Weigert
 # Based on and for GeniusTrader (C) 2000-2002 Raphaël Hertzog, Fabien Fulhaber
@@ -11,16 +11,16 @@ package GT::Indicators::Test;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("Test[#1,#2,#3,#4]","CM[#1]");
 @DEFAULT_ARGS = (5, 3, 3, "EMA", "Generic::MinInPeriod", "{I:Prices CLOSE}" );
 
 =head1 NAME
 
-GT::Indicators::Test - Indicator to test embedding of indicators
+Finance::GeniusTrader::Indicators::Test - Indicator to test embedding of indicators
 
 =head1 DESCRIPTION
 
@@ -57,16 +57,16 @@ sub initialize {
 
     my $ind1 = $self->{'args'}->get_arg_names(4);
     my $ind2 = $self->{'args'}->get_arg_names(5);
-    eval "use GT::Indicators::$ind1;\n";
-    eval "use GT::Indicators::$ind2;\n";
+    eval "use Finance::GeniusTrader::Indicators::$ind1;\n";
+    eval "use Finance::GeniusTrader::Indicators::$ind2;\n";
     
     # We need to call MIN and MAX first
-    my $min = "\$self->{'min'} = GT::Indicators::$ind2->new([ \$self->{'args'}->get_arg_names(1), \$self->{'args'}->get_arg_names(6)  ]);";
+    my $min = "\$self->{'min'} = Finance::GeniusTrader::Indicators::$ind2->new([ \$self->{'args'}->get_arg_names(1), \$self->{'args'}->get_arg_names(6)  ]);";
     eval $min;
 
 
     # Initialize smoothing of CM
-    my $smoothing = "\$self->{'smooth_cm'} = GT::Indicators::$ind1->new([ \$self->{'args'}->get_arg_names(3), \"{I:$ind1 \" . \$self->{'args'}->get_arg_names(2) . \"{I:Generic:ByName \" . \$self->get_name(1) . \"}}\" ])";
+    my $smoothing = "\$self->{'smooth_cm'} = Finance::GeniusTrader::Indicators::$ind1->new([ \$self->{'args'}->get_arg_names(3), \"{I:$ind1 \" . \$self->{'args'}->get_arg_names(2) . \"{I:Generic:ByName \" . \$self->get_name(1) . \"}}\" ])";
     eval $smoothing;
 
 
@@ -81,7 +81,7 @@ sub initialize {
 
 =pod
 
-=head2 GT::Indicators::Test::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::Test::calculate($calc, $day)
 
 =cut
 

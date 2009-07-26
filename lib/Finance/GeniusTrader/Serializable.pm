@@ -1,4 +1,4 @@
-package GT::Serializable;
+package Finance::GeniusTrader::Serializable;
 
 # Copyright 2000-2003 Raphaël Hertzog
 # This file is distributed under the terms of the General Public License
@@ -9,26 +9,26 @@ use strict;
 #ALL#  use Log::Log4perl qw(:easy);
 use XML::LibXML;
 use Compress::Zlib;
-use GT::Conf;
+use Finance::GeniusTrader::Conf;
 
-GT::Conf::default("Serializable::Compress", "1");
+Finance::GeniusTrader::Conf::default("Serializable::Compress", "1");
 
 =head1 NAME
 
-GT::Serializable - Add XML serialization functions to any object
+Finance::GeniusTrader::Serializable - Add XML serialization functions to any object
 
 =head1 DESCRIPTION
 
-The functions available in GT::Serializable can add serialization
+The functions available in Finance::GeniusTrader::Serializable can add serialization
 support to any simple perl object.
 
 The various functions will serialize any hash, array or scalar
 value blessed as an object.
 
-Any object can be made serializable by adding GT::Serializable in
+Any object can be made serializable by adding Finance::GeniusTrader::Serializable in
 @ISA :
 
-  our @ISA = qw(GT::Serializable);
+  our @ISA = qw(Finance::GeniusTrader::Serializable);
 
 All hash items whose names start with an underscore won't be
 stored in the serialization process. 
@@ -69,7 +69,7 @@ sub as_string {
     my $self = shift;
     my $element = $self->_serialize_as_element($self);
     my $string = $element->toString();
-    if ( GT::Conf::get("Serializable::Compress") == 1 ) {
+    if ( Finance::GeniusTrader::Conf::get("Serializable::Compress") == 1 ) {
         $string = Compress::Zlib::memGzip( $string ) ;
     }
     _unbind_node($element);

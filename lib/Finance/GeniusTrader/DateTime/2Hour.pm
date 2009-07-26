@@ -1,4 +1,4 @@
-package GT::DateTime::2Hour;
+package Finance::GeniusTrader::DateTime::2Hour;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # Copyright 2005 João Antunes Costa
@@ -8,10 +8,10 @@ package GT::DateTime::2Hour;
 use strict;
 use vars qw();
 
-use GT::DateTime;
+use use Finance::GeniusTrader::DateTime;
 use Time::Local;
 
-=head1 GT::DateTime::2Hour
+=head1 Finance::GeniusTrader::DateTime::2Hour
 
 This module treat dates describing the 2Hour timeframe. They have the following format :
 YYYY-MM-DD HH:00:00

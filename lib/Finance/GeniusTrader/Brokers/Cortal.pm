@@ -1,4 +1,4 @@
-package GT::Brokers::Cortal;
+package Finance::GeniusTrader::Brokers::Cortal;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,14 +7,14 @@ package GT::Brokers::Cortal;
 use strict;
 use vars qw(@NAMES @ISA);
 
-use GT::Brokers;
-use GT::Eval;
-use GT::Conf;
+use Finance::GeniusTrader::Brokers;
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::Conf;
 
 @NAMES = ("Cortal[#1]");
-@ISA = qw(GT::Brokers);
+@ISA = qw(Finance::GeniusTrader::Brokers);
 
-=head1 GT::Brokers::Cortal
+=head1 Finance::GeniusTrader::Brokers::Cortal
 
 =head2 Overview
 
@@ -48,8 +48,8 @@ sub new {
     my $args = shift;
     my $option = "Découverte";
     
-    if (GT::Conf::get("Brokers::SelfTrade::Forfait")) {
-	$option = GT::Conf::get("Brokers::SelfTrade::Forfait");
+    if (Finance::GeniusTrader::Conf::get("Brokers::SelfTrade::Forfait")) {
+	$option = Finance::GeniusTrader::Conf::get("Brokers::SelfTrade::Forfait");
     }
     
     my $self = { 'args' => defined($args) ? $args : [ $option ] };
@@ -74,8 +74,8 @@ sub calculate_order_commission {
     # Override $TVA if Brokers::TVA is already defined in the user
     # configuration file
     
-    if (GT::Conf::get("Brokers::TVA")) {
-	$TVA = (1 + GT::Conf::get("Brokers::TVA") / 100);
+    if (Finance::GeniusTrader::Conf::get("Brokers::TVA")) {
+	$TVA = (1 + Finance::GeniusTrader::Conf::get("Brokers::TVA") / 100);
     }
     
     if ( (defined($order->quantity) && $order->quantity) and

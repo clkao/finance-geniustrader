@@ -1,4 +1,4 @@
-package GT::CacheValues;
+package Finance::GeniusTrader::CacheValues;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -8,19 +8,19 @@ use strict;
 
 =head1 NAME
 
-GT::CacheValues - Cache the computed values (of indic/signals) for a single share
+Finance::GeniusTrader::CacheValues - Cache the computed values (of indic/signals) for a single share
 
 =head1 DESCRIPTION 
 
-This object is designed to be associated with a GT::Prices object.
+This object is designed to be associated with a Finance::GeniusTrader::Prices object.
 It may contain the computed value of some indicators corresponding
-to the GT::Prices object.
+to the Finance::GeniusTrader::Prices object.
 
 =over
 
-=item C<< my $cache = GT::CacheValues->new; >>
+=item C<< my $cache = Finance::GeniusTrader::CacheValues->new; >>
 
-Create a new GT::CacheValues that will contain computed values of
+Create a new Finance::GeniusTrader::CacheValues that will contain computed values of
 some indicators or signals.
 
 =cut

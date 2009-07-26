@@ -1,4 +1,4 @@
-package GT::Graphics::Graphic;
+package Finance::GeniusTrader::Graphics::Graphic;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -6,15 +6,15 @@ package GT::Graphics::Graphic;
 
 use strict;
 
-use GT::Graphics::Driver;
-use GT::Graphics::Zone;
-use GT::Graphics::Tools qw(:color);
-use GT::Conf;
+use Finance::GeniusTrader::Graphics::Driver;
+use Finance::GeniusTrader::Graphics::Zone;
+use Finance::GeniusTrader::Graphics::Tools qw(:color);
+use Finance::GeniusTrader::Conf;
 
-GT::Conf::default("Graphic::BackgroundColor", "white");
-GT::Conf::default("Graphic::ForegroundColor", "black");
+Finance::GeniusTrader::Conf::default("Graphic::BackgroundColor", "white");
+Finance::GeniusTrader::Conf::default("Graphic::ForegroundColor", "black");
 
-=head1 GT::Graphics::Graphic
+=head1 Finance::GeniusTrader::Graphics::Graphic
 
 A graphic is composed of a layout of zones. Objects are affected to
 the various zones. Those objects may be displayed. The display engine
@@ -23,7 +23,7 @@ draw.
 
 =cut
 
-=head2 GT::Graphics::Graphic->new($zone)
+=head2 Finance::GeniusTrader::Graphics::Graphic->new($zone)
 
 Create a new graphic using the specified zone layout.
 
@@ -35,9 +35,9 @@ sub new {
     
     my $self = { "zone" => $zone, "objects" => [],
 		 "bg_color" => 
-			get_color(GT::Conf::get("Graphic::BackgroundColor")),
+			get_color(Finance::GeniusTrader::Conf::get("Graphic::BackgroundColor")),
 		 "fg_color" => 
-			get_color(GT::Conf::get("Graphic::ForegroundColor"))
+			get_color(Finance::GeniusTrader::Conf::get("Graphic::ForegroundColor"))
 	       };
 
     return bless $self, $class;

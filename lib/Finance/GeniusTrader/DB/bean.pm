@@ -1,4 +1,4 @@
-package GT::DB::bean;
+package Finance::GeniusTrader::DB::bean;
 
 # Copyright 2003 Sai-kee Wong
 # This file is distributed under the terms of the General Public License
@@ -7,17 +7,17 @@ package GT::DB::bean;
 use strict;
 use vars qw(@ISA);
 
-use GT::DB;
-use GT::Prices;
-use GT::Conf;
-use GT::DateTime;
+use Finance::GeniusTrader::DB;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Conf;
+use Finance::GeniusTrader::DateTime;
 use DBI;
 
-@ISA = qw(GT::DB);
+@ISA = qw(Finance::GeniusTrader::DB);
 
 =head1 NAME
 
-GT::DB::bean - Access to beancounter database of quotes
+Finance::GeniusTrader::DB::bean - Access to beancounter database of quotes
 
 =head1 DESCRIPTION
 
@@ -51,37 +51,37 @@ the database is.
 
 =over
 
-=item C<< GT::DB::mysql->new() >>
+=item C<< Finance::GeniusTrader::DB::mysql->new() >>
 
 =cut
 sub new {
     my $type = shift;
     my $class = ref($type) || $type;
 
-    GT::Conf::default("DB::bean::dbname", "beancounter");
-    GT::Conf::default("DB::bean::dbhost", "");  #aka localhost
-    GT::Conf::default("DB::bean::dbport", "");  #aka std port
-    GT::Conf::default("DB::bean::dbuser", "");  #aka current user
-    GT::Conf::default("DB::bean::dbpasswd", "");#aka user is already identified
-    GT::Conf::default("DB::bean::db", "mysql");
+    Finance::GeniusTrader::Conf::default("DB::bean::dbname", "beancounter");
+    Finance::GeniusTrader::Conf::default("DB::bean::dbhost", "");  #aka localhost
+    Finance::GeniusTrader::Conf::default("DB::bean::dbport", "");  #aka std port
+    Finance::GeniusTrader::Conf::default("DB::bean::dbuser", "");  #aka current user
+    Finance::GeniusTrader::Conf::default("DB::bean::dbpasswd", "");#aka user is already identified
+    Finance::GeniusTrader::Conf::default("DB::bean::db", "mysql");
 
     # Avoid problem with careless users
-    if (GT::Conf::get("DB::bean::db") eq "pg") {
-	GT::Conf::set("DB::bean::db", "Pg");
+    if (Finance::GeniusTrader::Conf::get("DB::bean::db") eq "pg") {
+	Finance::GeniusTrader::Conf::set("DB::bean::db", "Pg");
     }
     
 
-    eval "use DBD::" . GT::Conf::get("DB::bean::db") . ";";
+    eval "use DBD::" . Finance::GeniusTrader::Conf::get("DB::bean::db") . ";";
 
-    my $self = { 'dbname'   => GT::Conf::get("DB::bean::dbname"),
-    		 'dbhost'   => GT::Conf::get("DB::bean::dbhost"),
-    		 'dbport'   => GT::Conf::get("DB::bean::dbport"),
-		 'dbuser'   => GT::Conf::get("DB::bean::dbuser"),
-		 'dbpasswd' => GT::Conf::get("DB::bean::dbpasswd"),
+    my $self = { 'dbname'   => Finance::GeniusTrader::Conf::get("DB::bean::dbname"),
+    		 'dbhost'   => Finance::GeniusTrader::Conf::get("DB::bean::dbhost"),
+    		 'dbport'   => Finance::GeniusTrader::Conf::get("DB::bean::dbport"),
+		 'dbuser'   => Finance::GeniusTrader::Conf::get("DB::bean::dbuser"),
+		 'dbpasswd' => Finance::GeniusTrader::Conf::get("DB::bean::dbpasswd"),
 		 @_
 		};
 		
-    my $connect_string = 'dbi:' . GT::Conf::get("DB::bean::db") .
+    my $connect_string = 'dbi:' . Finance::GeniusTrader::Conf::get("DB::bean::db") .
                             ':dbname=' . $self->{'dbname'};
     if ($self->{'dbhost'}) {
 	$connect_string .= ";host=" . $self->{'dbhost'};
@@ -109,7 +109,7 @@ sub disconnect {
 
 =item C<< $db->get_prices($code, $timeframe) >>
 
-Returns a GT::Prices object containing all known prices for the symbol $code.
+Returns a Finance::GeniusTrader::Prices object containing all known prices for the symbol $code.
 
 =cut
 sub get_prices {
@@ -118,7 +118,7 @@ sub get_prices {
 
 =item C<< $db->get_last_prices($code, $limit, $timeframe) >>
 
-Returns a GT::Prices object containing the $limit last known prices for
+Returns a Finance::GeniusTrader::Prices object containing the $limit last known prices for
 the symbol $code.
 
 Notice that beancounter only supports daily data, therefore it will
@@ -130,9 +130,9 @@ sub get_last_prices {
 
     $timeframe = $DAY unless($timeframe);
     die "The beancounter DB module does not support intraday data.\n" if ($timeframe < $DAY);
-    return GT::Prices->new() if ($timeframe > $DAY);
+    return Finance::GeniusTrader::Prices->new() if ($timeframe > $DAY);
 
-    my $q = GT::Prices->new($limit);
+    my $q = Finance::GeniusTrader::Prices->new($limit);
     $q->set_timeframe($timeframe);
 
     my $sql = qq{ SELECT day_open, day_high, day_low, day_close, volume, date

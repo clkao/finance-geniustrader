@@ -1,4 +1,4 @@
-package GT::MoneyManagement::RSI;
+package Finance::GeniusTrader::MoneyManagement::RSI;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,15 +7,15 @@ package GT::MoneyManagement::RSI;
 use strict;
 use vars qw(@NAMES @ISA);
 
-use GT::MoneyManagement;
-use GT::Indicators::RSI;
-use GT::Prices;
-use GT::Portfolio;
+use Finance::GeniusTrader::MoneyManagement;
+use Finance::GeniusTrader::Indicators::RSI;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Portfolio;
 
 @NAMES = ("RSI");
-@ISA = qw(GT::MoneyManagement);
+@ISA = qw(Finance::GeniusTrader::MoneyManagement);
 
-=head1 GT::MoneyManagement::RSI
+=head1 Finance::GeniusTrader::MoneyManagement::RSI
 
 =head2 Overview
 
@@ -42,7 +42,7 @@ sub new {
 sub initialize {
     my $self = shift;
 
-    $self->{'rsi'} = GT::Indicators::RSI->new([ 10 ]);
+    $self->{'rsi'} = Finance::GeniusTrader::Indicators::RSI->new([ 10 ]);
     $self->add_indicator_dependency($self->{'rsi'}, 1);
 }
 

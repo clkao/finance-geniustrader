@@ -1,4 +1,4 @@
-package GT::Indicators::SMA;
+package Finance::GeniusTrader::Indicators::SMA;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -11,15 +11,15 @@ package GT::Indicators::SMA;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
+use Finance::GeniusTrader::Indicators;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("SMA[#*]");
 @DEFAULT_ARGS = (50, "{I:Prices CLOSE}");
 
 =head1 NAME
 
-GT::Indicators::SMA - Simple Moving Average
+Finance::GeniusTrader::Indicators::SMA - Simple Moving Average
 
 =head1 DESCRIPTION 
 
@@ -46,17 +46,17 @@ which cases the corresponding prices serie will be used.
 
 =head2 Creation
 
- GT::Indicators::SMA->new()
- GT::Indicators::SMA->new([20])
+ Finance::GeniusTrader::Indicators::SMA->new()
+ Finance::GeniusTrader::Indicators::SMA->new([20])
 
 If you need a 30 days SMA of the opening prices you can write
 the following line:
 
- GT::Indicators::SMA->new([30, "{I:Prices OPEN}"])
+ Finance::GeniusTrader::Indicators::SMA->new([30, "{I:Prices OPEN}"])
 
 A 10 days SMA of the RSI could be created with :
 
- GT::Indicators::SMA->new([10, "{I:RSI}"])
+ Finance::GeniusTrader::Indicators::SMA->new([10, "{I:RSI}"])
 
 =cut
 
@@ -119,7 +119,7 @@ sub calculate_interval {
 	}
     } else {
 	# Calculate for each day separately
-	GT::Indicators::calculate_interval(@_);
+	Finance::GeniusTrader::Indicators::calculate_interval(@_);
     }
 }
 

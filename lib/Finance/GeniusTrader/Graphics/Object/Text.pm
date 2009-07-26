@@ -1,4 +1,4 @@
-package GT::Graphics::Object::Text;
+package Finance::GeniusTrader::Graphics::Object::Text;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -6,17 +6,17 @@ package GT::Graphics::Object::Text;
 
 use strict;
 use vars qw(@ISA);
-@ISA = qw(GT::Graphics::Object);
+@ISA = qw(Finance::GeniusTrader::Graphics::Object);
 
-use GT::Prices;
-use GT::Graphics::Object;
-use GT::Graphics::Driver;
-use GT::Graphics::Tools qw(:color);
-use GT::Conf;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Graphics::Object;
+use Finance::GeniusTrader::Graphics::Driver;
+use Finance::GeniusTrader::Graphics::Tools qw(:color);
+use Finance::GeniusTrader::Conf;
 
-GT::Conf::default("Graphic::Text::Color", "black");
+Finance::GeniusTrader::Conf::default("Graphic::Text::Color", "black");
 
-=head1 GT::Graphics::Object::Text
+=head1 Finance::GeniusTrader::Graphics::Object::Text
 
 This graphical object displays a block of text.
 
@@ -29,7 +29,7 @@ sub init {
     $valign = "top" if (! defined($valign));
     
     # Default values ...
-    $self->{'fg_color'} = get_color(GT::Conf::get("Graphic::Text::Color"));
+    $self->{'fg_color'} = get_color(Finance::GeniusTrader::Conf::get("Graphic::Text::Color"));
     $self->{'x_pc'} = $x / 100;
     $self->{'y_pc'} = $y / 100;
     $self->set_horizontal_align($halign);

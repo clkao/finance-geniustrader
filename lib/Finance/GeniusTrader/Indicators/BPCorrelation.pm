@@ -1,4 +1,4 @@
-package GT::Indicators::BPCorrelation;
+package Finance::GeniusTrader::Indicators::BPCorrelation;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber, Oliver Bossert
 # standards upgrade Copyright 2005 Thomas Weigert
@@ -14,12 +14,12 @@ package GT::Indicators::BPCorrelation;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Indicators;
+use Finance::GeniusTrader::Indicators;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("BPCorrelation[#1,#2,#3]");
 
-=head2 GT::Indicators::BPCorrelation (Bravais-Pearson Correlation Coefficient)
+=head2 Finance::GeniusTrader::Indicators::BPCorrelation (Bravais-Pearson Correlation Coefficient)
 
 This function will calculate the Bravais-Pearson Correlation Coefficient.
 Correlation analysis measures the relationship between two items and shows
@@ -78,7 +78,7 @@ sub initialize {
     die "$msg" if ( $err );
 }
 
-=head2 GT::Indicators::Correlation::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::Correlation::calculate($calc, $day)
 
 =cut
 sub calculate {

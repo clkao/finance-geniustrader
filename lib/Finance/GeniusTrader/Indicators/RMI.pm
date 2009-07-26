@@ -1,4 +1,4 @@
-package GT::Indicators::RMI;
+package Finance::GeniusTrader::Indicators::RMI;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,18 +9,18 @@ package GT::Indicators::RMI;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::MOM;
-use GT::Indicators::EMA;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::MOM;
+use Finance::GeniusTrader::Indicators::EMA;
 
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("RMI[#*]", "UpAvg[#*]", "DownAvg[#*]");
 @DEFAULT_ARGS = (21,10,"{I:Prices CLOSE}");
 
 =head1 NAME
 
-GT::Indicators::RMI - Relative Momentum Index
+Finance::GeniusTrader::Indicators::RMI - Relative Momentum Index
 
 =head1 DESCRIPTION
 
@@ -38,8 +38,8 @@ The first argument is the period used to calculed the average.
 
 =head2 Creation
 
- GT::Indicators::RMI->new()
- GT::Indicators::RMI->new([10,20])
+ Finance::GeniusTrader::Indicators::RMI->new()
+ Finance::GeniusTrader::Indicators::RMI->new([10,20])
 
 =head2 Links
 
@@ -49,7 +49,7 @@ http://www.geocities.com/burzum_3/rmi.html
 
 sub initialize {
     my ($self) = @_;
-    $self->{'mom'} = GT::Indicators::MOM->new( [ $self->{'args'}->get_arg_names(2), 
+    $self->{'mom'} = Finance::GeniusTrader::Indicators::MOM->new( [ $self->{'args'}->get_arg_names(2), 
         $self->{'args'}->get_arg_names(3) ] );
 }
 

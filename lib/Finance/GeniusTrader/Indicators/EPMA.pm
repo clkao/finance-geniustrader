@@ -1,4 +1,4 @@
-package GT::Indicators::EPMA;
+package Finance::GeniusTrader::Indicators::EPMA;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,14 +7,14 @@ package GT::Indicators::EPMA;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
+use Finance::GeniusTrader::Indicators;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("EPMA[#1,#2]");
 @DEFAULT_ARGS = (20, "{I:Prices CLOSE}");
 
 
-=head2 GT::Indicators::EPMA
+=head2 Finance::GeniusTrader::Indicators::EPMA
 
 =head2 Overview
 
@@ -27,9 +27,9 @@ EPMA(n) = [2 / (n * (n + 1))] * Sum of (((3 * i) - n - 1) * Close(i)) from i = 1
 
 =head2 Examples
 
-GT::Indicators::EPMA->new()
-GT::Indicators::EPMA->new([50])
-GT::Indicators::EPMA->new([30], "OPEN", $GET_OPEN)
+Finance::GeniusTrader::Indicators::EPMA->new()
+Finance::GeniusTrader::Indicators::EPMA->new([50])
+Finance::GeniusTrader::Indicators::EPMA->new([30], "OPEN", $GET_OPEN)
 
 =head2 Links
 
@@ -42,7 +42,7 @@ sub initialize {
 
     $self->add_prices_dependency($self->{'args'}->get_arg_constant(1));
 }
-=head2 GT::Indicators::EPMA::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::EPMA::calculate($calc, $day)
 
 =cut
 sub calculate {

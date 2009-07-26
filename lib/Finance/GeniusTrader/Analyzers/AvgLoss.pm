@@ -1,4 +1,4 @@
-package GT::Analyzers::AvgLoss;
+package Finance::GeniusTrader::Analyzers::AvgLoss;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::AvgLoss;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("AvgLoss[#*]");
 @DEFAULT_ARGS = ("{A:CumLoss}", "{A:Sum {A:IsLoss}}");
 
 =head1 NAME
 
-  GT::Analyzers::AvgLoss - Average Loss per trade
+  Finance::GeniusTrader::Analyzers::AvgLoss - Average Loss per trade
 
 =head1 DESCRIPTION 
 

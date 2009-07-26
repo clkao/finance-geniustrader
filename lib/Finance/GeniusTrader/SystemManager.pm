@@ -1,4 +1,4 @@
-package GT::SystemManager;
+package Finance::GeniusTrader::SystemManager;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -8,11 +8,11 @@ use strict;
 use vars qw(%OBJECT_REPOSITORY);
 
 #ALL#  use Log::Log4perl qw(:easy);
-use GT::Eval;
+use Finance::GeniusTrader::Eval;
 
 =head1 NAME
 
-GT::SystemManager - Manages trading systems
+Finance::GeniusTrader::SystemManager - Manages trading systems
 
 =head1 DESCRIPTION
 
@@ -33,7 +33,7 @@ setup_from_name($name).
 
 =over
 
-=item C<< my $sm = GT::SystemManager->new($system) >>
+=item C<< my $sm = Finance::GeniusTrader::SystemManager->new($system) >>
 
 Create a new system manager used to control a trading system.
 
@@ -180,7 +180,7 @@ manager is better known as "CloseStragegy".
 =cut
 sub add_position_manager {
     my ($self, $cs) = @_;
-    #WAR#  WARN  "Parameter must be a close strategy object" if ( ref($cs) =~ /GT::CloseStrategy/);
+    #WAR#  WARN  "Parameter must be a close strategy object" if ( ref($cs) =~ /Finance::GeniusTrader::CloseStrategy/);
     push @{$self->{'position_managers'}}, $cs;
     return;
 }
@@ -213,7 +213,7 @@ sub manage_position {
 
     foreach my $cs (@{$self->{'position_managers'}})
     {
- 	#ERR#  ERROR  "$_ should be a CloseStrategy object" if ( ref($cs) =~ /GT::CloseStrategy/);
+ 	#ERR#  ERROR  "$_ should be a CloseStrategy object" if ( ref($cs) =~ /Finance::GeniusTrader::CloseStrategy/);
 	if ($position->is_long) {
 	    $cs->manage_long_position($calc, $i, $position, $pf_manager, $self);
 	} else {
@@ -450,7 +450,7 @@ sub set_alias_name {
 }
 sub alias_name { defined($_[0]->{'alias'}) && $_[0]->{'alias'} }
 
-=item C<< my $sm = GT::SystemManager::get_registered_object($name) >>
+=item C<< my $sm = Finance::GeniusTrader::SystemManager::get_registered_object($name) >>
 
 Returns the system manager corresponding to this name.
 

@@ -1,4 +1,4 @@
-package GT::Indicators::Generic::Divide;
+package Finance::GeniusTrader::Indicators::Generic::Divide;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,18 +9,18 @@ package GT::Indicators::Generic::Divide;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
-use GT::Tools qw(:math);
-use GT::ArgsTree;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Tools qw(:math);
+use Finance::GeniusTrader::ArgsTree;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("Divide[#*]");
 @DEFAULT_ARGS = ();
 
 =head1 NAME
 
-GT::Indicators::Generic::Divide - Calculates Param1 / Param2
+Finance::GeniusTrader::Indicators::Generic::Divide - Calculates Param1 / Param2
 
 =head1 DESCRIPTION
 

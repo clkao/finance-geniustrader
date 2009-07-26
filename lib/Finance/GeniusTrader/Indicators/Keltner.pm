@@ -1,4 +1,4 @@
-package GT::Indicators::Keltner;
+package Finance::GeniusTrader::Indicators::Keltner;
 
 # Copyright 2002 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,18 +9,18 @@ package GT::Indicators::Keltner;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::ArgsTree;
-use GT::Indicators;
-use GT::Indicators::SMA;
-use GT::Indicators::ATR;
+use Finance::GeniusTrader::ArgsTree;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::SMA;
+use Finance::GeniusTrader::Indicators::ATR;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("Keltner[#*]", "KeltnerUp[#*]", "KeltnerDown[#*]");
 @DEFAULT_ARGS = (9, 2, "{I:Prices HIGH}", "{I:Prices LOW}", "{I:Prices CLOSE}");
 
 =head1 NAME
 
-GT::Indicators::Keltner - Keltner Channel
+Finance::GeniusTrader::Indicators::Keltner - Keltner Channel
 
 =head1 DESCRIPTION 
 
@@ -51,9 +51,9 @@ A constant factor with wich the Average True range is multiplied.
 sub initialize {
     my ($self) = @_;
 
-    $self->{'sma'} = GT::Indicators::SMA->new( [ $self->{'args'}->get_arg_names(1),
+    $self->{'sma'} = Finance::GeniusTrader::Indicators::SMA->new( [ $self->{'args'}->get_arg_names(1),
 						    $self->{'args'}->get_arg_names(5) ] );
-    $self->{'atr'} = GT::Indicators::ATR->new( [ $self->{'args'}->get_arg_names(1),
+    $self->{'atr'} = Finance::GeniusTrader::Indicators::ATR->new( [ $self->{'args'}->get_arg_names(1),
 						 $self->{'args'}->get_arg_names(3),
 						 $self->{'args'}->get_arg_names(4),
 						 $self->{'args'}->get_arg_names(5) ] );

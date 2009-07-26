@@ -1,4 +1,4 @@
-package GT::Graphics::DataSource;
+package Finance::GeniusTrader::Graphics::DataSource;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -6,16 +6,16 @@ package GT::Graphics::DataSource;
 
 use strict;
 
-require GT::Graphics::DataSource::Prices;
-require GT::Graphics::DataSource::Volume;
-require GT::Graphics::DataSource::Close;
-require GT::Graphics::DataSource::PricesColor;
-require GT::Graphics::DataSource::GenericIndicatorResults;
-require GT::Graphics::DataSource::SingleIndicator;
-require GT::Graphics::DataSource::Systems;
-require GT::Graphics::DataSource::PortfolioEvaluation;
+require Finance::GeniusTrader::Graphics::DataSource::Prices;
+require Finance::GeniusTrader::Graphics::DataSource::Volume;
+require Finance::GeniusTrader::Graphics::DataSource::Close;
+require Finance::GeniusTrader::Graphics::DataSource::PricesColor;
+require Finance::GeniusTrader::Graphics::DataSource::GenericIndicatorResults;
+require Finance::GeniusTrader::Graphics::DataSource::SingleIndicator;
+require Finance::GeniusTrader::Graphics::DataSource::Systems;
+require Finance::GeniusTrader::Graphics::DataSource::PortfolioEvaluation;
 
-=head1 GT::Graphics::DataSource
+=head1 Finance::GeniusTrader::Graphics::DataSource
 
 A datasource if a source of data for a graphical object. The datas
 are always indexed by an integer.

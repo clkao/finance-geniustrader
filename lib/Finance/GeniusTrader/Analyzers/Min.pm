@@ -1,4 +1,4 @@
-package GT::Analyzers::Min;
+package Finance::GeniusTrader::Analyzers::Min;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::Min;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("Min[#*]");
 @DEFAULT_ARGS = ("{A:Costs}");
 
 =head1 NAME
 
-  GT::Analyzers::Min - Calculates the Minimum of Arg1
+  Finance::GeniusTrader::Analyzers::Min - Calculates the Minimum of Arg1
 
 =head1 DESCRIPTION 
 

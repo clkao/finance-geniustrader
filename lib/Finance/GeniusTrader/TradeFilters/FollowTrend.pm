@@ -1,4 +1,4 @@
-package GT::TradeFilters::FollowTrend;
+package Finance::GeniusTrader::TradeFilters::FollowTrend;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::TradeFilters::FollowTrend;
 use strict;
 use vars qw(@NAMES @ISA @DEFAULT_ARGS);
 
-use GT::TradeFilters;
-use GT::Indicators::SMA;
+use Finance::GeniusTrader::TradeFilters;
+use Finance::GeniusTrader::Indicators::SMA;
 
 @NAMES = ("FollowTrend[#1]");
-@ISA = qw(GT::TradeFilters);
+@ISA = qw(Finance::GeniusTrader::TradeFilters);
 @DEFAULT_ARGS = (50);
 
 =head1 NAME
 
-GT::TradeFilters::FollowTrend - Allow only trades following the direction of an SMA
+Finance::GeniusTrader::TradeFilters::FollowTrend - Allow only trades following the direction of an SMA
 
 =head1 DESCRIPTION
 
@@ -32,7 +32,7 @@ The first parameter is the number of days used to calculate the SMA.
 sub initialize {
     my ($self) = @_;
     
-    $self->{'mm'} = GT::Indicators::SMA->new([ $self->{'args'}->get_arg_names(1) ]);
+    $self->{'mm'} = Finance::GeniusTrader::Indicators::SMA->new([ $self->{'args'}->get_arg_names(1) ]);
     
     $self->add_indicator_dependency($self->{'mm'}, 2);
     

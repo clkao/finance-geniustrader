@@ -1,4 +1,4 @@
-package GT::Indicators::SAR;
+package Finance::GeniusTrader::Indicators::SAR;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Indicators::SAR;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::Generic::MinInPeriod;
-use GT::Indicators::Generic::MaxInPeriod;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::Generic::MinInPeriod;
+use Finance::GeniusTrader::Indicators::Generic::MaxInPeriod;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("SAR[#*]");
 @DEFAULT_ARGS = (0.02, 0.02, 0.2, "{I:Prices HIGH}", "{I:Prices LOW}", "{I:Prices CLOSE}");
 
-=head1 GT::Indicators::SAR
+=head1 Finance::GeniusTrader::Indicators::SAR
 
 =head2 Overview
 
@@ -71,8 +71,8 @@ http://www.linnsoft.com/tour/techind/sar.htm
 sub initialize {
     my $self = shift;
 
-    $self->{'min'} = GT::Indicators::Generic::MinInPeriod->new([ 3, $self->{'args'}->get_arg_names(6) ]);
-    $self->{'max'} = GT::Indicators::Generic::MaxInPeriod->new([ 3, $self->{'args'}->get_arg_names(6) ]);
+    $self->{'min'} = Finance::GeniusTrader::Indicators::Generic::MinInPeriod->new([ 3, $self->{'args'}->get_arg_names(6) ]);
+    $self->{'max'} = Finance::GeniusTrader::Indicators::Generic::MaxInPeriod->new([ 3, $self->{'args'}->get_arg_names(6) ]);
     
     $self->add_indicator_dependency($self->{'min'}, 1);
     $self->add_indicator_dependency($self->{'max'}, 1);
@@ -81,7 +81,7 @@ sub initialize {
     $self->add_arg_dependency(6, 5);
 }
 
-=head2 GT::Indicators::SAR::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::SAR::calculate($calc, $day)
 
 =cut
 

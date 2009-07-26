@@ -1,4 +1,4 @@
-package GT::Report;
+package Finance::GeniusTrader::Report;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -6,12 +6,12 @@ package GT::Report;
 
 use strict;
 
-use GT::Portfolio;
-use GT::CacheValues;
-use GT::BackTest::Spool;
-use GT::Eval;
-use GT::Prices;
-use GT::DateTime;
+use Finance::GeniusTrader::Portfolio;
+use Finance::GeniusTrader::CacheValues;
+use Finance::GeniusTrader::BackTest::Spool;
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::DateTime;
 
 # This is not very clean ... should probably find another
 # system to let the user redirect the output
@@ -19,16 +19,16 @@ use GT::DateTime;
 
 =head1 NAME
 
-GT::Report - Generate visual report of common objects
+Finance::GeniusTrader::Report - Generate visual report of common objects
 
 =head1 DESCRIPTION
 
-This modules provides various functions to dump to GT::Report::OUT
+This modules provides various functions to dump to Finance::GeniusTrader::Report::OUT
 (by default STDOUT) various objects in a nice formatted text.
 
 =over
 
-=item C<< GT::Report::Portfolio($portfolio) >>
+=item C<< Finance::GeniusTrader::Report::Portfolio($portfolio) >>
 
 Prints the content of a portfolio in text format.
 
@@ -92,7 +92,7 @@ sub Portfolio {
     }
 }
 
-=item C<< GT::Report::PortfolioHTML($portfolio) >>
+=item C<< Finance::GeniusTrader::Report::PortfolioHTML($portfolio) >>
 
 Prints the content of a portfolio in HTML format.
 
@@ -163,7 +163,7 @@ sub PortfolioHTML {
 	if (defined($position->timeframe)) {
 	    $timeframe = $position->timeframe;
 	}
-	my $duration = (GT::DateTime::map_date_to_time($timeframe, $end_date) - GT::DateTime::map_date_to_time($timeframe, $start_date)) / 86400;
+	my $duration = (Finance::GeniusTrader::DateTime::map_date_to_time($timeframe, $end_date) - Finance::GeniusTrader::DateTime::map_date_to_time($timeframe, $start_date)) / 86400;
 	
         printf OUT ("<td $bg>%s</td><td $bg>%.4f</td>", $start_date, $start_price);
         printf OUT ("<td $bg>%s</td><td $bg>%.4f</td>", $end_date, $end_price);
@@ -174,7 +174,7 @@ sub PortfolioHTML {
     print OUT "</table>\n";
 }
 
-=item C<< GT::Report::OpenPositions($portfolio, $detailed) >>
+=item C<< Finance::GeniusTrader::Report::OpenPositions($portfolio, $detailed) >>
 
 Display the list of open positions.
 
@@ -223,7 +223,7 @@ sub OpenPositions {
 	    print "Error while retrieving prices. No calculations done.\n\n";
 	    next;
 	}
-	my $order = GT::Portfolio::Order->new();
+	my $order = Finance::GeniusTrader::Portfolio::Order->new();
 	$order->set_quantity($position->quantity);
 	$order->set_type_limited();
 	$order->set_price($prices->at($prices->count() - 1)->[$CLOSE]);
@@ -266,7 +266,7 @@ sub OpenPositions {
 	print OUT "$text\n\n";
     }
 }
-=item C<< GT::Report::safe_sprintf($format, $value) >>
+=item C<< Finance::GeniusTrader::Report::safe_sprintf($format, $value) >>
 
 Checks value is not a NaN, then calls sprintf.
 
@@ -282,7 +282,7 @@ sub safe_sprintf {
 	}
 }
 
-=item C<< GT::Report::PortfolioAnalysis($analysis) >>
+=item C<< Finance::GeniusTrader::Report::PortfolioAnalysis($analysis) >>
 
 Pretty prints the results of the analysis of the portfolio.
 
@@ -363,7 +363,7 @@ Max consec. win : @<<<<<<<<<  Max consec. loss : @<<<<<<<<<
     }
 }
 
-=item C<< GT::Report::AnalysisList >>
+=item C<< Finance::GeniusTrader::Report::AnalysisList >>
 
 Display the results of the backtest. Results per code and per system.
 
@@ -488,7 +488,7 @@ sub AnalysisList {
    
 }
 
-=item C<< GT::Report::SimplePortfolioAnalysis >>
+=item C<< Finance::GeniusTrader::Report::SimplePortfolioAnalysis >>
 
 Pretty prints only the main results of the analysis.
 
@@ -505,7 +505,7 @@ sub SimplePortfolioAnalysis {
     print OUT $text;
 }
 
-=item C<< GT::Report::CacheValues >>
+=item C<< Finance::GeniusTrader::Report::CacheValues >>
 
 Prints a summary of the content of the cache.
 

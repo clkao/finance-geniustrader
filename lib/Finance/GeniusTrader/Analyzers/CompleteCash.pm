@@ -1,4 +1,4 @@
-package GT::Analyzers::CompleteCash;
+package Finance::GeniusTrader::Analyzers::CompleteCash;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::CompleteCash;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("CompleteCash[#*]");
 @DEFAULT_ARGS = ();
 
 =head1 NAME
 
-  GT::Analyzers::CompleteCash - Returns the cash-part of the evaluation-history
+  Finance::GeniusTrader::Analyzers::CompleteCash - Returns the cash-part of the evaluation-history
 
 =head1 DESCRIPTION 
 

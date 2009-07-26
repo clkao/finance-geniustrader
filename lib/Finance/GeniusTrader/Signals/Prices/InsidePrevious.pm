@@ -1,4 +1,4 @@
-package GT::Signals::Prices::InsidePrevious;
+package Finance::GeniusTrader::Signals::Prices::InsidePrevious;
 
 # Copyright 2003 Alexander Henkel
 # This file is distributed under the terms of the General Public License
@@ -9,13 +9,13 @@ package GT::Signals::Prices::InsidePrevious;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Signals;
-use GT::Prices;
+use Finance::GeniusTrader::Signals;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Signals);
+@ISA = qw(Finance::GeniusTrader::Signals);
 @NAMES = ("InsidePrevious");
 
-=head1 GT::Signals::Prices::InsidePrevious
+=head1 Finance::GeniusTrader::Signals::Prices::InsidePrevious
 
 The InsidePrevious signal gets triggered if a security's high is lower than or equal to
 the previous period's high, and the low is higher than or equal to previous period's

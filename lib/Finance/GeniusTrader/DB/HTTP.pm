@@ -1,4 +1,4 @@
-package GT::DB::HTTP;
+package Finance::GeniusTrader::DB::HTTP;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -6,10 +6,10 @@ package GT::DB::HTTP;
 
 use strict;
 
-use GT::DB;
-use GT::Prices;
-use GT::Conf;
-use GT::DateTime;
+use Finance::GeniusTrader::DB;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Conf;
+use Finance::GeniusTrader::DateTime;
 use LWP;
 use POSIX;
 
@@ -118,35 +118,35 @@ sub new {
     my $type = shift;
     my $class = ref($type) || $type;
 
-    GT::Conf::default("DB::HTTP::directory",
-		      GT::Conf::_get_home_path() . "/.gt/http-db-cache");
-    GT::Conf::default('DB::HTTP::header_lines', '0');
-    GT::Conf::default('DB::HTTP::marker', "\t");
-    GT::Conf::default('DB::HTTP::file_extension', '.txt');
-    GT::Conf::default('DB::HTTP::format', '3');
-    GT::Conf::default('DB::HTTP::fields::datetime', '5');
-    GT::Conf::default('DB::HTTP::fields::open', '0');
-    GT::Conf::default('DB::HTTP::fields::low', '2');
-    GT::Conf::default('DB::HTTP::fields::high', '1');
-    GT::Conf::default('DB::HTTP::fields::close', '3');
-    GT::Conf::default('DB::HTTP::fields::volume', '4');
+    Finance::GeniusTrader::Conf::default("DB::HTTP::directory",
+		      Finance::GeniusTrader::Conf::_get_home_path() . "/.gt/http-db-cache");
+    Finance::GeniusTrader::Conf::default('DB::HTTP::header_lines', '0');
+    Finance::GeniusTrader::Conf::default('DB::HTTP::marker', "\t");
+    Finance::GeniusTrader::Conf::default('DB::HTTP::file_extension', '.txt');
+    Finance::GeniusTrader::Conf::default('DB::HTTP::format', '3');
+    Finance::GeniusTrader::Conf::default('DB::HTTP::fields::datetime', '5');
+    Finance::GeniusTrader::Conf::default('DB::HTTP::fields::open', '0');
+    Finance::GeniusTrader::Conf::default('DB::HTTP::fields::low', '2');
+    Finance::GeniusTrader::Conf::default('DB::HTTP::fields::high', '1');
+    Finance::GeniusTrader::Conf::default('DB::HTTP::fields::close', '3');
+    Finance::GeniusTrader::Conf::default('DB::HTTP::fields::volume', '4');
 
-    my $self = { "directory" => GT::Conf::get("DB::HTTP::directory"),
-		 "header_lines" => GT::Conf::get('DB::HTTP::header_lines'),
-		 "mark" => GT::Conf::get('DB::HTTP::marker'),
-		 "date_format" => GT::Conf::get('DB::HTTP::format'),
-		 "extension" => GT::Conf::get('DB::HTTP::file_extension'),
-		 "datetime" => GT::Conf::get('DB::HTTP::fields::datetime'),
-		 "open" => GT::Conf::get('DB::HTTP::fields::open'),
-		 "low" => GT::Conf::get('DB::HTTP::fields::low'),
-		 "high" => GT::Conf::get('DB::HTTP::fields::high'),
-		 "close" => GT::Conf::get('DB::HTTP::fields::close'),
-		 "volume" => GT::Conf::get('DB::HTTP::fields::volume'),
-                 "url" => GT::Conf::get("DB::HTTP::url"),
-                 "location" => GT::Conf::get("DB::HTTP::location"),
-                 "zone" => GT::Conf::get("DB::HTTP::zone"),
-                 "username" => GT::Conf::get("DB::HTTP::username"),
-                 "password" => GT::Conf::get("DB::HTTP::password")
+    my $self = { "directory" => Finance::GeniusTrader::Conf::get("DB::HTTP::directory"),
+		 "header_lines" => Finance::GeniusTrader::Conf::get('DB::HTTP::header_lines'),
+		 "mark" => Finance::GeniusTrader::Conf::get('DB::HTTP::marker'),
+		 "date_format" => Finance::GeniusTrader::Conf::get('DB::HTTP::format'),
+		 "extension" => Finance::GeniusTrader::Conf::get('DB::HTTP::file_extension'),
+		 "datetime" => Finance::GeniusTrader::Conf::get('DB::HTTP::fields::datetime'),
+		 "open" => Finance::GeniusTrader::Conf::get('DB::HTTP::fields::open'),
+		 "low" => Finance::GeniusTrader::Conf::get('DB::HTTP::fields::low'),
+		 "high" => Finance::GeniusTrader::Conf::get('DB::HTTP::fields::high'),
+		 "close" => Finance::GeniusTrader::Conf::get('DB::HTTP::fields::close'),
+		 "volume" => Finance::GeniusTrader::Conf::get('DB::HTTP::fields::volume'),
+                 "url" => Finance::GeniusTrader::Conf::get("DB::HTTP::url"),
+                 "location" => Finance::GeniusTrader::Conf::get("DB::HTTP::location"),
+                 "zone" => Finance::GeniusTrader::Conf::get("DB::HTTP::zone"),
+                 "username" => Finance::GeniusTrader::Conf::get("DB::HTTP::username"),
+                 "password" => Finance::GeniusTrader::Conf::get("DB::HTTP::password")
                };
     
     return bless $self, $class;
@@ -174,16 +174,16 @@ sub set_directory {
 
 =item C<< $db->get_prices($code, $timeframe) >>
 
-Returns a GT::Prices object containing all known prices for the symbol $code.
+Returns a Finance::GeniusTrader::Prices object containing all known prices for the symbol $code.
 
 =cut
 sub get_prices {
     my ($self, $code, $timeframe) = @_;
     $timeframe = $DAY unless ($timeframe);
     die "Intraday support not implemented in DB::HTTP" if ($timeframe < $DAY);
-    return GT::Prices->new() if ($timeframe > $DAY);
+    return Finance::GeniusTrader::Prices->new() if ($timeframe > $DAY);
 
-    my $prices = GT::Prices->new();
+    my $prices = Finance::GeniusTrader::Prices->new();
     $prices->set_timeframe($timeframe);
 
     my %fields = ('open' => $self->{'open'}, 'high' => $self->{'high'},
@@ -202,7 +202,7 @@ sub get_prices {
 
 NOT SUPPORTED for HTTP db.
 
-Returns a GT::Prices object containing the $limit last known prices for
+Returns a Finance::GeniusTrader::Prices object containing the $limit last known prices for
 the symbol $code.
 
 =cut
@@ -234,7 +234,7 @@ sub download_prices {
     # Have a look at the latest date available on our local set of
     # data and request quotes to the server since then.
     my ($latest_date, $last_close);
-    my $prices = GT::Prices->new();
+    my $prices = Finance::GeniusTrader::Prices->new();
     $prices->set_timeframe($DAY);
     if (-e $cache_file) {
         $prices->loadtxt($cache_file);
@@ -268,7 +268,7 @@ sub download_prices {
 	    die "Can't write in $cache_file.tmp : $!\n";
 	print CACHE $res->content;
 	close CACHE;
-	my $new_prices = GT::Prices->new();
+	my $new_prices = Finance::GeniusTrader::Prices->new();
 	$new_prices->loadtxt("$cache_file.tmp", $self->{'mark'}, $self->{'date_format'}, %{$self->{'fields'}});
 	$new_prices->set_timeframe($DAY);
 	for(my $i = 0; $i < $new_prices->count(); $i++) {

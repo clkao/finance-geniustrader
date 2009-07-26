@@ -1,4 +1,4 @@
-package GT::OrderFactory::StopOnExtreme;
+package Finance::GeniusTrader::OrderFactory::StopOnExtreme;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::OrderFactory::StopOnExtreme;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::OrderFactory;
-use GT::Prices;
+use Finance::GeniusTrader::OrderFactory;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::OrderFactory);
+@ISA = qw(Finance::GeniusTrader::OrderFactory);
 @NAMES = ("StopOnExtreme[#1,#2]");
 @DEFAULT_ARGS = (0.5, 1);
 
 =head1 NAME
 
-GT::OrderFactory::StopOnExtreme
+Finance::GeniusTrader::OrderFactory::StopOnExtreme
 
 =head1 DESCRIPTION
 

@@ -1,4 +1,4 @@
-package GT::CloseStrategy::Stop::SAR;
+package Finance::GeniusTrader::CloseStrategy::Stop::SAR;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # Modified 2004 by Oliver Bossert
@@ -10,15 +10,15 @@ package GT::CloseStrategy::Stop::SAR;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::CloseStrategy;
-use GT::Indicators::SAR;
-use GT::Prices;
+use Finance::GeniusTrader::CloseStrategy;
+use Finance::GeniusTrader::Indicators::SAR;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::CloseStrategy);
+@ISA = qw(Finance::GeniusTrader::CloseStrategy);
 @NAMES = ("SAR[#1,#2,#3]");
 @DEFAULT_ARGS = (0.02, 0.02, 0.20);
 
-=head1 GT::CloseStrategy::Stop::SAR
+=head1 Finance::GeniusTrader::CloseStrategy::Stop::SAR
 
 =head2 Overview
 
@@ -45,7 +45,7 @@ http://www.linnsoft.com/tour/techind/sar.htm
 sub initialize {
     my ($self) = @_;
 
-    $self->{'sar'} = GT::Indicators::SAR->new([ $self->{'args'}->get_arg_names(1),
+    $self->{'sar'} = Finance::GeniusTrader::Indicators::SAR->new([ $self->{'args'}->get_arg_names(1),
 						$self->{'args'}->get_arg_names(2),
 						$self->{'args'}->get_arg_names(3) ]);
  

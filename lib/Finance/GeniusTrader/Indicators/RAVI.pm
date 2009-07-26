@@ -1,4 +1,4 @@
-package GT::Indicators::RAVI;
+package Finance::GeniusTrader::Indicators::RAVI;
 
 # Copyright 2002 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,17 +9,17 @@ package GT::Indicators::RAVI;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::ArgsTree;
-use GT::Indicators;
-use GT::Indicators::SMA;
+use Finance::GeniusTrader::ArgsTree;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::SMA;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("RAVI[#*]");
 @DEFAULT_ARGS = (7, 65, "{I:Prices CLOSE}");
 
 =head1 NAME
 
-GT::Indicators::RAVI - RAVI Trendindicator
+Finance::GeniusTrader::Indicators::RAVI - RAVI Trendindicator
 
 =head1 DESCRIPTION 
 
@@ -52,9 +52,9 @@ The second argument is the period used to calculed the long average.
 sub initialize {
     my ($self) = @_;
 
-    $self->{'sma1'} = GT::Indicators::SMA->new( [ $self->{'args'}->get_arg_names(1),
+    $self->{'sma1'} = Finance::GeniusTrader::Indicators::SMA->new( [ $self->{'args'}->get_arg_names(1),
 						  $self->{'args'}->get_arg_names(3) ] );
-    $self->{'sma2'} = GT::Indicators::SMA->new( [ $self->{'args'}->get_arg_names(2),
+    $self->{'sma2'} = Finance::GeniusTrader::Indicators::SMA->new( [ $self->{'args'}->get_arg_names(2),
 						  $self->{'args'}->get_arg_names(3) ] );
 
     $self->add_indicator_dependency($self->{'sma1'}, 1);

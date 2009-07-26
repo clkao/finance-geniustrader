@@ -1,4 +1,4 @@
-package GT::Indicators::BOL;
+package Finance::GeniusTrader::Indicators::BOL;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,23 +9,23 @@ package GT::Indicators::BOL;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Indicators::SMA;
-use GT::Indicators::StandardDeviation;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Indicators::SMA;
+use Finance::GeniusTrader::Indicators::StandardDeviation;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("BOL[#1,#3]","BOLSup[#1,#2,#3]","BOLInf[#1,#2,#3]");
 @DEFAULT_ARGS = (20, 2, "{I:Prices CLOSE}");
 
-=head2 GT::Indicators::BOL
+=head2 Finance::GeniusTrader::Indicators::BOL
 
 Bollinger Bands are similar to moving average envelopes. The difference between Bollinger Bands and envelopes is envelopes are plotted at a fixed percentage above and below a moving average, whereas Bollinger Bands are plotted at standard deviation levels above and below a moving average.
 
-The standard Bolling Bands (BOL 20-2) can be called like that : GT::Indicators::BOL->new()
+The standard Bolling Bands (BOL 20-2) can be called like that : Finance::GeniusTrader::Indicators::BOL->new()
 
 If you need a non standard BOL :
-GT::Indicators::BOL->new([25, 2.5])
+Finance::GeniusTrader::Indicators::BOL->new([25, 2.5])
 
 =cut
 
@@ -36,9 +36,9 @@ sub initialize {
         $self->add_prices_dependency($self->{'args'}->get_arg_constant(1));
     }
 
-    $self->{'sma'} = GT::Indicators::SMA->new([ $self->{'args'}->get_arg_names(1),
+    $self->{'sma'} = Finance::GeniusTrader::Indicators::SMA->new([ $self->{'args'}->get_arg_names(1),
         $self->{'args'}->get_arg_names(3) ]);
-    $self->{'sd'} = GT::Indicators::StandardDeviation->new([ $self->{'args'}->get_arg_names(1),
+    $self->{'sd'} = Finance::GeniusTrader::Indicators::StandardDeviation->new([ $self->{'args'}->get_arg_names(1),
         $self->{'args'}->get_arg_names(3) ]);
 
     if ($self->{'args'}->is_constant(1)) {
@@ -48,7 +48,7 @@ sub initialize {
     }
 }
 
-=head2 GT::Indicators::BOL::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::BOL::calculate($calc, $day)
 
 =cut
 

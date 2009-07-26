@@ -1,4 +1,4 @@
-package GT::CloseStrategy::CloseGain;
+package Finance::GeniusTrader::CloseStrategy::CloseGain;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,12 +7,12 @@ package GT::CloseStrategy::CloseGain;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::CloseStrategy;
+use Finance::GeniusTrader::CloseStrategy;
 
-@ISA = qw(GT::CloseStrategy);
+@ISA = qw(Finance::GeniusTrader::CloseStrategy);
 @NAMES = ("CloseGain[#1]");
 
-=head1 GT::CloseStrategy::CloseGain
+=head1 Finance::GeniusTrader::CloseStrategy::CloseGain
 
 This strategy closes the position once the prices have crossed a
 limit called target. This target is defined as a percentage from the initial

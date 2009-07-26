@@ -1,4 +1,4 @@
-package GT::Analyzers;
+package Finance::GeniusTrader::Analyzers;
 
 # Copyright 2004 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -8,46 +8,46 @@ use strict;
 use vars qw(@ISA  %OBJECT_REPOSITORY);
 
 require Exporter;
-@ISA = qw(Exporter GT::Dependency);
+@ISA = qw(Exporter Finance::GeniusTrader::Dependency);
 
-use GT::Prices;
-use GT::Calculator;
-use GT::Registry;
-use GT::Dependency;
-use GT::Portfolio;
-use GT::Portfolio::Order;
-use GT::Conf;
-use GT::Eval;
-use GT::DateTime;
-use GT::ArgsTree;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Calculator;
+use Finance::GeniusTrader::Registry;
+use Finance::GeniusTrader::Dependency;
+use Finance::GeniusTrader::Portfolio;
+use Finance::GeniusTrader::Portfolio::Order;
+use Finance::GeniusTrader::Conf;
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::DateTime;
+use Finance::GeniusTrader::ArgsTree;
 
 =head1 NAME
 
-GT::Analyzers - Provides some functions that will be used by all analyzer modules.
+Finance::GeniusTrader::Analyzers - Provides some functions that will be used by all analyzer modules.
 
 =head1 DESCRIPTION
 
 
 =head2 MANAGE A REPOSITORY OF INDICATORS
 
-  GT::Analyzers::get_registered_object($name);
-  GT::Analyzers::register_object($name, $object);
-  GT::Analyzers::get_or_register_object($name, $object);
-  GT::Analyzers::manage_object(\@NAMES, $object, $class, $args, $key);
+  Finance::GeniusTrader::Analyzers::get_registered_object($name);
+  Finance::GeniusTrader::Analyzers::register_object($name, $object);
+  Finance::GeniusTrader::Analyzers::get_or_register_object($name, $object);
+  Finance::GeniusTrader::Analyzers::manage_object(\@NAMES, $object, $class, $args, $key);
 
 =cut
 
 sub get_registered_object {
-    GT::Registry::get_registered_object(\%OBJECT_REPOSITORY, @_);
+    Finance::GeniusTrader::Registry::get_registered_object(\%OBJECT_REPOSITORY, @_);
 }
 sub register_object {
-    GT::Registry::register_object(\%OBJECT_REPOSITORY, @_);
+    Finance::GeniusTrader::Registry::register_object(\%OBJECT_REPOSITORY, @_);
 }
 sub get_or_register_object {
-    GT::Registry::get_or_register_object(\%OBJECT_REPOSITORY, @_);
+    Finance::GeniusTrader::Registry::get_or_register_object(\%OBJECT_REPOSITORY, @_);
 }
 sub manage_object {
-    GT::Registry::manage_object(\%OBJECT_REPOSITORY, @_);
+    Finance::GeniusTrader::Registry::manage_object(\%OBJECT_REPOSITORY, @_);
 }
 
 
@@ -55,7 +55,7 @@ sub manage_object {
 
 =over 
 
-=item C<< GT::Analyzers::Module->new($args, $key, $func) >>
+=item C<< Finance::GeniusTrader::Analyzers::Module->new($args, $key, $func) >>
 
 Create a new analyzer with the given arguments. $key and $func are optional,
 they are useful for indicators which can use non-usual input streams.
@@ -74,11 +74,11 @@ sub new {
 		push @{$args}, ${"$class\::DEFAULT_ARGS"}[$n];
 	    }
 	}
-	$self->{'args'} = GT::ArgsTree->new(@{$args});
+	$self->{'args'} = Finance::GeniusTrader::ArgsTree->new(@{$args});
     } elsif (defined (@{"$class\::DEFAULT_ARGS"})) {
-	$self->{'args'} = GT::ArgsTree->new(@{"$class\::DEFAULT_ARGS"});
+	$self->{'args'} = Finance::GeniusTrader::ArgsTree->new(@{"$class\::DEFAULT_ARGS"});
     } else {
-	$self->{'args'} = GT::ArgsTree->new(); # no args
+	$self->{'args'} = Finance::GeniusTrader::ArgsTree->new(); # no args
     }
 
     if (defined($func)) {
@@ -104,7 +104,7 @@ sub initialize { 1; }
 sub calculate_interval {
     my ($self, $calc, $first, $last) = @_;
 
-    if (ref($self->{'args'}) =~ /GT::ArgsTree/) {
+    if (ref($self->{'args'}) =~ /Finance::GeniusTrader::ArgsTree/) {
 	$self->{'args'}->prepare_interval($calc, $first, $last);
     }
     for (my $i = $first; $i <= $last; $i++)

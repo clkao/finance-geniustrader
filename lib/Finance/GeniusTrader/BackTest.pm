@@ -1,4 +1,4 @@
-package GT::BackTest;
+package Finance::GeniusTrader::BackTest;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -11,19 +11,19 @@ require Exporter;
 @ISA = qw(Exporter);
 @EXPORT = qw(backtest_single backtest_all backtest_multi);
 
-use GT::Portfolio;
-use GT::Prices;
-use GT::Eval;
-use GT::Conf;
-use GT::DateTime;
+use Finance::GeniusTrader::Portfolio;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::Conf;
+use Finance::GeniusTrader::DateTime;
 #ALL#  use Log::Log4perl qw(:easy);
-use GT::Indicators::MaxDrawDown;
-use GT::Tools qw(:timeframe);
+use Finance::GeniusTrader::Indicators::MaxDrawDown;
+use Finance::GeniusTrader::Tools qw(:timeframe);
 
 
 =head1 NAME
 
-GT::BackTest - Backtest trading systems in different conditions
+Finance::GeniusTrader::BackTest - Backtest trading systems in different conditions
 
 =head1 OPTIONS
 
@@ -54,7 +54,7 @@ sub backtest_single {
     my $broker_object;
 
     # Create an empty portfolio object and make the manager use it
-    my $p = GT::Portfolio->new;
+    my $p = Finance::GeniusTrader::Portfolio->new;
     $pf_manager->set_portfolio($p);
     # XXX: Beuh why do I always need to have to hardcode such a stupid value ?
     $p->set_initial_value(10000);
@@ -64,7 +64,7 @@ sub backtest_single {
 	$broker_object = create_standard_object(
 				split (/\s+/, "Brokers::$broker"));
     } else {
-	my $broker_module = GT::Conf::get("Brokers::module");
+	my $broker_module = Finance::GeniusTrader::Conf::get("Brokers::module");
 	if (defined($broker_module) && $broker_module) {
 	    $broker_object = create_standard_object("Brokers::$broker_module");
 	}
@@ -103,7 +103,7 @@ sub backtest_single {
     # Close the open positions
     foreach my $position ($p->list_open_positions($systemname))
     {
-	my $close = GT::Portfolio::Order->new;
+	my $close = Finance::GeniusTrader::Portfolio::Order->new;
 	if ($position->is_long)
 	{
 	    $close->set_sell_order;
@@ -129,10 +129,10 @@ sub backtest_single {
     $re->{'buyandhold'} = $buyhold;
     
     # Standardized performance
-    GT::Conf::default("Analysis::ReferenceTimeFrame", "year");
-    my $tf_name = GT::Conf::get("Analysis::ReferenceTimeFrame");
-    my $ref_tf = GT::DateTime::name_to_timeframe($tf_name);
-    my $exp = GT::DateTime::timeframe_ratio($ref_tf, $calc->current_timeframe) 
+    Finance::GeniusTrader::Conf::default("Analysis::ReferenceTimeFrame", "year");
+    my $tf_name = Finance::GeniusTrader::Conf::get("Analysis::ReferenceTimeFrame");
+    my $ref_tf = Finance::GeniusTrader::DateTime::name_to_timeframe($tf_name);
+    my $exp = Finance::GeniusTrader::DateTime::timeframe_ratio($ref_tf, $calc->current_timeframe) 
 	      / ($last - $first + 1);
 	    
     $re->{'std_buyandhold'} = (($buyhold + 1) ** $exp) - 1;
@@ -150,10 +150,10 @@ sub backtest_single {
     if (defined($calc->prices->timeframe)) {
     	$timeframe = $calc->prices->timeframe;
     }
-    $re->{'duration'} = (GT::DateTime::map_date_to_time($timeframe, $re->{'last_date'}) - GT::DateTime::map_date_to_time($timeframe, $re->{'first_date'})) / 31557600;
+    $re->{'duration'} = (Finance::GeniusTrader::DateTime::map_date_to_time($timeframe, $re->{'last_date'}) - Finance::GeniusTrader::DateTime::map_date_to_time($timeframe, $re->{'first_date'})) / 31557600;
 
     # Calculate Buy & Hold Max Draw Down with our MaxDrawDown Indicator
-    my $indicator_maxdd = GT::Indicators::MaxDrawDown->new();
+    my $indicator_maxdd = Finance::GeniusTrader::Indicators::MaxDrawDown->new();
     $indicator_maxdd->calculate($calc, $last);
     my $buyandhold_maxdd = $calc->indicators->get($indicator_maxdd->get_name, $last);
     if (defined($buyandhold_maxdd)) {
@@ -179,7 +179,7 @@ sub backtest_multi {
     $init = 10000 unless ( defined($init) );
 
     # Create an empty portfolio object and make the manager use it
-    my $p = GT::Portfolio->new;
+    my $p = Finance::GeniusTrader::Portfolio->new;
     $pf_manager->set_portfolio($p);
     $p->set_initial_value( $init );
 
@@ -190,7 +190,7 @@ sub backtest_multi {
       if (defined($broker) && $broker) {
 	$broker_object[$cnt] = create_standard_object(split (/\s+/, "Brokers::$broker"));
       } else {
-	my $broker_module = GT::Conf::get("Brokers::module");
+	my $broker_module = Finance::GeniusTrader::Conf::get("Brokers::module");
 	if (defined($broker_module) && $broker_module) {
 	  $broker_object[$cnt] = create_standard_object("Brokers::$broker_module");
 	}
@@ -298,7 +298,7 @@ sub backtest_multi {
 
 	  next if ($position->code() ne $calc->code());
 
-	  my $close = GT::Portfolio::Order->new;
+	  my $close = Finance::GeniusTrader::Portfolio::Order->new;
 	  if ($position->is_long) {
 	    $close->set_sell_order;
 	  } else {
@@ -334,10 +334,10 @@ sub backtest_multi {
     $th->{'buyandhold'} = $buyhold;
     
 #    # Standardized performance
-    GT::Conf::default("Analysis::ReferenceTimeFrame", "year");
-    my $tf_name = GT::Conf::get("Analysis::ReferenceTimeFrame");
-    my $ref_tf = GT::DateTime::name_to_timeframe($tf_name);
-    my $exp = GT::DateTime::timeframe_ratio($ref_tf, $calc[0]->current_timeframe) 
+    Finance::GeniusTrader::Conf::default("Analysis::ReferenceTimeFrame", "year");
+    my $tf_name = Finance::GeniusTrader::Conf::get("Analysis::ReferenceTimeFrame");
+    my $ref_tf = Finance::GeniusTrader::DateTime::name_to_timeframe($tf_name);
+    my $exp = Finance::GeniusTrader::DateTime::timeframe_ratio($ref_tf, $calc[0]->current_timeframe) 
 	      / ($long_last - $long_first + 1);
 	    
     $re->{'std_buyandhold'} = (($buyhold + 1) ** $exp) - 1;
@@ -355,11 +355,11 @@ sub backtest_multi {
     $re->{'last_date'} = $calc[$long_code]->prices->at($long_last)->[$DATE];
     $th->{'last_date'} = $calc[$long_code]->prices->at($long_last)->[$DATE];
 
-    $re->{'duration'} = (GT::DateTime::map_date_to_time($timeframe, $re->{'last_date'}) - GT::DateTime::map_date_to_time($timeframe, $re->{'first_date'})) / 31557600;
-    $th->{'duration'} = (GT::DateTime::map_date_to_time($timeframe, $re->{'last_date'}) - GT::DateTime::map_date_to_time($timeframe, $re->{'first_date'})) / 31557600;
+    $re->{'duration'} = (Finance::GeniusTrader::DateTime::map_date_to_time($timeframe, $re->{'last_date'}) - Finance::GeniusTrader::DateTime::map_date_to_time($timeframe, $re->{'first_date'})) / 31557600;
+    $th->{'duration'} = (Finance::GeniusTrader::DateTime::map_date_to_time($timeframe, $re->{'last_date'}) - Finance::GeniusTrader::DateTime::map_date_to_time($timeframe, $re->{'first_date'})) / 31557600;
 
     # Calculate Buy & Hold Max Draw Down with our MaxDrawDown Indicator
-#    my $indicator_maxdd = GT::Indicators::MaxDrawDown->new();
+#    my $indicator_maxdd = Finance::GeniusTrader::Indicators::MaxDrawDown->new();
 #    $indicator_maxdd->calculate($calc, $last);
 #    my $buyandhold_maxdd = $calc->indicators->get($indicator_maxdd->get_name, $last);
 #    if (defined($buyandhold_maxdd)) {
@@ -384,7 +384,7 @@ sub backtest_multi {
 }
 
 
-=item C<< GT::BackTest::combinate_system_and_manager(\@systems, \@managers) >>
+=item C<< Finance::GeniusTrader::BackTest::combinate_system_and_manager(\@systems, \@managers) >>
 
 Returns a hash that can be used by backtest_combinations
 
@@ -401,7 +401,7 @@ sub combinate_system_and_manager {
     return $combi;
 }
 
-=item C<< GT::BackTest::create_managers_with_filters(\@filters) >>
+=item C<< Finance::GeniusTrader::BackTest::create_managers_with_filters(\@filters) >>
 
 Create all possible managers with all the possible combinations
 of filters.

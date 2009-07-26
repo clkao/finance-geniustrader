@@ -1,4 +1,4 @@
-package GT::Indicators::Generic::SumUpDiffs;
+package Finance::GeniusTrader::Indicators::Generic::SumUpDiffs;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,18 +9,18 @@ package GT::Indicators::Generic::SumUpDiffs;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
-use GT::Tools qw(:math);
-use GT::ArgsTree;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Tools qw(:math);
+use Finance::GeniusTrader::ArgsTree;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("SumUpDiffs[#*]");
 @DEFAULT_ARGS = (14, "{I:Prices CLOSE}");
 
 =head1 NAME
 
-GT::Indicators::Generic::SumUpDiffs - Calculation of the Sum of the differences of the last n days when the price goes up
+Finance::GeniusTrader::Indicators::Generic::SumUpDiffs - Calculation of the Sum of the differences of the last n days when the price goes up
 
 =head1 DESCRIPTION 
 
@@ -32,7 +32,7 @@ Calculation of the Sum of the differences of the last n days when the price goes
 
 =head2 Examples
 
-GT::Indicators::Generic::SumUpDiffs->new()
+Finance::GeniusTrader::Indicators::Generic::SumUpDiffs->new()
 
 =head2 Links
 

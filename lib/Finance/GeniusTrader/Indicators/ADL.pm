@@ -1,4 +1,4 @@
-package GT::Indicators::ADL;
+package Finance::GeniusTrader::Indicators::ADL;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Indicators::ADL;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("ADL[#*]");
 @DEFAULT_ARGS = ("{I:Prices HIGH}", "{I:Prices LOW}", "{I:Prices VOLUME}", "{I:Prices CLOSE}");
 
 =head1 NAME
 
-GT::Indicators::ADL - Accumulation/Distribution line
+Finance::GeniusTrader::Indicators::ADL - Accumulation/Distribution line
 
 =head1 DESCRIPTION
 

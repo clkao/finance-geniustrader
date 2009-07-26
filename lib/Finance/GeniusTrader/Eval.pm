@@ -1,4 +1,4 @@
-package GT::Eval;
+package Finance::GeniusTrader::Eval;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -8,9 +8,9 @@ use strict;
 use vars qw(@EXPORT @ISA);
 #ALL#  use Log::Log4perl qw(:easy);
 
-use GT::Conf;
-use GT::ArgsTree;
-use GT::Tools qw(:conf);
+use Finance::GeniusTrader::Conf;
+use Finance::GeniusTrader::ArgsTree;
+use Finance::GeniusTrader::Tools qw(:conf);
 
 require Exporter;
 
@@ -19,7 +19,7 @@ require Exporter;
 
 =head1 NAME
 
-GT::Eval - Create unknown standard objects at run-time
+Finance::GeniusTrader::Eval - Create unknown standard objects at run-time
 
 =head1 DESCRIPTION 
 
@@ -40,7 +40,7 @@ sub create_standard_object {
     $type = long_name($type);
     $type =~ s#/\d+##g;
 
-    my ($name, @args) = GT::ArgsTree::parse_args(join(" ", @rawparams));
+    my ($name, @args) = Finance::GeniusTrader::ArgsTree::parse_args(join(" ", @rawparams));
     if ($type =~ /^@(\S+)$/) {
 	my $def = resolve_object_alias(long_name($1), @args);
 	#DEB#  DEBUG  "Alias $1 maps to $def\n";
@@ -49,17 +49,17 @@ sub create_standard_object {
 	}
 	if ($def =~ /^\s*(\S+)\s*(.*)\s*$/) {
 	    $type = long_name($1);
-	    ($name, @args) = GT::ArgsTree::parse_args($2);
+	    ($name, @args) = Finance::GeniusTrader::ArgsTree::parse_args($2);
 	}
     }
     
     my $object;
-    my $eval = "use GT::$type;\n";
-    $eval .= "\$object = GT::$type->new(";
+    my $eval = "use Finance::GeniusTrader::$type;\n";
+    $eval .= "\$object = Finance::GeniusTrader::$type->new(";
     if (scalar(@args))
     {
 	$eval .= "[" . join(",", map { if (/^\d+$/) { $_ } else { "'$_'" } } 
-				 GT::ArgsTree::args_to_ascii(@args)) . "]";
+				 Finance::GeniusTrader::ArgsTree::args_to_ascii(@args)) . "]";
     }
     $eval .= ");";
     #DEB#  DEBUG  "create_standard_object with: $eval";
@@ -71,7 +71,7 @@ sub create_standard_object {
 
 =item C<< create_db_object() >>
 
-Return a GT::DB object created based on GT::Conf data. Thus GT::Conf::load()
+Return a Finance::GeniusTrader::DB object created based on Finance::GeniusTrader::Conf data. Thus Finance::GeniusTrader::Conf::load()
 should be called before this function. If DB::module doesn't exist in the
 config, it tries to load the user configuration (supposing it has never been done
 before).
@@ -79,12 +79,12 @@ before).
 =cut
 our $db;
 sub create_db_object {
-    my $db_module = GT::Conf::get("DB::module");
+    my $db_module = Finance::GeniusTrader::Conf::get("DB::module");
     if (! defined($db_module)) {
-	GT::Conf::load();
+	Finance::GeniusTrader::Conf::load();
     }
     if (! defined($db)) {
-	$db = create_standard_object("DB::" . GT::Conf::get("DB::module"));
+	$db = create_standard_object("DB::" . Finance::GeniusTrader::Conf::get("DB::module"));
     }
     return $db;
 }
@@ -99,7 +99,7 @@ sub get_standard_name {
     my ($object, $shorten, $number) = @_;
     $shorten = 1 if (! defined($shorten));
     my $n = ref($object);
-    $n =~ s/GT:://g;
+    $n =~ s/Finance::GeniusTrader:://g;
     if ($shorten)
     {
 	$n = short_name($n);
@@ -107,7 +107,7 @@ sub get_standard_name {
     if (defined($number) && $number) {
 	$n .= "/" . ($number + 1);
     }
-    if (ref($object->{'args'}) =~ /GT::ArgsTree/) {
+    if (ref($object->{'args'}) =~ /Finance::GeniusTrader::ArgsTree/) {
 	$n .= " " . join(" ", $object->{'args'}->get_arg_names());
     } elsif (scalar(@{$object->{'args'}})) {
 	$n .= " " . join(" ", @{$object->{'args'}});

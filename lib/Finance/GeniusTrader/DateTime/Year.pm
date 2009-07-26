@@ -1,4 +1,4 @@
-package GT::DateTime::Year;
+package Finance::GeniusTrader::DateTime::Year;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,11 +7,11 @@ package GT::DateTime::Year;
 use strict;
 use vars qw();
 
-use GT::DateTime;
+use Finance::GeniusTrader::DateTime;
 #ALL# use Log::Log4perl qw(:easy);
 use Time::Local;
 
-=head1 GT::DateTime::Year
+=head1 Finance::GeniusTrader::DateTime::Year
 
 This module treat dates describing a year. They have the following format :
 YYYY
@@ -37,7 +37,7 @@ sub timeframe_ratio {
     $tf == $MONTH && return 12;
     $tf == $WEEK  && return 52;
     $tf == $DAY   && return 250;
-    return GT::DateTime::timeframe_ratio($DAY, $tf) * 250;
+    return Finance::GeniusTrader::DateTime::timeframe_ratio($DAY, $tf) * 250;
 }
 
 1;

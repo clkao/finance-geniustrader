@@ -1,4 +1,4 @@
-package GT::Indicators::RSI;
+package Finance::GeniusTrader::Indicators::RSI;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,21 +9,21 @@ package GT::Indicators::RSI;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("RSI[#*]");
 @DEFAULT_ARGS = (14, "{I:Prices CLOSE}");
 
 =head1 NAME
 
-GT::Indicators::RSI - Relative Strength Index
+Finance::GeniusTrader::Indicators::RSI - Relative Strength Index
 
 =head1 DESCRIPTION
 
-The standard RSI is the RSI 14 days : GT::Indicators::RSI->new()
-If you need a non standard RSI use for example : GT::Indicators::RSI->new([25])
+The standard RSI is the RSI 14 days : Finance::GeniusTrader::Indicators::RSI->new()
+If you need a non standard RSI use for example : Finance::GeniusTrader::Indicators::RSI->new([25])
 
 =head2 Validation
 

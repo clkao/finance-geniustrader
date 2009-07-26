@@ -1,4 +1,4 @@
-package GT::Analyzers::IsLoss;
+package Finance::GeniusTrader::Analyzers::IsLoss;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::IsLoss;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("IsLoss[#*]");
 @DEFAULT_ARGS = ();
 
 =head1 NAME
 
-  GT::Analyzers::IsLoss - Boolean value: True if it is a loosing trade
+  Finance::GeniusTrader::Analyzers::IsLoss - Boolean value: True if it is a loosing trade
 
 =head1 DESCRIPTION 
 

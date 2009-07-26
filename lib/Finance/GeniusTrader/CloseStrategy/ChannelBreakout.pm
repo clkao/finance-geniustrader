@@ -1,4 +1,4 @@
-package GT::CloseStrategy::ChannelBreakout;
+package Finance::GeniusTrader::CloseStrategy::ChannelBreakout;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,17 +9,17 @@ package GT::CloseStrategy::ChannelBreakout;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::CloseStrategy;
-use GT::Eval;
-use GT::Tools qw(:generic);
+use Finance::GeniusTrader::CloseStrategy;
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::Tools qw(:generic);
 
-@ISA = qw(GT::CloseStrategy);
+@ISA = qw(Finance::GeniusTrader::CloseStrategy);
 @NAMES = ("ChannelBreakout[#*]");
 @DEFAULT_ARGS = ();
 
 =head1 NAME
 
-GT::CloseStrategy::ChannelBreakout
+Finance::GeniusTrader::CloseStrategy::ChannelBreakout
 
 =head1 DESCRIPTION
 

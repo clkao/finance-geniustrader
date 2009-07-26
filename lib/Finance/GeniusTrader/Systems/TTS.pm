@@ -1,4 +1,4 @@
-package GT::Systems::TTS;
+package Finance::GeniusTrader::Systems::TTS;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,12 +7,12 @@ package GT::Systems::TTS;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Prices;
-use GT::Systems;
-use GT::Indicators::Generic::MinInPeriod;
-use GT::Indicators::Generic::MaxInPeriod;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Systems;
+use Finance::GeniusTrader::Indicators::Generic::MinInPeriod;
+use Finance::GeniusTrader::Indicators::Generic::MaxInPeriod;
 
-@ISA = qw(GT::Systems);
+@ISA = qw(Finance::GeniusTrader::Systems);
 @NAMES = ("TTS[#1, #2]");
 
 =head1 Turtle Trading System (TTS)
@@ -49,8 +49,8 @@ sub new {
 sub initialize {
     my ($self) = @_;
 
-    $self->{'max'} = GT::Indicators::Generic::MaxInPeriod->new([ $self->{'args'}[0], "{I:Prices HIGH}"]);
-    $self->{'min'} = GT::Indicators::Generic::MinInPeriod->new([ $self->{'args'}[1], "{I:Prices LOW}"]);
+    $self->{'max'} = Finance::GeniusTrader::Indicators::Generic::MaxInPeriod->new([ $self->{'args'}[0], "{I:Prices HIGH}"]);
+    $self->{'min'} = Finance::GeniusTrader::Indicators::Generic::MinInPeriod->new([ $self->{'args'}[1], "{I:Prices LOW}"]);
 
     $self->add_indicator_dependency($self->{'min'}, 2);
     $self->add_indicator_dependency($self->{'max'}, 2);

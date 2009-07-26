@@ -1,4 +1,4 @@
-package GT::Analyzers::CloseDate;
+package Finance::GeniusTrader::Analyzers::CloseDate;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::CloseDate;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("CloseDate[#*]");
 @DEFAULT_ARGS = ();
 
 =head1 NAME
 
-  GT::Analyzers::CloseDate - The date where the position was closed
+  Finance::GeniusTrader::Analyzers::CloseDate - The date where the position was closed
 
 =head1 DESCRIPTION 
 

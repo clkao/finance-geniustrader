@@ -1,4 +1,4 @@
-package GT::MoneyManagement::STO;
+package Finance::GeniusTrader::MoneyManagement::STO;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,15 +7,15 @@ package GT::MoneyManagement::STO;
 use strict;
 use vars qw(@NAMES @ISA);
 
-use GT::MoneyManagement;
-use GT::Indicators::STO;
-use GT::Prices;
-use GT::Portfolio;
+use Finance::GeniusTrader::MoneyManagement;
+use Finance::GeniusTrader::Indicators::STO;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Portfolio;
 
 @NAMES = ("STO");
-@ISA = qw(GT::MoneyManagement);
+@ISA = qw(Finance::GeniusTrader::MoneyManagement);
 
-=head1 GT::MoneyManagement::STO
+=head1 Finance::GeniusTrader::MoneyManagement::STO
 
 =head2 Overview
 
@@ -42,7 +42,7 @@ sub new {
 sub initialize {
     my $self = shift;
 
-    $self->{'sto'} = GT::Indicators::STO->new([ 10 ]);
+    $self->{'sto'} = Finance::GeniusTrader::Indicators::STO->new([ 10 ]);
     $self->add_indicator_dependency($self->{'sto'}, 1);
 }
 

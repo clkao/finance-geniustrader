@@ -1,4 +1,4 @@
-package GT::OrderFactory::MarketPrice;
+package Finance::GeniusTrader::OrderFactory::MarketPrice;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,15 +9,15 @@ package GT::OrderFactory::MarketPrice;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::OrderFactory;
+use Finance::GeniusTrader::OrderFactory;
 
-@ISA = qw(GT::OrderFactory);
+@ISA = qw(Finance::GeniusTrader::OrderFactory);
 @NAMES = ("MarketPrice");
 @DEFAULT_ARGS = ();
 
 =head1 NAME
 
-GT::OrderFactory::MarketPrice
+Finance::GeniusTrader::OrderFactory::MarketPrice
 
 =head1 DESCRIPTION
 

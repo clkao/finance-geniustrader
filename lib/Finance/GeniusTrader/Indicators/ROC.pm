@@ -1,4 +1,4 @@
-package GT::Indicators::ROC;
+package Finance::GeniusTrader::Indicators::ROC;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,17 +9,17 @@ package GT::Indicators::ROC;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
+use Finance::GeniusTrader::Indicators;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("ROC[#1,#2]");
 @DEFAULT_ARGS = (12,"{I:Prices CLOSE}");
 
-=head2 GT::Indicators::ROC
+=head2 Finance::GeniusTrader::Indicators::ROC
 
 The Rate of Change (ROC) is similar to the Momentum.
-The standard Rate of Change is the ROC 12 days : GT::Indicators::MOM->new()
-If you need a non standard Momentum use for example : GT::Indicators::MOM->new([9]) or GT::Indicators::MOM->new([25])
+The standard Rate of Change is the ROC 12 days : Finance::GeniusTrader::Indicators::MOM->new()
+If you need a non standard Momentum use for example : Finance::GeniusTrader::Indicators::MOM->new([9]) or Finance::GeniusTrader::Indicators::MOM->new([25])
 
 =head2 Validation
 
@@ -33,7 +33,7 @@ sub intialize {
     my ($self) = @_;
 }
 
-=head2 GT::Indicators::ROC::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::ROC::calculate($calc, $day)
 
 =cut
 sub calculate {

@@ -1,4 +1,4 @@
-package GT::Indicators::ForceIndex;
+package Finance::GeniusTrader::Indicators::ForceIndex;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,15 +7,15 @@ package GT::Indicators::ForceIndex;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Indicators;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("ForceIndex");
 
-=head1 GT::Indicators::ForceIndex
+=head1 Finance::GeniusTrader::Indicators::ForceIndex
 
-GT::Indicators::ForceIndex->new()
+Finance::GeniusTrader::Indicators::ForceIndex->new()
 
 =head2 INFORMATION
 

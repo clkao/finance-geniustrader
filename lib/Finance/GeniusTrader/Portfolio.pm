@@ -1,4 +1,4 @@
-package GT::Portfolio;
+package Finance::GeniusTrader::Portfolio;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -8,19 +8,19 @@ use strict;
 use vars qw(@ISA);
 
 #ALL#  use Log::Log4perl qw(:easy);
-use GT::Prices;
-use GT::SystemManager;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::SystemManager;
 
-use GT::Portfolio::Order;
-use GT::Portfolio::Position;
+use Finance::GeniusTrader::Portfolio::Order;
+use Finance::GeniusTrader::Portfolio::Position;
 
-use GT::Serializable;
+use Finance::GeniusTrader::Serializable;
 
-@ISA = qw(GT::Serializable);
+@ISA = qw(Finance::GeniusTrader::Serializable);
 
 =head1 NAME
 
-GT::Portfolio - A portfolio
+Finance::GeniusTrader::Portfolio - A portfolio
 
 =head1 DESCRIPTION
 
@@ -31,7 +31,7 @@ performance and give useful statistics about what you've done
 
 =over
 
-=item C<< my $p = GT::Portfolio->new; >>
+=item C<< my $p = Finance::GeniusTrader::Portfolio->new; >>
 
 Create a portfolio object without any open positions and without any
 pendings orders (ie an empty portfolio).
@@ -112,7 +112,7 @@ Create a new open position in the portfolio.
 sub new_position {
     my ($self, $code, $source, $date) = @_;
 
-    my $position = GT::Portfolio::Position->new($code, $source, $date);
+    my $position = Finance::GeniusTrader::Portfolio::Position->new($code, $source, $date);
     $position->set_id($self->{'global_position_id'}++);
     push @{$self->{'open_positions'}}, $position;
     #DEB#  DEBUG  "position " . $position->id . " opened";
@@ -129,8 +129,8 @@ portfolio accordingly.
 sub apply_order_on_position {
     my ($self, $position, $order, $price, $date) = @_;
     
-    #WAR#  WARN  "valid type for position" if ( ref($position) =~ /GT::Portfolio::Position/);
-    #WAR#  WARN  "valid type for order" if ( ref($order) =~ /GT::Portfolio::Order/);
+    #WAR#  WARN  "valid type for position" if ( ref($position) =~ /Finance::GeniusTrader::Portfolio::Position/);
+    #WAR#  WARN  "valid type for order" if ( ref($order) =~ /Finance::GeniusTrader::Portfolio::Order/);
     
     my $stats_before = $position->stats($self);
     $position->apply_order($order, $price, $date);
@@ -161,7 +161,7 @@ Update the cash with the marged gain.
 sub close_position {
     my ($self, $position) = @_;
     
-    #WAR#  WARN  "valid type for position" if ( ref($position) =~ /GT::Portfolio::Position/);
+    #WAR#  WARN  "valid type for position" if ( ref($position) =~ /Finance::GeniusTrader::Portfolio::Position/);
     
     push @{$self->{'history'}}, $position;
     
@@ -212,7 +212,7 @@ sub apply_pending_orders {
 	$cb = sub { 
 	  my ($calc, $i, $position) = @_;
 	  my $sm;
-	  $sm = GT::SystemManager::get_registered_object($position->{'source'});
+	  $sm = Finance::GeniusTrader::SystemManager::get_registered_object($position->{'source'});
 	  $sm->position_opened($calc, $i, $position, $pf_manager) 
 							if (defined($sm));
         };
@@ -569,7 +569,7 @@ The informations calculated are :
 sub real_global_analysis {
     my ($self) = @_;
     my $date2int = sub { 
-	GT::DateTime::map_date_to_time($_[0]->timeframe, $_[0]->open_date)
+	Finance::GeniusTrader::DateTime::map_date_to_time($_[0]->timeframe, $_[0]->open_date)
     };
 
     my $ana = $self->new_analysis();
@@ -585,7 +585,7 @@ sub real_global_analysis {
 sub real_analysis_by_code {
     my ($self, $code) = @_;
     my $date2int = sub { 
-	GT::DateTime::map_date_to_time($_[0]->timeframe, $_[0]->open_date)
+	Finance::GeniusTrader::DateTime::map_date_to_time($_[0]->timeframe, $_[0]->open_date)
     };
 
     my $ana = $self->new_analysis();

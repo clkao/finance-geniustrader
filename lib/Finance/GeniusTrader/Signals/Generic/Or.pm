@@ -1,4 +1,4 @@
-package GT::Signals::Generic::Or;
+package Finance::GeniusTrader::Signals::Generic::Or;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,11 +9,11 @@ package GT::Signals::Generic::Or;
 use strict;
 use vars qw(@ISA @NAMES);
 
-use GT::Signals;
-use GT::Eval;
-use GT::Tools qw(:generic);
+use Finance::GeniusTrader::Signals;
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::Tools qw(:generic);
 
-@ISA = qw(GT::Signals);
+@ISA = qw(Finance::GeniusTrader::Signals);
 @NAMES = ("Or[#*]");
 
 =head1 Or Combination Signals

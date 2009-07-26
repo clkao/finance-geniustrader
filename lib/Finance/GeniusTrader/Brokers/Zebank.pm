@@ -1,4 +1,4 @@
-package GT::Brokers::Zebank;
+package Finance::GeniusTrader::Brokers::Zebank;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,14 +7,14 @@ package GT::Brokers::Zebank;
 use strict;
 use vars qw(@NAMES @ISA);
 
-use GT::Brokers;
-use GT::Eval;
-use GT::Conf;
+use Finance::GeniusTrader::Brokers;
+use Finance::GeniusTrader::Eval;
+use Finance::GeniusTrader::Conf;
 
 @NAMES = ("Zebank[#1]");
-@ISA = qw(GT::Brokers);
+@ISA = qw(Finance::GeniusTrader::Brokers);
 
-=head1 GT::Brokers::Zebank
+=head1 Finance::GeniusTrader::Brokers::Zebank
 
 =head2 Overview
 

@@ -1,4 +1,4 @@
-package GT::Dependency;
+package Finance::GeniusTrader::Dependency;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -11,12 +11,12 @@ use vars qw();
 
 =head1 NAME
 
-GT::Dependency - A dependency system for indicators/signals/systems.
+Finance::GeniusTrader::Dependency - A dependency system for indicators/signals/systems.
 
 =head1 DESCRIPTION
 
 This module is inheritated by any object which needs a Dependency
-mechanism. That's why it's listed in @ISA of GT::Indicators, GT::Signals,
+mechanism. That's why it's listed in @ISA of Finance::GeniusTrader::Indicators, Finance::GeniusTrader::Signals,
 GT:Systems and several other modules ...
 
 =over
@@ -49,7 +49,7 @@ because they are computed based on other data.
 =cut
 sub add_indicator_dependency {
     my ($self, $indicator, $nbdays) = @_;
-    #ERR#  ERROR  "Bad dependency" if ( ref($indicator) =~ /GT::Indicators/);
+    #ERR#  ERROR  "Bad dependency" if ( ref($indicator) =~ /Finance::GeniusTrader::Indicators/);
 
     if ($self->{'indic_depends'})
     {
@@ -64,7 +64,7 @@ sub add_indicator_dependency {
 }
 sub add_signal_dependency {
     my ($self, $signal, $nbdays) = @_;
-    #ERR#  ERROR  "Bad dependency" if ( ref($signal) =~ /GT::Signals/);
+    #ERR#  ERROR  "Bad dependency" if ( ref($signal) =~ /Finance::GeniusTrader::Signals/);
     
     if ($self->{'sig_depends'})
     {
@@ -93,13 +93,13 @@ sub add_prices_dependency {
 sub add_arg_dependency {
     my ($self, $argnum, $nbdays) = @_;
     my $object = $self->{'args'}->get_arg_object($argnum);
-    ref($object) =~ /^GT::Indicators/ and $self->add_indicator_dependency($object, $nbdays);
-    ref($object) =~ /^GT::Signals/ and $self->add_signal_dependency($object, $nbdays);
+    ref($object) =~ /^Finance::GeniusTrader::Indicators/ and $self->add_indicator_dependency($object, $nbdays);
+    ref($object) =~ /^Finance::GeniusTrader::Signals/ and $self->add_signal_dependency($object, $nbdays);
     return;
 }
 sub add_volatile_indicator_dependency {
     my ($self, $indicator, $nbdays) = @_;
-    #ERR#  ERROR  "Bad dependency" if ( ref($indicator) =~ /GT::Indicators/);
+    #ERR#  ERROR  "Bad dependency" if ( ref($indicator) =~ /Finance::GeniusTrader::Indicators/);
     
     if ($self->{'volatile_indic_depends'})
     {
@@ -114,7 +114,7 @@ sub add_volatile_indicator_dependency {
 }
 sub add_volatile_signal_dependency {
     my ($self, $signal, $nbdays) = @_;
-    #ERR#  ERROR  "Bad dependency" if ( ref($signal) =~ /GT::Signals/);
+    #ERR#  ERROR  "Bad dependency" if ( ref($signal) =~ /Finance::GeniusTrader::Signals/);
 
     if ($self->{'volatile_sig_depends'})
     {
@@ -143,8 +143,8 @@ sub add_volatile_prices_dependency {
 sub add_volatile_arg_dependency {
     my ($self, $argnum, $nbdays) = @_;
     my $object = $self->{'args'}->get_arg_object($argnum);
-    ref($object) =~ /^GT::Indicators/ and $self->add_volatile_indicator_dependency($object, $nbdays);
-    ref($object) =~ /^GT::Signals/ and $self->add_volatile_signal_dependency($object, $nbdays);
+    ref($object) =~ /^Finance::GeniusTrader::Indicators/ and $self->add_volatile_indicator_dependency($object, $nbdays);
+    ref($object) =~ /^Finance::GeniusTrader::Signals/ and $self->add_volatile_signal_dependency($object, $nbdays);
     return;
 }
 

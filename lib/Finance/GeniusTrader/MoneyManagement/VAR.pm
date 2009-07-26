@@ -1,4 +1,4 @@
-package GT::MoneyManagement::VAR;
+package Finance::GeniusTrader::MoneyManagement::VAR;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -7,14 +7,14 @@ package GT::MoneyManagement::VAR;
 use strict;
 use vars qw(@NAMES @ISA);
 
-use GT::MoneyManagement;
-use GT::Indicators::StandardDeviation;
-use GT::Prices;
+use Finance::GeniusTrader::MoneyManagement;
+use Finance::GeniusTrader::Indicators::StandardDeviation;
+use Finance::GeniusTrader::Prices;
 
 @NAMES = ("VAR[#1,#2]");
-@ISA = qw(GT::MoneyManagement);
+@ISA = qw(Finance::GeniusTrader::MoneyManagement);
 
-=head1 GT::MoneyManagement::VAR
+=head1 Finance::GeniusTrader::MoneyManagement::VAR
 
 =head2 Overview
 
@@ -45,7 +45,7 @@ sub new {
 sub initialize {
     my $self = shift;
 
-    $self->{'sd'} = GT::Indicators::StandardDeviation->new([ $self->{'args'}[0] ]);
+    $self->{'sd'} = Finance::GeniusTrader::Indicators::StandardDeviation->new([ $self->{'args'}[0] ]);
 
     $self->add_indicator_dependency($self->{'sd'}, 1);
     $self->add_prices_dependency($self->{'args'}[0]);

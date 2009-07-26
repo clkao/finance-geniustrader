@@ -1,4 +1,4 @@
-package GT::DB::CSV;
+package Finance::GeniusTrader::DB::CSV;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -7,19 +7,19 @@ package GT::DB::CSV;
 use strict;
 use vars qw(@ISA);
 
-use GT::DB;
-use GT::Prices;
-use GT::Conf;
-use GT::DateTime;
+use Finance::GeniusTrader::DB;
+use Finance::GeniusTrader::Prices;
+use Finance::GeniusTrader::Conf;
+use Finance::GeniusTrader::DateTime;
 use Time::Local;
 
 use DBI;
 
-@ISA = qw(GT::DB);
+@ISA = qw(Finance::GeniusTrader::DB);
 
 =head1 NAME
 
-GT::DB::CSV - Access to a text files by DBI::CSV
+Finance::GeniusTrader::DB::CSV - Access to a text files by DBI::CSV
 
 =head1 DESCRIPTION
 
@@ -49,7 +49,7 @@ the database is.
 
 =over
 
-=item C<< GT::DB::csv->new() >>
+=item C<< Finance::GeniusTrader::DB::csv->new() >>
 
 Creates a new database-object
 
@@ -59,32 +59,32 @@ sub new {
     my $type = shift;
     my $class = ref($type) || $type;
 
-    GT::Conf::default("DB::csv::database", "CSV");
-    GT::Conf::default("DB::csv::dbname", "/home/olf/ablage/private/finalize/GT/database"); 
-    GT::Conf::default("DB::csv::dbhost", "");   #aka localhost
-    GT::Conf::default("DB::csv::dbuser", "");   #aka current user
-    GT::Conf::default("DB::csv::dbpasswd", ""); #aka user is already identified
+    Finance::GeniusTrader::Conf::default("DB::csv::database", "CSV");
+    Finance::GeniusTrader::Conf::default("DB::csv::dbname", "/home/olf/ablage/private/finalize/GT/database"); 
+    Finance::GeniusTrader::Conf::default("DB::csv::dbhost", "");   #aka localhost
+    Finance::GeniusTrader::Conf::default("DB::csv::dbuser", "");   #aka current user
+    Finance::GeniusTrader::Conf::default("DB::csv::dbpasswd", ""); #aka user is already identified
 
-    my $self = { 'database' => GT::Conf::get("DB::csv::database"),
-		 'dbname'   => GT::Conf::get("DB::csv::dbname"),
-    		 'dbhost'   => GT::Conf::get("DB::csv::dbhost"), 
-		 'dbuser'   => GT::Conf::get("DB::csv::dbuser"), 
-		 'dbpasswd' => GT::Conf::get("DB::csv::dbpasswd"), 
+    my $self = { 'database' => Finance::GeniusTrader::Conf::get("DB::csv::database"),
+		 'dbname'   => Finance::GeniusTrader::Conf::get("DB::csv::dbname"),
+    		 'dbhost'   => Finance::GeniusTrader::Conf::get("DB::csv::dbhost"), 
+		 'dbuser'   => Finance::GeniusTrader::Conf::get("DB::csv::dbuser"), 
+		 'dbpasswd' => Finance::GeniusTrader::Conf::get("DB::csv::dbpasswd"), 
 		 @_
 		};
 
     if ( $self->{'database'} eq "CSV" ) {
-      GT::Conf::default("DB::csv::connectstring", "DBI:CSV:f_dir=" . $self->{'dbname'} . ";csv_sep_char=\t" );
+      Finance::GeniusTrader::Conf::default("DB::csv::connectstring", "DBI:CSV:f_dir=" . $self->{'dbname'} . ";csv_sep_char=\t" );
     } else {
       my $addstring = "";
       if ($self->{'dbhost'}) {
 	$addstring .= ";host=" . $self->{'dbhost'};
       }
-      GT::Conf::default("DB::csv::connectstring", "DBI:" . $self->{'database'} . 
+      Finance::GeniusTrader::Conf::default("DB::csv::connectstring", "DBI:" . $self->{'database'} . 
 			":database=" . $self->{'dbname'} . $addstring );
     }
 		
-    my $connect_string = GT::Conf::get("DB::csv::connectstring");
+    my $connect_string = Finance::GeniusTrader::Conf::get("DB::csv::connectstring");
     $self->{'_dbh'} = DBI->connect($connect_string, $self->{'dbuser'},
     		$self->{'dbpasswd'}) or die "Couldn't connect to database !\n";
 
@@ -186,7 +186,7 @@ EOT
 
 =item C<< $db->get_prices($code) >>
 
-Returns a GT::Prices object containing all known prices for the symbol $code.
+Returns a Finance::GeniusTrader::Prices object containing all known prices for the symbol $code.
 
 =cut
 sub get_prices {
@@ -195,14 +195,14 @@ sub get_prices {
 
 =item C<< $db->get_last_prices($code, $limit) >>
 
-Returns a GT::Prices object containing the $limit last known prices for
+Returns a Finance::GeniusTrader::Prices object containing the $limit last known prices for
 the symbol $code.
 
 =cut
 sub get_last_prices {
     my ($self, $code, $limit) = @_;
 
-    my $q = GT::Prices->new($limit);
+    my $q = Finance::GeniusTrader::Prices->new($limit);
     $q->set_timeframe($DAY);
 
     my $sql = qq{ SELECT open, high, low, close, volume, date
@@ -506,8 +506,8 @@ sub update_from_source {
     return if ( $self->available($code, $today) == 1 );
 
     # Check for the update-cycle
-    GT::Conf::default("DB::Source::$source::UpdateCycle", "12"); # 12h
-    my $update = GT::Conf::get("DB::Source::$source::UpdateCycle");
+    Finance::GeniusTrader::Conf::default("DB::Source::$source::UpdateCycle", "12"); # 12h
+    my $update = Finance::GeniusTrader::Conf::get("DB::Source::$source::UpdateCycle");
     my $lastupdate = $self->get_add_info( "Update_$source", $code );
     my $now = timelocal($sec, $min, $hour, $d, $m, $y);
     $update = $update * 60 * 60; # --> seconds
@@ -531,7 +531,7 @@ sub update_from_source {
 	$last_date = join("-", @last_dat);
 	print $last_date . " to " . $today . "\n";
 	my @data = ();
-	my $getstring = "use GT::DB::$source; my \$s = GT::DB::$source->new();
+	my $getstring = "use Finance::GeniusTrader::DB::$source; my \$s = Finance::GeniusTrader::DB::$source->new();
                          \@data = \$s->get_price_interval('$code', '$last_date', '$today');";
 
 	eval $getstring;
@@ -595,7 +595,7 @@ sub merge_from_source {
   $self->init_table( $code ) if ($self->table_exists("$code") == 0); 
 
   my @data = ();
-  my $getstring = "use GT::DB::$source; my \$s = GT::DB::$source->new();
+  my $getstring = "use Finance::GeniusTrader::DB::$source; my \$s = Finance::GeniusTrader::DB::$source->new();
                      \@data = \$s->get_all_prices('$code');\$s->disconnect();";
 
   eval $getstring;

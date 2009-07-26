@@ -1,4 +1,4 @@
-package GT::Indicators::Range;
+package Finance::GeniusTrader::Indicators::Range;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -9,14 +9,14 @@ package GT::Indicators::Range;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("Range[#*]");
 @DEFAULT_ARGS = ("{I:Prices HIGH}", "{I:Prices LOW}");
 
-=head1 GT::Indicators::Range
+=head1 Finance::GeniusTrader::Indicators::Range
 
 The range is nothing more than the difference between the high and the low
 of the day.
@@ -30,7 +30,7 @@ sub initialize {
     $self->add_arg_dependency(2,1);
 }
 
-=head2 GT::Indicators::Range::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::Range::calculate($calc, $day)
 
 =cut
 sub calculate {

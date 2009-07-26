@@ -1,4 +1,4 @@
-package GT::Analyzers::AvgPerformance;
+package Finance::GeniusTrader::Analyzers::AvgPerformance;
 
 # Copyright 2003 Oliver Bossert
 # This file is distributed under the terms of the General Public License
@@ -9,16 +9,16 @@ package GT::Analyzers::AvgPerformance;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Analyzers;
-use GT::Calculator;
+use Finance::GeniusTrader::Analyzers;
+use Finance::GeniusTrader::Calculator;
 
-@ISA = qw(GT::Analyzers);
+@ISA = qw(Finance::GeniusTrader::Analyzers);
 @NAMES = ("AvgPerformance[#*]");
 @DEFAULT_ARGS = ("{A:Sum {A:IsGain}}", "{A:Sum {A:IsLoss}}", "{A:Sum {A:NetGain}}", "{A:InitSum}");
 
 =head1 NAME
 
-  GT::Analyzers::AvgPerformance - Average Performance per trade
+  Finance::GeniusTrader::Analyzers::AvgPerformance - Average Performance per trade
 
 =head1 DESCRIPTION 
 

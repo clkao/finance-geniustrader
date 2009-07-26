@@ -1,4 +1,4 @@
-package GT::Indicators::Generic::Cum;
+package Finance::GeniusTrader::Indicators::Generic::Cum;
 
 # Copyright 2008 Thomas Weigert
 # Based on and for GeniusTrader (C) 2000-2002 Raphaël Hertzog, Fabien Fulhaber
@@ -12,17 +12,17 @@ package GT::Indicators::Generic::Cum;
 use strict;
 use vars qw(@ISA @NAMES @DEFAULT_ARGS);
 
-use GT::Indicators;
-#use GT::Indicators::BPCorrelation;
-use GT::Prices;
+use Finance::GeniusTrader::Indicators;
+#use Finance::GeniusTrader::Indicators::BPCorrelation;
+use Finance::GeniusTrader::Prices;
 
-@ISA = qw(GT::Indicators);
+@ISA = qw(Finance::GeniusTrader::Indicators);
 @NAMES = ("Cum[#1]");
 @DEFAULT_ARGS = ("{I:Prices CLOSE}");
 
 =pod
 
-=head1 GT::Indicators::Generic::Cum
+=head1 Finance::GeniusTrader::Indicators::Generic::Cum
 
 =head2 Overview
 
@@ -36,7 +36,7 @@ how many records are currently loaded.
 
 =pod
 
-=head2 GT::Indicators::Generic::Cum::calculate($calc, $day)
+=head2 Finance::GeniusTrader::Indicators::Generic::Cum::calculate($calc, $day)
 
 =cut
 

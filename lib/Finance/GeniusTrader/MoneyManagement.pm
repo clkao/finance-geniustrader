@@ -1,4 +1,4 @@
-package GT::MoneyManagement;
+package Finance::GeniusTrader::MoneyManagement;
 
 # Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 # This file is distributed under the terms of the General Public License
@@ -8,17 +8,17 @@ use strict;
 use vars qw(@ISA @EXPORT %OBJECT_REPOSITORY);
 
 require Exporter;
-@ISA = qw(Exporter GT::Dependency);
+@ISA = qw(Exporter Finance::GeniusTrader::Dependency);
 @EXPORT = qw(&build_object_name &manage_object);
 
-use GT::Registry;
-use GT::Dependency;
-use GT::Prices;
+use Finance::GeniusTrader::Registry;
+use Finance::GeniusTrader::Dependency;
+use Finance::GeniusTrader::Prices;
 #ALL#  use Log::Log4perl qw(:easy);
 
 =head1 NAME
 
-GT::MoneyManagement - Money management rules (risk management)
+Finance::GeniusTrader::MoneyManagement - Money management rules (risk management)
 
 =head1 DESCRIPTION
 
@@ -63,18 +63,18 @@ sub manage_quantity {
 # Default initialize that does nothing
 sub initialize { 1 }
 
-# GT::Registry functions
+# Finance::GeniusTrader::Registry functions
 sub get_registered_object {
-    GT::Registry::get_registered_object(\%OBJECT_REPOSITORY, @_);
+    Finance::GeniusTrader::Registry::get_registered_object(\%OBJECT_REPOSITORY, @_);
 }
 sub register_object {
-    GT::Registry::register_object(\%OBJECT_REPOSITORY, @_);
+    Finance::GeniusTrader::Registry::register_object(\%OBJECT_REPOSITORY, @_);
 }
 sub get_or_register_object {
-    GT::Registry::get_or_register_object(\%OBJECT_REPOSITORY, @_);
+    Finance::GeniusTrader::Registry::get_or_register_object(\%OBJECT_REPOSITORY, @_);
 }
 sub manage_object {
-    GT::Registry::manage_object(\%OBJECT_REPOSITORY, @_);
+    Finance::GeniusTrader::Registry::manage_object(\%OBJECT_REPOSITORY, @_);
 }
 
 =pod
