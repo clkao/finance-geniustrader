@@ -3,50 +3,46 @@ package Finance::GeniusTrader;
 use warnings;
 use strict;
 
+use vars qw/$VERSION/;
+
 =head1 NAME
 
-Finance::GeniusTrader - The great new Finance::GeniusTrader!
+Finance::GeniusTrader - a full featured toolbox to create trading systems
 
 =head1 VERSION
 
-Version 0.01
+Version 0.00_50
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.00_50';
 
 
-=head1 SYNOPSIS
+=head1 DESCRIPTION
 
-Quick summary of what the module does.
+GeniusTrader aims to be a full featured toolbox to create trading systems. Powerful systematic trading requires several things :
 
-Perhaps a little code snippet.
+=over
 
-    use Finance::GeniusTrader;
+=item * many indicators and corresponding signals
 
-    my $foo = Finance::GeniusTrader->new();
-    ...
+=item * money management rules
 
-=head1 EXPORT
+=item * deciding what is a reasonable amount of money to put on a single trade (to limit the risk associated to that trade)
 
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
+=item * combining different values within the portfolio (to limit the global risk)
 
-=head1 FUNCTIONS
+=item * flexibility to be able to test all combinations with the above items
 
-=head2 function1
+=item * backtesting system with analysis of results
 
-=cut
+=back
 
-sub function1 {
-}
+GeniusTrader already has support of most of this. GeniusTrader consists of a bunch of perl modules associated to a few perl scripts. It has no graphical user interface since it's absolutely not needed to achieve its goals ...
 
-=head2 function2
+=head1 SYNOPSYS
 
-=cut
-
-sub function2 {
-}
+Please read submodules synopsis for usage.
 
 =head1 AUTHOR
 
@@ -57,9 +53,6 @@ Erik Colson, C<< <eco at ecocode.net> >>
 Please report any bugs or feature requests to C<bug-finance-geniustrader at rt.cpan.org>, or through
 the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Finance-GeniusTrader>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
-
-
-
 
 =head1 SUPPORT
 
@@ -96,10 +89,23 @@ L<http://search.cpan.org/dist/Finance-GeniusTrader/>
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2009 Erik Colson, all rights reserved.
+=over
 
-This program is released under the following license: gpl
+=item - Copyright 2009 Erik Colson
 
+=item - Copyright 2008 Thomas Weigert
+
+=item - Copyright 2008 Robert A. Schmied
+
+=item - Copyright 2005 João Costa
+
+=item - Copyright 2004 Oliver Bossert
+
+=item - Copyright 2000-2002 Raphaël Hertzog, Fabien Fulhaber
+
+=back
+
+This program is released under the following license: gpl v2
 
 =cut
 
