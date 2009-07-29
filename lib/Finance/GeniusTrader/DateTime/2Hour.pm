@@ -8,7 +8,7 @@ package Finance::GeniusTrader::DateTime::2Hour;
 use strict;
 use vars qw();
 
-use use Finance::GeniusTrader::DateTime;
+use Finance::GeniusTrader::DateTime;
 use Time::Local;
 
 =head1 Finance::GeniusTrader::DateTime::2Hour
