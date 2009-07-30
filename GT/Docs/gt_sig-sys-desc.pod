@@ -1,26 +1,365 @@
 # Copyright 2008 ras
 # Based on and for GeniusTrader (C) 2000-2002 Raphaël Hertzog, Fabien Fulhaber
 
-# $Id: gt_sig-sys-desc.pod,v 1.1 2008/10/31 01:10:35 ras Exp ras $
+# $Id: gt_sig-sys-desc.pod,v 1.4 2009/07/24 18:23:54 ras Exp ras $
 
-=head1	gt system description specifications (sig-sys-desc)
+=pod
 
-used for defining indicators, signals, and system components. these
-sig-sys-desc are found throughout gt configuration and control files,
-and on command lines.
+=head1	gt system description specifications (sys-sig-indic-desc)
 
+used for defining indicators, signals, systems, and trading
+system components.
+these sys-sig-indic-desc are found throughout gt configuration and
+control files and on command lines.
 
-=head1 positional value substitution -- 
+sys-sig-indic-desc are text strings used to specify or describe
+the parameters used by gt to perform a particular technical analysis
+(ta) on a security.
 
+in general sys-sig-indic-desc
 
-=head1 indicator description (ind-desc) -- define an indicator
+=over 4
 
+=item a)
+
+are delimited with curly brackets '{...}'
+
+for example in { I:SMA } the whitespace within the curly brackets is
+ignored, thus {I:SMA} is equivalent, but harder for a human to scan.
+
+=item b)
+
+may include other sys-sig-indic-desc
+
+for example { I:Prices CLOSE } is an embedded sys-sig-indic-desc
+in this { I:SMA 50 { I:Prices CLOSE } } sys-sig-indic-desc.
+
+=item c)
+
+are written with case sensitive tokens unless otherwise noted
+
+sig-sig-indic names are always case sensitive, but other arguments
+might be case insensitive. 
+refer to the pod for the sig-sig-indic in question, or to the
+documentation regarding the argument (for example GT::Tools,
+GT::Graphics::Tools).
+in the examples a) and b) above only 'CLOSE' is case insensitive:
+ 
+ { I:SMA 50 { I:Prices close } }
+ 
+=item d)
+
+use whitespace to delimit individual elements within a sys-sig-indic-desc.
+for example example b) above can be written like this:
+ 
+ {I:SMA 50{I:Prices CLOSE}}
+ 
+note the required whitespace to delimit the time period (50) from the
+indicator name (I:SMA) and the price value id token (CLOSE) from the
+indicator name (I:Prices).
+
+=item e)
+
+may be written using sig-sig-indic name abbreviations
+(refer to GT::Tools for details)
+
+without sig-sig-indic name abbreviations example a) would be written
+like this
+ 
+ { Indicators::SMA }
+ 
+note Indicators is plural (and case sensitive), as are all the
+sig-sig-indic names. but trading system components are a mixed bag,
+some plural, others singular (see GT/Docs/how_to_spec+debug_a_system.pod),
+the singular and any misspelling or altered case will fail,
+usually with a somewhat unhelpful error message. so use the abbreviations.
+
+=item f)
+
+may include system or object aliases
+
+{ @S:3EMAlong #1 #2 #3 } is an example of a signal object alias
+(@S:3EMAlong) with 3 arguments (refer to GT/Docs/object_aliases.pod
+and GT::Tools for details on system and object aliases).
+
+=item g)
+
+trading system components are delimited with vertical bar '|'.
+
+trading systems include a system and possibly other components that,
+collect together the named components and listed parameters into a
+trading system rule set. (see GT/Docs/how_to_spec+debug_a_system.pod)
+
+for example
+ 
+ SY:ADX | TF:LongOnly | MM:FixedSum
+ 
+ADX system with a longonly trade filter and a fixed sum money manageer.
+however, missing from this trading system are a broker, which will
+add (subtract) trading and account costs from trading performance
+analyses.
+order filters, which aid in preventing trades that have
+flaws that the systems signals do not recognize.
+lastly, and most importantly a closingstrategy, which determines
+when to close an existing open position.
+a closingstrategy is the sell counterpart to the systems buy,
+but note both (systems and a closingstrategy) define two signals.
+the first signal applies to 'long' positions, the second to 'short' positions.
+ 
+=back
+
+=head1 positional value substitution -- sys-sig-indic arguments
+
+a sys-sig-indic-desc may have parameters that specify values to
+be used. within a sys-sig-indic-desc whitespace is used to delimit
+these arguments from each other and from the sys-sig-indic name.
+
+in addition the alias provisions allow for numbered parameter
+substitution. for details on system and object aliases see
+GT/Docs/object_aliases.pod and GT::Tools.
+
+sys-sig-indic, for the most part, have predefined default arguments
+that will be used in the absence of user provided values.
+
+there isn't an easy way to get the number of and defaults values
+of arguments supported by a particular sys-sig-indic short of
+reading the perl code for the sys-sig-indic (look for @DEFAULT_ARGS).
+however, the appropriate evaluation script display_*.pl can be used
+with advantage to see the default args as well as how any user
+passed args are applied.
+the standard output from those scripts will show the values used.
+
+when an indicator uses a prices value token
+(one of OPEN, HIGH, LOW, CLOSE, or VOLUME)
+the usual default is CLOSE (or VOLUME) as appropriate for the indicator.
+to alter that indicators prices value token the entire prices sys-sig-indic
+description must be embedded within the outer sys-sig-indic.
+in addition, in most cases the prices argument follows other arguments.
+it isn't possible (at least i've yet to determine how) to use earlier
+defaults and change a subsequent argument value without entering all
+the earlier arguments explicitly.
+take simple moving average { I:SMA } for example:
+ 
+ { I:SMA } defaults to { I:SMA 50 { I:Prices CLOSE } }
+ 
+in order to change the default prices value token from CLOSE to OPEN
+you must write the indic-desc in the expanded form:
+
+ { I:SMA 50 { I:Prices OPEN } }
+ 
+ yep, that's the way it works.
+ 
+
+=head1 indicator description (indic-desc) -- define an indicator
+
+an indicator is a mathematical calculation based on a securities
+price and/or volume, or possibly some other numeric value associated
+with a security or company, shares outstanding for example.
+
+examples of indic-desc:
+ 
+ { I:Prices LOW }
+ { I:Prices VOLUME }
+ { I:SMA }
+ { I:EMA }
+
+ { I:BOL 40 1.9 }
+ { I:BOL 40 1.9 { I:Prices HIGH } }
+ 
+in gt, an indicator is a series of data values for each bar (time
+period) in the window of time being analyzed. the indicator will
+have at least one value per bar, but may have many more. by default
+an indicators principle value is the first value returned. except
+for display_indicator.pl, which will output all values, this first
+value will be the value used when the indicator is listed in a
+sys-sig-indic-desc without a numeric value indicator. say what!?
+
+ok, indicators that have multiple values can be identified by
+appending a slash '/' and a number corresponding to the indicator
+value desired to the indicator name as a means to designate the
+value of interest. the numbers start with 1 the default value and
+increase by one for each subsequent value. by convention the code
+/99 is used to indicate all values are to be returned.
+
+'indicator_name/number' syntax examples:
+ 
+ { I:AROON/3 }
+ { I:BOL/3 }
+ { I:ADX/2 }
+ { I:STO/4 }
+ { I:HilbertPeriod/10 }
+ { I:Chandelier/1 }    # identical to { I:Chandelier }
+ 
+{ I:Prices } is completely different. it will only return one value
+at a time, by default it is CLOSE or LAST. furthermore { I:Prices }
+does not use the indic/number encoding, instead using a 'name' argument.
+the names arguments are case insensitive:
+
+ OPEN | FIRST
+ HIGH
+ LOW
+ CLOSE | LAST
+ VOLUME
+ DATE
+ 
+incidentally, { I:Prices DATE } is useful if you want the timeframe
+adjusted date string that corresponds to the time period index.
+
+to reiterate -- { I:indic } will return one value per bar, and it is,
+by default, the first value defined by that indicator. in other words
+{ I:indic/1 }. by convention the first indicator value should be
+the value logically associated with the indicator name, but there
+isn't any way to enforce that convention. in many cases gt indicators
+have multiple values that include oscillator values along with other
+values that relate to that indicator. to be sure what values are
+available from a given indicator read the pod, then the code.
+
+the sys-sig-indic devel/evaluation apps display_indicator.pl,
+display_signal.pl, and display_system.pl are useful in getting valid
+run-time default values and the other argument for the specified
+sys-sig-indic desc without having to read perl code.
+
+ 
+   % display_indicator.pl I:AROON T | head
+   display_indicator.pl: interval: 2457 .. 2657
+   Indicator I:AROON has 3 values ... all values selected
+           I:AROON/1  <=> AroonUp[25, { I:Prices HIGH}, { I:Prices LOW}]
+           I:AROON/2  <=> AroonDown[25, { I:Prices HIGH}, { I:Prices LOW}]
+           I:AROON/3  <=> AroonOsc[25, { I:Prices HIGH}, { I:Prices LOW}]
+ 
+           timeframe day, time periods 2457 .. 2657
+   Calculating all 3 indicators ...
+   AroonUp[25, { I:Prices HIGH}, { I:Prices LOW}][2008-10-03] = 8.0000
+   AroonDown[25, { I:Prices HIGH}, { I:Prices LOW}][2008-10-03] = 92.0000
+   AroonOsc[25, { I:Prices HIGH}, { I:Prices LOW}][2008-10-03] = -84
+ 
 
 =head1 signal description (sig-desc) -- define a signal
 
+signals are binary values (e.g. true/false, yes/no) that are used
+to trigger trading system actions (orders). a signal is a data
+series with a discrete value for each bar in the time period over
+the time being analyzed.
+
+signal descriptions (sig-desc) are similar to indicator descriptions
+with arguments (positional value substitution).
+note a signal may also have multiple signal values.
+this is unusual, but something to be aware of
+(refer to S:Swing:Trend, S:Swing:TrendEnding, S:Trend:HilbertChannelBreakout
+and others).
+
+sig-desc look very much like indic-desc, here are some examples
+ 
+ { Signals::Generic::CrossOverUp {I:BBO} {I:Generic::Eval 1.0} }
+ { S:Generic:Above {I:Prices CLOSE} {I:BOL/2 20 2.0} }
+ { S:Generic:Increase {I:ADX} }
+ 
+
+using the available boolean logic signals one can construct some
+fairly complex signal descriptions.
+ 
+   { S:G:And \
+     {S:G:CrossOverUp {I:SMA 3} {I:SMA 23}} \
+     {S:G:Increase {I:ADX}} \
+   }
+ 
+   {S:G:And \
+     {S:G:Or \
+       {S:G:And \
+         {S:G:Above {I:G:PeriodAgo 4  {I:STO/3 3 2 2 2}} 80} \
+         {S:G:Above {I:G:PeriodAgo 4} {I:G:PeriodAgo 4 {I:SMA 50}}} \
+       } \
+       {S:G:And \
+         {S:G:Below {I:G:PeriodAgo 4  {I:STO/3 3 2 2 2}} 20} \
+         {S:G:Below {I:G:PeriodAgo 4} {I:G:PeriodAgo 4 {I:SMA 50}}} \
+       } \
+     } \
+     {S:G:Above {I:Prices HIGH} {I:G:PeriodAgo 4 {I:Prices HIGH}}} \
+   }
+ 
+
+use script app display_signal.pl to aid you in the development,
+debugging and proofing of complex signal descriptions.
 
 
-=head1 sys description -- define a set of system components
+
+=head1 systems description (sys-desc) -- define a systems
+
+a gt sys-desc defines two signals, the first generates an
+order to (potentially) open a 'long' position, the second
+generates an order to (potentially) open a 'short' position.
+these are expressly not buys and sells, but orders to (potentially)
+enter into a new position either on the 'long' or the 'short'
+side of a trade.
+depending on other trading system components (tradefilters,
+orderfactory and moneymanagers) these orders may not be fulfilled.
+positions once opened are managed by the PortfolioManager
+via one or more CloseStrategy trading system component.
+the second signal, if omitted will default to always false
+ 
+ --statement validation required--
+ 
+the first signal must always be present. you can disabled
+either signal using this sig-desc:
+ 
+ { S:G:False }
+ 
+note that is one of the two required sig-desc within a sys-desc.
+
+gt has a couple predefined (hardcoded) systems:
+
+ { SY:TTS }             # initial attempt to imitate turtle trade
+ { SY:TFS }             # trend following system
+ { SY:Stochastic }      # stochastic system
+ see GT/Systems/ for the rest
+ 
+
+the usual arguments and embedded sys-sig-indic-desc arguments
+apply to sig-desc.
+  
+ { SY:Stochastic 12 3 4 5 }
+ { SY:TFS 20 7 }
+
+using relatively complex sys-sig-indic-desc you can formulate
+much more interesting sig-desc:
+ 
+ { SY:Generic \
+   { S:Generic:Above \
+     {I:Prices HIGH } {I:Generic:MaxInPeriod #1 {I:Prices CLOSE}} \
+   } \
+   { S:Generic:Below \
+     {I:Prices LOW  } {I:Generic:MinInPeriod #1 {I:Prices CLOSE}} \
+   } \
+ }
+
+ { SY:Generic \
+   {S:G:And \
+     {S:G:Or \
+       {S:G:And \
+         {S:G:Above {I:G:PeriodAgo 4  {I:STO/3 3 2 2 2}} 80} \
+         {S:G:Above {I:G:PeriodAgo 4} {I:G:PeriodAgo 4 {I:SMA 50}}} \
+       } \
+       {S:G:And \
+         {S:G:Below {I:G:PeriodAgo 4  {I:STO/3 3 2 2 2}} 20} \
+         {S:G:Below {I:G:PeriodAgo 4} {I:G:PeriodAgo 4 {I:SMA 50}}} \
+       } \
+     } \
+     {S:G:Above {I:Prices HIGH} {I:G:PeriodAgo 4 {I:Prices HIGH}}}}
+   {S:G:And \
+     {S:G:Or \
+       {S:G:And \
+         {S:G:Above {I:G:PeriodAgo 4  {I:STO/3 3 2 2 2}} 80} \
+         {S:G:Above {I:G:PeriodAgo 4} {I:G:PeriodAgo 4 {I:SMA 50}}} \
+       } \
+       {S:G:And \
+         {S:G:Below {I:G:PeriodAgo 4  {I:STO/3 3 2 2 2}} 20} \
+         {S:G:Below {I:G:PeriodAgo 4} {I:G:PeriodAgo 4 {I:SMA 50}}} \
+       } \
+     } \
+     {S:G:Below {I:Prices LOW} {I:G:PeriodAgo 4 {I:Prices LOW}}}} \
+ }
+
+=head1 trading sys description -- define a set of trading system components
 
 sig-sys-desc are used to specify a set of properties and parameters to
 be used by gt to perform the technical analysis desired. it may
@@ -33,7 +372,7 @@ Generic    = G:
 Signals    = S:
 Indicators = I:
 
-=head1 systems description (sys-desc) -- define parts of a system
+=head1 trading system components -- parts of a system
 
   GT/<directory>          abbreviation
      Systems                  SY:
@@ -50,34 +389,28 @@ components marked + above allow multiple elements of that component.
 
 
 =head2	yet more sys-desc examples:
-
+ 
   System:ADX 30 | TradeFilters:LongOnly | MoneyManagement:FixedSum
-  same as above using abbreviations
+ 
+same as above using abbreviations
+ 
   SY:ADX 30 | TF:LongOnly | MM:FixedSum
-
+ 
 
 =head2	sig-sys-desc examples:
 
  SY:SMA 2 3 4 | TF:AcceptAll
 
- S:Generic:And \
-  { S:Generic:Below { I:Prices CLOSE } { I:G:PeriodAgo } } \
-  { S:Generic:Below { I:Prices CLOSE } { I:SMA 50 {I:Prices CLOSE} } } \
-  NAME below 50 day sell \
-
 the following logical line group is effectively commented out
 
  #SY:SMA 10 20 200 \
- | TF:AcceptAll
-
-
-=head1	DESCRIPTION
-
-
-=head1	BUGS
-
+  | TF:AcceptAll
+ 
 
 =head1	SEE ALSO
-  scan.pl, backtest.pl, gt_file.pod, Tools.pm, 
+  display_indicator.pl, display_signal.pl, display_system.pl,
+  GT/Docs/how_to_spec+debug_a_system.pod, GT/Docs/object_aliases.pod
+  scan.pl, backtest.pl, gt_file.pod, GT::Tools, GT::Graphics::Tools,
+  and the pod for individual system, signal and indicators
 
-
+=cut
