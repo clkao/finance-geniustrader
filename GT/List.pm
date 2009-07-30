@@ -45,6 +45,7 @@ $list->get($i);
 =over
 
 =cut
+
 sub new {
     my $type = shift;
     my $class = ref($type) || $type;
@@ -58,6 +59,7 @@ sub new {
 Get symbol number $i.
 
 =cut
+
 sub get {
     my ($self, $i) = @_;
     return $self->{'symbol'}[$i];
@@ -68,6 +70,7 @@ sub get {
 Add a symbol in a list.
 
 =cut
+
 sub add {
     my ($self, $symbol) = @_;
     push @{$self->{'symbol'}}, $symbol;
@@ -79,11 +82,12 @@ sub add {
 Remove the symbol number $i.
 
 =cut
+
 sub remove {
     my ($self, $i) = @_;
 
     for (my $n = $i; $n < $self->count() - 1; $n++) {
-	$self->{'symbol'}[$n] = $self->{'symbol'}[$n + 1];
+        $self->{'symbol'}[$n] = $self->{'symbol'}[$n + 1];
     }
     delete $self->{'symbol'}[$self->count() - 1];
     $self->{'count'} -= 1;
@@ -94,6 +98,7 @@ sub remove {
 Find how many symbols are in the list.
 
 =cut
+
 sub count {
     return shift->{'count'};
 }
@@ -103,13 +108,14 @@ sub count {
 Load data from a list of symbol.
 
 =cut
+
 sub load {
     my ($self, $file) = @_;
     open(FILE, "<", $file) || die "$0: error: Can't open file $file: $!\n";
     $self->{'symbol'} = [];
     while (defined($_=<FILE>))
     {
-	chomp;
+        chomp;
         # ignore blank and sorta blank lines
 =pod
 
@@ -134,11 +140,13 @@ sub load {
 =cut
         next if /^\s*$/;    # remove lines with only whitespace or nothing
         # comments
-        next if /^#|^\s*#/;
-        # remove spaces at start of line, comments at end of lines
-        s/^\s*([^#\s]*)\s*#+\s*.*$/$1/;
+        next if /^\s*#/;
+        # remove spaces at start of string
+        s/^\s*//;
+        # remove spaces and comments after string
+        s/\s+#*.*$//;
 
-	$self->add($_);
+        $self->add($_);
     }
     close FILE;
 }
@@ -148,12 +156,13 @@ sub load {
 Save list in a file.
 
 =cut
+
 sub save {
     my ($self, $file) = @_;
     open(FILE, ">", $file) || die "Can't write in $file: $!\n";
     foreach (@{$self->{'symbol'}})
     {
-	print FILE "$_\n";
+        print FILE "$_\n";
     }
     close FILE;
 }
@@ -163,4 +172,5 @@ sub save {
 =back
 
 =cut
+
 1;

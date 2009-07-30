@@ -6,12 +6,12 @@ package GT::Indicators;
 
 use strict;
 use vars qw(@ISA @EXPORT $GET_FIRST $GET_OPEN $GET_HIGH $GET_LOW $GET_LAST
-	    $GET_CLOSE $GET_VOLUME %OBJECT_REPOSITORY);
+            $GET_CLOSE $GET_VOLUME %OBJECT_REPOSITORY);
 
 require Exporter;
 @ISA = qw(Exporter GT::Dependency);
 @EXPORT = qw($GET_FIRST $GET_OPEN $GET_HIGH $GET_LOW $GET_LAST $GET_CLOSE
-	     $GET_VOLUME &build_object_name &manage_object);
+             $GET_VOLUME &build_object_name &manage_object);
 
 use GT::Prices;
 use GT::Calculator;
@@ -49,6 +49,7 @@ can provide those functions if you want to calculate an average of
 some prices (or quotations or volumes).
 
 =cut
+
 $GET_FIRST  = $GET_OPEN  = sub { $_[0]->prices()->at($_[1])->[$FIRST] };
 $GET_HIGH   =              sub { $_[0]->prices()->at($_[1])->[$HIGH] };
 $GET_LOW    =              sub { $_[0]->prices()->at($_[1])->[$LOW] };
@@ -63,6 +64,7 @@ $GET_VOLUME =              sub { $_[0]->prices()->at($_[1])->[$VOLUME] };
   GT::Indicators::manage_object(\@NAMES, $object, $class, $args, $key);
 
 =cut
+
 sub get_registered_object {
     GT::Registry::get_registered_object(\%OBJECT_REPOSITORY, @_);
 }
@@ -80,41 +82,47 @@ sub manage_object {
 
 =over 
 
-=item C<< GT::Indicators::Module->new($args, $key, $func) >>
+=item C<< GT::Indicators::<indicator>->new($args, $key, $func) depreciated >>
 
-Create a new indicator with the given arguments. $key and $func are optional,
-they are useful for indicators which can use non-usual input streams.
+$func has been depreciated and is no longer supported. if $func is
+passed as an argument it will result in a runtime error.
+
+=item C<< GT::Indicators::<indicator>->new($args, $key) >>
+
+Create a new <indicator> with the given arguments. $key is optional,
+useful for indicators which can use non-usual input streams.
 
 =cut
+
 sub new {
     my ($type, $args, $key, $func) = @_;
     my $class = ref($type) || $type;
 
     no strict "refs";
     
-    my $self = { };
+    my $self = {};
     if (defined($args)) {
-	if ( $#{$args} < $#{"$class\::DEFAULT_ARGS"} ) {
-	    for (my $n=($#{$args}+1); $n<=$#{"$class\::DEFAULT_ARGS"}; $n++) {
-		push @{$args}, ${"$class\::DEFAULT_ARGS"}[$n];
-	    }
-	}
-	$self->{'args'} = GT::ArgsTree->new(@{$args});
+        if ( $#{$args} < $#{"$class\::DEFAULT_ARGS"} ) {
+            for (my $n=($#{$args}+1); $n<=$#{"$class\::DEFAULT_ARGS"}; $n++) {
+                push @{$args}, ${"$class\::DEFAULT_ARGS"}[$n];
+            }
+        }
+        $self->{'args'} = GT::ArgsTree->new(@{$args});
     } elsif (defined (@{"$class\::DEFAULT_ARGS"})) {
-	$self->{'args'} = GT::ArgsTree->new(@{"$class\::DEFAULT_ARGS"});
+        $self->{'args'} = GT::ArgsTree->new(@{"$class\::DEFAULT_ARGS"});
     } else {
-	$self->{'args'} = GT::ArgsTree->new(); # no args
+        $self->{'args'} = GT::ArgsTree->new(); # no args
     }
 
     if (defined($func)) {
-	# User supplied input
-	#$self->{'func'} = $func;
-	die "We tried to pass a 'func' parameter to an indicator, please convert the module...";
+        # User supplied input
+        #$self->{'func'} = $func;
+        die "We tried to pass a 'func' parameter to an indicator, please convert the module...";
     } #else {
-	# We make the supposition that the last parameter is going to be
-	# an input parameter ...
-	#$self->{'func'} = sub { $self->{'args'}->get_arg_values($_[0], $_[1],
-	#							$self->{'args'}->get_nb_args() ); };
+        # We make the supposition that the last parameter is going to be
+        # an input parameter ...
+        #$self->{'func'} = sub { $self->{'args'}->get_arg_values(
+        #                        $_[0], $_[1], $self->{'args'}->get_nb_args() ); };
     #}
     $self->{'func'} = sub { die "Please convert this module to NOT use \$self->{'func'} ..."; };
     
@@ -127,6 +135,7 @@ calculate_all will calculate all the values of the indicators for all
 possibles days.
 
 =cut
+
 sub calculate_all {
     my ($self, $calc) = @_;
     my $c = $calc->prices->count;
@@ -146,24 +155,27 @@ optimized version of the calculation algorithm by possibly reusing
 the result of previous days.
 
 =cut
+
 sub calculate_interval {
     my ($self, $calc, $first, $last) = @_;
 
     if (ref($self->{'args'}) =~ /GT::ArgsTree/) {
-	$self->{'args'}->prepare_interval($calc, $first, $last);
+        $self->{'args'}->prepare_interval($calc, $first, $last);
     }
     for (my $i = $first; $i <= $last; $i++)
     {
-	$self->calculate($calc, $i);
+        $self->calculate($calc, $i);
     }
     return;
 }
 
 =item C<< $indic->initialize() >>
 
-Default method that does nothing.
+Default method that does nothing. note this method is called by
+GT::Registry::manage_object if the object is new and needs initialization.
 
 =cut
+
 sub initialize { 1; }
 
 =item C<< $indic->get_name >>
@@ -183,6 +195,7 @@ available for use.
 =back
 
 =cut
+
 # Those functions are exported by GT::Registry
 
 1;
