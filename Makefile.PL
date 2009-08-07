@@ -11,5 +11,7 @@ no_index directory => 'Windows_Installer';
 no_index directory => 'docs';
 no_index directory => 'website';
 
+auto_install;
+
 WriteAll;
 
