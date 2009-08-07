@@ -1,7 +1,5 @@
 Revision history for Finance-GeniusTrader
 
-0.00_50    Date/time
+0.00_50    2009-08-07
            First alpha release of CPANified GeniusTrader.
-           Untested !
-
-
+           Small test suite, so concider this untested.
