@@ -5,9 +5,11 @@ all_from 'lib/Finance/GeniusTrader.pm';
 author   'Erik Colson <eco@ecocode.net>';
 license  'gpl';
 
-build_requires 'Test::More';
+test_requires 'Test::More';
 
-auto_install;
+no_index directory => 'Windows_Installer';
+no_index directory => 'docs';
+no_index directory => 'website';
 
 WriteAll;
 
