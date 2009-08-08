@@ -405,7 +405,7 @@ if (defined($template) && $template ne '') {
 
   my $use = 'use HTML::Mason;use File::Spec;use Cwd;';
   eval $use;
-  die(@!) if(@!);
+  die($@) if($@);
 
   my $root = Finance::GeniusTrader::Conf::get('Template::directory');
   $root = File::Spec->rel2abs( cwd() ) if (!defined($root));

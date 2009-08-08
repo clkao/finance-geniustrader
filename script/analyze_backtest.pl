@@ -83,7 +83,7 @@ if ($template ne '') {
 
    my $use = 'use HTML::Mason;use File::Spec;use Cwd;';
    eval $use;
-   die(@!) if(@!);
+   die($@) if($@);
  
    my $output;
    my $l = $spool->list_available_data($set);

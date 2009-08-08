@@ -637,7 +637,7 @@ print STDERR "not using template\n";
         my $use = 'use HTML::Mason;use File::Spec;use Cwd;';
 
         eval $use;
-        die(@!) if(@!);
+        die($@) if($@);
 
         my $interp = HTML::Mason::Interp->new( comp_root => $root,
     					       out_method => \$output
