@@ -62,6 +62,7 @@ Example of accepted argument list :
 =cut
 sub initialize {
     my ($self) = @_;
+    $self->add_arg_dependency(1, 1) unless $self->{'args'}->is_constant(1);
 }
 
 sub calculate_interval {
@@ -75,7 +76,7 @@ sub calculate_interval {
     my $arg = $self->{'args'}->get_arg_names(1);
     my $currentHigh;
 
-    if ($arg =~ /^\d+$/) {
+    if ($arg =~ /^[\d.]+$/) {
         my $period = $arg;
 	return if (! $self->check_dependencies_interval($calc, $first - $period, $last));
 	$currentHigh = $self->{'args'}->get_arg_values($calc, $first - $period, 2);
@@ -130,6 +131,9 @@ sub calculate_interval {
 	    $calc->indicators->set($name, $i, $currentHigh);
 	}
     }
+    else {
+	Finance::GeniusTrader::Indicators::calculate_interval(@_);
+    }
 }
 
 sub calculate {
@@ -137,18 +141,29 @@ sub calculate {
     my $name = $self->get_name;
     
     return if ($calc->indicators->is_available($name, $i));
+    return if (! $self->check_dependencies($calc, $i));
 
     my $res = undef;
     my $arg = $self->{'args'}->get_arg_values($calc, $i, 1);
-
-    if ($arg =~ /^\d+$/) {
+    Carp::cluck unless defined $arg;
+    if ($arg =~ /^[\d.]+$/) {
+        my $prev_arg = $i > 0 ? $self->{'args'}->get_arg_values($calc, $i-1, 1) : undef;
+        my $prev_val = $i > 0 ? $calc->indicators->get($name, $i-1) : undef;
 	$res = $self->{'args'}->get_arg_values($calc, $i, 2);
-	for (my $n = 1; $n < $arg; $n++) {
-	    my $val = $self->{'args'}->get_arg_values($calc, $i - $n, 2);
-	    if (defined($val) && defined($res)) {
-		$res = max($res, $val);
-	    }
-	}
+        if (defined $prev_arg && defined $res && defined $prev_val &&
+                $arg <= $prev_arg &&
+                $res >= $calc->indicators->get($name, $i-1) ) {
+            # leave res as current val
+        }
+        else {
+            for ( my $n = 1; $n < $arg; $n++ ) {
+                return if $i - $n < 0;
+                my $val = $self->{'args'}->get_arg_values( $calc, $i - $n, 2 );
+                if ( defined($val) && defined($res) ) {
+                    $res = max( $res, $val );
+                }
+            }
+        }
     } elsif ($arg =~/^\d{4}-\d\d(-\d\d)?( \d\d:\d\d:\d\d)?$/) {
 	my $n = undef;
 	if ($calc->prices->has_date($arg)) {
@@ -166,7 +181,7 @@ sub calculate {
 	    }
 	}
     }
-    
+
     if (defined($res)) {
 	$calc->indicators->set($name, $i, $res);
     }
