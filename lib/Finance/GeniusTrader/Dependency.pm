@@ -207,6 +207,10 @@ Returns the number of days required so that the object can produce a result.
 =cut
 sub days_required {
     my ($self) = @_;
+
+    return $self->{_days_required_cache}
+        if $self->{_days_required_cache};
+
     my $max = $self->get_prices_dependency;
     
     foreach ($self->get_indicator_dependencies())
@@ -220,7 +224,7 @@ sub days_required {
 	$max = ($tmp > $max) ? $tmp : $max;
     }
 
-    return $max;
+    return $self->{_days_required_cache} = $max;
 }
 
 =item C<< ($first, $last) = $object->update_interval($calc, $first, $last) >>
@@ -298,14 +302,16 @@ Check if all dependencies have been computed.
 # the indicator is available, then all others are available
 sub dependencies_are_available {
     my ($self, $calc, $i) = @_;
-
+    
+    my $indic = $calc->indicators;
     # Availibility of indicators
     foreach ($self->get_indicator_dependencies())
     {
 	my $name = $_->{'indicator'}->get_name;
+        
 	for (my $n = $i - $_->{'nbdays'} + 1; $n <= $i; $n++)
 	{
-	    if (! $calc->indicators->is_available($name, $n))
+	    if (! $indic->is_available($name, $n))
 	    {
 		return 0;
 	    }
@@ -324,7 +330,6 @@ sub dependencies_are_available {
 	    }
 	}
     }
-   
     return 1;
 }
 sub dependencies_are_available_interval {

@@ -152,11 +152,49 @@ sub calculate_interval {
     if (ref($self->{'args'}) =~ /Finance::GeniusTrader::ArgsTree/) {
 	$self->{'args'}->prepare_interval($calc, $first, $last);
     }
+    my $nb_items = $self->get_nb_values;
+    my $name = $self->{names}[0];
+    my $indic = $calc->indicators;
     for (my $i = $first; $i <= $last; $i++)
     {
-	$self->calculate($calc, $i);
+	$self->calculate($calc, $i)
+            if $nb_items == 1 && !$indic->is_available($name, $i);
     }
     return;
+}
+
+sub load_from_cache {
+    use Digest::SHA1  qw(sha1_hex);
+    my ($self, $calc) = @_;
+
+    my $dir = Finance::GeniusTrader::Conf::get("DB::text::directory");
+    my $code = $calc->code;
+
+    my $timeframe_name = Finance::GeniusTrader::DateTime::name_of_timeframe($calc->current_timeframe);
+    return if $self->{cache_tried};
+
+    my $pdir = "$dir/$code/$timeframe_name";
+
+    my $standard_name = Finance::GeniusTrader::Eval::get_standard_name($self) ;
+    my ($short) = $standard_name =~ m/[\S:](\w+)\s/;
+    my $file = "$pdir/$short.".sha1_hex($standard_name).".i";
+
+    return unless -e $file;
+    open my $fh, '<', $file or die $!;
+
+    my @names = map { $self->get_name($_) } 0..$self->get_nb_values-1;
+    my $i = 0;
+    my $indic = $calc->indicators;
+    while (<$fh>) {
+        chomp;
+        my @vals = split(',');
+        for (0..$#names) {
+            $indic->set($names[$_], $i, $vals[$_] eq 'NA' ? undef : $vals[$_])
+        }
+        ++$i;
+    }
+    ++$self->{cache_tried};
+
 }
 
 =item C<< $indic->initialize() >>
