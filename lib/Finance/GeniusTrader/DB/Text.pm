@@ -197,7 +197,11 @@ sub get_prices {
     if ($self->{'use_cache'}) {
         require Storable;
         if (-f $file.".cache" && (stat($file.".cache"))[9] > (stat($file))[9]) {
-            return Storable::retrieve($file.".cache");
+            my $cached = Storable::retrieve($file.".cache");
+            if (ref($cached) eq 'GT::Prices') {
+                bless $cached, 'Finance::GeniusTrader::Prices';
+            }
+            return $cached;
         }
     }
     $prices->loadtxt($file, $self->{'mark'}, $self->{'date_format'},
