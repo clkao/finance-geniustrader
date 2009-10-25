@@ -141,7 +141,10 @@ sub get_arg_values {
 	    my $object = $self->[$n][0]{"object"};
 	    my $number = $self->[$n][0]{"number"};
 	    my $name = $object->get_name($number);
-	    if (ref($object) =~ /Finance::GeniusTrader::Indicators/) {
+	    if (ref($object) =~ /Finance::GeniusTrader::Indicators::Prices/ && $object->{'use_std_prices'}) {
+                return if $day<0 || $day >= $calc->prices->count;
+                return $calc->prices->at($day)->[$object->{'data_ind'}];
+            } elsif (ref($object) =~ /Finance::GeniusTrader::Indicators/) {
 		$object->calculate($calc, $day) 
 		  unless ($indic->is_available($name, $day));
 		if ($indic->is_available($name, $day)) {
