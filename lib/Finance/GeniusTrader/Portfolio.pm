@@ -71,7 +71,7 @@ sub add_order {
     $order->set_id($self->{'order_id'});
     
     $self->{'order_id'}++;
-    $self->{'pending_orders'}[$order->id] = $order;
+    push @{$self->{'pending_orders'}}, $order;
     return $order->id;
 }
 
@@ -87,9 +87,8 @@ sub discard_order {
     #WAR#  WARN  "valid type for order" if ( ref($order) =~ /Portfolio::Order/);
     #WAR#  WARN  "order id is positive" if ( $order->id >= 0);
     
-    push @{$self->{'discarded_orders'}},
-	 $self->{'pending_orders'}[$order->id];
-    $self->{'pending_orders'}[$order->id] = undef;
+    push @{$self->{'discarded_orders'}}, $order;
+    $self->delete_order($order);
     
     return;
 }
@@ -99,8 +98,9 @@ sub delete_order {
 
     #WAR#  WARN  "valid type for order" if ( ref($order) =~ /Portfolio::Order/);
     #WAR#  WARN  "order id is positive" if ( $order->id >= 0);
-    
-    $self->{'pending_orders'}[$order->id] = undef;
+    my $order_id = $order->id;
+    @{$self->{'pending_orders'}} = grep { $_->id != $order_id } @{$self->{'pending_orders'}};
+
     return;
 }
 
@@ -218,8 +218,7 @@ sub apply_pending_orders {
         };
     }
 
-    foreach (@{$self->{'pending_orders'}}) {
-	next if (! defined($_));
+    foreach ($self->list_pending_orders) {
 	next if ($_->code ne $calc->code);
 	next if ($_->source ne $source);
 
@@ -443,7 +442,7 @@ sub list_pending_orders {
 	return grep { defined($_) && ($_->source eq $source) }
 		    @{$self->{'pending_orders'}};
     } else {
-	return grep { defined($_) } @{$self->{'pending_orders'}};
+	return @{$self->{'pending_orders'}};
     }
 }
 
