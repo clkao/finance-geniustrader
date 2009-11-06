@@ -269,7 +269,7 @@ sub download_prices {
 	print CACHE $res->content;
 	close CACHE;
 	my $new_prices = Finance::GeniusTrader::Prices->new();
-	$new_prices->loadtxt("$cache_file.tmp", $self->{'mark'}, $self->{'date_format'}, %{$self->{'fields'}});
+	$new_prices->loadtxt("$cache_file.tmp", $self->{'mark'}, $self->{'date_format'}, $self->{'header_lines'}, %{$self->{'fields'}});
 	$new_prices->set_timeframe($DAY);
 	for(my $i = 0; $i < $new_prices->count(); $i++) {
 	    if ($prices->has_date($new_prices->at($i)->[$DATE])) {
