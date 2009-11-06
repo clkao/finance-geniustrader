@@ -5,7 +5,7 @@ package Finance::GeniusTrader::Prices;
 # version 2 or (at your option) any later version.
 
 use strict;
-use vars qw(@ISA @EXPORT $FIRST $OPEN $HIGH $LOW $CLOSE $LAST $VOLUME $DATE);
+use vars qw(@ISA @EXPORT $FIRST $OPEN $HIGH $LOW $CLOSE $LAST $VOLUME $DATE $TIMESTAMP);
 
 use Date::Calc qw(Decode_Date_US Decode_Date_EU Today);
 #ALL#  use Log::Log4perl qw(:easy);
@@ -21,6 +21,7 @@ $LOW  = 2;
 $LAST = $CLOSE = 3;
 $VOLUME = 4;
 $DATE = 5;
+$TIMESTAMP = 6;
 
 =head1 NAME
 
@@ -62,6 +63,12 @@ sub at {
 sub at_date {
     my ($self, $date) = @_;
     return $self->at($self->date($date));
+}
+
+sub timestamp {
+    my ($self, $i) = @_;
+    return $self->{'prices'}[$i][$TIMESTAMP] ||=
+	Finance::GeniusTrader::DateTime::map_date_to_time($self->timeframe, $self->{'prices'}[$i][$DATE]);
 }
 
 =item C<< $p->has_date('YYYY-MM-DD') >>
@@ -227,14 +234,13 @@ sub find_nearest_following_date {
     my $time = Finance::GeniusTrader::DateTime::map_date_to_time($self->timeframe, $date);
     my $mindiff = $time;
     my $mindate = '';
-    foreach (@{$self->{'prices'}})
-    {
-	my $dtime = Finance::GeniusTrader::DateTime::map_date_to_time($self->timeframe, $_->[$DATE]);
+    for (my $i=0; $i < $self->count; ++$i) {
+	my $dtime = $self->timestamp($i);
 	my $diff = $dtime - $time;
 	next if ($diff < 0);
 	if ($diff < $mindiff)
 	{
-	    $mindate = $_->[$DATE];
+	    $mindate = $self->at($i)->[$DATE];
 	    $mindiff = $diff;
 	}
     }
@@ -246,14 +252,13 @@ sub find_nearest_preceding_date {
     my $time = Finance::GeniusTrader::DateTime::map_date_to_time($self->timeframe, $date);
     my $mindiff = $time;
     my $mindate = '';
-    foreach (@{$self->{'prices'}})
-    {
-	my $dtime = Finance::GeniusTrader::DateTime::map_date_to_time($self->timeframe, $_->[$DATE]);
+    for (my $i=0; $i < $self->count; ++$i) {
+	my $dtime = $self->timestamp($i);
 	my $diff = $time - $dtime;
 	next if ($diff < 0);
 	if ($diff < $mindiff)
 	{
-	    $mindate = $_->[$DATE];
+	    $mindate = $self->at($i)->[$DATE];
 	    $mindiff = $diff;
 	}
     }
@@ -265,13 +270,12 @@ sub find_nearest_date {
     my $time = Finance::GeniusTrader::DateTime::map_date_to_time($self->timeframe, $date);
     my $mindiff = $time;
     my $mindate = '';
-    foreach (@{$self->{'prices'}})
-    {
-	my $dtime = Finance::GeniusTrader::DateTime::map_date_to_time($self->timeframe, $_->[$DATE]);
+    for (my $i=0; $i < $self->count; ++$i) {
+	my $dtime = $self->timestamp($i);
 	my $diff = abs($time - $dtime);
 	if ($diff < $mindiff)
 	{
-	    $mindate = $_->[$DATE];
+	    $mindate = $self->at($i)->[$DATE];
 	    $mindiff = $diff;
 	}
     }

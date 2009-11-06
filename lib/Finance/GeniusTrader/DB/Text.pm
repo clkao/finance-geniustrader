@@ -5,7 +5,7 @@ package Finance::GeniusTrader::DB::Text;
 # version 2 or (at your option) any later version.
 
 # new version joao costa circa nov 07
-# $Id$
+# $Id: /mirror/geniustrader/trunk/GT/DB/Text.pm 11727 2008-06-10T04:43:34.636531Z thomas  $
 
 use strict;
 our @ISA = qw(Finance::GeniusTrader::DB);
@@ -128,6 +128,7 @@ sub new {
     Finance::GeniusTrader::Conf::default('DB::Text::fields::high', '1');
     Finance::GeniusTrader::Conf::default('DB::Text::fields::close', '3');
     Finance::GeniusTrader::Conf::default('DB::Text::fields::volume', '4');
+    Finance::GeniusTrader::Conf::default('DB::Text::cache', '0');
 
     $self->{'header_lines'} = Finance::GeniusTrader::Conf::get('DB::Text::header_lines');
     $self->{'mark'} = Finance::GeniusTrader::Conf::get('DB::Text::marker');
@@ -139,6 +140,7 @@ sub new {
     $self->{'high'} = Finance::GeniusTrader::Conf::get('DB::Text::fields::high');
     $self->{'close'} = Finance::GeniusTrader::Conf::get('DB::Text::fields::close');
     $self->{'volume'} = Finance::GeniusTrader::Conf::get('DB::Text::fields::volume');
+    $self->{'use_cache'} = Finance::GeniusTrader::Conf::get('DB::Text::cache');
 
     return bless $self, $class;
 }
@@ -192,9 +194,23 @@ sub get_prices {
     $extension =~ s/\$timeframe/$tfname/g;
 
     my $file = $self->{'directory'} . "/$code" . $extension;
-
+    if ($self->{'use_cache'}) {
+        require Storable;
+        if (-f $file.".cache" && (stat($file.".cache"))[9] > (stat($file))[9]) {
+            my $cached = Storable::retrieve($file.".cache");
+            if (ref($cached) eq 'GT::Prices') {
+                bless $cached, 'Finance::GeniusTrader::Prices';
+            }
+            return $cached;
+        }
+    }
     $prices->loadtxt($file, $self->{'mark'}, $self->{'date_format'},
 		     $self->{'header_lines'}, %fields);
+
+    if ($self->{'use_cache'}) {
+        $prices->timestamp($_) for 0..$prices->count-1;
+        Storable::nstore($prices, $file.".cache");
+    }
     return $prices;
 
 }
