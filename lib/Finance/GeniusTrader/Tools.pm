@@ -737,11 +737,11 @@ sub check_dates {
   }
   
   # timeframe relative date conversions
-  if ( $start && $timeframe != $DAY ) {
+  if ( $start && $timeframe > $DAY ) {
     $start = Finance::GeniusTrader::DateTime::convert_date($start, $DAY, $timeframe);
   }
 
-  if ( $end && $timeframe != $DAY ) {
+  if ( $end && $timeframe > $DAY ) {
     $end = Finance::GeniusTrader::DateTime::convert_date($end, $DAY, $timeframe);
   }
 
