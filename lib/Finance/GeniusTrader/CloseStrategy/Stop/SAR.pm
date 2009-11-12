@@ -105,7 +105,7 @@ sub manage_long_position {
     # Place the trailing stop only then SAR and Prices are moving together
     # Otherwise, exit immediately.
     if ($sar < $calc->prices->at($i)->[$LOW]) {
-	$position->{'stop'} = $sar;
+	$position->force_stop($sar);
     } else {
 	my $order = $pf_manager->sell_market_price($calc, $sys_manager->get_name);
         $pf_manager->submit_order_in_position($position, $order, $i, $calc);
@@ -124,7 +124,7 @@ sub manage_short_position {
     # Place the trailing stop only then SAR and Prices are moving together
     # Otherwise, exit immediately.
     if ($sar > $calc->prices->at($i)->[$HIGH]) {
-        $position->{'stop'} = $sar;
+        $position->force_stop($sar);
     } else {
         my $order = $pf_manager->buy_market_price($calc, $sys_manager->get_name);
         $pf_manager->submit_order_in_position($position, $order, $i, $calc);

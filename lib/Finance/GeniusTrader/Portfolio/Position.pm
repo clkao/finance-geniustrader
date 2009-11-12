@@ -185,27 +185,58 @@ sub set_stop {
     my ($self, $price) = @_;
     if (! (defined($self->{'stop'}) && $self->{'stop'}))
     {
-	$self->{'stop'} = $price;
+        $self->set_stop_order_price($price);
 	return;
     }
     if ($self->is_long) {
 	if ($price > $self->{'stop'})
 	{
-	    $self->{'stop'} = $price;
+            $self->set_stop_order_price($price);
 	}
     } else {
 	if ($price < $self->{'stop'})
 	{
-	    $self->{'stop'} = $price;
+            $self->set_stop_order_price($price);
 	}
     }
 }
 sub update_stop { set_stop(@_) }
 sub force_stop {
     my ($self, $price) = @_;
-    $self->{'stop'} = $price;
+    $self->set_stop_order_price($price);
 }
 sub stop { $_[0]->{'stop'} }
+
+=item C<< $p->stop_order() >>
+
+=item C<< $p->set_stop_order_price() >>
+
+stop_order returns the order object represeting the current position's top.
+set_stop_order_price updates the price of the stop order object.
+
+=cut
+
+sub set_stop_order_price {
+    my ($self, $price) = @_;
+    my $order = $self->{'stop_order'};
+    unless ($order) {
+        $order = Finance::GeniusTrader::Portfolio::Order->new;
+	if ($self->is_long)
+	{
+	    $order->set_sell_order;
+	} else {
+	    $order->set_buy_order;
+	}
+	$order->set_type_stop;
+	$order->set_quantity($self->quantity);
+        $order->set_not_discardable();
+        $self->{'stop_order'} = $order;
+    }
+    $self->{'stop'} = $price;
+    $order->set_price($price);
+}
+
+sub stop_order { $_[0]->{'stop_order'} }
 
 =item C<< $p->set_attribute($key, [ $value ]); >>
 
@@ -315,6 +346,9 @@ sub apply_order {
 		$self->{'quantity'} -= $order->quantity;
 	    }
 	}
+        if ($self->stop_order) {
+            $self->stop_order->set_quantity($self->quantity);
+        }
     } else {
 	$self->{'long'} = ($order->is_buy_order) ? 1 : 0;
 	$self->set_quantity($order->quantity);
@@ -342,45 +376,15 @@ sub apply_order {
 =cut
 sub apply_pending_orders {
     my ($self, $calc, $i) = @_ ;
-    
-    # Try to apply stop defined as orders
-    foreach (grep { $_->is_type_stop &&
+    my @stop_orders =
+        grep { $_->is_type_stop &&
 		    (($self->is_long  && $_->is_sell_order) ||
 		     ($self->is_short && $_->is_buy_order))
-		  } ($self->list_pending_orders))
-    {
-	next if (! defined($_));
+		  } ($self->list_pending_orders);
 
-	my $price = $_->is_executed($calc, $i);
-        if ($price)
-        {
-	    $self->apply_order($_, $price, $calc->prices->at($i)->[$DATE]);
-            $self->delete_order($_);
-        } else {
-            if ($_->discardable) {
-                $self->discard_order($_);
-            } else {
-                # Do not discard
-            }
-        }
-    }
-    
-    # Try to apply the stop if there's something left to stop
-    if (defined($self->stop) && $self->stop && $self->quantity)
-    {
-	my $order = Finance::GeniusTrader::Portfolio::Order->new;
-	if ($self->is_long)
-	{
-	    $order->set_sell_order;
-	} else {
-	    $order->set_buy_order;
-	}
-	$order->set_type_stop;
-	$order->set_price($self->stop);
-	$order->set_quantity($self->quantity);
-
+    if ($self->stop_order) {
 	my $apply_stop = 1;
-	
+
 	if ($self->open_date eq $calc->prices->at($i)->[$DATE])
 	{
 	    # First day, we can't always be sure how the stop has
@@ -402,19 +406,37 @@ sub apply_pending_orders {
 		}
 	    }
 	}
-	
-	if ($apply_stop && $order->is_executed($calc, $i))
-	{
-	    $self->apply_order($order, $self->stop, $calc->prices->at($i)->[$DATE]);
-	    return;
-	}
+        push @stop_orders, $self->stop_order
+            if $apply_stop;
     }
-    
+
+    @stop_orders = sort { $a->price cmp $b->price } @stop_orders;
+    @stop_orders = reverse @stop_orders if $self->is_long;
+
+    # try to apply stops from the nearest one
+    for (@stop_orders) {
+        last unless $self->quantity;
+
+	my $price = $_->is_executed($calc, $i);
+        if ($price)
+        {
+	    $self->apply_order($_, $price, $calc->prices->at($i)->[$DATE]);
+            $self->delete_order($_)
+                if defined $_->id;
+        } else {
+            if ($_->discardable) {
+                $self->discard_order($_);
+            } else {
+                # Do not discard
+            }
+        }
+    }
+
     # Apply the other orders
     foreach ($self->list_pending_orders) 
     {
 	next if (! defined($_));
-	
+	last if !$self->quantity;
 	my $price;
 	if ($price = $_->is_executed($calc, $i)) 
 	{

@@ -44,8 +44,9 @@ sub initialize {
 
 sub calculate {
     my ($self, $calc, $i) = @_;
-    my $nb = $self->{'args'}->get_arg_values($calc, $i, 1);
     my $name = $self->get_name;
+    return if ($calc->indicators->is_available($name, $i));
+    my $nb = $self->{'args'}->get_arg_values($calc, $i, 1);
     my $sum = 0;
     my $yesterday;
     my $today;
@@ -55,7 +56,6 @@ sub calculate {
     $self->remove_volatile_dependencies();
     $self->add_volatile_arg_dependency(2, $nb);
 
-    return if ($calc->indicators->is_available($name, $i));
     return if (! $self->check_dependencies($calc, $i));
 
     $yesterday = $self->{'args'}->get_arg_values($calc, $i-$nb, 2);

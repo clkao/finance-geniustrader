@@ -134,17 +134,21 @@ sub get_arg_values {
     #ERR#  ERROR  "Bad calculator argument for get_arg_values" if ( ref($calc) =~ /Finance::GeniusTrader::Calculator/);
     #ERR#  ERROR  "Bad day argument for get_arg_values" if ( $day =~ /^\d+$/);
     if (defined($n)) {
+        my $indic = $calc->indicators;
 	#ERR#  ERROR  "Bad argument index in get_arg_values" if ( $n >= 1 && $n < scalar(@{$self}));
 	my $res = undef;
 	if (ref($self->[$n]) =~ /ARRAY/) {
 	    my $object = $self->[$n][0]{"object"};
 	    my $number = $self->[$n][0]{"number"};
 	    my $name = $object->get_name($number);
-	    if (ref($object) =~ /Finance::GeniusTrader::Indicators/) {
+	    if (ref($object) =~ /Finance::GeniusTrader::Indicators::Prices/ && $object->{'use_std_prices'}) {
+                return if $day<0 || $day >= $calc->prices->count;
+                return $calc->prices->at($day)->[$object->{'data_ind'}];
+            } elsif (ref($object) =~ /Finance::GeniusTrader::Indicators/) {
 		$object->calculate($calc, $day) 
-		  unless ($calc->indicators->is_available($name, $day));
-		if ($calc->indicators->is_available($name, $day)) {
-		    $res = $calc->indicators->get($name, $day);
+		  unless ($indic->is_available($name, $day));
+		if ($indic->is_available($name, $day)) {
+		    $res = $indic->get($name, $day);
 		    return $res;
 		}
 	    } elsif (ref($object) =~ /Finance::GeniusTrader::Signals/) {
@@ -156,9 +160,9 @@ sub get_arg_values {
 		}
 	    } elsif (ref($object) =~ /Finance::GeniusTrader::Analyzers/) {
 		$object->calculate($calc, $day) 
-		  unless ($calc->indicators->is_available($name, $day));
-		if ($calc->indicators->is_available($name, $day)) {
-		    $res = $calc->indicators->get($name, $day);
+		  unless ($indic->is_available($name, $day));
+		if ($indic->is_available($name, $day)) {
+		    $res = $indic->get($name, $day);
 		    return $res;
 		}
 	    }

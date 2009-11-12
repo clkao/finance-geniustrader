@@ -447,6 +447,8 @@ $z_m->set_default_scale($scale_m) if ($type ne "none");
 
 my $axis = Finance::GeniusTrader::Graphics::Axis->new($scale_m);
 my $axis2 = Finance::GeniusTrader::Graphics::Axis->new($scale_m);
+$axis2->set_grid_level(2)
+    if $timeframe <= $PERIOD_5MIN;
 $axis->set_custom_big_ticks(
 	build_axis_for_interval($ds->get_value_range(), 0, 1)
     );
@@ -454,8 +456,10 @@ $axis->set_custom_ticks(
 	build_axis_for_interval($ds->get_value_range(), 1, 0)
     );
 
-if ($timeframe <= $PERIOD_5MIN) {
-	$axis2->set_custom_ticks(build_axis_for_timeframe($q, $HOUR, 1), 0);
+if ($timeframe <= $PERIOD_1MIN) {
+	$axis2->set_custom_ticks(build_axis_for_timeframe2($q, $PERIOD_15MIN, $DAY), 0);
+} elsif ($timeframe <= $PERIOD_5MIN) {
+	$axis2->set_custom_ticks(build_axis_for_timeframe2($q, $HOUR, $DAY), 0);
 } elsif ($timeframe < $DAY) {
 	$axis2->set_custom_ticks(build_axis_for_timeframe($q, $DAY, 1), 0);
 } elsif ($timeframe == $DAY) {
@@ -833,7 +837,9 @@ sub build_datasource {
 
     # Try aliases
     if ($desc !~ /^(I|Indicators|SY|Systems|PortfolioEvaluation)/i) {
-	my $alias = resolve_alias($desc);
+#	my $alias = resolve_alias($desc);
+	my $alias = resolve_object_alias(long_name($desc));
+
 	if (! $alias) {
 	  warn "Unknown datasource: $desc\n";
 	  return $ds;

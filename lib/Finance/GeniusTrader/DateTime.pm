@@ -6,13 +6,13 @@ package Finance::GeniusTrader::DateTime;
 
 use strict;
 use vars qw(@ISA @EXPORT $PERIOD_TICK $PERIOD_1MIN $PERIOD_5MIN $PERIOD_10MIN
-	    $PERIOD_15MIN $PERIOD_30MIN $HOUR $PERIOD_2HOUR $PERIOD_3HOUR $PERIOD_4HOUR
+	    $PERIOD_15MIN $PERIOD_30MIN $PERIOD_30MIN15 $HOUR $PERIOD_2HOUR $PERIOD_3HOUR $PERIOD_4HOUR
 	    $DAY $WEEK $MONTH $YEAR %NAMES);
 
 require Exporter;
 @ISA = qw(Exporter);
 @EXPORT = qw($PERIOD_TICK $PERIOD_1MIN $PERIOD_5MIN $PERIOD_10MIN
-	     $PERIOD_15MIN $PERIOD_30MIN $HOUR $PERIOD_2HOUR $PERIOD_3HOUR $PERIOD_4HOUR $DAY $WEEK $MONTH $YEAR);
+	     $PERIOD_15MIN $PERIOD_30MIN $PERIOD_30MIN15 $HOUR $PERIOD_2HOUR $PERIOD_3HOUR $PERIOD_4HOUR $DAY $WEEK $MONTH $YEAR);
 
 #ALL#  use Log::Log4perl qw(:easy);
 
@@ -22,6 +22,7 @@ $PERIOD_5MIN = 30;
 $PERIOD_10MIN = 40;
 $PERIOD_15MIN = 45;
 $PERIOD_30MIN = 50;
+$PERIOD_30MIN15 = 51;
 $HOUR = 60;
 $PERIOD_2HOUR = 62;
 $PERIOD_3HOUR = 64;
@@ -38,6 +39,7 @@ $YEAR = 100;
     $PERIOD_10MIN => "10min",
     $PERIOD_15MIN => "15min",
     $PERIOD_30MIN => "30min",
+    $PERIOD_30MIN15 => "30min15",
     $HOUR => "hour",
     $PERIOD_2HOUR => "2hour",
     $PERIOD_3HOUR => "3hour",
@@ -54,6 +56,7 @@ require Finance::GeniusTrader::DateTime::5Min;
 require Finance::GeniusTrader::DateTime::10Min;
 require Finance::GeniusTrader::DateTime::15Min;
 require Finance::GeniusTrader::DateTime::30Min;
+require Finance::GeniusTrader::DateTime::30Min15;
 require Finance::GeniusTrader::DateTime::Hour;
 require Finance::GeniusTrader::DateTime::2Hour;
 require Finance::GeniusTrader::DateTime::3Hour;
@@ -112,6 +115,7 @@ sub map_date_to_time {
     $timeframe == $PERIOD_10MIN && return Finance::GeniusTrader::DateTime::10Min::map_date_to_time($date);
     $timeframe == $PERIOD_15MIN && return Finance::GeniusTrader::DateTime::15Min::map_date_to_time($date);
     $timeframe == $PERIOD_30MIN && return Finance::GeniusTrader::DateTime::30Min::map_date_to_time($date);
+    $timeframe == $PERIOD_30MIN15 && return Finance::GeniusTrader::DateTime::30Min15::map_date_to_time($date);
     $timeframe == $HOUR  && return Finance::GeniusTrader::DateTime::Hour::map_date_to_time($date);
     $timeframe == $PERIOD_2HOUR  && return Finance::GeniusTrader::DateTime::2Hour::map_date_to_time($date);
     $timeframe == $PERIOD_3HOUR  && return Finance::GeniusTrader::DateTime::3Hour::map_date_to_time($date);
@@ -131,6 +135,7 @@ sub map_time_to_date {
     $timeframe == $PERIOD_10MIN && return Finance::GeniusTrader::DateTime::10Min::map_time_to_date($time);
     $timeframe == $PERIOD_15MIN && return Finance::GeniusTrader::DateTime::15Min::map_time_to_date($time);
     $timeframe == $PERIOD_30MIN && return Finance::GeniusTrader::DateTime::30Min::map_time_to_date($time);
+    $timeframe == $PERIOD_30MIN15 && return Finance::GeniusTrader::DateTime::30Min15::map_time_to_date($time);
     $timeframe == $HOUR  && return Finance::GeniusTrader::DateTime::Hour::map_time_to_date($time);
     $timeframe == $PERIOD_2HOUR  && return Finance::GeniusTrader::DateTime::2Hour::map_time_to_date($time);
     $timeframe == $PERIOD_3HOUR  && return Finance::GeniusTrader::DateTime::3Hour::map_time_to_date($time);
@@ -162,7 +167,7 @@ Returns the list of timeframes that are managed by the DateTime framework.
 sub list_of_timeframe {
     return (
 	    $PERIOD_TICK, $PERIOD_1MIN, $PERIOD_5MIN, $PERIOD_10MIN,
-	    $PERIOD_15MIN, $PERIOD_30MIN, $HOUR, $PERIOD_2HOUR, $PERIOD_3HOUR,
+	    $PERIOD_15MIN, $PERIOD_30MIN, $PERIOD_30MIN15, $HOUR, $PERIOD_2HOUR, $PERIOD_3HOUR,
 	    $PERIOD_4HOUR, $DAY, $WEEK, $MONTH, $YEAR
 	   );
 }
@@ -213,6 +218,7 @@ sub timeframe_ratio {
     $first == $PERIOD_10MIN && return (Finance::GeniusTrader::DateTime::Hour::timeframe_ratio($second) / 6);
     $first == $PERIOD_15MIN && return (Finance::GeniusTrader::DateTime::Hour::timeframe_ratio($second) / 4);
     $first == $PERIOD_30MIN && return (Finance::GeniusTrader::DateTime::Hour::timeframe_ratio($second) / 2);
+    $first == $PERIOD_30MIN15 && return (Finance::GeniusTrader::DateTime::Hour::timeframe_ratio($second) / 2);
     $first == $HOUR && return Finance::GeniusTrader::DateTime::Hour::timeframe_ratio($second);
     $first == $PERIOD_2HOUR && return (Finance::GeniusTrader::DateTime::Hour::timeframe_ratio($second) * 2);
     $first == $PERIOD_3HOUR && return (Finance::GeniusTrader::DateTime::Hour::timeframe_ratio($second) * 3);
